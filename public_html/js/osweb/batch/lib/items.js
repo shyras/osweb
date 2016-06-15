@@ -44,7 +44,6 @@
     p.python_workspace = null;
     p.vars             = null;
     p.variables        = null;
-    
 
     /*
      * Definition of public methods - general function.
@@ -1203,7 +1202,7 @@
 
     p.reset = function()
     {
-    	// Resets all item variables to their default value.
+        // Resets all item variables to their default value.
 	this._logvars      = null;
 	this.logvars       = [];
 	this.vars.auto_log = 'yes';

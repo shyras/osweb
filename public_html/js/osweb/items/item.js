@@ -44,7 +44,6 @@
     p.python_workspace = null;
     p.vars             = null;
     p.variables        = null;
-    
 
     /*
      * Definition of public methods - general function.

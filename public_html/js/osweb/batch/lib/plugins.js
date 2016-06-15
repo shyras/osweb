@@ -533,7 +533,7 @@
     	this.item_run();
 
 	// Show the information of the notepad on the console.
-	// console.log(this.note);
+	//osweb.debug.addMessage(this.note);
 
         // Complete the current cycle.
         this.complete();
@@ -740,7 +740,7 @@
         this.experiment.vars.response = this.cell;
         this.synonyms                 = [String(this.experiment.vars.response)];
                 
-        //
+        // Do the bookkeeping 
         this.response_bookkeeping();
     };            
 

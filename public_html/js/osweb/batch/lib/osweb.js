@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.031 (14-06-2016)';
+osweb.VERSION_NUMBER = '0.032 (15-06-2016)';
 
 /*
  * Definition of osweb class utility methods.
@@ -2187,7 +2187,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     p.python_workspace = null;
     p.vars             = null;
     p.variables        = null;
-    
 
     /*
      * Definition of public methods - general function.
@@ -3346,7 +3345,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.reset = function()
     {
-    	// Resets all item variables to their default value.
+        // Resets all item variables to their default value.
 	this._logvars      = null;
 	this.logvars       = [];
 	this.vars.auto_log = 'yes';
@@ -4799,7 +4798,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     	this.item_run();
 
 	// Show the information of the notepad on the console.
-	// console.log(this.note);
+	//osweb.debug.addMessage(this.note);
 
         // Complete the current cycle.
         this.complete();
@@ -5006,7 +5005,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         this.experiment.vars.response = this.cell;
         this.synonyms                 = [String(this.experiment.vars.response)];
                 
-        //
+        // Do the bookkeeping 
         this.response_bookkeeping();
     };            
 
