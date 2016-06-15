@@ -1,0 +1,52 @@
+/**
+ * All your custom CSS should go into this file
+ */
+
+html {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+body {
+	padding-top: 15px;
+}
+
+/* Custom page header */
+.header {
+	border-bottom: 1px solid #e5e5e5;
+}
+
+/* Make the masthead heading the same height as the navigation */
+.header h3 {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-bottom: 1px;
+}
+
+/* Main login message and login button */
+.jumbotron {
+	border-bottom: 1px solid #e5e5e5;
+	margin-top: 10px;
+	text-align: center;
+
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.jumbotron .btn {
+	font-size: 18px;
+}
+
+.footer {
+	padding-right: 0;
+	padding-left: 0;
+	text-align: center;
+}
+
+.chart {
+	margin-top: 10px;
+	text-align: center;
+}
+
+#week_selector {
+	margin-top: 10px;
+}

@@ -1,0 +1,100 @@
+/*  osweb CSS Definitions */
+
+* 
+{
+    margin              : 0;
+    padding             : 0;
+}
+
+body 
+{
+    display             :inline; 
+    color               : #FFFFFF;
+    font-family         : Arial;
+    font-size           : 12px;
+    text-align          : center;
+}
+
+#body_div
+{
+    background-color    : #000000;
+    margin              : 0 auto;
+    width               : 800px;
+    height              : 600px;
+}
+
+#command_div
+{
+    background-color    : #AAAAAA;
+    height              : 30px;
+    text-align          : left;
+    width               : 800px;
+}
+
+#osweb_div
+{
+    height              : 600px;
+    width               : 800px;
+}
+
+
+
+#osweb_form{ display: table; }
+#osweb_form.cell { display: table-cell; }
+.table, .cell { height: 100%; }
+
+
+video 
+{
+    display             : none;
+}
+
+#dialogoverlay
+{
+    background          : #FFF;
+    display             : none;
+    left                : 0px;
+    opacity             : .8;
+    position            : fixed;
+    top                 : 0px;
+    width               : 100%;
+    z-index             : 10;
+}
+
+#dialogbox
+{
+    background          : #000;
+    border-radius       : 3px; 
+    display             : none;
+    position            : fixed;
+    width               : 400px;
+    z-index             : 10;
+}
+
+#dialogbox > div
+{ 
+    background          :#FFF; 
+    margin              :2px; 
+}
+
+#dialogbox > div > #dialogboxhead
+{ 
+    background          : #666; 
+    color               : #CCC; 
+    font-size           : 12px; 
+    padding             : 10px; 
+}
+
+#dialogbox > div > #dialogboxbody
+{ 
+    background          : #333; 
+    color               : #FFF; 
+    padding             : 20px; 
+}
+
+#dialogbox > div > #dialogboxfoot
+{ 
+    background          : #666; 
+    padding             : 10px; 
+    text-align          : right; 
+}

@@ -1,0 +1,223 @@
+
+/* Disable horizontal scrolling */
+html, body
+{
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+/* gebaseerd op bootstrap template: navbar-fixed-top */
+.navbar-app {
+	position: fixed;
+	right: 0;
+	left: 0;
+	top: 0;
+	border-width: 0 0 1px;
+}
+
+/* De spacer geeft bepaalde (divjes vaak) elementen wat extra TOP ruimte */
+.spacer
+{
+	padding-top: 40px;
+}
+
+/*.background_full*/
+/*{*/
+/*	background-image: url("../img/rugstyle/bg-page3.gif");*/
+/*	background-color: transparent;*/
+/*	position: absolute;*/
+/*	z-index: -1;*/
+/*	background-repeat: no-repeat;*/
+/*	height: 100%;*/
+/*	min-height: 500px;*/
+/*}*/
+
+/*.background_right*/
+/*{*/
+/*	background-image: url("../img/rugstyle/bg-header-blue.gif");*/
+/*	min-height: 157px;*/
+/*	background-repeat: no-repeat;*/
+/*}*/
+
+/*.background_left*/
+/*{*/
+/*	background-image: url("../img/rugstyle/bg-header-blue-left.png");*/
+/*	background-color: transparent;*/
+/*	min-height: 157px;*/
+/*	background-repeat: no-repeat;*/
+/*}*/
+
+
+/*.sides*/
+/*{*/
+/*	background-image: url('../img/rugstyle/bg-main-blue.png');*/
+/*}*/
+
+#header
+{
+	background: url('../img/rugstyle/bg-header-blue.gif') no-repeat scroll 0% 0% transparent;
+	z-index: 150;
+	position: relative;
+	padding: 16px 0px 0px 9px;
+/*	height: 141px;*/
+	width: auto;
+	display: block;
+}
+
+#main
+{
+	background: url('../img/rugstyle/bg-main-blue.png') no-repeat scroll 0% 0% transparent;
+	min-height: 250px;
+	padding-left: 25px;
+	padding-right: 25px;
+	margin: 0px;
+	border: 0px none;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+.rugbody
+{
+	margin: 0px;
+	color: #333;
+	font: 11px/18px Verdana,Arial,sans-serif;
+	background: url('../img/rugstyle/bg-page2.gif') repeat-x scroll 50% 0px #FFF;
+	min-width: 990px;
+}
+
+.subnavigation
+{
+
+}
+
+.rugnav
+{
+	min-height: 79px;
+	padding-left: 10px;
+	padding-top: 5px;
+	width: 960px;
+}
+
+/* Color menu texts white */
+.rugnav a
+{
+	color: white;
+}
+
+/* Remove the corners from the nav tabs */
+.nav-tabs > li > a
+{
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+}
+
+/* Change font + background colors when hovering over the menu items */
+.nav-tabs > li > a:hover
+{
+/*	color: black;*/
+	background-color: #0A9BEB;
+/*	border: none;*/
+}
+
+/* Remove the rounded corners from dropdown menus */
+.dropdown-menu
+{
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0;
+/*	background-color: red;*/
+	border: 1px solid #0A9BEB;
+	border-top: 0px;
+}
+
+/*.topnav {*/
+/*    display: block;*/
+/*    float: none;*/
+/*}*/
+
+.rugnav_left
+{
+	float:left;
+	min-width: 550px;
+}
+
+.rugnav_right
+{
+	float:left;
+	text-align: right;
+	width: 400px;
+}
+
+.div_test
+{
+	border-color: red;
+	border-width: 1px;
+	border-style: solid;
+}
+
+.w1
+{
+	width: 2300px;
+	position: relative;
+	float: left;
+	left: 50%;
+	background: url('../img/rugstyle/bg-page.gif') repeat-x scroll 50% 0px rgba(0, 0, 0, 0);
+}
+
+.w2
+{
+	width: 2300px;
+	position: relative;
+	float: left;
+	left: -50%;
+	background: url('../img/rugstyle/bg-page3.gif') repeat-x scroll 50% 200px transparent;
+	min-height: 500px;
+}
+
+.w3:after
+{
+	clear: both;
+	content: "";
+	display: block;
+}
+
+.w3
+{
+	background: url('../img/rugstyle/bg-wrapper.gif') repeat-y scroll 50% 0px transparent;
+	width: 978px;
+	margin: 0px auto;
+}
+
+.title-app
+{
+	position: absolute;
+	left: 350px;
+	top: 65px;
+	font-size: 2em;
+	color: #5e5e5e;
+}
+
+.alert-padding
+{
+	padding: 5px;
+}
+
+
+.content_panel
+{
+	margin-right: 20px;
+	padding: 15px;
+
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+
+	border-radius: 20px;
+	border:1px solid #90C3F0;
+	background-color:#F0F3F5;
+	-webkit-box-shadow: #B3B3B3 6px 6px 6px;
+	-moz-box-shadow: #B3B3B3 6px 6px 6px;
+
+	box-shadow: #B3B3B3 6px 6px 6px;
+}
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <!-- Head - general definitions -->
+        <title>osweb</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+        <!-- Head - link definitions -->
+        <link rel="stylesheet" href="css/osweb.css"/>
+    	<script type="text/javascript" src="js/createjs.js"></script>
+	<script type="text/javascript" src="js/uheprng.js"></script>
+	<script type="text/javascript" src="js/prototype.js"></script>
+	<script type="text/javascript" src="js/gzip.js"></script>
+	<script type="text/javascript" src="js/filbert.js"></script>
+	<script type="text/javascript" src="js/filbert_loose.js"></script>
+	<script type="text/javascript" src="js/osweb.js"></script>
+
+    </head>
+    <body>
+	<!-- Body - HTML definitions -->
+ 	<div id="body_div">
+            <div id="command_div">
+		<input id="button1" type="file">
+		<input id="button2" type="reset" onclick="loadDatabase();" value="Load from database">
+		<input id="button3" type="reset" onclick="loadScript();" value="Load from script">
+		<input id="button4" type="reset" onclick="runExperiment();" value="run experiment" disabled>
+            </div>
+            <div id="osweb_div">
+                <canvas id="osweb_canvas" width="800" height="600" style="background-color:#000000;">&nbsp;</canvas>
+                <div id="osweb_form" style="display: none;background-color:#FF0000;width: 800px;height: 600px;"></div>
+                <div id="dialogoverlay"></div>
+                <div id="dialogbox">
+                    <div>
+                        <div id="dialogboxhead"></div>
+                        <div id="dialogboxbody"></div>
+                        <div id="dialogboxfoot"></div>
+                    </div>
+                </div>
+            </div>
+	</div>
+
+        <!-- Body - Hidden experiment video player -->
+        <video id="video" width="1024" height="768"></video>
+
+        <!-- Body - Start up script -->
+        <script>
+            var Experiment;
+            var Script;
+        
+	    function loadDatabase()
+	    {
+                // Update interface.
+                document.getElementById('button1').disabled = true;
+                document.getElementById('button2').disabled = true;
+                document.getElementById('button3').disabled = true;
+                document.getElementById('button4').disabled = false;
+
+	  	// Definition of the experiment object and its properties.
+		Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://www.gmw.rug.nl/~qweb/osweb/', 'scriptUserID': 99};
+		//Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://127.0.0.1/osweb/public_html', 'scriptUserID': 99};
+	    };  
+
+	    function loadScript()
+	    {
+                // Update interface.
+	    	document.getElementById('button1').disabled = true;
+	    	document.getElementById('button2').disabled = true;
+	    	document.getElementById('button3').disabled = true;
+	    	document.getElementById('button4').disabled = false;
+
+	     	Script = '---' + '\n' +
+			 'API: 2' + '\n' +
+			 'OpenSesame: 3.0.2' + '\n' +
+			 'Platform: nt' + '\n' +
+			 '---' + '\n' +
+			 'set width 800' + '\n' +
+			 'set uniform_coordinates "yes"' + '\n' +
+			 'set title "New experiment"' + '\n' +
+			 'set subject_parity "even"' + '\n' +
+			 'set subject_nr 0' + '\n' +
+			 'set start "block"' + '\n' +
+			 'set height 600' + '\n' +
+			 'set foreground "white"' + '\n' +
+			 'set description "Default description"' + '\n' +
+			 'set coordinates "uniform"' + '\n' +
+			 'set compensation 0' + '\n' +
+			 'set canvas_backend "xpyriment"' + '\n' +
+			 'set background "black"' + '\n' +
+			 '' + '\n' +
+			 'define sequence block' + '\n' +
+			 '	set flush_keyboard "yes"' + '\n' +
+			 '	set description "Runs a number of items in sequence"' + '\n' +
+			 '	run new_loop always' + '\n' +
+			 '' + '\n' +
+			 'define loop new_loop' + '\n' +
+			 '	set skip 0' + '\n' +
+			 '	set repeat 1' + '\n' +
+			 '	set order "sequential"' + '\n' +
+			 '	set offset "no"' + '\n' +
+			 '	set item "trial"' + '\n' +
+			 '	set description "Repeatedly runs another item"' + '\n' +
+			 '	set cycles 2' + '\n' +
+			 '	set column_order "stimulus;counter"' + '\n' +
+			 '	set break_if "never"' + '\n' +
+			 '	setcycle 0 stimulus "page 1"' + '\n' +
+			 '	setcycle 0 counter "1"' + '\n' +
+			 '	setcycle 1 stimulus "page 2"' + '\n' +
+			 '	setcycle 1 counter "2"' + '\n' +
+			 '	run trial' + '\n' +
+			 '' + '\n' +
+			 'define sequence trial' + '\n' +
+			 '	set flush_keyboard "yes"' + '\n' +
+			 '	set description "Runs a number of items in sequence"' + '\n' +
+			 '	run welcome always' + '\n' +
+			 '' + '\n' +
+			 'define sketchpad welcome' + '\n' +
+			 '	set start_response_interval "no"' + '\n' +
+			 '	set reset_variables "no"' + '\n' +
+			 '	set duration "keypress"' + '\n' +
+			 '	set description "Displays stimuli"' + '\n' +
+			 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
+                
+                // Definition of the experiment object and its properties.
+		Experiment = {'onFinished': onFinished, 'script': Script};
+	    };  
+	    
+	    function runExperiment()
+	    {
+	    	// Update the interface.
+	    	document.getElementById('button4').disabled          = true;
+		document.getElementById('command_div').style.display = 'none';
+			
+	  	// Run the experiment within the Runner with the given canvas and experiment object.
+	        osweb.runner.run('osweb_canvas', Experiment); 
+	    };  
+
+            function onFinished()
+            {
+                // Reset the in
+                document.getElementById('button1').disabled = false;
+	    	document.getElementById('button2').disabled = false;
+	    	document.getElementById('button3').disabled = false;
+                document.getElementById('command_div').style.display = 'inherit';
+            }
+
+	    function handleFileSelect(evt) 
+            {
+	    	// Update the interface.
+	 	document.getElementById('button1').disabled = true;
+	    	document.getElementById('button2').disabled = true;
+	 	document.getElementById('button3').disabled = true;
+   	    	document.getElementById('button4').disabled = false;
+
+        	var files = evt.target.files; // FileList object
+
+        	// files is a FileList of File objects. List some properties.
+        	var output = [];
+        	for (var i = 0, f; f = files[i]; i++) 
+        	{
+                    var reader = new FileReader();
+                    reader.onload = (function(theFile) 
+                    {
+	        	return function(e) 
+                        {
+		  	    // Definition of the experiment object and its properties.
+                            Experiment = {'onFinished': onFinished, 'file': e.target.result};
+        		};	
+                    })(f);
+     	   	
+                    // Read in the image file as a data URL.
+                    reader.readAsBinaryString(f);
+        	}
+            };
+
+            document.getElementById('button1').addEventListener('change', handleFileSelect, false);
+        
+        </script>
+      
+    </body>
+</html>
