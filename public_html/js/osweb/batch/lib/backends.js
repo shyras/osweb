@@ -641,14 +641,14 @@
 
     p.close = function()
     {
-        console.log('?');
+        console.log ('?');
         console.log(this._log);
         
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
             console.log(this._log.join(''));
-	}
+        }
 
 	// Clear the log file.
 	this._log = [];

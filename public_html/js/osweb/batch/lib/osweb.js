@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.032 (15-06-2016)';
+osweb.VERSION_NUMBER = '0.033 (16-06-2016)';
 
 /*
  * Definition of osweb class utility methods.
@@ -806,14 +806,14 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.close = function()
     {
-        console.log('?');
+        console.log ('?');
         console.log(this._log);
         
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
             console.log(this._log.join(''));
-	}
+        }
 
 	// Clear the log file.
 	this._log = [];
