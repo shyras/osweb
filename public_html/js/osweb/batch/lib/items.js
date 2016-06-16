@@ -821,14 +821,7 @@
     p.init_random = function()
     {
 	// Initializes the random number generators. For some reason
-	/* import random
-	random.seed()
-	try:
-            # Don't assume that numpy is available
-            import numpy
-            numpy.random.seed()
-            except:
-            pass */
+        osweb.prng._initialize();
     };
 
     p.init_sound = function()

@@ -1,48 +1,36 @@
 
 /*
- * Definition of the class PRNG.
+ * Definition of the class prng.
  */
 
 (function() 
 {
-    function PRNG()
+    function prng()
     {
-    	throw "The class PRNG cannot be instantiated!";
+    	throw "The class prng cannot be instantiated!";
     }; 
 	
     // Set the class private properties. 
-    PRNG._previous = 0;
-    PRNG._prng     = uheprng();    
-    PRNG._seed     = '0';
+    prng._previous = 0;
+    prng._prng     = uheprng();    
+    prng._seed     = '0';
 
     /*
-     * Definition of class methods (build cycle).   
-     */
-
-    PRNG._build = function(properties)
-    {
-    };
-
-    /*
-     * Definition of class methods (run cycle).   
+     * Definition of class methods - run cycle.   
      */
     
-    PRNG._initialize = function()
+    prng._initialize = function()
     {
         // Create the random seed. 
         this._prng.initState();
         this._prng.hashString(this._seed); 
     };
 
-    PRNG._finalize = function()
-    {
-    };
-  
     /*
      * Definition of class methods.   
      */
 
-    PRNG._getNext = function() 
+    prng._getNext = function() 
     {
         // Get the next random number.
         this._previous = (this._prng(1000000000000000) / 1000000000000000);
@@ -51,19 +39,19 @@
         return this._previous;
 	};
 
-    PRNG._getPrevious = function() 
+    prng._getPrevious = function() 
     {
         // Return function result.
         return this._previous;
     };
 
-    PRNG._getSeed = function() 
+    prng._getSeed = function() 
     {
         // Return the current seed value.
         return this._seed;        
     };
 
-    PRNG._random = function(pMin, pMax) 
+    prng._random = function(pMin, pMax) 
     {
         // Calculate the range devider.
         var devider = (1 / ((pMax - pMin) + 1));
@@ -78,7 +66,7 @@
         return this._previous;
     };
 
-    PRNG._reset = function() 
+    prng._reset = function() 
     {
         // Set the random seed value to 0. 
         this._seed = '0';
@@ -88,7 +76,7 @@
         this._prng.hashString(String(this._seed));
     };
     
-    PRNG._setSeed = function(pSeed) 
+    prng._setSeed = function(pSeed) 
     {
         // Set the random seed value. 
         this._seed = String(pSeed);
@@ -98,6 +86,6 @@
         this._prng.hashString(this._seed);
     };
 
-    // Bind the PRNG class to the osweb namespace.
-    osweb.PRNG = PRNG;
+    // Bind the prng class to the osweb namespace.
+    osweb.prng = prng;
 }());

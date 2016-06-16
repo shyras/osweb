@@ -641,17 +641,15 @@
 
     p.close = function()
     {
-        console.log ('?');
-        console.log(this._log);
-        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
-            console.log(this._log.join(''));
-        }
+            // Join the data into one single csv data stream.
+            osweb.runner.data = this._log.join('');
 
-	// Clear the log file.
-	this._log = [];
+            // Clear the log file.
+            this._log = [];
+        }
     };
 
     p.flush = function()

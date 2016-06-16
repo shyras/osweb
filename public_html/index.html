@@ -53,7 +53,8 @@ and open the template in the editor.
             var Experiment;
             var Script;
         
-	    function loadDatabase()
+	    
+            function loadDatabase()
 	    {
                 // Update interface.
                 document.getElementById('button1').disabled = true;
@@ -140,13 +141,16 @@ and open the template in the editor.
 	        osweb.runner.run('osweb_canvas', Experiment); 
 	    };  
 
-            function onFinished()
+            function onFinished(pData, pSession_data)
             {
                 // Reset the in
                 document.getElementById('button1').disabled = false;
 	    	document.getElementById('button2').disabled = false;
 	    	document.getElementById('button3').disabled = false;
                 document.getElementById('command_div').style.display = 'inherit';
+            
+                console.log(pData);
+                console.log(pSession_data);
             }
 
 	    function handleFileSelect(evt) 

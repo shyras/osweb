@@ -10,6 +10,9 @@
     	throw "The class session cannot be instantiated!";
     }
 
+    // Definition of public properties.
+    session.data = {};
+
     /*
      * Definition of session related methods.   
      */
@@ -30,8 +33,8 @@
     session._getSessionInformation = function()
     {
     	// Get the session information from the client system
-    	this.date    = new Date();
-	this.session = 
+    	this.date = new Date();
+	this.data = 
         {
             "browser": 
             {

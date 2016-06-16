@@ -20,6 +20,7 @@
     runner._stage	  = null;           // Links to the stage object (CreateJS).
 
     // Definition of public properties.
+    runner.data           = null;           // Container for the date information.
     runner.debug          = false;          // Debug toggle.
     runner.experiment     = null;           // The root experiment object to run.           
     runner.onFinished	  = null;           // Event triggered on finishing the experiment.
@@ -74,8 +75,9 @@
             this.script       = (typeof this._context.script      !== 'undefined') ? this._context.script      : null;      
             this.scriptID     = (typeof this._context.scriptID    !== 'undefined') ? this._context.scriptID    : 0;         
             this.scriptURL    = (typeof this._context.scriptURL   !== 'undefined') ? this._context.scriptURL   : '';		 
-            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : null;
-					
+            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : {};
+            this.storage      = (typeof this._context.storage     !== 'undefined') ? this._context.storage     : null;
+            
             // Check if an osexp script is given as parameter.                            
             if (this.script !== null) 
             {	
@@ -374,15 +376,12 @@
         
     	// Finalize the debugger. 
 	osweb.debug._finalize();
-        	
-        // Set the cursor visibility to none (default).
-        this._stage.canvas.style.cursor = "default";
 
-        // Check if an event handler is attached.
+        // Check if an event handler is attached to send session and data result. 
 	if (this.onFinished) 
 	{
             // Execute.
-            this.onFinished();
+            this.onFinished(osweb.session.data, this.data);
 	}
     };
 

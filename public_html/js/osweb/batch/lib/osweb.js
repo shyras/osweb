@@ -806,17 +806,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.close = function()
     {
-        console.log ('?');
-        console.log(this._log);
-        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
-            console.log(this._log.join(''));
-        }
+            // Join the data into one single csv data stream.
+            osweb.runner.data = this._log.join('');
 
-	// Clear the log file.
-	this._log = [];
+            // Clear the log file.
+            this._log = [];
+        }
     };
 
     p.flush = function()
@@ -1802,49 +1800,37 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 }());
 
 /*
- * Definition of the class PRNG.
+ * Definition of the class prng.
  */
 
 (function() 
 {
-    function PRNG()
+    function prng()
     {
-    	throw "The class PRNG cannot be instantiated!";
+    	throw "The class prng cannot be instantiated!";
     }; 
 	
     // Set the class private properties. 
-    PRNG._previous = 0;
-    PRNG._prng     = uheprng();    
-    PRNG._seed     = '0';
+    prng._previous = 0;
+    prng._prng     = uheprng();    
+    prng._seed     = '0';
 
     /*
-     * Definition of class methods (build cycle).   
-     */
-
-    PRNG._build = function(properties)
-    {
-    };
-
-    /*
-     * Definition of class methods (run cycle).   
+     * Definition of class methods - run cycle.   
      */
     
-    PRNG._initialize = function()
+    prng._initialize = function()
     {
         // Create the random seed. 
         this._prng.initState();
         this._prng.hashString(this._seed); 
     };
 
-    PRNG._finalize = function()
-    {
-    };
-  
     /*
      * Definition of class methods.   
      */
 
-    PRNG._getNext = function() 
+    prng._getNext = function() 
     {
         // Get the next random number.
         this._previous = (this._prng(1000000000000000) / 1000000000000000);
@@ -1853,19 +1839,19 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         return this._previous;
 	};
 
-    PRNG._getPrevious = function() 
+    prng._getPrevious = function() 
     {
         // Return function result.
         return this._previous;
     };
 
-    PRNG._getSeed = function() 
+    prng._getSeed = function() 
     {
         // Return the current seed value.
         return this._seed;        
     };
 
-    PRNG._random = function(pMin, pMax) 
+    prng._random = function(pMin, pMax) 
     {
         // Calculate the range devider.
         var devider = (1 / ((pMax - pMin) + 1));
@@ -1880,7 +1866,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         return this._previous;
     };
 
-    PRNG._reset = function() 
+    prng._reset = function() 
     {
         // Set the random seed value to 0. 
         this._seed = '0';
@@ -1890,7 +1876,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         this._prng.hashString(String(this._seed));
     };
     
-    PRNG._setSeed = function(pSeed) 
+    prng._setSeed = function(pSeed) 
     {
         // Set the random seed value. 
         this._seed = String(pSeed);
@@ -1900,8 +1886,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         this._prng.hashString(this._seed);
     };
 
-    // Bind the PRNG class to the osweb namespace.
-    osweb.PRNG = PRNG;
+    // Bind the prng class to the osweb namespace.
+    osweb.prng = prng;
 }());
 
 /*
@@ -2975,14 +2961,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     p.init_random = function()
     {
 	// Initializes the random number generators. For some reason
-	/* import random
-	random.seed()
-	try:
-            # Don't assume that numpy is available
-            import numpy
-            numpy.random.seed()
-            except:
-            pass */
+        osweb.prng._initialize();
     };
 
     p.init_sound = function()
@@ -7059,6 +7038,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     	throw "The class session cannot be instantiated!";
     }
 
+    // Definition of public properties.
+    session.data = {};
+
     /*
      * Definition of session related methods.   
      */
@@ -7079,8 +7061,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     session._getSessionInformation = function()
     {
     	// Get the session information from the client system
-    	this.date    = new Date();
-	this.session = 
+    	this.date = new Date();
+	this.data = 
         {
             "browser": 
             {
@@ -7147,6 +7129,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     runner._stage	  = null;           // Links to the stage object (CreateJS).
 
     // Definition of public properties.
+    runner.data           = null;           // Container for the date information.
     runner.debug          = false;          // Debug toggle.
     runner.experiment     = null;           // The root experiment object to run.           
     runner.onFinished	  = null;           // Event triggered on finishing the experiment.
@@ -7201,8 +7184,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             this.script       = (typeof this._context.script      !== 'undefined') ? this._context.script      : null;      
             this.scriptID     = (typeof this._context.scriptID    !== 'undefined') ? this._context.scriptID    : 0;         
             this.scriptURL    = (typeof this._context.scriptURL   !== 'undefined') ? this._context.scriptURL   : '';		 
-            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : null;
-					
+            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : {};
+            this.storage      = (typeof this._context.storage     !== 'undefined') ? this._context.storage     : null;
+            
             // Check if an osexp script is given as parameter.                            
             if (this.script !== null) 
             {	
@@ -7501,15 +7485,12 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         
     	// Finalize the debugger. 
 	osweb.debug._finalize();
-        	
-        // Set the cursor visibility to none (default).
-        this._stage.canvas.style.cursor = "default";
 
-        // Check if an event handler is attached.
+        // Check if an event handler is attached to send session and data result. 
 	if (this.onFinished) 
 	{
             // Execute.
-            this.onFinished();
+            this.onFinished(osweb.session.data, this.data);
 	}
     };
 
