@@ -98,15 +98,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
      * Definition of error constants. 
      */
 
-    constants.ERROR_001 = 'OSweb has stopped running due a fatal error.';
-    constants.ERROR_002 = 'No content container parameter specified.';
-    constants.ERROR_003 = 'No script parameter specified.';
+    constants.ERROR_001 = 'osweb has stopped running due a fatal error.';
+    constants.ERROR_002 = 'No content parameter specified.';
+    constants.ERROR_003 = 'No context parameter specified.';
     constants.ERROR_004 = 'Invalid scriptID or scriptURL for retrieving script from external location.';
     constants.ERROR_005 = 'Failure to retrieve script from external location (Ajax call error).';
     constants.ERROR_006 = 'Failure to retrieve script from external location (database response error)';
     constants.ERROR_007 = 'Failure to retrieve script from external location (database retrieve error).';
     constants.ERROR_008 = 'Invalid script definition, parsing error.';
-    constants.ERROR_009 = 'Unkwone class definition within OSweb script - ';
+    constants.ERROR_009 = 'Unknown class definition within osweb script - ';
 
     /*
      * Definition of message constants. 
@@ -114,7 +114,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     constants.MESSAGE_001 = 'OS';
     constants.MESSAGE_002 = 'web - version ';
-    constants.MESSAGE_003 = 'Start up QPrime experiment session.';
+    constants.MESSAGE_003 = 'Start up osweb experiment session.';
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
@@ -407,6 +407,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 		
 	// Initialize the display color.
 	osweb.runner._canvas.style.background = pExperiment.vars.background;
+
+        // Set the cursor visibility to none (default).
+        osweb.runner._canvas.style.cursor = 'none';
 
         // Set focus to the experiment canvas.
         osweb.runner._canvas.focus(); 
@@ -803,6 +806,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.close = function()
     {
+        console.log('?');
+        console.log(this._log);
+        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
@@ -862,12 +868,16 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	{
             pVar_list = this.all_vars();
 	}
-		
+
+        // Sort the var list.
+        pVar_list.sort();
+        
 	if (this._header_written == false)
 	{
             for (var i=0; i < pVar_list.length; i++)
             {
-		l.push('"' + pVar_list[i] + '"');
+		//l.push('"' + pVar_list[i] + '"');
+		l.push(pVar_list[i]);
             }		
             this.write(l.join());
             this._header_written = true;
@@ -876,8 +886,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	l = [];
 	for (var i=0; i < pVar_list.length; i++)
 	{
-            value = this.experiment.vars.get(pVar_list[i],'NA',false);
-            l.push('"' + value + '"');
+            value = this.experiment.vars.get(pVar_list[i], 'NA', false);
+            //l.push('"' + value + '"');
+            l.push(value);
 	}
 	this.write(l.join());
     };
@@ -2937,6 +2948,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     {
 	// Initializes the canvas backend.
 	this._canvas.init_display(this);
+
         this._python_workspace['win'] = window;
     };
 
@@ -3011,7 +3023,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 		this.reset_feedback();
 		this.init_heartbeat(); 
 	
-		console.log('experiment.run(): experiment started at ' + new Date().toUTCString()); 
+		// Add closing message to debug system.
+		osweb.debug.addMessage('experiment.run(): experiment started at ' + new Date().toUTCString()); 
 
 		if (osweb.item_store._items[this.vars.start] != null)
 		{
@@ -3020,13 +3033,14 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 		}
 		else
 		{
-                    // raise osexception("Could not find item '%s', which is the entry point of the experiment" % self.var.start)
+                    osweb.debug.addError('Could not find item ' + self.vars.start +  ' , which is the entry point of the experiment');
 		}
 
             break;
             case osweb.constants.STATUS_FINALIZE:
 
-		console.log('experiment.run(): experiment finished at ' +  new Date().toUTCString());
+		// Add closing message to debug system.
+                osweb.debug.addMessage('experiment.run(): experiment finished at ' +  new Date().toUTCString());
 
 		// Complete the run process.
 		this.end();
@@ -3039,14 +3053,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     {
 	this.running = false;
 	
-	this._log.flush();
+	//this._log.flush();
 	this._log.close();
 		
 	// Disable the processing unit.
 	osweb.events._current_item = null;
 	
-	// Clear the exprimental stage. 
-	osweb.runner._stage.update(); 
+	// Clear the exprimental stage and enabled the mouse.
+	osweb.runner._canvas.style.cursor = 'default';
+        osweb.runner._stage.update(); 
 			
 	// Finalize the parent (runner).	
     	osweb.runner._finalize();
@@ -7474,9 +7489,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         // Initialize the devices.
 	osweb.events._initialize();
 
-        // Set the cursor visibility to none (default).
-        this._stage.canvas.style.cursor = "none";
-
         // Prepare and execute the experiment item.
 	this.experiment.prepare();
 	this.experiment.run();
@@ -7507,7 +7519,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     runner.run = function(pContent, pContext) 
     {
-	// Initialize the content container.
+        // Initialize the content container.
 	this._setupContent(pContent);
 
 	// Initialize the context parameter

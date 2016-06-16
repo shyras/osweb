@@ -243,6 +243,9 @@
 	// Initialize the display color.
 	osweb.runner._canvas.style.background = pExperiment.vars.background;
 
+        // Set the cursor visibility to none (default).
+        osweb.runner._canvas.style.cursor = 'none';
+
         // Set focus to the experiment canvas.
         osweb.runner._canvas.focus(); 
     };

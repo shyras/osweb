@@ -362,9 +362,6 @@
         // Initialize the devices.
 	osweb.events._initialize();
 
-        // Set the cursor visibility to none (default).
-        this._stage.canvas.style.cursor = "none";
-
         // Prepare and execute the experiment item.
 	this.experiment.prepare();
 	this.experiment.run();
@@ -395,7 +392,7 @@
 
     runner.run = function(pContent, pContext) 
     {
-	// Initialize the content container.
+        // Initialize the content container.
 	this._setupContent(pContent);
 
 	// Initialize the context parameter

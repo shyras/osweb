@@ -243,6 +243,9 @@
 	// Initialize the display color.
 	osweb.runner._canvas.style.background = pExperiment.vars.background;
 
+        // Set the cursor visibility to none (default).
+        osweb.runner._canvas.style.cursor = 'none';
+
         // Set focus to the experiment canvas.
         osweb.runner._canvas.focus(); 
     };
@@ -638,6 +641,9 @@
 
     p.close = function()
     {
+        console.log('?');
+        console.log(this._log);
+        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
@@ -697,12 +703,16 @@
 	{
             pVar_list = this.all_vars();
 	}
-		
+
+        // Sort the var list.
+        pVar_list.sort();
+        
 	if (this._header_written == false)
 	{
             for (var i=0; i < pVar_list.length; i++)
             {
-		l.push('"' + pVar_list[i] + '"');
+		//l.push('"' + pVar_list[i] + '"');
+		l.push(pVar_list[i]);
             }		
             this.write(l.join());
             this._header_written = true;
@@ -711,8 +721,9 @@
 	l = [];
 	for (var i=0; i < pVar_list.length; i++)
 	{
-            value = this.experiment.vars.get(pVar_list[i],'NA',false);
-            l.push('"' + value + '"');
+            value = this.experiment.vars.get(pVar_list[i], 'NA', false);
+            //l.push('"' + value + '"');
+            l.push(value);
 	}
 	this.write(l.join());
     };
