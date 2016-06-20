@@ -32,6 +32,8 @@
 	// Retrieves a list of all variables that exist in the experiment.
 	if (this._all_vars == null)
 	{
+            console.log(this.experiment.vars);
+            
             this._all_vars = this.experiment.vars.inspect();
 	}
 		
@@ -108,8 +110,7 @@
 	{
             for (var i=0; i < pVar_list.length; i++)
             {
-		//l.push('"' + pVar_list[i] + '"');
-		l.push(pVar_list[i]);
+		l.push('"' + pVar_list[i] + '"');
             }		
             this.write(l.join());
             this._header_written = true;
@@ -119,8 +120,7 @@
 	for (var i=0; i < pVar_list.length; i++)
 	{
             value = this.experiment.vars.get(pVar_list[i], 'NA', false);
-            //l.push('"' + value + '"');
-            l.push(value);
+            l.push('"' + value + '"');
 	}
 	this.write(l.join());
     };

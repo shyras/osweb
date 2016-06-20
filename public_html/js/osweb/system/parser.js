@@ -281,9 +281,6 @@
 
     parser._node_variable_declarator = function(pNode)
     {
-        //console.log('node_variable_declarator');
-        //console.log(pNode);
-        
         // Process the id lead.
         switch (pNode.id.type)
         {
