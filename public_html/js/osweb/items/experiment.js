@@ -249,7 +249,14 @@
     p.init_random = function()
     {
 	// Initializes the random number generators. For some reason
-        osweb.prng._initialize();
+	/* import random
+	random.seed()
+	try:
+            # Don't assume that numpy is available
+            import numpy
+            numpy.random.seed()
+            except:
+            pass */
     };
 
     p.init_sound = function()

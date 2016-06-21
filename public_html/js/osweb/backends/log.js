@@ -32,8 +32,6 @@
 	// Retrieves a list of all variables that exist in the experiment.
 	if (this._all_vars == null)
 	{
-            console.log(this.experiment.vars);
-            
             this._all_vars = this.experiment.vars.inspect();
 	}
 		
@@ -42,15 +40,17 @@
 
     p.close = function()
     {
+        console.log('?');
+        console.log(this._log);
+        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
-            // Join the data into one single csv data stream.
-            osweb.runner.data = this._log.join('');
+            console.log(this._log.join(''));
+	}
 
-            // Clear the log file.
-            this._log = [];
-        }
+	// Clear the log file.
+	this._log = [];
     };
 
     p.flush = function()
@@ -110,7 +110,8 @@
 	{
             for (var i=0; i < pVar_list.length; i++)
             {
-		l.push('"' + pVar_list[i] + '"');
+		//l.push('"' + pVar_list[i] + '"');
+		l.push(pVar_list[i]);
             }		
             this.write(l.join());
             this._header_written = true;
@@ -120,7 +121,8 @@
 	for (var i=0; i < pVar_list.length; i++)
 	{
             value = this.experiment.vars.get(pVar_list[i], 'NA', false);
-            l.push('"' + value + '"');
+            //l.push('"' + value + '"');
+            l.push(value);
 	}
 	this.write(l.join());
     };

@@ -77,16 +77,23 @@
                         // Return the experiment object as self.
                         return {'object': osweb.runner.experiment};
                     break;    
+                    case 'var': 
+                        return {'object': osweb.runner.experiment.vars};
+                    break;    
                     default:
                         // Check if the variable exists.
                         if (window[pNode.name] === undefined) 
                         {
                             // Create the variable with null setting.
                             window[pNode.name] = null;
+                        
+                            // Return the window variable.                
+                            return {'object': pNode.name };
                         }
-
-                        // Return the window variable.                
-                        return {'object': pNode.name };
+                        else
+                        {
+                            return {'object': window[pNode.name]};
+                        }
                 }            
             break;
             case 'property':
@@ -179,6 +186,8 @@
                             break;        
                             case 1: var call_result = window[tmp_callee.property](tmp_arguments[0]);
                             break;        
+                            case 2: var call_result = window[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                            break;        
                         }    
                     } 
                     else
@@ -189,6 +198,8 @@
                             case 0: var call_result = window[tmp_callee.object][tmp_callee.property]();
                             break;        
                             case 1: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0]);
+                            break;        
+                            case 2: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
                             break;        
                         }    
                     }
@@ -201,6 +212,8 @@
                         break;
                         case 1: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0]);
                         break;
+                        case 2: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                        break;
                     }       
                 }    
             break;    
@@ -208,8 +221,16 @@
    
         if (tmp_callee.property != 'sleep')
         {
-            // Return result.
-            return call_result;
+            // Temporal for loop testing.
+            if (typeof tmp_callee.object === 'function')
+            {    
+                return tmp_callee.object(tmp_arguments[0],tmp_arguments[1]);
+            }
+            else
+            {    
+                // Return result.
+                return call_result;
+            }    
         }    
         else
         {
@@ -281,6 +302,9 @@
 
     parser._node_variable_declarator = function(pNode)
     {
+        //console.log('node_variable_declarator');
+        //console.log(pNode);
+        
         // Process the id lead.
         switch (pNode.id.type)
         {
@@ -367,9 +391,15 @@
         }
     };
 
+    parser._runstatement = function(pNode)
+    {
+        // Call the expression statement en return the value.       
+        return this._node_call_expression(pNode.expression);
+    };
+    
     parser._run = function(pInline_script, pAst_tree)
     {
-	// Set the ast_tree; 
+	// Set the ast_tree. 
 	this._inline_script = pInline_script;
 	
 	// Set the programm node.
@@ -378,7 +408,7 @@
 	this._current_node.index  = 0;
 	this._status              = 1;
         
-    	// Process the next first node. 
+    	// Process the next node. 
 	osweb.parser._process_node();
     };
 

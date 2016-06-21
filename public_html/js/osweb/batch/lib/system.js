@@ -652,16 +652,23 @@
                         // Return the experiment object as self.
                         return {'object': osweb.runner.experiment};
                     break;    
+                    case 'var': 
+                        return {'object': osweb.runner.experiment.vars};
+                    break;    
                     default:
                         // Check if the variable exists.
                         if (window[pNode.name] === undefined) 
                         {
                             // Create the variable with null setting.
                             window[pNode.name] = null;
+                        
+                            // Return the window variable.                
+                            return {'object': pNode.name };
                         }
-
-                        // Return the window variable.                
-                        return {'object': pNode.name };
+                        else
+                        {
+                            return {'object': window[pNode.name]};
+                        }
                 }            
             break;
             case 'property':
@@ -754,6 +761,8 @@
                             break;        
                             case 1: var call_result = window[tmp_callee.property](tmp_arguments[0]);
                             break;        
+                            case 2: var call_result = window[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                            break;        
                         }    
                     } 
                     else
@@ -764,6 +773,8 @@
                             case 0: var call_result = window[tmp_callee.object][tmp_callee.property]();
                             break;        
                             case 1: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0]);
+                            break;        
+                            case 2: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
                             break;        
                         }    
                     }
@@ -776,6 +787,8 @@
                         break;
                         case 1: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0]);
                         break;
+                        case 2: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                        break;
                     }       
                 }    
             break;    
@@ -783,8 +796,16 @@
    
         if (tmp_callee.property != 'sleep')
         {
-            // Return result.
-            return call_result;
+            // Temporal for loop testing.
+            if (typeof tmp_callee.object === 'function')
+            {    
+                return tmp_callee.object(tmp_arguments[0],tmp_arguments[1]);
+            }
+            else
+            {    
+                // Return result.
+                return call_result;
+            }    
         }    
         else
         {
@@ -945,9 +966,15 @@
         }
     };
 
+    parser._runstatement = function(pNode)
+    {
+        // Call the expression statement en return the value.       
+        return this._node_call_expression(pNode.expression);
+    };
+    
     parser._run = function(pInline_script, pAst_tree)
     {
-	// Set the ast_tree; 
+	// Set the ast_tree. 
 	this._inline_script = pInline_script;
 	
 	// Set the programm node.
@@ -956,7 +983,7 @@
 	this._current_node.index  = 0;
 	this._status              = 1;
         
-    	// Process the next first node. 
+    	// Process the next node. 
 	osweb.parser._process_node();
     };
 
@@ -974,9 +1001,6 @@
     {
     	throw "The class session cannot be instantiated!";
     }
-
-    // Definition of public properties.
-    session.data = {};
 
     /*
      * Definition of session related methods.   
@@ -998,8 +1022,8 @@
     session._getSessionInformation = function()
     {
     	// Get the session information from the client system
-    	this.date = new Date();
-	this.data = 
+    	this.date    = new Date();
+	this.session = 
         {
             "browser": 
             {
@@ -1066,7 +1090,6 @@
     runner._stage	  = null;           // Links to the stage object (CreateJS).
 
     // Definition of public properties.
-    runner.data           = null;           // Container for the date information.
     runner.debug          = false;          // Debug toggle.
     runner.experiment     = null;           // The root experiment object to run.           
     runner.onFinished	  = null;           // Event triggered on finishing the experiment.
@@ -1121,9 +1144,8 @@
             this.script       = (typeof this._context.script      !== 'undefined') ? this._context.script      : null;      
             this.scriptID     = (typeof this._context.scriptID    !== 'undefined') ? this._context.scriptID    : 0;         
             this.scriptURL    = (typeof this._context.scriptURL   !== 'undefined') ? this._context.scriptURL   : '';		 
-            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : {};
-            this.storage      = (typeof this._context.storage     !== 'undefined') ? this._context.storage     : null;
-            
+            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : null;
+					
             // Check if an osexp script is given as parameter.                            
             if (this.script !== null) 
             {	
@@ -1422,12 +1444,15 @@
         
     	// Finalize the debugger. 
 	osweb.debug._finalize();
+        	
+        // Set the cursor visibility to none (default).
+        this._stage.canvas.style.cursor = "default";
 
-        // Check if an event handler is attached to send session and data result. 
+        // Check if an event handler is attached.
 	if (this.onFinished) 
 	{
             // Execute.
-            this.onFinished(osweb.session.data, this.data);
+            this.onFinished();
 	}
     };
 

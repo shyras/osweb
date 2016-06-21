@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.033 (16-06-2016)';
+osweb.VERSION_NUMBER = '0.034 (21-06-2016)';
 
 /*
  * Definition of osweb class utility methods.
@@ -724,7 +724,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     p.show_virtual_keyboard = function(pVisible)
     {
         // Shows or hides a virtual keyboard.		
-    	if (pVisivle == true)
+    	if (pVisible == true)
 	{
             // Hack to show the virutal keyboard. ## Must be tested!
             osweb.runner._canvas.setfocus();
@@ -798,8 +798,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	// Retrieves a list of all variables that exist in the experiment.
 	if (this._all_vars == null)
 	{
-            console.log(this.experiment.vars);
-            
             this._all_vars = this.experiment.vars.inspect();
 	}
 		
@@ -808,15 +806,17 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.close = function()
     {
+        console.log('?');
+        console.log(this._log);
+        
 	// Closes the current log.
 	if (this._log.length > 0) 
 	{
-            // Join the data into one single csv data stream.
-            osweb.runner.data = this._log.join('');
+            console.log(this._log.join(''));
+	}
 
-            // Clear the log file.
-            this._log = [];
-        }
+	// Clear the log file.
+	this._log = [];
     };
 
     p.flush = function()
@@ -876,7 +876,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	{
             for (var i=0; i < pVar_list.length; i++)
             {
-		l.push('"' + pVar_list[i] + '"');
+		//l.push('"' + pVar_list[i] + '"');
+		l.push(pVar_list[i]);
             }		
             this.write(l.join());
             this._header_written = true;
@@ -886,7 +887,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	for (var i=0; i < pVar_list.length; i++)
 	{
             value = this.experiment.vars.get(pVar_list[i], 'NA', false);
-            l.push('"' + value + '"');
+            //l.push('"' + value + '"');
+            l.push(value);
 	}
 	this.write(l.join());
     };
@@ -1208,7 +1210,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     }
 
     // Definition of public properties.
-    debug.enabled    = true;
+    debug.enabled    = false;
     debug.error      = false;
     debug.messageLog = new Array();
 
@@ -1462,8 +1464,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     functions._initialize = function()
     {
-	window['print']		     = this.print;
-		
+	window['print']		 = this.print;
+	window['randint']        = this.randint;
+        
 	// Create the global function calls for use in the inlide script item.
 	window['canvas']         = this.canvas;
 	window['copy_sketchpad'] = this.copy_sketchpad;
@@ -1491,6 +1494,13 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     functions.print = function(pString)
     {
 	console.log('print output:' + pString);
+    };
+
+    functions.randint = function(pStart, pEnd)
+    {
+        var multiplier = pEnd - pStart;
+        var rand = Math.floor(Math.random() * multiplier);
+        return rand + pStart;
     };
 
     /*
@@ -2961,7 +2971,14 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     p.init_random = function()
     {
 	// Initializes the random number generators. For some reason
-        osweb.prng._initialize();
+	/* import random
+	random.seed()
+	try:
+            # Don't assume that numpy is available
+            import numpy
+            numpy.random.seed()
+            except:
+            pass */
     };
 
     p.init_sound = function()
@@ -3436,6 +3453,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         // Definition of private properties. 
         this._break_if = '';
         this._cycles   = [];
+        this._keyboard = null;
         this._index    = -1;
     }; 
 	
@@ -3489,12 +3507,19 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 			var name  = tokens[2];
 			var value = osweb.syntax.remove_quotes(tokens[3]);
 					
-			value = osweb.syntax.isNumber(value) ? Number(value) : value;
+			// Check if the value is numeric
+                        value = osweb.syntax.isNumber(value) ? Number(value) : value;
 
                         // Convert the python expression to javascript.
 			if (value[0] == '=')
 			{
-                            value = osweb.syntax._convertPython(value); 
+                            // Parse the python statement. 
+                            value = osweb.parser._prepare(value.slice(1));
+                            
+                            if (value !== null)        
+                            {
+                                value = value.body[0];
+                            }    
 			}
 
                         if (this.matrix[cycle] == undefined)
@@ -3509,7 +3534,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	}
     };
   
-     /*
+    /*
      * Definition of public methods - runn cycle.         
      */
 
@@ -3539,18 +3564,20 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 		var value = this.matrix[cycle][variable];
 
 		// Check for python expression.
-		if (value[0] == '=')
-		{
+		if (typeof value === 'object')
+                {
+                    // value contains ast tree, run the parser.
                     try
                     {	
                         // Evaluate the expression
-			value = eval(value.slice(1));
+                        value = osweb.parser._runstatement(value);
                     }
                     catch (e)
                     {
-			// raise osexception(u"Failed to evaluate '%s' in loop item '%s': %s" % (val[1:], self.name, e)) */
+                        // Error during evaluation.
+                        osweb.debug.addError('Failed to evaluate ' + value + ' in loop item ' + this.name);
                     }						
-		}
+                }
 				
                 // Set the variable.
                 this.experiment.vars.set(variable, value);
@@ -3569,8 +3596,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	// Prepare the break if condition.
 	if ((this.vars.break_if != '') && (this.vars.break_if != 'never'))
 	{
-            this._break_if = this.vars.break_if; //this.syntax.compile_cond(this.vars.get('break_if', null, false));
-	}
+            this._break_if = this.syntax.compile_cond(this.vars.break_if);
+        }
 	else
 	{
             this._break_if = null;
@@ -3581,7 +3608,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	this._index  = 0;
 		
 	// Walk through all complete repeats
-	var whole_repeats = Number(this.vars.repeat);
+	var whole_repeats = Math.floor(this.vars.repeat);
 	for (var j = 0; j < whole_repeats; j++)
 	{
             for (var i = 0; i < this.vars.cycles; i++)
@@ -3594,10 +3621,17 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	var partial_repeats = this.vars.repeat - whole_repeats;
 	if (partial_repeats > 0)
 	{
-            /*	all_cycles = range(self.var.cycles)
-            	_sample = sample(all_cycles, int(len(all_cycles) * partial_repeats))
-            	for i in _sample:
-			l.append(i) */
+            var all_cycles = Array.apply(null, {length: this.vars.cycles}).map(Number.call, Number);    
+            var remainder  = Math.floor(this.vars.cycles * partial_repeats);
+            for (var i = 0; i < remainder; i++)
+            {
+                // Calculate random position.
+                var position = Math.floor(Math.random() * all_cycles.length);     
+                // Add position to cycles.
+                this._cycles.push(position);
+                // Remove position from array.
+                all_cycles.splice(position,1);
+            }
 	}		
 
 	// Randomize the list if necessary.
@@ -3610,14 +3644,14 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             // In sequential order, the offset and the skip are relevant.
             if (this._cycles.length < this.vars.skip)  
             {
-		// raise osexception(u'The value of skip is too high in loop item "%s":: You cannot skip more cycles than there are.' % self.name)
+		osweb.debug.addError('The value of skip is too high in loop item ' + this.name + '. You cannot skip more cycles than there are.');
             }
             else
             {
 		if (this.vars.offset == 'yes')
 		{
                     // Get the skip elements.
-                    var skip = this._cycles.slice(0,this.vars.skip);
+                    var skip = this._cycles.slice(0, this.vars.skip);
 					
                     // Remove the skip elements from the original location.
                     this._cycles = this._cycles.slice(this.vars.skip);
@@ -3632,15 +3666,14 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             }
 	}
 		
-	/* Create a keyboard to flush responses between cycles
-	self._keyboard = openexp.keyboard.keyboard(self.experiment)
-
-	# Make sure the item to run exists
-	if self.var.item not in self.experiment.items:
-	raise osexception( \
-	u"Could not find item '%s', which is called by loop item '%s'" \
-	% (self.var.item, self.name))
-	*/
+	// Create a keyboard to flush responses between cycles.
+	this._keyboard = new osweb.keyboard(this.experiment);
+	
+        // Make sure the item to run exists.
+	if (this.experiment.items._items[this.vars.item] === 'undefined')
+        {
+            osweb.debug.addError('Could not find item ' + this.vars.item + ', which is called by loop item ' + this.name);
+        }    
     };
 
     p.run = function()
@@ -3653,12 +3686,13 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             var exit = false;
             this._index = this._cycles.shift();
             this.apply_cycle(this._index);
-			
+		
             if (this._break_if != null)
             {
                 this.python_workspace['this'] = this;
-				
-                var break_if = osweb.syntax.eval_text(this._break_if); // ## Hack
+                
+                var break_if = osweb.syntax.eval_text(this._break_if); 
+                
                 if (this.python_workspace._eval(break_if) == true)
                 {
                     exit = true;
@@ -3668,7 +3702,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             if (exit == false)
             {
 		this.experiment.vars.repeat_cycle = 0;
-		osweb.item_store.execute(this.vars.item, this);
+		
+                osweb.item_store.execute(this.vars.item, this);
             }
             else
             {
@@ -4042,7 +4077,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     // Bind the sequence class to the osweb namespace.
     osweb.sequence = osweb.promoteClass(sequence, "item");
 }());
-
 /*
  * Definition of the class sketchpad.
  */
@@ -6715,16 +6749,23 @@ osweb.promoteClass = function(pSubClass, pPrefix)
                         // Return the experiment object as self.
                         return {'object': osweb.runner.experiment};
                     break;    
+                    case 'var': 
+                        return {'object': osweb.runner.experiment.vars};
+                    break;    
                     default:
                         // Check if the variable exists.
                         if (window[pNode.name] === undefined) 
                         {
                             // Create the variable with null setting.
                             window[pNode.name] = null;
+                        
+                            // Return the window variable.                
+                            return {'object': pNode.name };
                         }
-
-                        // Return the window variable.                
-                        return {'object': pNode.name };
+                        else
+                        {
+                            return {'object': window[pNode.name]};
+                        }
                 }            
             break;
             case 'property':
@@ -6817,6 +6858,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
                             break;        
                             case 1: var call_result = window[tmp_callee.property](tmp_arguments[0]);
                             break;        
+                            case 2: var call_result = window[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                            break;        
                         }    
                     } 
                     else
@@ -6827,6 +6870,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
                             case 0: var call_result = window[tmp_callee.object][tmp_callee.property]();
                             break;        
                             case 1: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0]);
+                            break;        
+                            case 2: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
                             break;        
                         }    
                     }
@@ -6839,6 +6884,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
                         break;
                         case 1: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0]);
                         break;
+                        case 2: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
+                        break;
                     }       
                 }    
             break;    
@@ -6846,8 +6893,16 @@ osweb.promoteClass = function(pSubClass, pPrefix)
    
         if (tmp_callee.property != 'sleep')
         {
-            // Return result.
-            return call_result;
+            // Temporal for loop testing.
+            if (typeof tmp_callee.object === 'function')
+            {    
+                return tmp_callee.object(tmp_arguments[0],tmp_arguments[1]);
+            }
+            else
+            {    
+                // Return result.
+                return call_result;
+            }    
         }    
         else
         {
@@ -7008,9 +7063,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         }
     };
 
+    parser._runstatement = function(pNode)
+    {
+        // Call the expression statement en return the value.       
+        return this._node_call_expression(pNode.expression);
+    };
+    
     parser._run = function(pInline_script, pAst_tree)
     {
-	// Set the ast_tree; 
+	// Set the ast_tree. 
 	this._inline_script = pInline_script;
 	
 	// Set the programm node.
@@ -7019,7 +7080,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	this._current_node.index  = 0;
 	this._status              = 1;
         
-    	// Process the next first node. 
+    	// Process the next node. 
 	osweb.parser._process_node();
     };
 
@@ -7037,9 +7098,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     {
     	throw "The class session cannot be instantiated!";
     }
-
-    // Definition of public properties.
-    session.data = {};
 
     /*
      * Definition of session related methods.   
@@ -7061,8 +7119,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     session._getSessionInformation = function()
     {
     	// Get the session information from the client system
-    	this.date = new Date();
-	this.data = 
+    	this.date    = new Date();
+	this.session = 
         {
             "browser": 
             {
@@ -7129,7 +7187,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     runner._stage	  = null;           // Links to the stage object (CreateJS).
 
     // Definition of public properties.
-    runner.data           = null;           // Container for the date information.
     runner.debug          = false;          // Debug toggle.
     runner.experiment     = null;           // The root experiment object to run.           
     runner.onFinished	  = null;           // Event triggered on finishing the experiment.
@@ -7184,9 +7241,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             this.script       = (typeof this._context.script      !== 'undefined') ? this._context.script      : null;      
             this.scriptID     = (typeof this._context.scriptID    !== 'undefined') ? this._context.scriptID    : 0;         
             this.scriptURL    = (typeof this._context.scriptURL   !== 'undefined') ? this._context.scriptURL   : '';		 
-            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : {};
-            this.storage      = (typeof this._context.storage     !== 'undefined') ? this._context.storage     : null;
-            
+            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : null;
+					
             // Check if an osexp script is given as parameter.                            
             if (this.script !== null) 
             {	
@@ -7485,12 +7541,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         
     	// Finalize the debugger. 
 	osweb.debug._finalize();
+        	
+        // Set the cursor visibility to none (default).
+        this._stage.canvas.style.cursor = "default";
 
-        // Check if an event handler is attached to send session and data result. 
+        // Check if an event handler is attached.
 	if (this.onFinished) 
 	{
             // Execute.
-            this.onFinished(osweb.session.data, this.data);
+            this.onFinished();
 	}
     };
 

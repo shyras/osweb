@@ -130,7 +130,7 @@
     p.show_virtual_keyboard = function(pVisible)
     {
         // Shows or hides a virtual keyboard.		
-    	if (pVisivle == true)
+    	if (pVisible == true)
 	{
             // Hack to show the virutal keyboard. ## Must be tested!
             osweb.runner._canvas.setfocus();

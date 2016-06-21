@@ -11,7 +11,7 @@
     }
 
     // Definition of public properties.
-    debug.enabled    = true;
+    debug.enabled    = false;
     debug.error      = false;
     debug.messageLog = new Array();
 
@@ -265,8 +265,9 @@
 
     functions._initialize = function()
     {
-	window['print']		     = this.print;
-		
+	window['print']		 = this.print;
+	window['randint']        = this.randint;
+        
 	// Create the global function calls for use in the inlide script item.
 	window['canvas']         = this.canvas;
 	window['copy_sketchpad'] = this.copy_sketchpad;
@@ -294,6 +295,13 @@
     functions.print = function(pString)
     {
 	console.log('print output:' + pString);
+    };
+
+    functions.randint = function(pStart, pEnd)
+    {
+        var multiplier = pEnd - pStart;
+        var rand = Math.floor(Math.random() * multiplier);
+        return rand + pStart;
     };
 
     /*

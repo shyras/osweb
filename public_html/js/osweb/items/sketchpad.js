@@ -1,4 +1,3 @@
-
 /*
  * Definition of the class sketchpad.
  */
