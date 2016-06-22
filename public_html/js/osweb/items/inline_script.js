@@ -135,22 +135,28 @@
 
     p.prepare = function()
     {
-	// Inherited.	
-	this.item_prepare();
-	
 	// Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);
 	
-/*        // Execute the run code.
+        // Execute the run code.
  	if (this._prepare_tree != null)
     	{
+            // Set the current item.
+            osweb.events._current_item = this;
+            
             // Set the prepare run toggle.
             this._prepare_run = true;
             
+            console.log('run');
             // Start the parser
             osweb.parser._run(this, this._prepare_tree);    		
-        } */
+        }
+        else
+        {
+            // Inherited.	
+            this.item_prepare();
+        }    
     };
 
     p.run = function()
@@ -164,6 +170,9 @@
         // Execute the run code.
  	if (this._run_tree != null)
     	{
+            // Set the prepare run toggle.
+            this._prepare_run = false;
+            
             // Start the parser
             osweb.parser._run(this, this._run_tree);    		
     	}
@@ -171,6 +180,7 @@
     
     p.complete = function()
     {
+            console.log('run complete');
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
@@ -182,8 +192,16 @@
         }
         else
         {    
-            // Inherited.           
-            this.item_complete();
+            if (this._prepare_run === true)             
+            {
+                // Inherited prepare.	
+                this.item_prepare();
+            }    
+            else
+            { 
+                // Inherited.           
+                this.item_complete();
+            }
         }    
     }; 
 	

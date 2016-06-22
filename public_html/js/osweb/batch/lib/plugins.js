@@ -38,9 +38,6 @@
 
     p.prepare = function()
     {
-        // Inherited.	
-	this.item_prepare();
-
 	this._duration = this.vars.duration;
         /* # Sanity check on the duration value, which should be a positive numeric
 	# value.
@@ -62,6 +59,9 @@
 	self._duration = int(self._duration)
 	self.experiment.var.set(u'delay_%s' % self.name, self._duration)
 	debug.msg(u"delay for %s ms" % self._duration) */
+
+        // Inherited.	
+	this.item_prepare();
     };
     
     p.run = function() 
@@ -447,9 +447,6 @@
 
     p.prepare = function()
     {
-       	// Inherited.	
-	this.generic_response_prepare();
-
   	// Opens the video file for playback."""
         this._video        = osweb.pool[this.vars.get('video_src')];  
         this._video_player = new osweb.video_backend(this.experiment, this._video);
@@ -476,6 +473,9 @@
             //this._y      = max(0, (self.experiment.var.height - self._h) / 2);
             //this.src_rgb = cv.CreateMat(self._h, self._w, cv.CV_8UC3);
         }
+
+      	// Inherited.	
+	this.generic_response_prepare();
     };    
     
     p.run = function() 
@@ -576,11 +576,11 @@
 
     p.prepare = function()
     {
-        // Inherited.	
-	this.item_prepare();
-    
         // Prepare the condtion for which the repeat_cycle must fire.
         this._condition = osweb.syntax.compile_cond(this.vars.get('condition'));
+
+        // Inherited.	
+	this.item_prepare();
     }; 
 
     p.run = function()
@@ -704,11 +704,11 @@
     
     p.prepare = function()
     {
-        //
-        this.mouse_response_prepare();
-        
         // Temp hack
         this.experiment.vars.correct = -1;
+   
+        // Inherited.
+        this.mouse_response_prepare();
     };
         
     p.process_response_mouseclick = function(pRetval)

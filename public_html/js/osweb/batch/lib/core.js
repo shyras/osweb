@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.034 (21-06-2016)';
+osweb.VERSION_NUMBER = '0.035 (21-06-2016)';
 
 /*
  * Definition of osweb class utility methods.
@@ -46,7 +46,10 @@ osweb.newItemClass = function(pType, pExperiment, pName, pString)
 {
     // Create the element.
     var element = new this[pType](pExperiment, pName, pString);
-   	
+   
+    // Set the type of the item.
+    element.type = pType;
+    
     // Return the element
     return element;
 };
@@ -55,7 +58,7 @@ osweb.newElementClass = function(pType, pSketchpad, pString)
 {
     // Create the element.
     var element = new this[pType](pSketchpad, pString);
-   	
+    
     // Return the element
     return element;
 };

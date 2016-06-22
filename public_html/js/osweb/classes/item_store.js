@@ -66,12 +66,13 @@
 	}
     };
     
-    item_store.prepare = function(pName)
+    item_store.prepare = function(pName, pParent)
     {
         // Executes the prepare phase of an item, and updates the item stack.
 	osweb.item_stack.push(pName, 'prepare');
-	this._items[pName].prepare();
-	osweb.item_stack.pop();
+        
+        this._items[pName]._parent = pParent;
+        this._items[pName].prepare();
     };	
 
     item_store.run = function(pName, pParent)

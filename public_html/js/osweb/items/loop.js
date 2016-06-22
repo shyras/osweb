@@ -263,7 +263,8 @@
             {
 		this.experiment.vars.repeat_cycle = 0;
 		
-                osweb.item_store.execute(this.vars.item, this);
+                osweb.item_store.prepare(this.vars.item, this);
+                //osweb.item_store.execute(this.vars.item, this);
             }
             else
             {
@@ -286,6 +287,7 @@
             osweb.debug.msg('repeating cycle ' + this._index);
 			
             this._cycles.push(this._index);
+            
             if (this.vars.order == 'random')
             {
 		this.shuffle(this._cycles);

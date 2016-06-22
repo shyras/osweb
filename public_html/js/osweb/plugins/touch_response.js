@@ -38,11 +38,11 @@
     
     p.prepare = function()
     {
-        //
-        this.mouse_response_prepare();
-        
         // Temp hack
         this.experiment.vars.correct = -1;
+   
+        // Inherited.
+        this.mouse_response_prepare();
     };
         
     p.process_response_mouseclick = function(pRetval)

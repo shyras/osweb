@@ -45,9 +45,6 @@
 
     p.prepare = function()
     {
-    	// Inherited.	
-	this.generic_response_prepare();
-	
         // Create the sample
 	if (this.vars.sample != '')
 	{
@@ -61,6 +58,9 @@
             /* raise osexception(
             u'No sample has been specified in sampler "%s"' % self.name) */
 	}
+    
+        // Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()

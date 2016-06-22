@@ -34,7 +34,8 @@
 
     p.prepare = function()
     {
-    	// Prepares the item.
+        // Prepares the item.
+        this._parent.prepare_complete();
     };
 
     p.run = function()

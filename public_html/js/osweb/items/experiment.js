@@ -303,7 +303,8 @@
 		if (osweb.item_store._items[this.vars.start] != null)
 		{
                     osweb.item_stack.clear();
-                    osweb.item_store.execute(this.vars.start, this);
+                    osweb.item_store.prepare(this.vars.start, this);
+                    //osweb.item_store.execute(this.vars.start, this);
 		}
 		else
 		{

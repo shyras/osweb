@@ -89,10 +89,7 @@
 
     p.prepare = function()
     {
-    	// Inherited.	
-	this.generic_response_prepare();
-
-	// Draw the elements. 
+        // Draw the elements. 
 	for (var i=0; i < this.elements.length; i++)
 	{
             if (this.elements[i].is_shown() == true)
@@ -100,6 +97,9 @@
 		this.elements[i].draw();
             }			
 	}				
+    
+        // Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()

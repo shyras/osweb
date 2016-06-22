@@ -43,11 +43,11 @@
 
     p.prepare = function()
     {	
-	// Inherited.	
-	this.generic_response_prepare();
-
 	// Set the internal flush property.
 	this._flush = (this.vars.flush) ? this.vars.flush : 'yes';
+
+    	// Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()

@@ -304,13 +304,13 @@
     
     p.prepare = function()
     {
-	// Inherited.	
-	this.item_prepare();
-
 	// Implements the prepare phase of the item.
 	this.prepare_timeout();
 	this.prepare_allowed_responses();
 	this.prepare_duration();
+    
+        // Inherited.	
+	this.item_prepare();
     };
     
     p.update = function(pResponse)

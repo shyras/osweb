@@ -38,9 +38,6 @@
 
     p.prepare = function()
     {
-        // Inherited.	
-	this.item_prepare();
-
 	this._duration = this.vars.duration;
         /* # Sanity check on the duration value, which should be a positive numeric
 	# value.
@@ -62,6 +59,9 @@
 	self._duration = int(self._duration)
 	self.experiment.var.set(u'delay_%s' % self.name, self._duration)
 	debug.msg(u"delay for %s ms" % self._duration) */
+
+        // Inherited.	
+	this.item_prepare();
     };
     
     p.run = function() 

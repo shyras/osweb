@@ -200,6 +200,19 @@
     	
         // For debugging.
         osweb.debug.addMessage('prepare' + this.name);
+        
+        // Implements the complete phase of the item (to support blocking script in the prepare phase).
+	if ((this._parent !== null) && (this.type !== 'feedback'))
+	{
+            // Prepare cycle of parent.
+            this._parent.prepare_complete();
+        }
+    };
+
+    p.prepare_complete = function()
+    {
+        // Dummy function for completion process.
+        console.log('prepare complete' + this.name);
     };
 
     p.set_item_onset = function(pTime)
@@ -545,13 +558,13 @@
     
     p.prepare = function()
     {
-	// Inherited.	
-	this.item_prepare();
-
 	// Implements the prepare phase of the item.
 	this.prepare_timeout();
 	this.prepare_allowed_responses();
 	this.prepare_duration();
+    
+        // Inherited.	
+	this.item_prepare();
     };
     
     p.update = function(pResponse)
@@ -875,7 +888,8 @@
 		if (osweb.item_store._items[this.vars.start] != null)
 		{
                     osweb.item_stack.clear();
-                    osweb.item_store.execute(this.vars.start, this);
+                    osweb.item_store.prepare(this.vars.start, this);
+                    //osweb.item_store.execute(this.vars.start, this);
 		}
 		else
 		{
@@ -1053,22 +1067,28 @@
 
     p.prepare = function()
     {
-	// Inherited.	
-	this.item_prepare();
-	
 	// Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);
 	
-/*        // Execute the run code.
+        // Execute the run code.
  	if (this._prepare_tree != null)
     	{
+            // Set the current item.
+            osweb.events._current_item = this;
+            
             // Set the prepare run toggle.
             this._prepare_run = true;
             
+            console.log('run');
             // Start the parser
             osweb.parser._run(this, this._prepare_tree);    		
-        } */
+        }
+        else
+        {
+            // Inherited.	
+            this.item_prepare();
+        }    
     };
 
     p.run = function()
@@ -1082,6 +1102,9 @@
         // Execute the run code.
  	if (this._run_tree != null)
     	{
+            // Set the prepare run toggle.
+            this._prepare_run = false;
+            
             // Start the parser
             osweb.parser._run(this, this._run_tree);    		
     	}
@@ -1089,6 +1112,7 @@
     
     p.complete = function()
     {
+            console.log('run complete');
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
@@ -1100,8 +1124,16 @@
         }
         else
         {    
-            // Inherited.           
-            this.item_complete();
+            if (this._prepare_run === true)             
+            {
+                // Inherited prepare.	
+                this.item_prepare();
+            }    
+            else
+            { 
+                // Inherited.           
+                this.item_complete();
+            }
         }    
     }; 
 	
@@ -1153,11 +1185,11 @@
 
     p.prepare = function()
     {	
-	// Inherited.	
-	this.generic_response_prepare();
-
 	// Set the internal flush property.
 	this._flush = (this.vars.flush) ? this.vars.flush : 'yes';
+
+    	// Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()
@@ -1557,7 +1589,8 @@
             {
 		this.experiment.vars.repeat_cycle = 0;
 		
-                osweb.item_store.execute(this.vars.item, this);
+                osweb.item_store.prepare(this.vars.item, this);
+                //osweb.item_store.execute(this.vars.item, this);
             }
             else
             {
@@ -1580,6 +1613,7 @@
             osweb.debug.msg('repeating cycle ' + this._index);
 			
             this._cycles.push(this._index);
+            
             if (this.vars.order == 'random')
             {
 		this.shuffle(this._cycles);
@@ -1652,12 +1686,12 @@
 
     p.prepare = function()
     {	
-    	// Inherited.	
-	this.generic_response_prepare();
-
 	// Set the internal flush property.
 	this._flush = (this.vars.flush) ? this.vars.flush : 'yes';
-    };
+ 
+        // Inherited.	
+	this.generic_response_prepare();
+   };
 
     p.run = function()
     {
@@ -1742,9 +1776,6 @@
 
     p.prepare = function()
     {
-    	// Inherited.	
-	this.generic_response_prepare();
-	
         // Create the sample
 	if (this.vars.sample != '')
 	{
@@ -1758,6 +1789,9 @@
             /* raise osexception(
             u'No sample has been specified in sampler "%s"' % self.name) */
 	}
+    
+        // Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()
@@ -1864,6 +1898,11 @@
         // Generate the items list for the run cycle.
         this._index = 0;
 	this._items = [];
+        
+        // Prepare the items.
+        this.prepare_complete();
+        
+                /* this._items = [];
 	for (var i=0; i < this.items.length; i++)
 	{
             if ((this.items[i].item in osweb.item_store._items) === false)
@@ -1878,7 +1917,41 @@
                 // Add the item to the internal list.
                 this._items.push({'item': this.items[i].item, 'cond': osweb.syntax.compile_cond(this.items[i].cond)});
             }
-	}	
+	} */	
+    };
+    
+    p.prepare_complete = function()
+    {
+        // Generate the items list for the run cycle.
+        if (this._index < this.items.length)
+        {
+            if ((this.items[this._index].item in osweb.item_store._items) === false)
+            {
+		osweb.debug.addError('Could not find item ' + this.items[this._index].item.name + ' which is called by sequence item ' + this.name);
+            }
+            else 
+            {
+                // Increase the current index.
+                this._index++;
+                
+                // Add the item to the internal list.
+                this._items.push({'item': this.items[this._index - 1].item, 'cond': osweb.syntax.compile_cond(this.items[this._index - 1].cond)});
+                
+                // Prepare the item.
+                osweb.item_store.prepare(this.items[this._index - 1].item, this);
+	    }
+        }
+        else
+        {
+            // Prepare process is done, start execution.
+            this._index = 0;
+            
+            // Remove the prepare phase form the stack.    
+            osweb.item_stack.pop();
+    
+  	    // Execute the next cycle of the sequnce itself.
+            osweb.item_store.run(this.name, this._parent);
+        }    
     };
     
     p.run = function()
@@ -2023,10 +2096,7 @@
 
     p.prepare = function()
     {
-    	// Inherited.	
-	this.generic_response_prepare();
-
-	// Draw the elements. 
+        // Draw the elements. 
 	for (var i=0; i < this.elements.length; i++)
 	{
             if (this.elements[i].is_shown() == true)
@@ -2034,6 +2104,9 @@
 		this.elements[i].draw();
             }			
 	}				
+    
+        // Inherited.	
+	this.generic_response_prepare();
     };
 
     p.run = function()
@@ -2095,7 +2168,8 @@
 
     p.prepare = function()
     {
-    	// Prepares the item.
+        // Prepares the item.
+        this._parent.prepare_complete();
     };
 
     p.run = function()

@@ -23,11 +23,11 @@
 
     p.prepare = function()
     {
-        // Inherited.	
-	this.item_prepare();
-    
         // Prepare the condtion for which the repeat_cycle must fire.
         this._condition = osweb.syntax.compile_cond(this.vars.get('condition'));
+
+        // Inherited.	
+	this.item_prepare();
     }; 
 
     p.run = function()

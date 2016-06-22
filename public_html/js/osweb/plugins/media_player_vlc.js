@@ -23,9 +23,6 @@
 
     p.prepare = function()
     {
-       	// Inherited.	
-	this.generic_response_prepare();
-
   	// Opens the video file for playback."""
         this._video        = osweb.pool[this.vars.get('video_src')];  
         this._video_player = new osweb.video_backend(this.experiment, this._video);
@@ -52,6 +49,9 @@
             //this._y      = max(0, (self.experiment.var.height - self._h) / 2);
             //this.src_rgb = cv.CreateMat(self._h, self._w, cv.CV_8UC3);
         }
+
+      	// Inherited.	
+	this.generic_response_prepare();
     };    
     
     p.run = function() 

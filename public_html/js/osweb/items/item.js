@@ -200,6 +200,19 @@
     	
         // For debugging.
         osweb.debug.addMessage('prepare' + this.name);
+        
+        // Implements the complete phase of the item (to support blocking script in the prepare phase).
+	if ((this._parent !== null) && (this.type !== 'feedback'))
+	{
+            // Prepare cycle of parent.
+            this._parent.prepare_complete();
+        }
+    };
+
+    p.prepare_complete = function()
+    {
+        // Dummy function for completion process.
+        console.log('prepare complete' + this.name);
     };
 
     p.set_item_onset = function(pTime)

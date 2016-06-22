@@ -91,6 +91,11 @@
         // Generate the items list for the run cycle.
         this._index = 0;
 	this._items = [];
+        
+        // Prepare the items.
+        this.prepare_complete();
+        
+                /* this._items = [];
 	for (var i=0; i < this.items.length; i++)
 	{
             if ((this.items[i].item in osweb.item_store._items) === false)
@@ -105,7 +110,41 @@
                 // Add the item to the internal list.
                 this._items.push({'item': this.items[i].item, 'cond': osweb.syntax.compile_cond(this.items[i].cond)});
             }
-	}	
+	} */	
+    };
+    
+    p.prepare_complete = function()
+    {
+        // Generate the items list for the run cycle.
+        if (this._index < this.items.length)
+        {
+            if ((this.items[this._index].item in osweb.item_store._items) === false)
+            {
+		osweb.debug.addError('Could not find item ' + this.items[this._index].item.name + ' which is called by sequence item ' + this.name);
+            }
+            else 
+            {
+                // Increase the current index.
+                this._index++;
+                
+                // Add the item to the internal list.
+                this._items.push({'item': this.items[this._index - 1].item, 'cond': osweb.syntax.compile_cond(this.items[this._index - 1].cond)});
+                
+                // Prepare the item.
+                osweb.item_store.prepare(this.items[this._index - 1].item, this);
+	    }
+        }
+        else
+        {
+            // Prepare process is done, start execution.
+            this._index = 0;
+            
+            // Remove the prepare phase form the stack.    
+            osweb.item_stack.pop();
+    
+  	    // Execute the next cycle of the sequnce itself.
+            osweb.item_store.run(this.name, this._parent);
+        }    
     };
     
     p.run = function()
