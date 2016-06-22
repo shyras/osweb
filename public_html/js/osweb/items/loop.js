@@ -147,12 +147,6 @@
 	
     p.prepare = function()
     {
-	// Inherited.	
-	this.item_prepare();
-	
-	// Set the onset time.
-	this.set_item_onset();
-
 	// Prepare the break if condition.
 	if ((this.vars.break_if != '') && (this.vars.break_if != 'never'))
 	{
@@ -234,6 +228,12 @@
         {
             osweb.debug.addError('Could not find item ' + this.vars.item + ', which is called by loop item ' + this.name);
         }    
+
+        // Inherited.	
+	this.item_prepare();
+	
+	// Set the onset time.
+	this.set_item_onset();
     };
 
     p.run = function()
