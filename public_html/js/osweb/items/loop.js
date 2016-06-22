@@ -13,8 +13,8 @@
         // Definition of private properties. 
         this._break_if = '';
         this._cycles   = [];
-        this._keyboard = null;
         this._index    = -1;
+        this._keyboard = null;
     }; 
 	
     // Extend the class from its base class.

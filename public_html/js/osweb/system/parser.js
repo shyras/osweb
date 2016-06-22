@@ -346,7 +346,7 @@
 
     parser._process_node = function()
     {
-	console.log(this._current_node);
+	//console.log(this._current_node);
         // Set the parser status.
         switch (this._current_node.type)
 	{

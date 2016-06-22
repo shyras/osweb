@@ -11,9 +11,10 @@
 	this.item_constructor(pExperiment, pName, pScript);
 	
         // Definition of private properties. 
-	this._index    = -1;
-	this._items    = null;
-        this._keyboard = null;    
+	this._index         = -1;
+	this._index_prepare = -1;
+        this._items         = null;
+        this._keyboard      = null;    
     }; 
 	
     // Extend the class from its base class.
@@ -106,7 +107,7 @@
             }
 	}	
     };
-
+    
     p.run = function()
     {
         // Inherited.	

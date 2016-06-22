@@ -929,7 +929,8 @@
 	this.item_constructor(pExperiment, pName, pScript);
 	
 	// Define and set the public properties. 
-	this._prepare_tree = null;
+	this._prepare_run  = false;   
+        this._prepare_tree = null;
 	this._run_tree     = null;
     }; 
 	
@@ -1055,16 +1056,19 @@
 	// Inherited.	
 	this.item_prepare();
 	
-	// Compile the python script code.
-	this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
-	this._run_tree     = osweb.parser._prepare(this.vars._run);
-		
-        // Execute the run code.
+	// Compile the script code to ast trees.
+        this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
+        this._run_tree     = osweb.parser._prepare(this.vars._run);
+	
+/*        // Execute the run code.
  	if (this._prepare_tree != null)
     	{
+            // Set the prepare run toggle.
+            this._prepare_run = true;
+            
             // Start the parser
-            // osweb.parser._run(this, this._prepare_tree);    		
-        }
+            osweb.parser._run(this, this._prepare_tree);    		
+        } */
     };
 
     p.run = function()
@@ -1303,8 +1307,8 @@
         // Definition of private properties. 
         this._break_if = '';
         this._cycles   = [];
-        this._keyboard = null;
         this._index    = -1;
+        this._keyboard = null;
     }; 
 	
     // Extend the class from its base class.
@@ -1780,9 +1784,10 @@
 	this.item_constructor(pExperiment, pName, pScript);
 	
         // Definition of private properties. 
-	this._index    = -1;
-	this._items    = null;
-        this._keyboard = null;    
+	this._index         = -1;
+	this._index_prepare = -1;
+        this._items         = null;
+        this._keyboard      = null;    
     }; 
 	
     // Extend the class from its base class.
@@ -1875,7 +1880,7 @@
             }
 	}	
     };
-
+    
     p.run = function()
     {
         // Inherited.	
