@@ -291,13 +291,24 @@
     events._videoEnded = function()
     {
         console.log('video has ended');
+        osweb.events._video_ended = true;
     };
 
     events._videoUpdate = function(event)
     {
-        console.log('video update');
+        if (this._playing == true)
+        {
+            // Clip the content of the video to the 
+            this._ctx.drawImage(this._video, 0, 0);
         
-        this._ctx.drawImage(this._video, 0, 0);
+            // execute script.
+            if (this._script !== null)
+            {
+                // Start the parser
+                console.log(this._script);
+                //osweb.parser._run(this, this._script);    		
+            }    
+        }    
     };
 
     /*

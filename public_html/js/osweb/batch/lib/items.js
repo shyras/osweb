@@ -1567,9 +1567,6 @@
         // Inherited.	
         this.item_run();
 
-        console.log('okokok');
-        console.log(this._cycles.length);
-
         if (this._cycles.length > 0)
         {
             var exit = false;

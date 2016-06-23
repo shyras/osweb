@@ -1156,6 +1156,10 @@ osweb.promoteClass = function(pSubClass, pPrefix)
       	// Set the class public properties. 
 	this.experiment = pExperiment;
 	
+        // Set the class pivate properties. 
+	this._playing   = false; 
+        this._script    = null;
+        
 	// Create the sound instance
 	if (pSrc != null)
 	{
@@ -1173,7 +1177,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     var p = video.prototype;
     
     // Define the public properties. 
-    p.duration = 'video';	
+    p.duration    = 'video';	
+    p.full_screen = false;
     
     /*
      * Definition of class public methods.
@@ -1182,13 +1187,29 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     p.play = function()
     {
 	// Play the actual video.
-        this._video.play();	
+        this._video.play();
+        
+        // Check if the video must be scaled.
+        if (this.full_screen == true)
+        {    
+            // Draw the first image with scaling.
+            var xScale = (this.experiment._canvas._width  / this._video.videoWidth);
+            var yScale = (this.experiment._canvas._height / this._video.videoHeight);
+            this._ctx.scale(xScale,yScale);
+        }
+        
+        // Draw the first frame.
+        this._ctx.drawImage(this._video, 0, 0);
+        
+        // Set the play toggle.
+        this._playing = true;
     };
 
     p.stop = function()
     {
 	// Pause the actual sound.
-	this._video.pause();	
+	this._video.pause();
+        this._playing = false;
     };
 
     p.wait = function()
@@ -3721,9 +3742,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         // Inherited.	
         this.item_run();
 
-        console.log('okokok');
-        console.log(this._cycles.length);
-
         if (this._cycles.length > 0)
         {
             var exit = false;
@@ -4826,33 +4844,19 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.prepare = function()
     {
-  	// Opens the video file for playback."""
+        // Opens the video file for playback.
         this._video        = osweb.pool[this.vars.get('video_src')];  
         this._video_player = new osweb.video_backend(this.experiment, this._video);
         
-	// Convert the string to a boolean, for slightly faster evaluations in the run phase.
-	this._fullscreen = (this.vars.get('fullscreen') == 'yes');
+        // Set the script code option.
+        if (this.vars.event_handler !== '')
+        {
+            this._video_player._script = osweb.parser._prepare(this.vars.event_handler);
+        }
+        
+        // Set the full screen option (if enabled).
+        this._video_player.full_screen = (this.vars.get('resizeVideo') == 'yes');
 	
-        // The dimensions of the video
-	// this._w = int(cv.GetCaptureProperty(self.video, cv.CV_CAP_PROP_FRAME_WIDTH))
-	// this._h = int(cv.GetCaptureProperty(self.video, cv.CV_CAP_PROP_FRAME_HEIGHT))
-
-        if (this._fullscreen)
-        { 
-            // In fullscreen mode, the video is always shown in the top-left and the temporary images need to be fullscreen size
-            //this._x      = 0;
-            //this._y      = 0;
-            //this.src_tmp = cv.CreateMat(self.experiment.var.height, self.experiment.var.width, cv.CV_8UC3);
-            //this.src_rgb = cv.CreateMat(self.experiment.var.height, self.experiment.var.width, cv.CV_8UC3);
-        }
-        else
-        {    
-            // Otherwise the location of the video depends on its dimensions and the temporary image is the same size as the video
-            //this._x      = max(0, (self.experiment.var.width - self._w) / 2);
-            //this._y      = max(0, (self.experiment.var.height - self._h) / 2);
-            //this.src_rgb = cv.CreateMat(self._h, self._w, cv.CV_8UC3);
-        }
-
       	// Inherited.	
 	this.generic_response_prepare();
     };    
@@ -4872,7 +4876,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.complete = function() 
     {
-	// Stop the video playing.
+        console.log('video complete.');    
+        
+        // Stop the video playing.
 	this._video_player.stop();
 		
 	// Inherited.	
@@ -6474,13 +6480,23 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     events._videoEnded = function()
     {
         console.log('video has ended');
+        osweb.events._video_ended = true;
     };
 
     events._videoUpdate = function(event)
     {
-        console.log('video update');
+        if (this._playing == true)
+        {
+            // Clip the content of the video to the 
+            this._ctx.drawImage(this._video, 0, 0);
         
-        this._ctx.drawImage(this._video, 0, 0);
+            // execute script.
+            if (this._script !== null)
+            {
+                // Start the parser
+                osweb.parser._run(this, this._script);    		
+            }    
+        }    
     };
 
     /*

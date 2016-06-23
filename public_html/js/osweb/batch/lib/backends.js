@@ -988,6 +988,10 @@
       	// Set the class public properties. 
 	this.experiment = pExperiment;
 	
+        // Set the class pivate properties. 
+	this._playing   = false; 
+        this._script    = null;
+        
 	// Create the sound instance
 	if (pSrc != null)
 	{
@@ -1005,7 +1009,8 @@
     var p = video.prototype;
     
     // Define the public properties. 
-    p.duration = 'video';	
+    p.duration    = 'video';	
+    p.full_screen = false;
     
     /*
      * Definition of class public methods.
@@ -1014,13 +1019,29 @@
     p.play = function()
     {
 	// Play the actual video.
-        this._video.play();	
+        this._video.play();
+        
+        // Check if the video must be scaled.
+        if (this.full_screen == true)
+        {    
+            // Draw the first image with scaling.
+            var xScale = (this.experiment._canvas._width  / this._video.videoWidth);
+            var yScale = (this.experiment._canvas._height / this._video.videoHeight);
+            this._ctx.scale(xScale,yScale);
+        }
+        
+        // Draw the first frame.
+        this._ctx.drawImage(this._video, 0, 0);
+        
+        // Set the play toggle.
+        this._playing = true;
     };
 
     p.stop = function()
     {
 	// Pause the actual sound.
-	this._video.pause();	
+	this._video.pause();
+        this._playing = false;
     };
 
     p.wait = function()
