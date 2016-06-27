@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.035 (21-06-2016)';
+osweb.VERSION_NUMBER = '0.036 (27-06-2016)';
 
 /*
  * Definition of osweb class utility methods.
@@ -1157,9 +1157,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	this.experiment = pExperiment;
 	
         // Set the class pivate properties. 
-	this._playing   = false; 
-        this._script    = null;
-        
+        this._playing = false; 
+        this._script  = null;
+
 	// Create the sound instance
 	if (pSrc != null)
 	{
@@ -1169,7 +1169,8 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             
             // Set the event anchor for 
             this._video.on("ended"     , osweb.events._videoEnded.bind(this));
-            this._video.on("timeupdate", osweb.events._videoUpdate.bind(this));
+            this._video.on("play"      , osweb.events._videoPlay.bind(this));
+            //this._video.on("timeupdate", osweb.events._videoUpdate.bind(this));
     	}
     }; 
 	
@@ -1177,8 +1178,30 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     var p = video.prototype;
     
     // Define the public properties. 
-    p.duration    = 'video';	
+    p.audio       = true;
+    p.duration    = 'keypress';	
     p.full_screen = false;
+    
+    /*
+     * Definition of class private methods.
+     */
+    
+    p._update_video_canvas = function()
+    {
+        // Clip the content of the video to the 
+        if (this._playing == true)
+        {    
+            this._ctx.drawImage(this._video, 0, 0);
+
+            // execute script.
+            if ((this._script !== null) && (this._event_handler_always === true))
+            {
+                // Start the parser
+                console.log('execute by frame');
+                osweb.parser._run(null, this._script);    		
+            }    
+        }    
+    };    
     
     /*
      * Definition of class public methods.
@@ -1188,6 +1211,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     {
 	// Play the actual video.
         this._video.play();
+        
+        // Set the volume
+        this._video.volume = (this.audio === true) ? 1 : 0;
         
         // Check if the video must be scaled.
         if (this.full_screen == true)
@@ -2742,7 +2768,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	this.item_prepare();
     };
     
-    p.update = function(pResponse)
+    p.update_response = function(pResponse)
     {
         // Implements the update response phase of the item.
 	if ((this._responsetype == osweb.constants.RESPONSE_KEYBOARD) && (pResponse.type == osweb.constants.RESPONSE_KEYBOARD)) 
@@ -3255,7 +3281,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             // Set the prepare run toggle.
             this._prepare_run = true;
             
-            console.log('run');
             // Start the parser
             osweb.parser._run(this, this._prepare_tree);    		
         }
@@ -3284,10 +3309,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             osweb.parser._run(this, this._run_tree);    		
     	}
     };
-    
+
     p.complete = function()
     {
-            console.log('run complete');
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
@@ -3312,6 +3336,12 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         }    
     }; 
 	
+    p.complete_script = function()
+    {
+        // Added for video script functionaliry.
+        this.complete();
+    };
+
     // Bind the Sequence class to the osweb namespace.
     osweb.inline_script = osweb.promoteClass(inline_script, "item");
 }());
@@ -4830,6 +4860,9 @@ osweb.promoteClass = function(pSubClass, pPrefix)
     {
 	// Inherited.
 	this.generic_response_constructor(pExperiment, pName, pScript);
+    
+        // Define and set the private properties. 
+        this._script_executed = false;
     }; 
 	
     // Extend the class from its base class.
@@ -4848,11 +4881,15 @@ osweb.promoteClass = function(pSubClass, pPrefix)
         this._video        = osweb.pool[this.vars.get('video_src')];  
         this._video_player = new osweb.video_backend(this.experiment, this._video);
         
-        // Set the script code option.
+        // Set the inline code options.
         if (this.vars.event_handler !== '')
         {
             this._video_player._script = osweb.parser._prepare(this.vars.event_handler);
         }
+        this._video_player._event_handler_always = (this.vars.event_handler_trigger == 'after every frame');
+		
+        // Set the audio option.
+        this._video_player.audio = (this.vars.get('playaudio') == 'yes');
         
         // Set the full screen option (if enabled).
         this._video_player.full_screen = (this.vars.get('resizeVideo') == 'yes');
@@ -4876,14 +4913,38 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     p.complete = function() 
     {
-        console.log('video complete.');    
-        
-        // Stop the video playing.
-	this._video_player.stop();
-		
-	// Inherited.	
-	this.generic_response_complete();
+        if (this._script_executed == false)
+        {
+            // Stop the video playing.  
+            this._video_player.stop();
+	
+            // execute script.
+            if ((this._video_player._script !== null) && (this.vars.get('event_handler_trigger') == 'on keypress'))
+            {
+                // Set the execute toggle.
+                this._script_executed = true;
+            
+                // Execute the script code.
+                osweb.parser._run(this, this._video_player._script);
+            }   
+            else
+            {    
+                // Inherited.	
+                this.generic_response_complete();
+            }
+        }
+        else
+        {
+            // Inherited.	
+            this.generic_response_complete();
+        };    
     };    
+
+    p.update = function()
+    {
+        // Update the video canvas.
+        this._video_player._update_video_canvas();
+    };
     
     // Bind the media_player_vlc class to the osweb namespace.
     osweb.media_player_vlc = osweb.promoteClass(media_player_vlc, "generic_response");
@@ -6303,7 +6364,12 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout)))  	   	
         {
             this._current_item._status = osweb.constants.STATUS_FINALIZE;
-  	}	
+  	}
+        else
+        {
+            // Update the current item.
+            this._current_item.update();
+        }    
     };
     
     events._complete = function()
@@ -6397,7 +6463,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 	    if (this._current_item !== null) 
     	    {
                 // Process the response.
-                this._current_item.update(KeyboardResponses);
+                this._current_item.update_response(KeyboardResponses);
             } 	 
         
             // Set the valid response given toggle.
@@ -6455,7 +6521,7 @@ osweb.promoteClass = function(pSubClass, pPrefix)
             // Process the response to the current object.
             if (this._current_item !== null)
             {
-                this._current_item.update(MouseResponses);
+                this._current_item.update_response(MouseResponses);
             }   
 
             // Set the valid response given toggle.
@@ -6479,24 +6545,10 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     events._videoEnded = function()
     {
-        console.log('video has ended');
-        osweb.events._video_ended = true;
     };
 
-    events._videoUpdate = function(event)
+    events._videoPlay = function(event)
     {
-        if (this._playing == true)
-        {
-            // Clip the content of the video to the 
-            this._ctx.drawImage(this._video, 0, 0);
-        
-            // execute script.
-            if (this._script !== null)
-            {
-                // Start the parser
-                osweb.parser._run(this, this._script);    		
-            }    
-        }    
     };
 
     /*
@@ -7120,7 +7172,6 @@ osweb.promoteClass = function(pSubClass, pPrefix)
 
     parser._process_node = function()
     {
-	//console.log(this._current_node);
         // Set the parser status.
         switch (this._current_node.type)
 	{
@@ -7140,7 +7191,10 @@ osweb.promoteClass = function(pSubClass, pPrefix)
                     this._status = 2;
         
                     // Complete the inline item.    
-                    parser._inline_script.complete();
+                    if (this._inline_script != null)
+                    {    
+                        this._inline_script.complete();
+                    }    
                 } 
             break; 
             case 'BlockStatement':

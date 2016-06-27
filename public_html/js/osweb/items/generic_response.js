@@ -313,7 +313,7 @@
 	this.item_prepare();
     };
     
-    p.update = function(pResponse)
+    p.update_response = function(pResponse)
     {
         // Implements the update response phase of the item.
 	if ((this._responsetype == osweb.constants.RESPONSE_KEYBOARD) && (pResponse.type == osweb.constants.RESPONSE_KEYBOARD)) 

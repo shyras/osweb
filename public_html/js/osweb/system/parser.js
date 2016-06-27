@@ -346,7 +346,6 @@
 
     parser._process_node = function()
     {
-	//console.log(this._current_node);
         // Set the parser status.
         switch (this._current_node.type)
 	{
@@ -366,7 +365,10 @@
                     this._status = 2;
         
                     // Complete the inline item.    
-                    parser._inline_script.complete();
+                    if (this._inline_script != null)
+                    {    
+                        this._inline_script.complete();
+                    }    
                 } 
             break; 
             case 'BlockStatement':

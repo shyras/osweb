@@ -10,9 +10,9 @@
 	this.experiment = pExperiment;
 	
         // Set the class pivate properties. 
-	this._playing   = false; 
-        this._script    = null;
-        
+        this._playing = false; 
+        this._script  = null;
+
 	// Create the sound instance
 	if (pSrc != null)
 	{
@@ -22,7 +22,8 @@
             
             // Set the event anchor for 
             this._video.on("ended"     , osweb.events._videoEnded.bind(this));
-            this._video.on("timeupdate", osweb.events._videoUpdate.bind(this));
+            this._video.on("play"      , osweb.events._videoPlay.bind(this));
+            //this._video.on("timeupdate", osweb.events._videoUpdate.bind(this));
     	}
     }; 
 	
@@ -30,8 +31,30 @@
     var p = video.prototype;
     
     // Define the public properties. 
-    p.duration    = 'video';	
+    p.audio       = true;
+    p.duration    = 'keypress';	
     p.full_screen = false;
+    
+    /*
+     * Definition of class private methods.
+     */
+    
+    p._update_video_canvas = function()
+    {
+        // Clip the content of the video to the 
+        if (this._playing == true)
+        {    
+            this._ctx.drawImage(this._video, 0, 0);
+
+            // execute script.
+            if ((this._script !== null) && (this._event_handler_always === true))
+            {
+                // Start the parser
+                console.log('execute by frame');
+                osweb.parser._run(null, this._script);    		
+            }    
+        }    
+    };    
     
     /*
      * Definition of class public methods.
@@ -41,6 +64,9 @@
     {
 	// Play the actual video.
         this._video.play();
+        
+        // Set the volume
+        this._video.volume = (this.audio === true) ? 1 : 0;
         
         // Check if the video must be scaled.
         if (this.full_screen == true)

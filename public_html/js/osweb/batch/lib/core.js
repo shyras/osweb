@@ -23,7 +23,7 @@ this.osweb = this.osweb||{};
  */
 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.035 (21-06-2016)';
+osweb.VERSION_NUMBER = '0.036 (27-06-2016)';
 
 /*
  * Definition of osweb class utility methods.

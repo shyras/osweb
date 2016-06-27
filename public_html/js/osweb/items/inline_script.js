@@ -148,7 +148,6 @@
             // Set the prepare run toggle.
             this._prepare_run = true;
             
-            console.log('run');
             // Start the parser
             osweb.parser._run(this, this._prepare_tree);    		
         }
@@ -177,10 +176,9 @@
             osweb.parser._run(this, this._run_tree);    		
     	}
     };
-    
+
     p.complete = function()
     {
-            console.log('run complete');
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
@@ -205,6 +203,12 @@
         }    
     }; 
 	
+    p.complete_script = function()
+    {
+        // Added for video script functionaliry.
+        this.complete();
+    };
+
     // Bind the Sequence class to the osweb namespace.
     osweb.inline_script = osweb.promoteClass(inline_script, "item");
 }());

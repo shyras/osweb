@@ -114,7 +114,12 @@
             (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout)))  	   	
         {
             this._current_item._status = osweb.constants.STATUS_FINALIZE;
-  	}	
+  	}
+        else
+        {
+            // Update the current item.
+            this._current_item.update();
+        }    
     };
     
     events._complete = function()
@@ -208,7 +213,7 @@
 	    if (this._current_item !== null) 
     	    {
                 // Process the response.
-                this._current_item.update(KeyboardResponses);
+                this._current_item.update_response(KeyboardResponses);
             } 	 
         
             // Set the valid response given toggle.
@@ -266,7 +271,7 @@
             // Process the response to the current object.
             if (this._current_item !== null)
             {
-                this._current_item.update(MouseResponses);
+                this._current_item.update_response(MouseResponses);
             }   
 
             // Set the valid response given toggle.
@@ -290,24 +295,10 @@
 
     events._videoEnded = function()
     {
-        console.log('video has ended');
-        osweb.events._video_ended = true;
     };
 
-    events._videoUpdate = function(event)
+    events._videoPlay = function(event)
     {
-        if (this._playing == true)
-        {
-            // Clip the content of the video to the 
-            this._ctx.drawImage(this._video, 0, 0);
-        
-            // execute script.
-            if (this._script !== null)
-            {
-                // Start the parser
-                osweb.parser._run(this, this._script);    		
-            }    
-        }    
     };
 
     /*
@@ -931,7 +922,6 @@
 
     parser._process_node = function()
     {
-	//console.log(this._current_node);
         // Set the parser status.
         switch (this._current_node.type)
 	{
@@ -951,7 +941,10 @@
                     this._status = 2;
         
                     // Complete the inline item.    
-                    parser._inline_script.complete();
+                    if (this._inline_script != null)
+                    {    
+                        this._inline_script.complete();
+                    }    
                 } 
             break; 
             case 'BlockStatement':
