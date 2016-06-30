@@ -625,11 +625,7 @@
         }	   	
     };
 
-    /*
-     * Definition of private methods - AST parsing   
-     */
-
-    parser._node_identifier = function(pNode, pType)
+    /* parser._node_identifier = function(pNode, pType)
     {
         // Select te type of identifier to process.
         switch (pType) 
@@ -920,54 +916,460 @@
         this._process_node();
     };
 
+
+    parser._node_if_statement = function(pNode)
+    {
+        console.log('if');
+        
+        // Set parent node.
+        this._current_node = this._current_node.parent;
+
+        // Set the parser status.
+        this._process_node();
+    };    */
+    
+    
+    parser._process_literal = function(pNode)
+    {
+        // Return function result.
+        return pNode.value;
+    };
+
+    parser._process_identifier = function(pNode)
+    {
+        // Return function result.
+        if (typeof window[pNode.name] === 'undefined')
+        {
+            // Return the string name.
+            return pNode.name;
+        }    
+        else
+        {
+            // Return the global defined object.
+            return window[pNode.name];
+        }    
+    };
+
+    parser._process_assignment_expression = function(pNode)
+    {
+        console.log('processing assignment expression');
+
+        // Process right node
+        var right;
+        switch (pNode.right.type)
+        {
+            case 'Literal': 
+                // Process member expression.
+                right  = this._process_literal(pNode.right);
+            break;    
+        }
+
+        // Process left node
+        var left;
+        switch (pNode.left.type)
+        {
+            case 'MemberExpression': 
+                // Process member expression.
+                left  = this._process_member_expression(pNode.left);
+            break;    
+        }
+
+        // process operator
+        switch (pNode.operator)
+        {
+            case '=':
+                // Process the '=' operator.
+                left = right;    
+            break;    
+        }
+    };
+    
+    parser._process_binary_expression = function(pNode)
+    {
+        // Process right node
+        var right_node;
+        switch (pNode.right.type)  
+        {
+            case 'Identifier':
+                right_node = this._process_identifier(pNode.right);
+            break;    
+            case 'Literal': 
+                right_node = this._process_literal(pNode.right);  
+            break;    
+            }
+    };        
+
+    
+    
+    parser._process_call_expression = function(pNode)
+    {
+        // Process arguments node.
+        var tmp_arguments = [];
+        for (var i = 0; i < pNode.arguments.length;i++)
+        {
+            // Process each argument depending on its type. 
+            switch (pNode.arguments[i].type)
+            {
+                case 'BinaryExpression': 
+                    tmp_arguments.push(this._process_binary_expression(pNode.arguments[i]));
+                break;    
+                case 'Identifier': 
+                    tmp_arguments.push(this._process_identifier(pNode.arguments[i]));
+                break;    
+                case 'Literal': 
+                    tmp_arguments.push(this._process_literal(pNode.arguments[i]));
+                break;    
+            } 
+        }
+
+        // Process call node.
+        var callee;
+        switch (pNode.callee.type)
+        {
+            case 'MemberExpression':
+                callee = this._process_member_expression(pNode.callee);
+            break;
+        }
+
+        console.log(callee);
+
+        // Execute call expression.
+        if (typeof callee.object === 'object')
+        {
+            switch (tmp_arguments.length)
+            {
+                case 0: 
+                    return callee.object[callee.property]();
+                break;        
+                case 1: 
+                    return callee.object[callee.property](tmp_arguments[0]);
+                break;    
+                case 2: 
+                    return callee.object[callee.property](tmp_arguments[0],tmp_arguments[1]);
+                break;
+                case 3: 
+                    return callee.object[callee.property](tmp_arguments[0],tmp_arguments[1],tmp_arguments[2]);
+                break;    
+            }
+        }    
+        else 
+        {
+            console.log(typeof callee.property);
+            // Function processing.
+            switch (tmp_arguments.length)
+            {
+                case 0: 
+                    return callee.property();
+                break;        
+                case 1: 
+                    return callee.property(tmp_arguments[0]);
+                break;    
+                case 2: 
+                    return callee.property(tmp_arguments[0],tmp_arguments[1]);
+                break;
+                case 3: 
+                    return callee.property(tmp_arguments[0],tmp_arguments[1],tmp_arguments[2]);
+                break;    
+            }
+            
+            // Return function result.
+            return null;
+        }    
+    };
+
+    parser._process_member_expression = function(pNode)
+    {
+        var member = {};
+        switch (pNode.object.type)
+        {
+            case 'Identifier': 
+                member.object = this._process_identifier(pNode.object);
+            break;    
+            case 'MemberExpression':
+                member.object = 'function';
+            break;    
+        }
+        switch (pNode.property.type)
+        {
+            case 'Identifier':
+                member.property = this._process_identifier(pNode.property);
+            break;        
+        }    
+            
+        // Return function result.
+        return member;
+    };
+
+    parser._process_variable_declarator = function(pNode)
+    {
+        // processing variable declaration.
+        console.log('processing variable declarator');
+        console.log(pNode);
+        
+        // Process initialize value for variable.
+        var init;
+        switch (pNode.init.type) 
+        {
+            case 'CallExpression':
+                // Get call expression.
+                init = this._process_call_expression(pNode.init);
+            break;
+            case 'Literal': 
+                init = pNode.init.value;
+            break;        
+        }
+        
+        // Process identifier value for variable.
+        switch (pNode.id.type) 
+        {
+            case 'Identifier':
+                window[pNode.id.name] = init;
+            break; 
+        }
+
+        console.log(window[pNode.id.name]);
+    };    
+
+    /*
+     * Definition of private methods - global declaration and statement nodes.   
+     */
+
+    parser._process_expression_statement = function()
+    {
+        // Process the expression
+        console.log('processing expression statement');
+        
+        // Select type of expression to process.
+        switch (this._current_node.expression.type)
+        {
+            case 'AssignmentExpression':
+                // Process an assignment expression.
+                this._process_assignment_expression(this._current_node.expression);
+            break;    
+            case 'CallExpression':
+                this._process_call_expression(this._current_node.expression);
+            break;    
+        }
+    
+        // Set parent node.
+        this._current_node = this._current_node.parent;
+
+        // Set the parser status.
+        this._process_node();
+    };    
+
+    parser._process_variable_declaration = function()
+    {
+        // Process list of variables.
+        for (var i = 0;i < this._current_node.declarations.length;i++)
+        {
+            this._process_variable_declarator(this._current_node.declarations[i]);
+        }    
+    
+        // Set parent node.
+        this._current_node = this._current_node.parent;
+
+        // Set the parser status.
+        this._process_node();
+    };   
+
+    parser._process_program = function()
+    {
+        // Check if all nodes in script have been processed.
+        if (this._current_node.index < this._current_node.body.length)		
+	{
+            // Set current node to next node in list.
+            this._current_node.index++;
+            this._current_node.body[this._current_node.index - 1].parent = this._current_node;
+            this._current_node = this._current_node.body[this._current_node.index - 1];
+
+            // Return to the node processessor.
+            this._process_node();
+        }
+        else
+        {
+            // All nodes are processed, set status to finished.
+            this._status = 2;
+        
+            // Complete the inline item.    
+            if (this._inline_script != null)
+            {    
+                this._inline_script.complete();
+            }    
+        } 
+    }; 
+
+    /*
+     * Definition of private methods - global node processor.   
+     */
+
     parser._process_node = function()
     {
+        console.log(this._current_node);
+        
         // Set the parser status.
         switch (this._current_node.type)
 	{
             case 'Program':
-		if (this._current_node.index < this._current_node.body.length)		
-		{
-                    this._current_node.index++;
-                    this._current_node.body[this._current_node.index - 1].parent = this._current_node;
-                    this._current_node = this._current_node.body[this._current_node.index - 1];
-
-                    // Set the parser status.
-                    this._process_node();
-                }
-                else
-                {
-                    // End the parser.
-                    this._status = 2;
-        
-                    // Complete the inline item.    
-                    if (this._inline_script != null)
-                    {    
-                        this._inline_script.complete();
-                    }    
-                } 
+                // Process program node.
+                this._process_program();
             break; 
+            case 'ExpressionStatement':
+                // Process a variable declarator.
+                this._process_expression_statement();
+            break;		
+            case 'IfStatement':
+                // Process a if statement declarator.
+                this._process_if_statement();
+            break;
+
             case 'BlockStatement':
                 // Process a variable declarator.
-                this._node_block_expression(this._current_node);
+                //this._node_block_expression(this._current_node);
             break;		
             case 'EmptyStatement':
                 // Set parent node.
-                this._current_node = this._current_node.parent;
+                //this._current_node = this._current_node.parent;
 
                 // Set the parser status.
-                this._process_node();
+                //this._process_node();
             break
-            case 'ExpressionStatement':
-                // Process a variable declarator.
-                this._node_expression_statement(this._current_node);
-            break;		
             case 'VariableDeclaration':
                 // Process a variable declarator.
-                this._node_variable_declarator(this._current_node.declarations[0]);
+                this._process_variable_declaration();
             break; 
         }
     };
+
+
+    /*
+     * Definition of private methods - expressions
+     */
+
+    parser._expression = function(pNode)
+    {
+        console.log('expression');
+        console.log(pNode);
+
+        switch (pNode.type)
+        {
+        }
+    
+        return 'a';
+    };
+
+    /*
+     * Definition of private methods - statements
+     */
+
+    parser._block_statement = function()
+    {
+        console.log('block statement');
+        console.log(this._current_node);
+    };    
+
+    parser._expression_statement = function()
+    {
+        // Process the experession node from the statement.
+        var returnvalue = this._expression(this._current_node.expression);
+        
+        if (returnvalue !== null)
+        {
+            // Set parent node.
+            this._current_node = this._current_node.parent;
+
+            // Next step.
+            this._statement();
+        }    
+    };
+
+    parser._variable_declarator = function(pNode)
+    {
+        console.log('variable declaration');
+        
+        // Next step.
+        this._statement();
+    };    
+
+    parser._variable_declaration = function()
+    {
+        // Initialize index counter only the fitst time.
+        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
+        
+        // Check if all nodes in script have been processed.
+        if (this._current_node.index < this._current_node.declarations.length)		
+	{
+            // Set current node to next node in list.
+            this._current_node.index++;
+
+            // Process the variable declaration.
+            this._variable_declarator(this._current_node.declarations[this._current_node.index - 1]);
+        } 
+        else
+        {
+            // Set parent node.
+            this._current_node = this._current_node.parent;
+
+            // Process statements.
+            this._statement();
+        }    
+    };
+    
+    parser._statement = function()
+    {
+        // Select the proper statement.
+        switch(this._current_node.type)
+        { 
+            case 'BlockStatement':
+                this._block_statement();
+            break;
+            case 'ExpressionStatement':
+                this._expression_statement();
+            break;    
+            case 'VariableDeclaration':
+                this._variable_declaration();
+            break; 
+            default:
+                this._program();
+        }
+    };
+
+    /*
+     * Definition of private methods - program.
+     */
+
+    parser._program = function()
+    {
+        // Initialize index counter only the fitst time.
+        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
+        
+        // Check if all nodes in script have been processed.
+        if (this._current_node.index < this._current_node.body.length)		
+	{
+            // Set current node to next node in list.
+            this._current_node.index++;
+            this._current_node.body[this._current_node.index - 1].parent = this._current_node;
+            this._current_node = this._current_node.body[this._current_node.index - 1];
+
+            // Return to the node processessor.
+            this._statement();
+        }
+        else
+        {
+            // All nodes are processed, set status to finished.
+            this._status = 2;
+        
+            // Complete the inline item.    
+            if (this._inline_script != null)
+            {    
+                this._inline_script.complete();
+            }    
+        } 
+    }; 
+
+    /*
+     * Definition of private methods - statements
+     */
 
     parser._runstatement = function(pNode)
     {
@@ -981,13 +1383,10 @@
 	this._inline_script = pInline_script;
 	
 	// Set the programm node.
-	this._current_node        = pAst_tree;
-	this._current_node.parent = null;
-	this._current_node.index  = 0;
-	this._status              = 1;
+	this._current_node = pAst_tree;
         
     	// Process the next node. 
-	osweb.parser._process_node();
+	osweb.parser._program();
     };
 
     // Bind the parser class to the osweb namespace.

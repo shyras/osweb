@@ -1000,9 +1000,8 @@
             this._video = pSrc.data;
             
             // Set the event anchor for 
-            this._video.on("ended"     , osweb.events._videoEnded.bind(this));
-            this._video.on("play"      , osweb.events._videoPlay.bind(this));
-            //this._video.on("timeupdate", osweb.events._videoUpdate.bind(this));
+            this._video.on("ended", osweb.events._videoEnded.bind(this));
+            this._video.on("play" , osweb.events._videoPlay.bind(this));
     	}
     }; 
 	
@@ -1029,7 +1028,6 @@
             if ((this._script !== null) && (this._event_handler_always === true))
             {
                 // Start the parser
-                console.log('execute by frame');
                 osweb.parser._run(null, this._script);    		
             }    
         }    

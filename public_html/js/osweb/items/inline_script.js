@@ -135,6 +135,8 @@
 
     p.prepare = function()
     {
+        console.log(this.vars._prepare)
+        
 	// Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);

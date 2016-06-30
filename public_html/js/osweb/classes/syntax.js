@@ -21,7 +21,7 @@
 
     syntax.isNumber = function(n)
     {
-        return Number(n) == n;
+        return Number(n) === n; // aangepast van == naar ===
     };
 
     syntax.isFloat = function(n)
@@ -31,7 +31,11 @@
 
     syntax.remove_quotes = function(pString)
     {
-	if ((pString[0] == '"') && (pString[pString.length - 1] == '"'))
+        if (pString == '""')
+        {
+            return '';
+        }    
+        else if ((pString[0] == '"') && (pString[pString.length - 1] == '"'))
 	{
             return pString.slice(1, pString.length - 1);
 	}

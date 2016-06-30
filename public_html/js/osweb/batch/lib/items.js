@@ -166,10 +166,14 @@
 		{
                     // Rettrieve the value of the variable, remove additional quotes.
                     var value = osweb.syntax.remove_quotes(tokens[2]);
+
+                    console.log(tokens[1] + ',' + value);
+
                     // Check for number types.
                     value = osweb.syntax.isNumber(value) ? Number(value) : value;
                     
                     this.vars.set(tokens[1], value);
+
                     return true;
 		}
             }
@@ -1067,6 +1071,8 @@
 
     p.prepare = function()
     {
+        console.log(this.vars._prepare)
+        
 	// Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);
