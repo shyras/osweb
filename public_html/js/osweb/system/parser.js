@@ -48,748 +48,490 @@
             return null;
         }	   	
     };
-
-    /* parser._node_identifier = function(pNode, pType)
-    {
-        // Select te type of identifier to process.
-        switch (pType) 
-        {   
-            case 'object':
-                // Process the object 
-                switch(pNode.name)
-                {
-                    case 'canvas': 
-                        return {'object': new osweb.canvas()};
-                    break;    
-                    case 'exp':
-                        // Return the experiment object as exp.
-                        return {'object': osweb.runner.experiment};
-                    break;    
-                    case 'mouse': 
-                        // Create a osweb canvas object.
-                        return {'object': new osweb.mouse()};
-                    break;    
-                    case 'self':
-                        // Return the experiment object as self.
-                        return {'object': osweb.runner.experiment};
-                    break;    
-                    case 'var': 
-                        return {'object': osweb.runner.experiment.vars};
-                    break;    
-                    default:
-                        // Check if the variable exists.
-                        if (window[pNode.name] === undefined) 
-                        {
-                            // Create the variable with null setting.
-                            window[pNode.name] = null;
-                        
-                            // Return the window variable.                
-                            return {'object': pNode.name };
-                        }
-                        else
-                        {
-                            return {'object': window[pNode.name]};
-                        }
-                }            
-            break;
-            case 'property':
-                return {'property': pNode.name};
-            break;
-            case 'value':
-                return window[pNode.name];
-            break    
-        }    
-    };
-
-    parser._node_binary_expression = function(pNode)
-    {
-        // Process left node.
-        var tmp_left;
-        switch (pNode.left.type)  
-        {
-            case 'Identifier':
-                tmp_left = this._node_identifier(pNode.left, 'value');
-            break;    
-            case 'Literal': 
-                tmp_left = pNode.left.value;  
-            break;    
-        }
-
-        // Process right node.
-        var tmp_right;
-        switch (pNode.right.type)  
-        {
-            case 'Identifier':
-                tmp_right = this._node_identifier(pNode.right, 'value');
-            break;    
-            case 'Literal': 
-                tmp_right = pNode.right.value;  
-            break;    
-        }
-
-        // Process operator
-        switch (pNode.operator)
-        {
-            case '-': 
-                // Substraction.
-                return tmp_left - tmp_right;
-            case '%': 
-                // Concatenation.    
-                return tmp_left + tmp_right;
-            break;        
-        }
-    };
-
-    parser._node_call_expression = function(pNode)
-    {
-       // console.log('node_call_expression');
-
-        // Process arguments.
-        var tmp_arguments = [];
-        for (var i = 0; i < pNode.arguments.length;i++)
-        {
-            // Process each argument depending on its type. 
-            switch (pNode.arguments[i].type)
-            {
-                case 'BinaryExpression': 
-                    tmp_arguments.push(this._node_binary_expression(pNode.arguments[i]));
-                break;    
-                case 'Literal': 
-                    tmp_arguments.push(pNode.arguments[i].value);
-                break;    
-            } 
-        }
-        
-        // Process caller.
-        switch (pNode.callee.type)
-        {
-            case 'Identifier': 
-                var tmp_callee  = this._node_identifier(pNode.callee, 'object');
-                var call_result = tmp_callee.object;
-            break;    
-            case 'MemberExpression': 
-                var tmp_callee = this._node_member_expression(pNode.callee);
-
-                // Check if the given object is defined as string name or as an object itself.
-                if (typeof tmp_callee.object === 'string')
-                {
-                    if (tmp_callee.object === 'function')
-                    {
-                        // Ugly hack for parameters.
-                        switch (tmp_arguments.length)
-                        {
-                            case 0: var call_result = window[tmp_callee.property]();
-                            break;        
-                            case 1: var call_result = window[tmp_callee.property](tmp_arguments[0]);
-                            break;        
-                            case 2: var call_result = window[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
-                            break;        
-                        }    
-                    } 
-                    else
-                    {    
-                        // Ugly hack for parameters.
-                        switch (tmp_arguments.length)
-                        {
-                            case 0: var call_result = window[tmp_callee.object][tmp_callee.property]();
-                            break;        
-                            case 1: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0]);
-                            break;        
-                            case 2: var call_result = window[tmp_callee.object][tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
-                            break;        
-                        }    
-                    }
-                }    
-                else
-                {
-                    switch (tmp_arguments.length)
-                    {
-                        case 0: var call_result = tmp_callee.object[tmp_callee.property]();
-                        break;
-                        case 1: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0]);
-                        break;
-                        case 2: var call_result = tmp_callee.object[tmp_callee.property](tmp_arguments[0],tmp_arguments[1]);
-                        break;
-                    }       
-                }    
-            break;    
-        }
-   
-        if (tmp_callee.property != 'sleep')
-        {
-            // Temporal for loop testing.
-            if (typeof tmp_callee.object === 'function')
-            {    
-                return tmp_callee.object(tmp_arguments[0],tmp_arguments[1]);
-            }
-            else
-            {    
-                // Return result.
-                return call_result;
-            }    
-        }    
-        else
-        {
-            return 'sleep';
-        }    
-    };
-
-    parser._node_member_expression = function(pNode)
-    {
-        // Process the object leaf.
-        switch (pNode.object.type)
-        {
-            case 'Identifier':
-                var tmp_object = this._node_identifier(pNode.object, 'object');
-            break;    
-            case 'MemberExpression':
-                var tmp_object = this._node_member_expression(pNode.object);
-                if (tmp_object.property == 'functions')
-                {
-                    tmp_object.object = 'function';
-                }  
-            break;    
-        }
-     
-        // Process the property leaf.
-        switch (pNode.property.type)
-        {
-            case 'Identifier':
-                var tmp_property = this._node_identifier(pNode.property,'property');
-            break;    
-        }
-
-        // Return the function result.
-        return {'object': tmp_object.object, 'property': tmp_property.property};
-    };
-
-
-    parser._node_block_expression = function(pNode)
-    {
-        console.log('node_block_expression');
-        console.log(pNode);
-        
-        // Set parent node.
-        this._current_node = this._current_node.parent;
-
-        // Set the parser status.
-        this._process_node();
-    };    
-
-    parser._node_expression_statement = function(pNode)
-    {
-        // Process the expression
-        switch (pNode.expression.type)
-        {
-            case 'CallExpression':
-                var tmp_expression = this._node_call_expression(pNode.expression);    
-            break;
-        } 
-
-        if (tmp_expression != 'sleep')
-        {
-            // Set parent node.
-            this._current_node = this._current_node.parent;
-
-            // Set the parser status.
-            this._process_node();
-        }
-    };
-
-    parser._node_variable_declarator = function(pNode)
-    {
-        //console.log('node_variable_declarator');
-        //console.log(pNode);
-        
-        // Process the id lead.
-        switch (pNode.id.type)
-        {
-            case 'Identifier':
-                // Process id as identifier.
-                var tmp_id = this._node_identifier(pNode.id, 'object');
-            break;    
-        }
-
-        // Process the init leaf.
-        switch (pNode.init.type)
-        {
-            case 'BinaryExpression': 
-                // Process init as call expression.
-                var tmp_init = this._node_binary_expression(pNode.init);
-            break;    
-            case 'CallExpression':
-                // Process init as call expression.
-                var tmp_init = this._node_call_expression(pNode.init, true);    
-            break;    
-        }
-
-        // Process declaration.
-        if (typeof tmp_id.object === 'string')
-        {
-            window[tmp_id.object] = tmp_init;
-        } 
-        else
-        {
-            console.log('b');
-        }   
-
-        // Set parent node.
-        this._current_node = this._current_node.parent;
-
-        // Set the parser status.
-        this._process_node();
-    };
-
-
-    parser._node_if_statement = function(pNode)
-    {
-        console.log('if');
-        
-        // Set parent node.
-        this._current_node = this._current_node.parent;
-
-        // Set the parser status.
-        this._process_node();
-    };    */
     
-    
-    parser._process_literal = function(pNode)
-    {
-        // Return function result.
-        return pNode.value;
-    };
-
-    parser._process_identifier = function(pNode)
-    {
-        // Return function result.
-        if (typeof window[pNode.name] === 'undefined')
-        {
-            // Return the string name.
-            return pNode.name;
-        }    
-        else
-        {
-            // Return the global defined object.
-            return window[pNode.name];
-        }    
-    };
-
-    parser._process_assignment_expression = function(pNode)
-    {
-        console.log('processing assignment expression');
-
-        // Process right node
-        var right;
-        switch (pNode.right.type)
-        {
-            case 'Literal': 
-                // Process member expression.
-                right  = this._process_literal(pNode.right);
-            break;    
-        }
-
-        // Process left node
-        var left;
-        switch (pNode.left.type)
-        {
-            case 'MemberExpression': 
-                // Process member expression.
-                left  = this._process_member_expression(pNode.left);
-            break;    
-        }
-
-        // process operator
-        switch (pNode.operator)
-        {
-            case '=':
-                // Process the '=' operator.
-                left = right;    
-            break;    
-        }
-    };
-    
-    parser._process_binary_expression = function(pNode)
-    {
-        // Process right node
-        var right_node;
-        switch (pNode.right.type)  
-        {
-            case 'Identifier':
-                right_node = this._process_identifier(pNode.right);
-            break;    
-            case 'Literal': 
-                right_node = this._process_literal(pNode.right);  
-            break;    
-            }
-    };        
-
-    
-    
-    parser._process_call_expression = function(pNode)
-    {
-        // Process arguments node.
-        var tmp_arguments = [];
-        for (var i = 0; i < pNode.arguments.length;i++)
-        {
-            // Process each argument depending on its type. 
-            switch (pNode.arguments[i].type)
-            {
-                case 'BinaryExpression': 
-                    tmp_arguments.push(this._process_binary_expression(pNode.arguments[i]));
-                break;    
-                case 'Identifier': 
-                    tmp_arguments.push(this._process_identifier(pNode.arguments[i]));
-                break;    
-                case 'Literal': 
-                    tmp_arguments.push(this._process_literal(pNode.arguments[i]));
-                break;    
-            } 
-        }
-
-        // Process call node.
-        var callee;
-        switch (pNode.callee.type)
-        {
-            case 'MemberExpression':
-                callee = this._process_member_expression(pNode.callee);
-            break;
-        }
-
-        console.log(callee);
-
-        // Execute call expression.
-        if (typeof callee.object === 'object')
-        {
-            switch (tmp_arguments.length)
-            {
-                case 0: 
-                    return callee.object[callee.property]();
-                break;        
-                case 1: 
-                    return callee.object[callee.property](tmp_arguments[0]);
-                break;    
-                case 2: 
-                    return callee.object[callee.property](tmp_arguments[0],tmp_arguments[1]);
-                break;
-                case 3: 
-                    return callee.object[callee.property](tmp_arguments[0],tmp_arguments[1],tmp_arguments[2]);
-                break;    
-            }
-        }    
-        else 
-        {
-            console.log(typeof callee.property);
-            // Function processing.
-            switch (tmp_arguments.length)
-            {
-                case 0: 
-                    return callee.property();
-                break;        
-                case 1: 
-                    return callee.property(tmp_arguments[0]);
-                break;    
-                case 2: 
-                    return callee.property(tmp_arguments[0],tmp_arguments[1]);
-                break;
-                case 3: 
-                    return callee.property(tmp_arguments[0],tmp_arguments[1],tmp_arguments[2]);
-                break;    
-            }
-            
-            // Return function result.
-            return null;
-        }    
-    };
-
-    parser._process_member_expression = function(pNode)
-    {
-        var member = {};
-        switch (pNode.object.type)
-        {
-            case 'Identifier': 
-                member.object = this._process_identifier(pNode.object);
-            break;    
-            case 'MemberExpression':
-                member.object = 'function';
-            break;    
-        }
-        switch (pNode.property.type)
-        {
-            case 'Identifier':
-                member.property = this._process_identifier(pNode.property);
-            break;        
-        }    
-            
-        // Return function result.
-        return member;
-    };
-
-    parser._process_variable_declarator = function(pNode)
-    {
-        // processing variable declaration.
-        console.log('processing variable declarator');
-        console.log(pNode);
-        
-        // Process initialize value for variable.
-        var init;
-        switch (pNode.init.type) 
-        {
-            case 'CallExpression':
-                // Get call expression.
-                init = this._process_call_expression(pNode.init);
-            break;
-            case 'Literal': 
-                init = pNode.init.value;
-            break;        
-        }
-        
-        // Process identifier value for variable.
-        switch (pNode.id.type) 
-        {
-            case 'Identifier':
-                window[pNode.id.name] = init;
-            break; 
-        }
-
-        console.log(window[pNode.id.name]);
-    };    
-
     /*
-     * Definition of private methods - global declaration and statement nodes.   
+     * Definition of private methods - node types
      */
 
-    parser._process_expression_statement = function()
+    parser._set_return_value = function(pNode, pValue)
     {
-        // Process the expression
-        console.log('processing expression statement');
-        
-        // Select type of expression to process.
-        switch (this._current_node.expression.type)
+        var index=0;
+        while (typeof pNode['returnvalue' + String(index)] !== 'undefined')
         {
-            case 'AssignmentExpression':
-                // Process an assignment expression.
-                this._process_assignment_expression(this._current_node.expression);
-            break;    
-            case 'CallExpression':
-                this._process_call_expression(this._current_node.expression);
-            break;    
-        }
+            index++;
+        }    
+        
+        // Set the return value\
+        pNode['returnvalue' + String(index)] = pValue;
+    };
     
-        // Set parent node.
-        this._current_node = this._current_node.parent;
+    /*
+     * Definition of private methods - node types
+     */
+    
+    parser._node_binary_expression = function()
+    {
+        // Initialize status property.
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // process right expression;
+                this._current_node.status = 1;
+                this._current_node.right.parent = this._current_node;
+                this._current_node = this._current_node.right;
 
-        // Set the parser status.
-        this._process_node();
+                // Return to the node processessor.
+                this._process_node();
+            break;        
+            case 1: 
+                // process right expression;
+                this._current_node.status = 2;
+                this._current_node.left.parent = this._current_node;
+                this._current_node = this._current_node.left;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;        
+            case 2: 
+                var left,right;
+                if  (typeof window[this._current_node.returnvalue0] === 'undefined')
+                {
+                    var right = this._current_node.returnvalue0;
+                }
+                else
+                {
+                    var right = window[this._current_node.returnvalue0];
+                }
+                var left,right;
+                if  (typeof window[this._current_node.returnvalue1] === 'undefined')
+                {
+                    var left = this._current_node.returnvalue1;
+                }
+                else
+                {
+                    var left = window[this._current_node.returnvalue1];
+                }
+            
+                // Select the binary operator to perform.
+                switch (this._current_node.operator)
+                {
+                    case '-':
+                        // Process call - check for blocking methods.
+    
+                        this._set_return_value(this._current_node.parent,left - right);
+                    break;
+                }
+
+                // Set parent node.
+                this._current_node.status = 3;
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;        
+        }    
     };    
 
-    parser._process_variable_declaration = function()
+    parser._node_call_expression = function()
     {
-        // Process list of variables.
-        for (var i = 0;i < this._current_node.declarations.length;i++)
+        // Initialize status property.
+        this._current_node.arguments = (typeof this._current_node.arguments === 'undefined') ? [] : this._current_node.arguments;
+        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0  : this._current_node.index; 
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
         {
-            this._process_variable_declarator(this._current_node.declarations[i]);
+            case 0: 
+                // Process arguments.
+                if (this._current_node.index < this._current_node.arguments.length)		
+                {
+                    // Set current node to next node in list.
+                    this._current_node.index++;
+                    this._current_node.arguments[this._current_node.index - 1].parent = this._current_node;
+                    this._current_node = this._current_node.arguments[this._current_node.index - 1];
+        
+                    // Return to the node processessor.
+                    this._process_node();
+                } 
+                else
+                { 
+                    // Set parent node.
+                    this._current_node.status = 1;
+
+                    // Return to the node processessor.
+                    this._process_node();
+                }
+            break;
+            case 1: 
+                // Set parent node.
+                this._current_node.status = 2;
+                this._current_node.callee.parent = this._current_node;
+                this._current_node = this._current_node.callee;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+            case 2: 
+                // Set status of node.
+                this._current_node.status = 3;
+            
+                // Create the aruments array.
+                var tmp_arguments = [];
+                for (var i=0;i< this._current_node.arguments.length; i++)
+                {
+                    if (typeof window[this._current_node['returnvalue' + String(i)]] !== 'undefined')
+                    {
+                        tmp_arguments.push(window[this._current_node['returnvalue' + String(i)]]);
+                    }    
+                    else
+                    {    
+                        tmp_arguments.push(this._current_node['returnvalue' + String(i)]);
+                    }    
+                }    
+                    
+                // Select the type of call to process
+                var callee = this._current_node['returnvalue' + String(this._current_node.arguments.length)];
+                var returnvalue = null;
+                if (callee.type == 'function')
+                {
+                    // function call
+                    returnvalue = window[callee.obj].apply(null, tmp_arguments);
+                    
+                    // Process call - check for blocking methods.
+                    this._current_node.parent['returnvalue' + String(this._current_node.arguments.length)] = returnvalue;
+                
+                    // Return to the node processessor.
+                    this._process_node();
+                }    
+                else if (callee.type == 'object')
+                {
+                    if ((callee.obj == 'clock') && (callee.prop == 'sleep'))
+                    {
+                        // Process special calls with blocking (no direct result processing).
+                        window[callee.obj][callee.prop].apply(window[callee.obj], tmp_arguments);
+                    }    
+                    else
+                    {    
+                        // object methods calls.
+                        returnvalue = window[callee.obj][callee.prop]();
+                    
+                        // Process call - check for blocking methods.
+                        this._current_node.parent['returnvalue' + String(this._current_node.arguments.length)] = returnvalue;
+                
+                        // Return to the node processessor.
+                        this._process_node();
+                    }        
+                }
+                else
+                {
+                    switch (callee)
+                    {   
+                        case 'canvas':
+                            returnvalue = new osweb.canvas();
+                        break;    
+                    }    
+                  
+                    // Process call - check for blocking methods.
+                    this._current_node.parent['returnvalue' + String(this._current_node.arguments.length)] = returnvalue;
+                
+                    // Return to the node processessor.
+                    this._process_node();
+                }    
+            break;    
+            case 3: 
+                // Set parent node.
+                this._current_node.status = 4;
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;        
         }    
-    
+    };
+
+    parser._node_expression_statement = function()
+    {
+        // Initialize status property.
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // Set parent node.
+                this._current_node.status = 1;
+                this._current_node.expression.parent = this._current_node;
+                this._current_node = this._current_node.expression;
+
+                // Return to the node processessor.
+                 this._process_node();
+            break;
+            case 1: 
+                // Set parent node.
+                this._current_node.status = 2;
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;
+        ;}    
+    };
+
+    parser._node_identifier = function()
+    {
+        // Return function result.
+        if (typeof window[this._current_node.name] === 'undefined')
+        {
+            // Item is undefined, create it without value/type definition.
+            window[this._current_node.name] = null;
+        }
+        
+        // Set the return value.
+        this._set_return_value(this._current_node.parent, this._current_node.name);
+
         // Set parent node.
         this._current_node = this._current_node.parent;
 
-        // Set the parser status.
+        // Return to the node processessor.
         this._process_node();
-    };   
+    };
 
-    parser._process_program = function()
+    parser._node_literal = function()
     {
-        // Check if all nodes in script have been processed.
-        if (this._current_node.index < this._current_node.body.length)		
-	{
-            // Set current node to next node in list.
-            this._current_node.index++;
-            this._current_node.body[this._current_node.index - 1].parent = this._current_node;
-            this._current_node = this._current_node.body[this._current_node.index - 1];
-
-            // Return to the node processessor.
-            this._process_node();
-        }
-        else
-        {
-            // All nodes are processed, set status to finished.
-            this._status = 2;
+        // Set the return value.
+        this._set_return_value(this._current_node.parent, this._current_node.value);
         
-            // Complete the inline item.    
-            if (this._inline_script != null)
-            {    
-                this._inline_script.complete();
-            }    
-        } 
-    }; 
+        // Set parent node.
+        this._current_node = this._current_node.parent;
+
+        // Return to the node processessor.
+        this._process_node();
+    };
+
+    parser._node_member_expression = function()
+    {
+        // Initialize status property.
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // Process object.
+                this._current_node.status = 1;
+                this._current_node.object.parent = this._current_node;
+                this._current_node = this._current_node.object;
+                
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+            case 1: 
+                // Process object.
+                this._current_node.status = 2;
+                this._current_node.property.parent = this._current_node;
+                this._current_node = this._current_node.property;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+            case 2: 
+                // Set the return value.
+                //console.log('member->');
+                //console.log(typeof this._current_node.returnvalue0);
+                    
+                if (typeof this._current_node.returnvalue0 == 'object')
+                {
+                    this._set_return_value(this._current_node.parent,{ 'obj': this._current_node.returnvalue1, 'prop': null, 'type': 'function'});
+                }
+                else
+                {    
+                    this._set_return_value(this._current_node.parent,{ 'obj': this._current_node.returnvalue0, 'prop': this._current_node.returnvalue1,'type':'object'});
+                }
+                
+                // Set parent node.
+                this._current_node.status = 3;
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+        }        
+    };
+
+    parser._node_program = function()
+    {
+        // Initialize index counter only the fitst time.
+        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // Check if all nodes in script have been processed.
+                if (this._current_node.index < this._current_node.body.length)		
+            	{
+                    // Set current node to next node in list.
+                    this._current_node.index++;
+                    this._current_node.body[this._current_node.index - 1].parent = this._current_node;
+                    this._current_node = this._current_node.body[this._current_node.index - 1];
+
+                    // Return to the node processessor.
+                    this._process_node();
+                }
+                else
+                {
+                    // End status.
+                    this._current_node.status = 1;
+                
+                    // Return to the node processessor.
+                    this._process_node();
+                }    
+            break;
+            case 1:
+                // Change the node stats.                                
+                this._current_node.status = 2;
+
+                // All nodes are processed, set status to finished.
+                this._status = 2;
+        
+                // Complete the inline item.    
+                if (this._inline_script != null)
+                {    
+                    this._inline_script.complete();
+                }    
+            break;    
+        }   
+    };    
+
+    parser._node_variable_declaration = function()
+    {
+        // Initialize index counter only the fitst time.
+        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // Check if all nodes in script have been processed.
+                if (this._current_node.index < this._current_node.declarations.length)		
+        	{
+                    // Set current node to next node in list.
+                    this._current_node.index++;
+                    this._current_node.declarations[this._current_node.index - 1].parent = this._current_node;
+                    this._current_node = this._current_node.declarations[this._current_node.index - 1];
+
+                    // Return to the node processessor.
+                    this._process_node();
+                } 
+                else
+                {
+                    // Change the node stats.                                
+                    this._current_node.status = 1;
+
+                    // Return to the node processessor.
+                    this._process_node();
+                }    
+            break; 
+            case 1:
+                // Change the node stats.                                
+                this._current_node.status = 2;
+
+                // Set parent node.
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;
+        }   
+    };
+
+    parser._node_variable_declarator = function()
+    {
+        // Initialize status property.
+        this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
+        
+        // Process the current status.
+        switch (this._current_node.status)
+        {
+            case 0: 
+                // Process init.
+                this._current_node.status      = 1;
+                this._current_node.init.parent = this._current_node;
+                this._current_node             = this._current_node.init;
+                
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+            case 1: 
+                // process id.
+                this._current_node.status    = 2;
+                this._current_node.id.parent = this._current_node;
+                this._current_node           = this._current_node.id;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+            case 2: 
+                // Set variable.
+                window[this._current_node.returnvalue1] = this._current_node.returnvalue0;      
+                
+                // Set parent node.
+                this._current_node.status = 3;
+                this._current_node = this._current_node.parent;
+
+                // Return to the node processessor.
+                this._process_node();
+            break;    
+        }
+    };
 
     /*
-     * Definition of private methods - global node processor.   
+     * Definition of private methods - process node
      */
 
     parser._process_node = function()
     {
+        console.log('processing node');
         console.log(this._current_node);
         
-        // Set the parser status.
-        switch (this._current_node.type)
-	{
-            case 'Program':
-                // Process program node.
-                this._process_program();
-            break; 
-            case 'ExpressionStatement':
-                // Process a variable declarator.
-                this._process_expression_statement();
-            break;		
-            case 'IfStatement':
-                // Process a if statement declarator.
-                this._process_if_statement();
-            break;
-
-            case 'BlockStatement':
-                // Process a variable declarator.
-                //this._node_block_expression(this._current_node);
-            break;		
-            case 'EmptyStatement':
-                // Set parent node.
-                //this._current_node = this._current_node.parent;
-
-                // Set the parser status.
-                //this._process_node();
-            break
-            case 'VariableDeclaration':
-                // Process a variable declarator.
-                this._process_variable_declaration();
-            break; 
-        }
-    };
-
-
-    /*
-     * Definition of private methods - expressions
-     */
-
-    parser._expression = function(pNode)
-    {
-        console.log('expression');
-        console.log(pNode);
-
-        switch (pNode.type)
-        {
-        }
-    
-        return 'a';
-    };
-
-    /*
-     * Definition of private methods - statements
-     */
-
-    parser._block_statement = function()
-    {
-        console.log('block statement');
-        console.log(this._current_node);
-    };    
-
-    parser._expression_statement = function()
-    {
-        // Process the experession node from the statement.
-        var returnvalue = this._expression(this._current_node.expression);
-        
-        if (returnvalue !== null)
-        {
-            // Set parent node.
-            this._current_node = this._current_node.parent;
-
-            // Next step.
-            this._statement();
-        }    
-    };
-
-    parser._variable_declarator = function(pNode)
-    {
-        console.log('variable declaration');
-        
-        // Next step.
-        this._statement();
-    };    
-
-    parser._variable_declaration = function()
-    {
-        // Initialize index counter only the fitst time.
-        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
-        
-        // Check if all nodes in script have been processed.
-        if (this._current_node.index < this._current_node.declarations.length)		
-	{
-            // Set current node to next node in list.
-            this._current_node.index++;
-
-            // Process the variable declaration.
-            this._variable_declarator(this._current_node.declarations[this._current_node.index - 1]);
-        } 
-        else
-        {
-            // Set parent node.
-            this._current_node = this._current_node.parent;
-
-            // Process statements.
-            this._statement();
-        }    
-    };
-    
-    parser._statement = function()
-    {
-        // Select the proper statement.
+        // Select the type of node to process
         switch(this._current_node.type)
         { 
-            case 'BlockStatement':
-                this._block_statement();
+            case 'BinaryExpression':
+                this._node_binary_expression();
+            break;
+            case 'CallExpression':
+                this._node_call_expression();
             break;
             case 'ExpressionStatement':
-                this._expression_statement();
-            break;    
+                this._node_expression_statement();
+            break;
+            case 'Identifier':
+                this._node_identifier();
+            break;
+            case 'Literal':
+                this._node_literal();
+            break;
+            case 'MemberExpression':
+                this._node_member_expression();
+            break;
+            case 'Program':
+                this._node_program();
+            break;
             case 'VariableDeclaration':
-                this._variable_declaration();
+                this._node_variable_declaration();
             break; 
-            default:
-                this._program();
+            case 'VariableDeclarator':
+                this._node_variable_declarator();
+            break; 
         }
     };
-
-    /*
-     * Definition of private methods - program.
-     */
-
-    parser._program = function()
-    {
-        // Initialize index counter only the fitst time.
-        this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0 : this._current_node.index; 
-        
-        // Check if all nodes in script have been processed.
-        if (this._current_node.index < this._current_node.body.length)		
-	{
-            // Set current node to next node in list.
-            this._current_node.index++;
-            this._current_node.body[this._current_node.index - 1].parent = this._current_node;
-            this._current_node = this._current_node.body[this._current_node.index - 1];
-
-            // Return to the node processessor.
-            this._statement();
-        }
-        else
-        {
-            // All nodes are processed, set status to finished.
-            this._status = 2;
-        
-            // Complete the inline item.    
-            if (this._inline_script != null)
-            {    
-                this._inline_script.complete();
-            }    
-        } 
-    }; 
 
     /*
      * Definition of private methods - statements
@@ -803,14 +545,16 @@
     
     parser._run = function(pInline_script, pAst_tree)
     {
-	// Set the ast_tree. 
+        // Set the inline item. 
 	this._inline_script = pInline_script;
 	
-	// Set the programm node.
-	this._current_node = pAst_tree;
+	// Set the first node and its parent.
+	this._current_node        = pAst_tree;
+        this._current_node.parent = null;
+        this._status              = 1;
         
-    	// Process the next node. 
-	osweb.parser._program();
+    	// Process the nodes. 
+	osweb.parser._process_node();
     };
 
     // Bind the parser class to the osweb namespace.

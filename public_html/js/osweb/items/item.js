@@ -167,8 +167,6 @@
                     // Rettrieve the value of the variable, remove additional quotes.
                     var value = osweb.syntax.remove_quotes(tokens[2]);
 
-                    console.log(tokens[1] + ',' + value);
-
                     // Check for number types.
                     value = osweb.syntax.isNumber(value) ? Number(value) : value;
                     
@@ -216,7 +214,6 @@
     p.prepare_complete = function()
     {
         // Dummy function for completion process.
-        console.log('prepare complete' + this.name);
     };
 
     p.set_item_onset = function(pTime)

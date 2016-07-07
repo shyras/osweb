@@ -135,9 +135,7 @@
 
     p.prepare = function()
     {
-        console.log(this.vars._prepare)
-        
-	// Compile the script code to ast trees.
+        // Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);
 	
@@ -184,10 +182,7 @@
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
-            // Set parent node.
-            osweb.parser._current_node = osweb.parser._current_node.parent;
-
-            // Set the parser status.
+            // Process the current active node.
             osweb.parser._process_node();
         }
         else

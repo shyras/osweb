@@ -11,7 +11,7 @@
     }
 
     // Definition of public properties.
-    debug.enabled    = true;
+    debug.enabled    = false;
     debug.error      = false;
     debug.messageLog = new Array();
 

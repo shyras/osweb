@@ -167,8 +167,6 @@
                     // Rettrieve the value of the variable, remove additional quotes.
                     var value = osweb.syntax.remove_quotes(tokens[2]);
 
-                    console.log(tokens[1] + ',' + value);
-
                     // Check for number types.
                     value = osweb.syntax.isNumber(value) ? Number(value) : value;
                     
@@ -216,7 +214,6 @@
     p.prepare_complete = function()
     {
         // Dummy function for completion process.
-        console.log('prepare complete' + this.name);
     };
 
     p.set_item_onset = function(pTime)
@@ -1071,9 +1068,7 @@
 
     p.prepare = function()
     {
-        console.log(this.vars._prepare)
-        
-	// Compile the script code to ast trees.
+        // Compile the script code to ast trees.
         this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
         this._run_tree     = osweb.parser._prepare(this.vars._run);
 	
@@ -1120,10 +1115,7 @@
         // Check if the parser is ready. 
         if (osweb.parser._status == 1)
         {
-            // Set parent node.
-            osweb.parser._current_node = osweb.parser._current_node.parent;
-
-            // Set the parser status.
+            // Process the current active node.
             osweb.parser._process_node();
         }
         else
