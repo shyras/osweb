@@ -1,8 +1,8 @@
 /*
- * OSweb 
+ * osweb 
  *  
  * An experiment research tool written in Javascript and HTML to be used in 
- * Qualtrics or other web-based tools. 
+ * Qualtrics or other web-based tools. Based upon OpenSesame.         
  *
  * Author: drs. J. Bos
  *
@@ -18,70 +18,60 @@
 // Set osweb namespace.
 this.osweb = this.osweb||{};
 
-/*
- * Definition of osweb version constants. 
- */
-
+// Definition of osweb version constants. 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.036 (27-06-2016)';
+osweb.VERSION_NUMBER = '0.037 (12-07-2016)';
 
-/*
- * Definition of osweb class utility methods.
- */
-
-osweb.extendClass = function(pSubClass, pSuperClass) 
-{
-    function o() { this.constructor = pSubClass; }
-    o.prototype = pSuperClass.prototype;
-    return (pSubClass.prototype = new o());
+// Definition of osweb class utility methods.
+osweb.extendClass = function(sub_class, super_class) {
+    function o() { 
+        this.constructor = sub_class; 
+    }
+    o.prototype = super_class.prototype;
+    return (sub_class.prototype = new o());
 }; 
 
-osweb.isClass = function(pClassName)
-{
+osweb.isClass = function(class_name) {
     // Return true if the classname is defined within the osweb namespace.
-    return (this[pClassName] !== undefined);
+    return (this[class_name] !== undefined);
 };
 
-osweb.newItemClass = function(pType, pExperiment, pName, pString)
-{
+osweb.newItemClass = function(type, experiment, name, string) {
     // Create the element.
-    var element = new this[pType](pExperiment, pName, pString);
+    var element = new this[type](experiment, name, string);
    
     // Set the type of the item.
-    element.type = pType;
+    element.type = type;
     
     // Return the element
     return element;
 };
 
-osweb.newElementClass = function(pType, pSketchpad, pString)
-{
+osweb.newElementClass = function(type, sketchpad, string) {
     // Create the element.
-    var element = new this[pType](pSketchpad, pString);
+    var element = new this[type](sketchpad, string);
     
     // Return the element
     return element;
 };
 
-osweb.newWidgetClass = function(pType, pForm, pVariables)
-{
+osweb.newWidgetClass = function(type, form, variables) {
     // Create the element.
-    var widget = new this[pType](pForm, pVariables);
+    var widget = new this[type](form, variables);
    	
     // Return the element
     return widget;
 }; 
 
-osweb.promoteClass = function(pSubClass, pPrefix) 
-{
-    var subP = pSubClass.prototype, supP = (Object.getPrototypeOf&&Object.getPrototypeOf(subP))||subP.__proto__;
-    if (supP) 
-    {
-    	subP[(pPrefix+="_") + "constructor"] = supP.constructor; 
-    	for (var n in supP) 
-    	{
-            if (subP.hasOwnProperty(n) && (typeof supP[n] === "function")) { subP[pPrefix + n] = supP[n]; }
+osweb.promoteClass = function(sub_class, prefix) {
+    var subP = sub_class.prototype, supP = (Object.getPrototypeOf&&Object.getPrototypeOf(subP))||subP.__proto__;
+    if (supP) {
+    	subP[(prefix+="_") + "constructor"] = supP.constructor; 
+    	for (var n in supP) {
+            if (subP.hasOwnProperty(n) && (typeof supP[n] === "function")) {
+                subP[prefix + n] = supP[n]; 
+            }
 	}
     }
-    return pSubClass;
+    return sub_class;
 }; 

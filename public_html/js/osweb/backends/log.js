@@ -1,51 +1,38 @@
-/*
- * Definition of the class log.
- */
 
-(function() 
-{
-    function log(pExperiment, pPath)
-    {
-    	// Define and set the private properties. 
-	this._all_vars       = null;
+(function() {
+    // Definition of the class log.
+    function log(experiment, path) {
+        // Set the class private properties. 
+    	this._all_vars = null;
 	this._header_written = false;	
-	this._log            = [];
-	this._path           = '';
+	this._log = [];
+	this._path = '';
 
-        // set the class properties. 
-	this.experiment              = pExperiment;
-	this.experiment.vars.logfile = pPath;
+        // set the class public properties. 
+	this.experiment = experiment;
+	this.experiment.vars.logfile = path;
     }; 
 	
     // Extend the class from its base class.
     var p = log.prototype;
     
-    // Set the class default properties. 
+    // Define the class public properties. 
     p.experiment = null;
 	
-    /*
-     * Definition of public class methods.   
-     */
+    // Definition of public class methods.   
 
-    p.all_vars = function()
-    {
+    p.all_vars = function() {
 	// Retrieves a list of all variables that exist in the experiment.
-	if (this._all_vars == null)
-	{
+	if (this._all_vars === null) {
             this._all_vars = this.experiment.vars.inspect();
 	}
 		
 	return this._all_vars;
     };
 
-    p.close = function()
-    {
-        console.log('?');
-        console.log(this._log);
-        
+    p.close = function() {
 	// Closes the current log.
-	if (this._log.length > 0) 
-	{
+	if (this._log.length > 0) {
             console.log(this._log.join(''));
 	}
 
@@ -53,81 +40,69 @@
 	this._log = [];
     };
 
-    p.flush = function()
-    {
+    p.flush = function() {
     	// Flush the log file.
         this._log = [];
     };
 
-    p.open = function(pPath)
-    {	
+    p.open = function(path) {	
 	// Opens the current log. If a log was already open, it is closed.
 	this._header_written = false;
-	this._path           = pPath; 
+	this._path = path; 
 	
 	// Check for old data.
-	if (this._log != null)
-	{
+	if (this._log !== null) {
             // Clear the old data.
             this.close();
 	}
     };
 
-    p.write = function(pMsg, pNewline)
-    {
+    p.write = function(msg, new_line) {
     	// Write one message to the log.
-	pNewline = (typeof pNewline === 'undefined') ? true : pNewline;
+	new_line = (typeof new_line === 'undefined') ? true : new_line;
 	
 	// Write a new line.
-	if (pNewline == true)
-	{
-            this._log.push(pMsg + '\n');
+	if (new_line === true) {
+            this._log.push(msg + '\n');
 	}
-	else
-	{
+	else {
             // Write the Message line.
-            this._log.push(pMsg);
+            this._log.push(msg);
 	}
     };
 
-    p.write_vars = function(pVar_list)
-    {
+    p.write_vars = function(var_list) {
     	// Writes variables to the log.
-	pVar_list = (typeof pVar_list === 'undefined') ? null : pVar_list;
+	var_list = (typeof var_list === 'undefined') ? null : var_list;
 		
-	var value, variable; 
+	var value; 
 	var l = [];
-			
-	if (pVar_list == null)
-	{
-            pVar_list = this.all_vars();
+        // If no var list defines, retrieve all variable.
+	if (var_list == null) {
+            var_list = this.all_vars();
 	}
 
         // Sort the var list.
-        pVar_list.sort();
+        var_list.sort();
         
-	if (this._header_written == false)
-	{
-            for (var i=0; i < pVar_list.length; i++)
-            {
-		//l.push('"' + pVar_list[i] + '"');
-		l.push(pVar_list[i]);
+	// Add the header to the log file.
+        if (this._header_written === false) {
+            for (var i = 0; i < var_list.length; i++) {
+		l.push('"' + var_list[i] + '"');
             }		
             this.write(l.join());
             this._header_written = true;
 	}
 		
-	l = [];
-	for (var i=0; i < pVar_list.length; i++)
-	{
-            value = this.experiment.vars.get(pVar_list[i], 'NA', false);
-            //l.push('"' + value + '"');
-            l.push(value);
+        // Add the data entries to the log file.        
+        l = [];
+	for (var i = 0; i < var_list.length; i++) {
+            value = this.experiment.vars.get(var_list[i], 'NA', false);
+            l.push('"' + value + '"');
 	}
-	this.write(l.join());
+        this.write(l.join());
     };
  	
     // Bind the log class to the osweb namespace.
     osweb.log = log;
 }());
-

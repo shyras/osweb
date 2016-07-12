@@ -74,11 +74,11 @@
     p.prepare_duration = function()
     {
 	// Prepare the duration.
-	if (this.vars.get('duration') != null)
+        if (this.vars.get('duration') != null)
 	{
             if (typeof this.vars.duration == 'number')
             {
-		// Prepare a duration in milliseconds
+        	// Prepare a duration in milliseconds
 		this._duration = this.vars.duration;
 		if (this._duration == 0)
 		{
@@ -241,7 +241,8 @@
 	
    p.process_response = function()
    {
-   	// Start stimulus response cycle.
+   	console.log('stimulus response cycle' + this._responsetype);
+       // Start stimulus response cycle.
    	switch (this._responsetype)
    	{
             case osweb.constants.RESPONSE_NONE:

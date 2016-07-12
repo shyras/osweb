@@ -21,7 +21,7 @@
 
     syntax.isNumber = function(n)
     {
-        return Number(n) === n; // aangepast van == naar ===
+        return Number(n) == n; // aangepast van == naar === en weer terug naar '==' anders werkt duration niet.
     };
 
     syntax.isFloat = function(n)

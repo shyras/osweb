@@ -91,6 +91,10 @@
 	
     events._run = function(pCaller, pTimeout, pResponse_type, pResponse_list)
     {
+        console.log('running');
+        console.log(pCaller);
+        console.log(pTimeout);
+            
 	// Activate the event running mechanism.
 	this._caller        = pCaller;
 	this._response_list = pResponse_list;
@@ -804,15 +808,13 @@
                 }
                 else
                 {
-                    console.log('---');
                     switch (callee)
                     {   
                         case 'canvas':
                             returnvalue = new osweb.canvas();
                         break;    
                     }    
-                    console.log(returnvalue);
-                    
+                  
                     // Process call - check for blocking methods.
                     this._current_node.parent['returnvalue' + String(this._current_node.arguments.length)] = returnvalue;
                 
@@ -1230,7 +1232,7 @@
 
     // Show library name and library version number in the console.
     console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);	
-    console.log(osweb);
+    // console.log(osweb);
 
     // Definition of private properties.
     runner._canvas        = null;           // Canvas on which the experiment is shown.

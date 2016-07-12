@@ -12,7 +12,7 @@
 
     // Show library name and library version number in the console.
     console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);	
-    console.log(osweb);
+    // console.log(osweb);
 
     // Definition of private properties.
     runner._canvas        = null;           // Canvas on which the experiment is shown.

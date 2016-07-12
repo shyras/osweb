@@ -1,35 +1,26 @@
 
-/*
- * Definition of the class debug.
- */
-
-(function() 
-{
+(function() {
+    // Definition of the class debug.
     function debug() 
     {
-    	throw "The class debug cannot be instantiated!";
+    	throw 'The class debug cannot be instantiated!';
     }
 
     // Definition of public properties.
-    debug.enabled    = false;
-    debug.error      = false;
-    debug.messageLog = new Array();
+    debug.enabled = true;                        // Enable the debugger  
+    debug.error = false;                         // true if an error occured.
+    debug.messageLog = new Array();              // Arraty with alle log messages.
 
-    /*
-     * Definition of class methods.               
-     */
-
-    debug._initialize = function()
-    {
+    // Definition of class private methods.               
+   
+    debug._initialize = function() {
     	// Clear the log.
     	this.messageLog = [];
     };	
 
-    debug._finalize = function()
-    {
-	// If enabled add the log to the javascript console.
-	if (this.enabled == true)
-	{
+    debug._finalize = function() {
+	// If enabled push the messages to the javascript console.
+	if (this.enabled === true) {
             console.log(this.messageLog);			
 	}
 
@@ -37,43 +28,32 @@
 	this.messageLog = [];
     };
 
-    /*
-     * Definition of the public methods.               
-     */
-
-    debug.addError = function(pErrorText)
-    {
+    // Definition of the public methods.               
+   
+    debug.addError = function(error_text) {
     	// Set the error flag.
     	this.error = true;
 
         // Show the fatal error warning.
-	console.log(pErrorText);
+	console.log(error_text);
 	console.log(osweb.constants.ERROR_001);
 
-	// throw the exception.
-	throw new Error(pErrorText);	
+	// Throw the exception.
+	throw new Error(error_text);	
     };
 	
-    debug.addMessage = function(pMessageText)
-    {
+    debug.addMessage = function(message_text) {
         // Push the error message to the log.
-	this.messageLog.push(pMessageText);		
+	this.messageLog.push(message_text);		
 	
-	if (debug.enabled == true)
-	{
-            console.log(pMessageText);
+	if (debug.enabled === true) {
+            console.log(message_text);
         }    
     };
 
-    debug.msg = function(pMessageText)
-    {
+    debug.msg = function(message_text) {
 	// Push the error message to the log.
-	this.messageLog.push(pMessageText);		
-	
-	if (debug.enabled == true)
-	{
-            console.log(pMessageText);
-        }    
+	this.addMesage(message_text);
     };
 
     // Bind the debug class to the osweb namespace.
@@ -769,7 +749,7 @@
 
     syntax.isNumber = function(n)
     {
-        return Number(n) === n; // aangepast van == naar ===
+        return Number(n) == n; // aangepast van == naar === en weer terug naar '==' anders werkt duration niet.
     };
 
     syntax.isFloat = function(n)

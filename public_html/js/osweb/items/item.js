@@ -166,7 +166,7 @@
 		{
                     // Rettrieve the value of the variable, remove additional quotes.
                     var value = osweb.syntax.remove_quotes(tokens[2]);
-
+                 
                     // Check for number types.
                     value = osweb.syntax.isNumber(value) ? Number(value) : value;
                     

@@ -91,6 +91,10 @@
 	
     events._run = function(pCaller, pTimeout, pResponse_type, pResponse_list)
     {
+        console.log('running');
+        console.log(pCaller);
+        console.log(pTimeout);
+            
 	// Activate the event running mechanism.
 	this._caller        = pCaller;
 	this._response_list = pResponse_list;
