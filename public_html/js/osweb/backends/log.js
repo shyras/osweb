@@ -3,30 +3,29 @@
     // Definition of the class log.
     function log(experiment, path) {
         // Set the class private properties. 
-    	this._all_vars = null;
-	this._header_written = false;	
-	this._log = [];
-	this._path = '';
+    	this._all_vars = null;                             // If true all variables are written to the log.  
+	this._header_written = false;	                   // If true the header has been written to the log.
+	this._log = [];                                    // Array containing the log entries.
+	this._path = '';                                   // Path to wich the log is written.
 
-        // set the class public properties. 
-	this.experiment = experiment;
-	this.experiment.vars.logfile = path;
+        // Set the class public properties. 
+	this.experiment = experiment;                      // Anchor to the experiment object.
+    	this.experiment.vars.logfile = path;               // Store the path location into the vars list.   
     }; 
 	
     // Extend the class from its base class.
     var p = log.prototype;
     
-    // Define the class public properties. 
+    // Definition of public properties. 
     p.experiment = null;
 	
-    // Definition of public class methods.   
+    // Definition of public methods.   
 
     p.all_vars = function() {
 	// Retrieves a list of all variables that exist in the experiment.
 	if (this._all_vars === null) {
             this._all_vars = this.experiment.vars.inspect();
 	}
-		
 	return this._all_vars;
     };
 

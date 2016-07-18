@@ -20,7 +20,7 @@ this.osweb = this.osweb||{};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.037 (12-07-2016)';
+osweb.VERSION_NUMBER = '0.038 (18-07-2016)';
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {

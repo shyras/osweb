@@ -2,20 +2,20 @@
 (function() {
     // Definition of the class clock.
     function clock(experiment) {
-        // Define and set the private properties. 
-        this._startTime = this._now();
+        // Definition of private properties. 
+        this._startTime = this._now();                     // Start time anchor of the experiment.
 		
         // Set the class public properties. 
-	this.experiment = experiment;
+	this.experiment = experiment;                      // Anchor to the experiment object.
     }; 
 	
     // Extend the class from its base class.
     var p = clock.prototype;
     
-    // Define the class public properties. 
+    // Definition of public properties. 
     p.experiment = null;
 
-    // Definition of class private methods.   
+    // Definition of private methods.   
     
     p._now = function() {
 	// Get the current time stamp using the best available timing method.
@@ -30,7 +30,7 @@
 	}
     };
 
-    // Definition of public class methods.   
+    // Definition of public methods.   
 
     p.initialize = function() {
         // Set the absolute start time of the expeirment.

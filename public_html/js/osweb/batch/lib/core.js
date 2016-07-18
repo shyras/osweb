@@ -20,7 +20,7 @@ this.osweb = this.osweb||{};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.037 (12-07-2016)';
+osweb.VERSION_NUMBER = '0.038 (18-07-2016)';
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
@@ -94,12 +94,15 @@ osweb.promoteClass = function(sub_class, prefix) {
     constants.ERROR_009 = 'Unknown class definition within osweb script - ';
 
     // Definition of message constants. 
-    constants.MESSAGE_001 = 'OS';
+    constants.MESSAGE_001 = 'Os';
     constants.MESSAGE_002 = 'web - version ';
     constants.MESSAGE_003 = 'Start up osweb experiment session.';
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
+
+    // Definition of non-supported warnings.
+    constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
 
     // Definition of general constants. 
     constants.STATUS_NONE = 0;                   // Running status of an item.   

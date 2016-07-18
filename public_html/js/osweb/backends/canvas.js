@@ -1,80 +1,67 @@
 
-/*
- * Definition of the class canvas.
- */
-
-(function() 
-{
-    function canvas(pExperiment, pAuto_prepare)
-    {
+(function() {
+// Definition of the class canvas.
+    function canvas(experiment, auto_prepare) {
 	// set the class public properties.
-	this.auto_prepare = (typeof pAuto_prepare === 'undefined') ? true                    : pAuto_prepare;	
-	this.experiment   = (typeof pExperiment   === 'undefined') ? osweb.runner.experiment : pExperiment;
+        this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare; // Set autoprepare toggle (not supported yet). 	
+	this.experiment = experiment;                                                    // Anchor to the experiment object.
 		
-        // Set the class public properties. 
-    	this.background_color = this.experiment.vars.background;
-        this.bidi             = this.experiment.vars.bidi == 'yes';
-        this.color            = this.experiment.vars.foregound;
-        this.fill             = false;
-        this.font_bold        = this.experiment.vars.font_bold == 'yes';
-        this.font_family      = this.experiment.vars.font_family; 
-        this.font_italic      = this.experiment.vars.font_italic == 'yes';
-        this.font_size        = this.experiment.vars.font_size;        
-        this.font_underline   = this.experiment.vars.font_underline == 'yes';
-        this.html             = true;
-        this.penwidth         = 1;
+        // Set the public properties. 
+    	this.background_color = this.experiment.vars.background;                         // Backgropund color of canvas.     
+        this.bidi = (this.experiment.vars.bidi === 'yes');                               // If true bidi mode is enabled.
+        this.color = this.experiment.vars.foregound;                                     // Foreground color of canvas.
+        this.fill = false;                                                               // If true fill mode is used.
+        this.font_bold = (this.experiment.vars.font_bold === 'yes');                     // If true font style bold is enabled.
+        this.font_family = (this.experiment.vars.font_family);                           // Family name of the font used.
+        this.font_italic = (this.experiment.vars.font_italic === 'yes');                 // If true font style italic is enabled.
+        this.font_size = (this.experiment.vars.font_size);                               // Size of the font in pixels.
+        this.font_underline = (this.experiment.vars.font_underline === 'yes');           // If true font style underline is enabled.
+        this.html = true;                                                                // If true html is used (not supported yet).
+        this.penwidth = 1;                                                               // Default penwidth for drawing shapes. 
         
-        // Set the class private properties. 
-    	this._container   = new createjs.Container();
-        this._font_string = 'bold 18px Courier New';
-	this._height      = osweb.runner._canvas.height;
-	this._width	  = osweb.runner._canvas.width;
+        // Set the private properties.  
+    	this._container = new createjs.Container();                                      // EASELJS: Container which holds the shapes
+        this._font_string = 'bold 18px Courier New';                                     // EASELJS: Default font definition string.
+	this._height = osweb.runner._canvas.height;                                      // Height of the HTML canvas used for drawing.
+	this._width = osweb.runner._canvas.width;                                        // Width of the HTML canvas used for drawing.
     }; 
 	
     // Extend the class from its base class.
     var p = canvas.prototype;
     
-    // Define and set the class public properties. 
-    p.auto_prepare        = false;
-    p.experiment          = null;
+    // Definition of public properties. 
+    p.auto_prepare= false;
+    p.experiment = null;
     p.uniform_coordinates = false;
 	
-    /*
-     * Definition of private class methods. 
-     */
+    // Definition of private methods. 
     
-    p._arrow_shape = function(pSx, pSy, pEx, pEy, pBody_length, pBody_width, pHead_width)
-    {
+    p._arrow_shape = function(sx, sy, ex, ey, body_length, body_width, head_width) {
         // Length
-        var d = Math.sqrt(Math.pow(pEy - pSy,2) + Math.pow(pSx - pEx,2));
-		
-        // Direction.
-        var angle       = Math.atan2(pEy - pSy, pEx - pSx);
-	var _head_width = (1 - pBody_width) / 2.0;
-	pBody_width     = pBody_width / 2.0;
+        var d = Math.sqrt(Math.pow(ey - sy,2) + Math.pow(sx - ex,2));
+        var angle = Math.atan2(ey - sy, ex - sx);
+	var _head_width = (1 - body_width) / 2.0;
+	body_width = body_width / 2.0;
 	
         // calculate coordinates
-	var p4 = [pEx, pEy];
-	var p1 = [pSx + pBody_width * pHead_width * Math.cos(angle - Math.PI / 2), pSy + pBody_width * pHead_width * Math.sin(angle - Math.PI / 2)];
-	var p2 = [p1[0] + pBody_length * Math.cos(angle) * d, p1[1] + pBody_length * Math.sin(angle) * d];
-	var p3 = [p2[0] + _head_width * pHead_width * Math.cos(angle - Math.PI / 2), p2[1] + _head_width * pHead_width * Math.sin(angle - Math.PI / 2)];
-	var p7 = [pSx + pBody_width * pHead_width * Math.cos(angle + Math.PI / 2), pSy + pBody_width * pHead_width * Math.sin(angle + Math.PI / 2)];
-	var p6 = [p7[0] + pBody_length * Math.cos(angle) * d, p7[1] + pBody_length * Math.sin(angle) * d];
-	var p5 = [p6[0] + _head_width * pHead_width * Math.cos(angle + Math.PI / 2), p6[1] + _head_width * pHead_width * Math.sin(angle + Math.PI / 2)];
+	var p4 = [ex, ey];
+	var p1 = [sx + body_width * head_width * Math.cos(angle - Math.PI / 2), sy + body_width * head_width * Math.sin(angle - Math.PI / 2)];
+	var p2 = [p1[0] + body_length * Math.cos(angle) * d, p1[1] + body_length * Math.sin(angle) * d];
+	var p3 = [p2[0] + _head_width * head_width * Math.cos(angle - Math.PI / 2), p2[1] + _head_width * head_width * Math.sin(angle - Math.PI / 2)];
+	var p7 = [sx + body_width * head_width * Math.cos(angle + Math.PI / 2), sy + body_width * head_width * Math.sin(angle + Math.PI / 2)];
+	var p6 = [p7[0] + body_length * Math.cos(angle) * d, p7[1] + body_length * Math.sin(angle) * d];
+	var p5 = [p6[0] + _head_width * head_width * Math.cos(angle + Math.PI / 2), p6[1] + _head_width * head_width * Math.sin(angle + Math.PI / 2)];
 	
         return [p1, p2, p3, p4, p5, p6, p7];
     };    
         
-    /*
-     * Definition of public class methods. 
-     */
-
-    p.arrow = function (pSx, pSy, pEx, pEy, pColor, pPenWidth, pBody_length, pBody_width, pHead_width, pFill)
-    {
-        var points = this._arrow_shape(pSx, pSy, pEx, pEy, pBody_width, pBody_length, pHead_width);
+    // Definition of public methods. 
+    
+    p.arrow = function (sx, sy, ex, ey, color, penwidth, body_length, body_width, head_width, fill) {
+        var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width);
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
         
         shape.graphics.moveTo(points[0][0],points[0][1]);
 	shape.graphics.lineTo(points[1][0],points[1][1]);
@@ -89,159 +76,136 @@
 	this._container.addChild(shape); 
     }; 
     		
-    p.circle = function(pX, pY, pR, pFill, pColor, pPenWidth)
-    {
+    p.circle = function(x, y, r, fill, color, penwidth) {
 	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill == 1)
 	{
-            shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.drawCircle(pX, pY, pR);
+	shape.graphics.drawCircle(x, y, r);
 		
-	// Add the line item to container..
+	// Add the line item to container.
 	this._container.addChild(shape); 
     };
 
-    p.clear = function(pBackround_color)
-    {
+    p.clear = function(backround_color) {
 	// Remove the container from the stage object.
 	osweb.runner._stage.removeChild(this._container);
-	this._container.removeAllChildren();
+	
+        // Remove the children from the container.
+        this._container.removeAllChildren();
     };
 
-    p.close_display = function(pExperiment)
-    {
-    	console.log('N/A: canvas.close');
+    p.close_display = function(experiment) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.close_display().');
     };
 
-    p.copy = function(pCanvas)
-    {
-    	console.log('N/A: canvas.copy');
+    p.copy = function(canvas) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.copy().');
     };
 
-    p.ellipse = function(pX, pY, pW, pH, pFill, pColor, pPenWidth)
-    {
+    p.ellipse = function(x, y, w, h, fill, color, penwidth) {
 	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill == 1)
 	{
-    	shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.drawEllipse(pX, pY, pW, pH); 
+	shape.graphics.drawEllipse(x, y, w, h); 
 
 	// Add the text item to the parten frame.
 	this._container.addChild(shape);
     };
 
-    p.fixdot = function(pX, pY, pColor, pStyle)
-    {
+    p.fixdot = function(x, y, color, style) {
         // Check the color and style arguments.      
-        pColor = (typeof pColor === 'undefined') ? 'white'   : pColor;
-        pStyle = (typeof pStyle === 'undefined') ? 'default' : pStyle;
+        color = (typeof color === 'undefined') ? 'white' : color;
+        style = (typeof style === 'undefined') ? 'default' : style;
         
-        if (typeof pX === 'undefined')
-	{
-            if (this.uniform_coordinates == true)
-            {
-		pX = 0;
+        if (typeof x === 'undefined') {
+            if (this.uniform_coordinates === true) {
+		x = 0;
             }
-            else
-            {
-                pX = this._width / 2;
+            else {
+                x = this._width / 2;
             }
 	}
-	if (typeof pY === 'undefined')
-	{
-            if (this.uniform_coordinates == true)
-            {
-		pY = 0;
+	if (typeof y === 'undefined') {
+            if (this.uniform_coordinates === true) {
+		y = 0;
             }
-            else
-            {
-		pY = this._height / 2;
+            else {
+		y = this._height / 2;
             }	
 	}
 		
 	var s = 4;
 	var h = 2;
-		
-	if (pStyle.indexOf('large') != -1)
-	{
+	if (style.indexOf('large') !== -1) {
             s = 16;
 	}
-	else if ((pStyle.indexOf('medium') != -1) || (pStyle == 'default'))
-	{
+	else if ((style.indexOf('medium') !== -1) || (style === 'default')) {
             s = 8;
 	}
-	else if (pStyle.indexOf('small') != -1)
-	{
+	else if (style.indexOf('small') !== -1) {
             s = 4;
 	}
-	else
-	{
-            osweb.debug.addError('Unknown style: ' + pStyle);
+	else {
+            osweb.debug.addError('Unknown style: ' + style);
 	}	
 		
-	if ((pStyle.indexOf('open') != -1) || (pStyle == 'default'))
-	{	
-            this.ellipse(pX - s, pY - s, 2 * s, 2 * s, 1, pColor, 1);
-            this.ellipse(pX - h, pY - h, 2 * h, 2 * h, 1, 'black', 1);
+	if ((style.indexOf('open') !== -1) || (style === 'default')) {	
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
+            this.ellipse(x - h, y - h, 2 * h, 2 * h, 1, 'black', 1);
 	}
-	else if (pStyle.indexOf('filled') != -1)
-	{	
-            this.ellipse(pX - s, pY - s, 2 * s, 2 * s, 1, pColor, 1);
+	else if (style.indexOf('filled') !== -1)	{	
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
 	}
-        else if (pStyle.indexOf('cross') != -1)
-	{
-            this.line(pX, pY - s, pX, pY + s);
-            this.line(pX - s, pY, pX + s, pY);
+        else if (style.indexOf('cross') !== -1)	{
+            this.line(x, y - s, x, y + s);
+            this.line(x - s, y, x + s, y);
 	}
-	else
-	{
-            osweb.debug.addError('Unknown style: ' + pStyle);
+	else {
+            osweb.debug.addError('Unknown style: ' + style);
 	}	
     };
 
-    p.gabor = function(pX, pY, pOrient, pFreq, pEnv, pSize, pStdev, pPhase, pColor1, pColor2, pBgmode)
-    {
-	console.log('Not available yet: canvas.gabor');
+    p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.gabor().');
     };
 
-    p.height = function()
-    {
+    p.height = function() {
     	return this._heigth();
     };
 
-    p.image = function(pFName, pCenter, pX, pY, pScale)
-    {
+    p.image = function(fname, center, x, y, scale) {
 	// Set the class private properties. 
-	var image         = new createjs.Bitmap();
-        image.image       = pFName.data;
-	image.scaleX      = pScale;
-        image.scaleY      = pScale;
+	var image = new createjs.Bitmap();
+        image.image = fname.data;
+	image.scaleX = scale;
+        image.scaleY = scale;
         image.snapToPixel = true;
-        image.x		  = pX - ((image.image.width  * pScale) / 2);
-    	image.y           = pY - ((image.image.height * pScale) / 2);
+        image.x = x - ((image.image.width  * scale) / 2);
+    	image.y = y - ((image.image.height * scale) / 2);
 	
 	// Add the text item to the parten frame.
 	this._container.addChild(image);
     };
 	
-    p.init_display = function(pExperiment)
-    {
+    p.init_display = function(experiment) {
 	// Set the dimension properties.
-	this._height = pExperiment.vars.height;
-    	this._width  = pExperiment.vars.width;
+	this._height = experiment.vars.height;
+    	this._width  = experiment.vars.width;
 	
 	// Initialize the display dimensions.
-	osweb.runner._canvas.height = pExperiment.vars.height;
-	osweb.runner._canvas.width  = pExperiment.vars.width;
+	osweb.runner._canvas.height = experiment.vars.height;
+	osweb.runner._canvas.width  = experiment.vars.width;
 		
 	// Initialize the display color.
-	osweb.runner._canvas.style.background = pExperiment.vars.background;
+	osweb.runner._canvas.style.background = experiment.vars.background;
 
         // Set the cursor visibility to none (default).
         osweb.runner._canvas.style.cursor = 'none';
@@ -250,98 +214,87 @@
         osweb.runner._canvas.focus(); 
     };
 
-    p.line = function(pSx, pSy, pEx, pEy, pColor, pPenWidth)
-    {
+    p.line = function(sx, sy, ex, ey, color, penwidth) {
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	shape.graphics.moveTo(pSx, pSy);
-	shape.graphics.lineTo(pEx, pEy); 
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	shape.graphics.moveTo(sx, sy);
+	shape.graphics.lineTo(ex, ey); 
 
 	// Add the line item to container..
 	this._container.addChild(shape); 
     };
 	
-    p.noise_patch = function(pX, pY, pEnv, pSize, pStdev, pColor1, pColor2, pBgmode)
-    {
-    	console.log('Not available yet: canvas.noise_patch');
+    p.noise_patch = function(pX, pY, pEnv, pSize, pStdev, pColor1, pColor2, pBgmode) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.noise_patch().');
     };
 	
-    p.polygon = function()
-    {
-    	console.log('Not available yet: canvas.polygon');
+    p.polygon = function(verticles) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.polygon().');
     };
 	
-    p.prepare = function()
-    {
-    	console.log('N/A: canvas.prepare');
+    p.prepare = function() {
     };
 	
-    p.rect = function(pX, pY, pW, pH, pFill, pColor, pPenWidth)
-    {
+    p.rect = function(x, y, w, h, fill, color, penwidth) {
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill == 1)
 	{
-            shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.rect(pX, pY, pW, pH); 
+	shape.graphics.rect(x, y, w, h); 
 
 	// Add the line item to container..
 	this._container.addChild(shape); 
     };
 	
-    p.set_font = function(pFamily, pSize, pItalic, pBold, pUnderline)
-    {
+    p.set_font = function(family, size, italic, bold, underline) {
    	// Define the the font styles.
-    	var font_bold      = (pBold      == true) ? 'bold '      : '';
-        var font_italic    = (pItalic    == true) ? 'italic '    : '';
-        var font_underline = (pUnderline == true) ? 'underline ' : '';
+    	var font_bold = (bold === true) ? 'bold ' : '';
+        var font_italic = (italic === true) ? 'italic ' : '';
+        var font_underline = (underline === true) ? 'underline ' : '';
         
         // Set the font string.
-        this._font_string = font_bold + font_italic + font_underline + pSize + 'px ' + pFamily; 
+        this._font_string = font_bold + font_italic + font_underline + size + 'px ' + family; 
      };
         
-    p.show = function()
-    {
+    p.show = function() {
     	// Add the container to the stage object and update the stage.
 	osweb.runner._stage.addChild(this._container);
 	osweb.runner._stage.update(); 
 
 	// Return the current time.
-	if (this.experiment != null)
-        {
+	if (this.experiment != null) {
             return this.experiment.clock.time();
         }    
-        else
-        {    
+        else {    
             return null;
         }
     };
 	
-    p.size = function()
-    {
+    p.size = function() {
     	// Create object tuple.
     	var size = {width: this._width, height: this._height};
 	return size;
     };
 	
-    p.text = function(pText, pCenter, pX, pY , pColor, pHtml)
-    {
+    p.text = function(text, center, x, y , color, html) {
 	// Create the text element.          
-	var text = new createjs.Text(pText, this._font_string, pColor);
+	var text_element = new createjs.Text(text, this._font_string, color);
 
 	// Set the text element properties.
-	text.x = pX - (text.getMeasuredWidth() / 2);
-	text.y = pY - (text.getMeasuredHeight() / 2);
+	text_element.x = x - (text_element.getMeasuredWidth() / 2);
+	text_element.y = y - (text_element.getMeasuredHeight() / 2);
 		 
 	// Add the text item to the parten frame.
-	this._container.addChild(text);
+	this._container.addChild(text_element);
     };
 
-    p.text_size = function(pText, pMax_width, pStyle_args)
-    {
+    p.text_size = function(text, max_width, style_args) {
+        // Return the text size in pixels.
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
     };
 
     // Bind the canvas class to the osweb namespace.

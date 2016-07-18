@@ -20,7 +20,7 @@ this.osweb = this.osweb||{};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.037 (12-07-2016)';
+osweb.VERSION_NUMBER = '0.038 (18-07-2016)';
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
@@ -94,12 +94,15 @@ osweb.promoteClass = function(sub_class, prefix) {
     constants.ERROR_009 = 'Unknown class definition within osweb script - ';
 
     // Definition of message constants. 
-    constants.MESSAGE_001 = 'OS';
+    constants.MESSAGE_001 = 'Os';
     constants.MESSAGE_002 = 'web - version ';
     constants.MESSAGE_003 = 'Start up osweb experiment session.';
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
+
+    // Definition of non-supported warnings.
+    constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
 
     // Definition of general constants. 
     constants.STATUS_NONE = 0;                   // Running status of an item.   
@@ -132,82 +135,69 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.constants = constants;
 }()); 
 
-/*
- * Definition of the class canvas.
- */
-
-(function() 
-{
-    function canvas(pExperiment, pAuto_prepare)
-    {
+(function() {
+// Definition of the class canvas.
+    function canvas(experiment, auto_prepare) {
 	// set the class public properties.
-	this.auto_prepare = (typeof pAuto_prepare === 'undefined') ? true                    : pAuto_prepare;	
-	this.experiment   = (typeof pExperiment   === 'undefined') ? osweb.runner.experiment : pExperiment;
+        this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare; // Set autoprepare toggle (not supported yet). 	
+	this.experiment = experiment;                                                    // Anchor to the experiment object.
 		
-        // Set the class public properties. 
-    	this.background_color = this.experiment.vars.background;
-        this.bidi             = this.experiment.vars.bidi == 'yes';
-        this.color            = this.experiment.vars.foregound;
-        this.fill             = false;
-        this.font_bold        = this.experiment.vars.font_bold == 'yes';
-        this.font_family      = this.experiment.vars.font_family; 
-        this.font_italic      = this.experiment.vars.font_italic == 'yes';
-        this.font_size        = this.experiment.vars.font_size;        
-        this.font_underline   = this.experiment.vars.font_underline == 'yes';
-        this.html             = true;
-        this.penwidth         = 1;
+        // Set the public properties. 
+    	this.background_color = this.experiment.vars.background;                         // Backgropund color of canvas.     
+        this.bidi = (this.experiment.vars.bidi === 'yes');                               // If true bidi mode is enabled.
+        this.color = this.experiment.vars.foregound;                                     // Foreground color of canvas.
+        this.fill = false;                                                               // If true fill mode is used.
+        this.font_bold = (this.experiment.vars.font_bold === 'yes');                     // If true font style bold is enabled.
+        this.font_family = (this.experiment.vars.font_family);                           // Family name of the font used.
+        this.font_italic = (this.experiment.vars.font_italic === 'yes');                 // If true font style italic is enabled.
+        this.font_size = (this.experiment.vars.font_size);                               // Size of the font in pixels.
+        this.font_underline = (this.experiment.vars.font_underline === 'yes');           // If true font style underline is enabled.
+        this.html = true;                                                                // If true html is used (not supported yet).
+        this.penwidth = 1;                                                               // Default penwidth for drawing shapes. 
         
-        // Set the class private properties. 
-    	this._container   = new createjs.Container();
-        this._font_string = 'bold 18px Courier New';
-	this._height      = osweb.runner._canvas.height;
-	this._width	  = osweb.runner._canvas.width;
+        // Set the private properties.  
+    	this._container = new createjs.Container();                                      // EASELJS: Container which holds the shapes
+        this._font_string = 'bold 18px Courier New';                                     // EASELJS: Default font definition string.
+	this._height = osweb.runner._canvas.height;                                      // Height of the HTML canvas used for drawing.
+	this._width = osweb.runner._canvas.width;                                        // Width of the HTML canvas used for drawing.
     }; 
 	
     // Extend the class from its base class.
     var p = canvas.prototype;
     
-    // Define and set the class public properties. 
-    p.auto_prepare        = false;
-    p.experiment          = null;
+    // Definition of public properties. 
+    p.auto_prepare= false;
+    p.experiment = null;
     p.uniform_coordinates = false;
 	
-    /*
-     * Definition of private class methods. 
-     */
+    // Definition of private methods. 
     
-    p._arrow_shape = function(pSx, pSy, pEx, pEy, pBody_length, pBody_width, pHead_width)
-    {
+    p._arrow_shape = function(sx, sy, ex, ey, body_length, body_width, head_width) {
         // Length
-        var d = Math.sqrt(Math.pow(pEy - pSy,2) + Math.pow(pSx - pEx,2));
-		
-        // Direction.
-        var angle       = Math.atan2(pEy - pSy, pEx - pSx);
-	var _head_width = (1 - pBody_width) / 2.0;
-	pBody_width     = pBody_width / 2.0;
+        var d = Math.sqrt(Math.pow(ey - sy,2) + Math.pow(sx - ex,2));
+        var angle = Math.atan2(ey - sy, ex - sx);
+	var _head_width = (1 - body_width) / 2.0;
+	body_width = body_width / 2.0;
 	
         // calculate coordinates
-	var p4 = [pEx, pEy];
-	var p1 = [pSx + pBody_width * pHead_width * Math.cos(angle - Math.PI / 2), pSy + pBody_width * pHead_width * Math.sin(angle - Math.PI / 2)];
-	var p2 = [p1[0] + pBody_length * Math.cos(angle) * d, p1[1] + pBody_length * Math.sin(angle) * d];
-	var p3 = [p2[0] + _head_width * pHead_width * Math.cos(angle - Math.PI / 2), p2[1] + _head_width * pHead_width * Math.sin(angle - Math.PI / 2)];
-	var p7 = [pSx + pBody_width * pHead_width * Math.cos(angle + Math.PI / 2), pSy + pBody_width * pHead_width * Math.sin(angle + Math.PI / 2)];
-	var p6 = [p7[0] + pBody_length * Math.cos(angle) * d, p7[1] + pBody_length * Math.sin(angle) * d];
-	var p5 = [p6[0] + _head_width * pHead_width * Math.cos(angle + Math.PI / 2), p6[1] + _head_width * pHead_width * Math.sin(angle + Math.PI / 2)];
+	var p4 = [ex, ey];
+	var p1 = [sx + body_width * head_width * Math.cos(angle - Math.PI / 2), sy + body_width * head_width * Math.sin(angle - Math.PI / 2)];
+	var p2 = [p1[0] + body_length * Math.cos(angle) * d, p1[1] + body_length * Math.sin(angle) * d];
+	var p3 = [p2[0] + _head_width * head_width * Math.cos(angle - Math.PI / 2), p2[1] + _head_width * head_width * Math.sin(angle - Math.PI / 2)];
+	var p7 = [sx + body_width * head_width * Math.cos(angle + Math.PI / 2), sy + body_width * head_width * Math.sin(angle + Math.PI / 2)];
+	var p6 = [p7[0] + body_length * Math.cos(angle) * d, p7[1] + body_length * Math.sin(angle) * d];
+	var p5 = [p6[0] + _head_width * head_width * Math.cos(angle + Math.PI / 2), p6[1] + _head_width * head_width * Math.sin(angle + Math.PI / 2)];
 	
         return [p1, p2, p3, p4, p5, p6, p7];
     };    
         
-    /*
-     * Definition of public class methods. 
-     */
-
-    p.arrow = function (pSx, pSy, pEx, pEy, pColor, pPenWidth, pBody_length, pBody_width, pHead_width, pFill)
-    {
-        var points = this._arrow_shape(pSx, pSy, pEx, pEy, pBody_width, pBody_length, pHead_width);
+    // Definition of public methods. 
+    
+    p.arrow = function (sx, sy, ex, ey, color, penwidth, body_length, body_width, head_width, fill) {
+        var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width);
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
         
         shape.graphics.moveTo(points[0][0],points[0][1]);
 	shape.graphics.lineTo(points[1][0],points[1][1]);
@@ -222,159 +212,136 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this._container.addChild(shape); 
     }; 
     		
-    p.circle = function(pX, pY, pR, pFill, pColor, pPenWidth)
-    {
+    p.circle = function(x, y, r, fill, color, penwidth) {
 	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill == 1)
 	{
-            shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.drawCircle(pX, pY, pR);
+	shape.graphics.drawCircle(x, y, r);
 		
-	// Add the line item to container..
+	// Add the line item to container.
 	this._container.addChild(shape); 
     };
 
-    p.clear = function(pBackround_color)
-    {
+    p.clear = function(backround_color) {
 	// Remove the container from the stage object.
 	osweb.runner._stage.removeChild(this._container);
-	this._container.removeAllChildren();
+	
+        // Remove the children from the container.
+        this._container.removeAllChildren();
     };
 
-    p.close_display = function(pExperiment)
-    {
-    	console.log('N/A: canvas.close');
+    p.close_display = function(experiment) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.close_display().');
     };
 
-    p.copy = function(pCanvas)
-    {
-    	console.log('N/A: canvas.copy');
+    p.copy = function(canvas) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.copy().');
     };
 
-    p.ellipse = function(pX, pY, pW, pH, pFill, pColor, pPenWidth)
-    {
+    p.ellipse = function(x, y, w, h, fill, color, penwidth) {
 	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill == 1)
 	{
-    	shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.drawEllipse(pX, pY, pW, pH); 
+	shape.graphics.drawEllipse(x, y, w, h); 
 
 	// Add the text item to the parten frame.
 	this._container.addChild(shape);
     };
 
-    p.fixdot = function(pX, pY, pColor, pStyle)
-    {
+    p.fixdot = function(x, y, color, style) {
         // Check the color and style arguments.      
-        pColor = (typeof pColor === 'undefined') ? 'white'   : pColor;
-        pStyle = (typeof pStyle === 'undefined') ? 'default' : pStyle;
+        color = (typeof color === 'undefined') ? 'white' : color;
+        style = (typeof style === 'undefined') ? 'default' : style;
         
-        if (typeof pX === 'undefined')
-	{
-            if (this.uniform_coordinates == true)
-            {
-		pX = 0;
+        if (typeof x === 'undefined') {
+            if (this.uniform_coordinates === true) {
+		x = 0;
             }
-            else
-            {
-                pX = this._width / 2;
+            else {
+                x = this._width / 2;
             }
 	}
-	if (typeof pY === 'undefined')
-	{
-            if (this.uniform_coordinates == true)
-            {
-		pY = 0;
+	if (typeof y === 'undefined') {
+            if (this.uniform_coordinates === true) {
+		y = 0;
             }
-            else
-            {
-		pY = this._height / 2;
+            else {
+		y = this._height / 2;
             }	
 	}
 		
 	var s = 4;
 	var h = 2;
-		
-	if (pStyle.indexOf('large') != -1)
-	{
+	if (style.indexOf('large') !== -1) {
             s = 16;
 	}
-	else if ((pStyle.indexOf('medium') != -1) || (pStyle == 'default'))
-	{
+	else if ((style.indexOf('medium') !== -1) || (style === 'default')) {
             s = 8;
 	}
-	else if (pStyle.indexOf('small') != -1)
-	{
+	else if (style.indexOf('small') !== -1) {
             s = 4;
 	}
-	else
-	{
-            osweb.debug.addError('Unknown style: ' + pStyle);
+	else {
+            osweb.debug.addError('Unknown style: ' + style);
 	}	
 		
-	if ((pStyle.indexOf('open') != -1) || (pStyle == 'default'))
-	{	
-            this.ellipse(pX - s, pY - s, 2 * s, 2 * s, 1, pColor, 1);
-            this.ellipse(pX - h, pY - h, 2 * h, 2 * h, 1, 'black', 1);
+	if ((style.indexOf('open') !== -1) || (style === 'default')) {	
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
+            this.ellipse(x - h, y - h, 2 * h, 2 * h, 1, 'black', 1);
 	}
-	else if (pStyle.indexOf('filled') != -1)
-	{	
-            this.ellipse(pX - s, pY - s, 2 * s, 2 * s, 1, pColor, 1);
+	else if (style.indexOf('filled') !== -1)	{	
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
 	}
-        else if (pStyle.indexOf('cross') != -1)
-	{
-            this.line(pX, pY - s, pX, pY + s);
-            this.line(pX - s, pY, pX + s, pY);
+        else if (style.indexOf('cross') !== -1)	{
+            this.line(x, y - s, x, y + s);
+            this.line(x - s, y, x + s, y);
 	}
-	else
-	{
-            osweb.debug.addError('Unknown style: ' + pStyle);
+	else {
+            osweb.debug.addError('Unknown style: ' + style);
 	}	
     };
 
-    p.gabor = function(pX, pY, pOrient, pFreq, pEnv, pSize, pStdev, pPhase, pColor1, pColor2, pBgmode)
-    {
-	console.log('Not available yet: canvas.gabor');
+    p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.gabor().');
     };
 
-    p.height = function()
-    {
+    p.height = function() {
     	return this._heigth();
     };
 
-    p.image = function(pFName, pCenter, pX, pY, pScale)
-    {
+    p.image = function(fname, center, x, y, scale) {
 	// Set the class private properties. 
-	var image         = new createjs.Bitmap();
-        image.image       = pFName.data;
-	image.scaleX      = pScale;
-        image.scaleY      = pScale;
+	var image = new createjs.Bitmap();
+        image.image = fname.data;
+	image.scaleX = scale;
+        image.scaleY = scale;
         image.snapToPixel = true;
-        image.x		  = pX - ((image.image.width  * pScale) / 2);
-    	image.y           = pY - ((image.image.height * pScale) / 2);
+        image.x = x - ((image.image.width  * scale) / 2);
+    	image.y = y - ((image.image.height * scale) / 2);
 	
 	// Add the text item to the parten frame.
 	this._container.addChild(image);
     };
 	
-    p.init_display = function(pExperiment)
-    {
+    p.init_display = function(experiment) {
 	// Set the dimension properties.
-	this._height = pExperiment.vars.height;
-    	this._width  = pExperiment.vars.width;
+	this._height = experiment.vars.height;
+    	this._width  = experiment.vars.width;
 	
 	// Initialize the display dimensions.
-	osweb.runner._canvas.height = pExperiment.vars.height;
-	osweb.runner._canvas.width  = pExperiment.vars.width;
+	osweb.runner._canvas.height = experiment.vars.height;
+	osweb.runner._canvas.width  = experiment.vars.width;
 		
 	// Initialize the display color.
-	osweb.runner._canvas.style.background = pExperiment.vars.background;
+	osweb.runner._canvas.style.background = experiment.vars.background;
 
         // Set the cursor visibility to none (default).
         osweb.runner._canvas.style.cursor = 'none';
@@ -383,98 +350,87 @@ osweb.promoteClass = function(sub_class, prefix) {
         osweb.runner._canvas.focus(); 
     };
 
-    p.line = function(pSx, pSy, pEx, pEy, pColor, pPenWidth)
-    {
+    p.line = function(sx, sy, ex, ey, color, penwidth) {
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	shape.graphics.moveTo(pSx, pSy);
-	shape.graphics.lineTo(pEx, pEy); 
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	shape.graphics.moveTo(sx, sy);
+	shape.graphics.lineTo(ex, ey); 
 
 	// Add the line item to container..
 	this._container.addChild(shape); 
     };
 	
-    p.noise_patch = function(pX, pY, pEnv, pSize, pStdev, pColor1, pColor2, pBgmode)
-    {
-    	console.log('Not available yet: canvas.noise_patch');
+    p.noise_patch = function(pX, pY, pEnv, pSize, pStdev, pColor1, pColor2, pBgmode) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.noise_patch().');
     };
 	
-    p.polygon = function()
-    {
-    	console.log('Not available yet: canvas.polygon');
+    p.polygon = function(verticles) {
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.polygon().');
     };
 	
-    p.prepare = function()
-    {
-    	console.log('N/A: canvas.prepare');
+    p.prepare = function() {
     };
 	
-    p.rect = function(pX, pY, pW, pH, pFill, pColor, pPenWidth)
-    {
+    p.rect = function(x, y, w, h, fill, color, penwidth) {
     	var shape = new createjs.Shape();
-	shape.graphics.setStrokeStyle(pPenWidth);
-	shape.graphics.beginStroke(pColor);
-	if (pFill == 1)
+	shape.graphics.setStrokeStyle(penwidth);
+	shape.graphics.beginStroke(color);
+	if (fill === 1)
 	{
-            shape.graphics.beginFill(pColor);
+            shape.graphics.beginFill(color);
 	}
-	shape.graphics.rect(pX, pY, pW, pH); 
+	shape.graphics.rect(x, y, w, h); 
 
 	// Add the line item to container..
 	this._container.addChild(shape); 
     };
 	
-    p.set_font = function(pFamily, pSize, pItalic, pBold, pUnderline)
-    {
+    p.set_font = function(family, size, italic, bold, underline) {
    	// Define the the font styles.
-    	var font_bold      = (pBold      == true) ? 'bold '      : '';
-        var font_italic    = (pItalic    == true) ? 'italic '    : '';
-        var font_underline = (pUnderline == true) ? 'underline ' : '';
+    	var font_bold = (bold === true) ? 'bold ' : '';
+        var font_italic = (italic === true) ? 'italic ' : '';
+        var font_underline = (underline === true) ? 'underline ' : '';
         
         // Set the font string.
-        this._font_string = font_bold + font_italic + font_underline + pSize + 'px ' + pFamily; 
+        this._font_string = font_bold + font_italic + font_underline + size + 'px ' + family; 
      };
         
-    p.show = function()
-    {
+    p.show = function() {
     	// Add the container to the stage object and update the stage.
 	osweb.runner._stage.addChild(this._container);
 	osweb.runner._stage.update(); 
 
 	// Return the current time.
-	if (this.experiment != null)
-        {
+	if (this.experiment != null) {
             return this.experiment.clock.time();
         }    
-        else
-        {    
+        else {    
             return null;
         }
     };
 	
-    p.size = function()
-    {
+    p.size = function() {
     	// Create object tuple.
     	var size = {width: this._width, height: this._height};
 	return size;
     };
 	
-    p.text = function(pText, pCenter, pX, pY , pColor, pHtml)
-    {
+    p.text = function(text, center, x, y , color, html) {
 	// Create the text element.          
-	var text = new createjs.Text(pText, this._font_string, pColor);
+	var text_element = new createjs.Text(text, this._font_string, color);
 
 	// Set the text element properties.
-	text.x = pX - (text.getMeasuredWidth() / 2);
-	text.y = pY - (text.getMeasuredHeight() / 2);
+	text_element.x = x - (text_element.getMeasuredWidth() / 2);
+	text_element.y = y - (text_element.getMeasuredHeight() / 2);
 		 
 	// Add the text item to the parten frame.
-	this._container.addChild(text);
+	this._container.addChild(text_element);
     };
 
-    p.text_size = function(pText, pMax_width, pStyle_args)
-    {
+    p.text_size = function(text, max_width, style_args) {
+        // Return the text size in pixels.
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
     };
 
     // Bind the canvas class to the osweb namespace.
@@ -485,20 +441,20 @@ osweb.promoteClass = function(sub_class, prefix) {
 (function() {
     // Definition of the class clock.
     function clock(experiment) {
-        // Define and set the private properties. 
-        this._startTime = this._now();
+        // Definition of private properties. 
+        this._startTime = this._now();                     // Start time anchor of the experiment.
 		
         // Set the class public properties. 
-	this.experiment = experiment;
+	this.experiment = experiment;                      // Anchor to the experiment object.
     }; 
 	
     // Extend the class from its base class.
     var p = clock.prototype;
     
-    // Define the class public properties. 
+    // Definition of public properties. 
     p.experiment = null;
 
-    // Definition of class private methods.   
+    // Definition of private methods.   
     
     p._now = function() {
 	// Get the current time stamp using the best available timing method.
@@ -513,7 +469,7 @@ osweb.promoteClass = function(sub_class, prefix) {
 	}
     };
 
-    // Definition of public class methods.   
+    // Definition of public methods.   
 
     p.initialize = function() {
         // Set the absolute start time of the expeirment.
@@ -542,145 +498,119 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.clock = clock;
 }());
 
-/*
- * Definition of the class keyboard.
- */
 
-(function() 
-{
-    function keyboard(pExperiment, pTimeout, pKeylist)
-    {
+(function() {
+    // Definition of the class keyboard.
+    function keyboard(experiment, timeout, keylist) {
         // Set the public properties. 
-	this.experiment = pExperiment;
-	this.keylist    = (typeof pKeylist === 'undefined') ? []   : pKeylist;	
-	this.timeout    = (typeof pTimeout === 'undefined') ? null : pTimeout;
-	
-        // Set the private properties. 
-        this._response     = null;
-	this._synoniem_map = null;
-        
-        // Define the key conversion list.
-        this._define_synoniem_map();
+	this.experiment = experiment;                                          // Anchor to the experiment object. 
+	this.keylist = (typeof keylist === 'undefined') ? [] : keylist;	       // List of acceptable response keys. 
+	this.timeout = (typeof timeout === 'undefined') ? null : timeout;      // Duration in millisecond for time-out.
     }; 
 	
     // Extend the class from its base class.
     var p = keyboard.prototype;
     
-    // Define the public properties. 
+    // Definition of public properties. 
     p.experiment = null;
-    p.keylist 	 = [];
-    p.timeout    = null;
+    p.keylist = [];
+    p.timeout = null;
 	
-    /*
-     * Definition of class private methods.
-     */
+    // Definition of the synoniem map for all keys.                                  
+    p.SYNONIEM_MAP = [[' ','space','SPACE'],['"','quotedbl','QUOTEDBL'],['!','exclaim','EXCLAIM'],['#','hash','HASH'],
+        ['$','dollar','DOLLAR'],['&','ampersand','AMPERSAND'],["'",'quote','QUOTE'],['(','leftbracket','leftparen','LEFTBRACKET','LEFTPAREN'],
+        [')','rightbracket','rightparen','RIGHTBRACKET','RIGHTPAREN'],['*','asteriks','ASTERISK'],['+','plus','PLUS'],[',','comma','COMMA'],
+        ['-','minus','MINUS'],['.','period','PERIOD'],['/','slash','SLASH'],
+        ['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['0'],['=','equals','EQUALS'],
+        [':','colon','COLON'],[';','semicolon','SEMICOLON'],['<','less','LESS'],['>','greater','GREATER'],
+        ['?','question','QUESTION'],['@','at','AT'],
+        ['a','A'],['b','B'],['c','C'],['d','D'],['e','E'],['f','F'],
+        ['g','G'],['h','H'],['i','I'],['j','J'],['k','K'],['l','L'],
+        ['m','M'],['n','N'],['o','O'],['p','P'],['q','Q'],['r','R'],
+        ['s','S'],['t','T'],['u','U'],['v','V'],['w','W'],['x','X'],
+        ['y','Y'],['z','Z'],
+        ['kp0','KP0'],['kp1','KP1'],['kp2','KP2'],['kp3','KP3'],['kp4','KP4'],['kp5','KP5'],['kp6','KP6'],['kp7','KP7'],['kp8','KP8'],['kp9','KP9'],  
+        ['kp_divide','KP_DIVIDE'],['kp_enter','KP_ENTER'],['kp_equals','KP_EQUALS'],['kp_minus','KP_MINUS'],['kp_multiply','KP_MULTIPLY'],['kp_period','KP_PERIOD'],['kp_plus','KP_PLUS'],
+        ['\\','backslash','BACKSLASH'],['^','power','caret','POWER','CARET'],['_','underscore','UNDERSCORE'],['`','backquote','BACKQUOTE'],
+        ['f1','F1','help','HELP'],['f2','F2'],['f3','F3'],['f4','F4'],['f5','F5'],['f6','F6'],
+        ['f7','F7'],['f8','F8'],['f9','F9'],['f10','F10'],['f11','F11'],['f12','F12'],
+        ['f13','F13'],['f14','F14'],['f15','F15'],
+        ['up','UP'],['down','DOWN'],['left','LEFT'],['right','RIGHT'],['menu','MENU'],
+        ['lshift','left shift','LSHIFT','LEFT SHIFT'],['lctrl','left ctrl','LCTRL','LEFT CTRL'],['lalt','left alt','LALT','LEFT ALT'],
+        ['rshift','right shift','RSHIFT','RIGHT SHIFT'],['rctrl','right ctrl','RCTRL','RIGHT CTRL'],['ralt','right alt','alt gr','RALT','RIGHT ALT','ALT GR'],
+        ['page up','pageup','PAGE UP','PAGEUP'],['page down','pagedown','PAGE DOWN','PAGEDOWN'],['pause','PAUSE'],
+        ['scroll lock','scrollock','SCROLL LOCK','SCROLLOCK'],['caps lock','capslock','CAPS LOCK','CAPSLOCK'],['nummlock','NUMMLOCK'],
+        ['clear','CLEAR'],['enter','ENTER','return','RETURN'],['tab','TAB'],['backspace','BACKSPACE'],['end','END'],['home','HOME'],['insert','INSERT'],['delete','DELETE'],
+        ['sysreq','sys req','SYSREQ','SYS REQ'],['break','BREAK'],['escape','ESCAPE'],['print','PRINT'],['print screen','PRINT SCREEN'],
+        ['lmeta','left meta','LMETA','LEFT META',,'lsuper','LSUPER','left super','LEFT SUPER'],                  
+        ['rmeta','right meta','RMETA','RIGHT META','rsuper','right super','RSUPER','RIGHT SUPER'],                  
+        // key defined below are not supported yet.
+        ['euro','EURO'],['first','FIRST'],['last','LAST'],['kp enter','KP ENTER'],['kp equals','KP EQUALS'],
+        ['mode','MODE'],['unknown','UNKNOWN'],['unknown key','UNKNOWN KEY']];  
 
-    p._define_synoniem_map = function()
-    {
-        // Define the map with synoniems.
-        this._synoniem_map = [[' ','space','SPACE'],['"','quotedbl','QUOTEDBL'],['!','exclaim','EXCLAIM'],['#','hash','HASH'],
-                              ['$','dollar','DOLLAR'],['&','ampersand','AMPERSAND'],["'",'quote','QUOTE'],['(','leftbracket','leftparen','LEFTBRACKET','LEFTPAREN'],
-                              [')','rightbracket','rightparen','RIGHTBRACKET','RIGHTPAREN'],['*','asteriks','ASTERISK'],['+','plus','PLUS'],[',','comma','COMMA'],
-                              ['-','minus','MINUS'],['.','period','PERIOD'],['/','slash','SLASH'],
-                              ['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['0'],['=','equals','EQUALS'],
-                              [':','colon','COLON'],[';','semicolon','SEMICOLON'],['<','less','LESS'],['>','greater','GREATER'],
-                              ['?','question','QUESTION'],['@','at','AT'],
-                              ['a','A'],['b','B'],['c','C'],['d','D'],['e','E'],['f','F'],
-                              ['g','G'],['h','H'],['i','I'],['j','J'],['k','K'],['l','L'],
-                              ['m','M'],['n','N'],['o','O'],['p','P'],['q','Q'],['r','R'],
-                              ['s','S'],['t','T'],['u','U'],['v','V'],['w','W'],['x','X'],
-                              ['y','Y'],['z','Z'],
-                              ['kp0','KP0'],['kp1','KP1'],['kp2','KP2'],['kp3','KP3'],['kp4','KP4'],['kp5','KP5'],['kp6','KP6'],['kp7','KP7'],['kp8','KP8'],['kp9','KP9'],  
-                              ['kp_divide','KP_DIVIDE'],['kp_enter','KP_ENTER'],['kp_equals','KP_EQUALS'],['kp_minus','KP_MINUS'],['kp_multiply','KP_MULTIPLY'],['kp_period','KP_PERIOD'],['kp_plus','KP_PLUS'],
-                              ['\\','backslash','BACKSLASH'],['^','power','caret','POWER','CARET'],['_','underscore','UNDERSCORE'],['`','backquote','BACKQUOTE'],
-                              ['f1','F1','help','HELP'],['f2','F2'],['f3','F3'],['f4','F4'],['f5','F5'],['f6','F6'],
-                              ['f7','F7'],['f8','F8'],['f9','F9'],['f10','F10'],['f11','F11'],['f12','F12'],
-                              ['f13','F13'],['f14','F14'],['f15','F15'],
-                              ['up','UP'],['down','DOWN'],['left','LEFT'],['right','RIGHT'],['menu','MENU'],
-                              ['lshift','left shift','LSHIFT','LEFT SHIFT'],['lctrl','left ctrl','LCTRL','LEFT CTRL'],['lalt','left alt','LALT','LEFT ALT'],
-                              ['rshift','right shift','RSHIFT','RIGHT SHIFT'],['rctrl','right ctrl','RCTRL','RIGHT CTRL'],['ralt','right alt','alt gr','RALT','RIGHT ALT','ALT GR'],
-                              ['page up','pageup','PAGE UP','PAGEUP'],['page down','pagedown','PAGE DOWN','PAGEDOWN'],['pause','PAUSE'],
-                              ['scroll lock','scrollock','SCROLL LOCK','SCROLLOCK'],['caps lock','capslock','CAPS LOCK','CAPSLOCK'],['nummlock','NUMMLOCK'],
-                              ['clear','CLEAR'],['enter','ENTER','return','RETURN'],['tab','TAB'],['backspace','BACKSPACE'],['end','END'],['home','HOME'],['insert','INSERT'],['delete','DELETE'],
-                              ['sysreq','sys req','SYSREQ','SYS REQ'],['break','BREAK'],['escape','ESCAPE'],['print','PRINT'],['print screen','PRINT SCREEN'],
-                              ['lmeta','left meta','LMETA','LEFT META',,'lsuper','LSUPER','left super','LEFT SUPER'],                  
-                              ['rmeta','right meta','RMETA','RIGHT META','rsuper','right super','RSUPER','RIGHT SUPER'],                  
-                              // key defined below are not supported yet.
-                              ['euro','EURO'],['first','FIRST'],['last','LAST'],['kp enter','KP ENTER'],['kp equals','KP EQUALS'],
-                              ['mode','MODE'],['unknown','UNKNOWN'],['unknown key','UNKNOWN KEY']];  
-    };
+    // Definition of private methods.
 
-    p._get_default_from_synoniem = function(pResponses)
-    {
+    p._get_default_from_synoniem = function(responses) {
         var defaults = [];
-        for (var i = 0;i < pResponses.length;i++)
-        {
-            var synoniem = this.synonyms(pResponses[i]);
+        for (var i = 0;i < responses.length; i++) {
+            var synoniem = this.synonyms(responses[i]);
             defaults.push(synoniem[0]);
         }
-
         return defaults;    
     };
     
-    p._set_response = function(pKeyboardResponse)
-    {
-	// Set the last response item.
-	this._response = pKeyboardResponse;		
-    };
+    // Definition of public methods.
 
-    /*
-     * Definition of class public methods.
-     */
-
-    p.default_config = function()
-    {
+    p.default_config = function() {
         // Return the default configuration.
-	return {'timeout': null, 
-                'keylist': null};
+	return {'timeout': null, 'keylist': []};
     };
     
-    p.flush = function() 
-    {
+    p.flush = function() {
 	// Clear all pending keyboard input, not limited to the keyboard.
-        osweb.debug.addMessage('OsWeb warning: the method keyboard.flush() is not implemented in the current version of OsWeb.');
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'keyboard.flush().');
     };
  	
-    p.get_key = function(pTimeout, pKeylist) 
-    {
+    p.get_key = function(timeout, keylist) {
 	// Collects a single key press.
-	this.keylist = (typeof pKeylist === 'undefined') ? this.keylist : pKeylist;	
-	this.timeout = (typeof pTimeout === 'undefined') ? this.timeout : pTimeout;
+	this.keylist = (typeof keylist === 'undefined') ? this.keylist : keylist;	
+	this.timeout = (typeof timeout === 'undefined') ? this.timeout : timeout;
 		
-	if (this.experiment != null)
-	{
+	if (this.experiment != null) {
             // Set the event processor.
             osweb.events._run(this, this.timeout, osweb.constants.RESPONSE_KEYBOARD, this.keylist);
 	};
     };
 
-    p.get_mods = function()
-    {
-    	// Returns a list of keyboard moderators (e.g., shift, alt, etc.) that are currently pressed.
-        osweb.debug.addMessage('OsWeb warning: the method keyboard.get_mods() is not implemented in the current version of OsWeb.');
+    p.get_mods = function() {
+    	var moderators = [];
+        if (osweb.events._keyboard_event !== null) {
+            if (osweb.events._keyboard_event.shiftKey === true) {
+                moderators.push('shift');
+            };    
+            if (osweb.events._keyboard_event.ctrlKey === true) {
+                moderators.push('ctrl');
+            };    
+            if (osweb.events._keyboard_event.altKey === true) {
+                moderators.push('alt');
+            };    
+        } 
+        return moderators;    
     };
 
-    p.set_config = function(pTimeout, pKeylist)
-    {
+    p.set_config = function(timeout, keylist) {
 	// Set the properties.
-	this.keylist = pKeylist;	
-	this.timeout = pTimeout;
+	this.keylist = keylist;	
+	this.timeout = timeout;
     };
 	
-    p.show_virtual_keyboard = function(pVisible)
-    {
+    p.show_virtual_keyboard = function(visible) {
         // Shows or hides a virtual keyboard.		
-    	if (pVisible == true)
-	{
+    	if (visible === true) {
             // Hack to show the virutal keyboard. ## Must be tested!
             osweb.runner._canvas.setfocus();
 	}
-	else
-	{
+	else {
             // Hack to hide the virtual keyboard. ## Must be tested!
             var tmp = document.createElement("input");
             document.body.appendChild(tmp);
@@ -689,24 +619,18 @@ osweb.promoteClass = function(sub_class, prefix) {
 	}
     };
 
-    p.synonyms = function(pButton)
-    {
-        if (typeof pButton !== 'undefined')
-        {
-            for (var i = 0;i < this._synoniem_map.length;i++)
-            {
-                for (var j = 0;j < this._synoniem_map[i].length;j++)
-                {
-                    if (this._synoniem_map[i][j] == pButton)
-                    {
-                        return this._synoniem_map[i];
+    p.synonyms = function(button) {
+        if (typeof button !== 'undefined') {
+            for (var i = 0;i < this.SYNONIEM_MAP.length;i++) {
+                for (var j = 0;j < this.SYNONIEM_MAP[i].length; j++) {
+                    if (this.SYNONIEM_MAP[i][j] == button) {
+                        return this.SYNONIEM_MAP[i];
                         break;
                     }
                 }   
             }
         }
-        else
-        {
+        else {
             return null;
         }    
     };
@@ -719,30 +643,29 @@ osweb.promoteClass = function(sub_class, prefix) {
     // Definition of the class log.
     function log(experiment, path) {
         // Set the class private properties. 
-    	this._all_vars = null;
-	this._header_written = false;	
-	this._log = [];
-	this._path = '';
+    	this._all_vars = null;                             // If true all variables are written to the log.  
+	this._header_written = false;	                   // If true the header has been written to the log.
+	this._log = [];                                    // Array containing the log entries.
+	this._path = '';                                   // Path to wich the log is written.
 
-        // set the class public properties. 
-	this.experiment = experiment;
-	this.experiment.vars.logfile = path;
+        // Set the class public properties. 
+	this.experiment = experiment;                      // Anchor to the experiment object.
+    	this.experiment.vars.logfile = path;               // Store the path location into the vars list.   
     }; 
 	
     // Extend the class from its base class.
     var p = log.prototype;
     
-    // Define the class public properties. 
+    // Definition of public properties. 
     p.experiment = null;
 	
-    // Definition of public class methods.   
+    // Definition of public methods.   
 
     p.all_vars = function() {
 	// Retrieves a list of all variables that exist in the experiment.
 	if (this._all_vars === null) {
             this._all_vars = this.experiment.vars.inspect();
 	}
-		
 	return this._all_vars;
     };
 
@@ -822,92 +745,61 @@ osweb.promoteClass = function(sub_class, prefix) {
     // Bind the log class to the osweb namespace.
     osweb.log = log;
 }());
-/*
- * Definition of the class mouse.
- */
 
-(function() 
-{
-    function mouse(pExperiment, pTimeout, pButtonlist, pVisible)
+(function() {
+    // Definition of the class mouse.
+    function mouse(experiment, timeout, buttonlist, visible)
     {
         // Set the class public properties. 
-	this.experiment = pExperiment;
-	this.timeout    = (typeof pTimeout === 'undefined')    ? null : pTimeout;
-	this.buttonlist = (typeof pButtonlist === 'undefined') ? null : pButtonlist;	
-	this.visible    = (typeof pVisible === 'undefined')    ? true : pVisible;	
-
-	// Set the class private properties. 
-	this._response     = null;
-        this._synoniem_map = null;
-
-        // Define the key conversion list.
-        this._define_synoniem_map();
+	this.experiment = experiment;                                               // Anchor to the experiment object.
+	this.timeout = (typeof timeout === 'undefined') ? null : timeout;           // Duration in millisecond for time-out. 
+	this.buttonlist = (typeof buttonlist === 'undefined') ? null : buttonlist;  // List of acceptable response buttons.	
+	this.visible = (typeof visible === 'undefined') ? false : visible;	    // if true the mouse cursor is visible.
     }; 
 	
     // Extend the class from its base class.
     var p = mouse.prototype;
     
-    // Define the class public properties. 
+    // Definition of public properties. 
     p.experiment = null;
     p.buttonlist = [];
-    p.timeout    = -1;
-    p.visible 	 = false;
+    p.timeout = -1;
+    p.visible = false;
 	
-    /*
-     * Definition of class private methods.
-     */
+    // Definition of the synoniem map for all keys.                                  
+    p.SYNONIEM_MAP = [['1','left_button'], ['2','middle_button'], ['3','right_button'], ['4','scroll_up'], ['5','scroll_down']];
+        
+    // Definition of private methods.
 
-    p._define_synoniem_map = function()
-    {
-        // Define the map with synoniems.
-        this._synoniem_map = [['1','left_button'], ['2','middle_button'], ['3','right_button'], ['4','scroll_up'], ['5','scroll_down']];
-    };        
-
-    p._get_default_from_synoniem = function(pResponses)
-    {
+    p._get_default_from_synoniem = function(responses) {
+        // Return the default synoniem value from a response.
         var defaults = [];
-        for (var i = 0;i < pResponses.length;i++)
-        {
-            var synoniem = this.synonyms(pResponses[i]);
+        for (var i = 0;i < responses.length;i++) {
+            var synoniem = this.synonyms(responses[i]);
             defaults.push(synoniem[0]);
         }
-
         return defaults;    
     };
 
-    p._set_response = function(pMouseResponse)
-    {
-    	// Set the last response item.
-    	this._response = pMouseResponse;		
-    };
-
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of class public methods.
     
-    p.default_config = function()
-    {
+    p.default_config = function() {
         // Return the default configuration.
-        return {'timeout'   : -1,
-		'buttonlist': null,
-		'visible'   : false};
+        return {'timeout': null, 'buttonlist': null, 'visible': false};
     };
 
-    p.flush = function() 
-    {
+    p.flush = function() {
 	// Clears all pending mouse input, not limited to the mouse.
-        osweb.debug.addMessage('OsWeb warning: the method mouse.flush() is not implemented in the current version of OsWeb.');
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'mouse.flush().');
     };
  	
-    p.get_click = function(pTimeout, pButtonlist, pVisible)
-    {
+    p.get_click = function(timeout, buttonlist, visible) {
 	// Collects a single mouse click.
-	this.timeout    = (typeof pTimeout === 'undefined')    ? this.timeout    : pTimeout;
-	this.buttonlist = (typeof pButtonlist === 'undefined') ? this.buttonlist : pButtonlist;	
-	this.visible    = (typeof pVisible === 'undefined')    ? this.visible    : pVisible;	
+	this.timeout = (typeof timeout === 'undefined') ? this.timeout : timeout;
+	this.buttonlist = (typeof buttonlist === 'undefined') ? this.buttonlist : buttonlist;	
+	this.visible = (typeof visible === 'undefined') ? this.visible : visible;	
 
-	if (this.experiment != null)
-	{
+	if (this.experiment != null) {
             // Hide or show the mouse.
             this.show_cursor(this.visible);
 	
@@ -916,75 +808,66 @@ osweb.promoteClass = function(sub_class, prefix) {
 	};
     };
 
-    p.get_pos = function()
-    {
-    	// check if there is a mouse move event available.
-        if (osweb.events._mouse_move !== null)
-        {
+    p.get_pos = function() {
+    	// Returns the current mouse position. !Warning: this methods uses the state in the last known mouse respone, not the current state.
+        if (osweb.events._mouse_move !== null) {
             return {'rtTime': osweb.events._mouse_move.rtTime, 'x': osweb.events._mouse_move.event.clientX, 'y': osweb.events._mouse_move.event.clientY};
         }
-        else
-        {
+        else {
             return {'rtTime': -1, 'x': -1, 'y': -1};
         }    
     };
 
-    p.get_pressed = function()
-    {
-    	// Returns the current state of the mouse buttons. A True value means the button is currently being pressed.
-        osweb.debug.addMessage('OsWeb warning: the method mouse.get_pressed() is not implemented in the current version of OsWeb.');
-     };
+    p.get_pressed = function() {
+        // Returns the current button state of the mouse buttons. !Warning: this methods uses the state in the last known mouse respone, not the current state.
+        if (osweb.events._mouse_press !== null) {
+            return { 'buttons': [(osweb.events._mouse_press.button === 0), (osweb.events._mouse_press.button === 1), (osweb.events._mouse_press.button === 2)]};
+        }
+        else {
+            return { 'buttons': [null, null, null]};
+        }    
+    };
 
-    p.set_config = function(pTimeout, pButtonlist, pVisible)
-    {
+    p.set_config = function(timeout, buttonlist, visible) {
 	// Set mouse properties.          
-	this.timeout    = pTimeout;
-	this.buttonlist = pButtonlist;	
-	this.visible    = pVisible;	
+	this.timeout = timeout;
+	this.buttonlist = buttonlist;	
+	this.visible = visible;	
     };
 
-    p.set_pos = function(pPos)
-    {
+    p.set_pos = function(pos) {
     	// Returns the current position of the cursor.	
-        osweb.debug.addMessage('OsWeb warning: the method mouse.set_pos() is not implemented in the current version of OsWeb.');
+        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'mouse.set_pos().');
     };
 
-    p.show_cursor = function(pVisible)
-    {
+    p.show_cursor = function(visible) {
     	// Set the property
-	this.visible = pVisible;
+	this.visible = visible;
 		
 	// Immediately changes the visibility of the mouse cursor.	
-	if (pVisible == true)
-	{
+	if (visible === true) {
             // Show the mouse cursor.
             osweb.runner._stage.canvas.style.cursor = "default";
 	}
-	else
-	{
+	else {
             // Set the cursor visibility to none.
             osweb.runner._stage.canvas.style.cursor = "none";
         }
     };
 
-    p.synonyms = function(pButton)
+    p.synonyms = function(button)
     {
-        if (typeof pButton !== 'undefined')
-        {
-            for (var i = 0;i < this._synoniem_map.length;i++)
-            {
-                for (var j = 0;j < this._synoniem_map[i].length;j++)
-                {
-                    if (this._synoniem_map[i][j] == pButton)
-                    {
-                        return this._synoniem_map[i];
+        if (typeof button !== 'undefined') {
+            for (var i = 0;i < this.SYNONIEM_MAP.length;i++) {
+                for (var j = 0;j < this.SYNONIEM_MAP[i].length;j++) {
+                    if (this.SYNONIEM_MAP[i][j] == button) {
+                        return this.SYNONIEM_MAP[i];
                         break;
                     }
                 }   
             }
         }
-        else
-        {
+        else {
             return null;
         }    
     };
@@ -6153,134 +6036,125 @@ osweb.promoteClass = function(sub_class, prefix) {
 }());
 
 /*
- * Definition of the class events.   
+ * Class events - processing all user and system evens within osweb.
  */
 
-(function() 
-{
-    function events()
-    {
-    	throw "The class events cannot be instantiated!";
+(function() {
+    function events() {
+    	throw 'The class events cannot be instantiated!';
     }; 
 	
     // Definition of private properties.
-    events._active         = false;                             // If true event processing is active.
-    events._caller	   = null;                              // The caller object (clock, keyboard, mouse).
-    events._current_item   = null;				// Contain the current active item. 			
-    events._keyboard_mode  = osweb.constants.PRESSES_ONLY;      // Keyboard collecting mode (down/up/both).
-    events._keyboard_event = null;                              // Contains the last known keyboard event.
-    events._mouse_mode     = osweb.constants.PRESSES_ONLY;      // Mouse collecting mode (down/up/both).
-    events._mouse_event    = null;				// Contains the last known mouse event.	
-    events._mouse_move     = null;                              // Contains the last known mouse move event (used within the mouse class).
-    events._response_given = false;				// Valid response toggle
-    events._response_type  = -1;				// Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
-    events._response_list  = null;	                        // Items to respond on.
-    events._sound_ended    = false;				// Sound play is finished.
-    events._timeout        = -1;                                // Duration for timeout.
-    events._video_ended    = false;				// Video play is finished.
+    events._active = false;                                // If true event processing is active.
+    events._caller = null;                                 // The caller object (clock, keyboard, mouse).
+    events._current_item = null;			   // Contain the current active item. 			
+    events._keyboard_mode = osweb.constants.PRESSES_ONLY;  // Keyboard collecting mode (down/up/both).
+    events._keyboard_event = null;                         // Contains the last known keyboard event.
+    events._mouse_mode = osweb.constants.PRESSES_ONLY;     // Mouse collecting mode (down/up/both).
+    events._mouse_move = null;                             // Contains the last known mouse move event (used within the mouse class).
+    events._mouse_press = null;				   // Contains the last known mouse press event (used within the mouse class).	
+    events._response_given = false;			   // Valid response toggle
+    events._response_type = -1;				   // Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
+    events._response_list = null;	                   // Items to respond on.
+    events._sound_ended = false;			   // Sound play is finished.
+    events._timeout = -1;                                  // Duration for timeout.
+    events._video_ended = false;			   // Video play is finished.
     
-    // Convert keyCode with special keys to a unique value.
-    events.keyCodes  = ['','','','','','','help','','backspace','tab','','','clear','enter','enter_special','','shift','ctrl','alt','pause',   // 00  .. 19
-                        'caps','','','','','','','escape','','','','','space','page up','page down','end','home','left','up','right',          // 20  .. 39
-                        'down','select','print','execute','print screen','insert','delete','','0','1','2','3','4','5','6','7','8','9',':',';', // 40  .. 59
-                        '<','=','>','?','@','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',                                       // 60  .. 79
-                        'p','q','r','s','t','u','v','w','x','y','z','left meta','right meta','menu','','','kp0','kp1','kp2','kp3',             // 80  .. 99
-                        'kp4','kp5','kp6','kp7','kp8','kp9','kp_multiply','kp_plus','','kp_minus','kp_period','kp_divide','f1','f2','f3','f4','f5','f6','f7','f8', // 100 .. 119
-                        'f9','f10','f11','f12','','','','','','','','','','','','','','','','',                                                // 120 .. 139
-                        '','','','','numlock','scrollock','','','','','','','','','','','','','','',                                           // 140 .. 159
-                        '^','!','"','#','$','%','&','_','(',')','*','+','|','_','{','}','~','','','',                                          // 160 .. 179
-                        '','','','','','',';','=',',','-','.','/','`','','','','','','','',                                                    // 180 .. 199
-                        '','','','','','','','','','','','','','','','','','','','[',                                                          // 200 .. 219
-                        '\\',']','\'','','','','','','','','','','','','','','','','','',                                                      // 220 .. 239
-                        '','','','','','','','','','','','','','','',''];                                                                      // 240 .. 255
-    events.keySCodes = ['','','','','','','','','','','','','','','','','','','','pause',                                                      // 00  .. 19
-                        '','','','','','','','','','','','','','','','','','','','',                                                           // 20  .. 39
-                        '','','','','','','','',')','!','@','#','$','%','^','&','*','(','',':',                                                // 40  .. 59
-                        '','+','','','','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',                                           // 60  .. 79
-                        'p','q','r','s','t','u','v','w','y','z','','','','','','','','','','',                                                 // 80  .. 99
-                        '','','','','','','','','','','','','','','','','','','','',                                                           // 100 .. 119
-                        '','','','','','','','','','','','','','','','','','','','',                                                           // 120 .. 139
-                        '','','','','','','','','','','','','','','','','','','','',                                                           // 140 .. 159
-                        '','','','','','','','','','','','','','_','','','','','','',                                                          // 160 .. 179
-                        '','','','','','','','','<','','>','?','~','','','','','','','',                                                       // 180 .. 199
-                        '','','','','','','','','','','','','','','','','','','','{',                                                          // 200 .. 219
-                        '|','}','"','','','','','','','','','','','','','','','','','',                                                        // 220 .. 239
-                        '','','','','','','','','','','','','','','',''];                                                                      // 240 .. 255
+    // Definition of the conversion table to convert keycodes to OpenSesame codes.
+    events.KEY_CODES = ['','','','','','','help','','backspace','tab','','','clear','enter','enter_special','','shift','ctrl','alt','pause',         // 00  .. 19
+        'caps','','','','','','','escape','','','','','space','page up','page down','end','home','left','up','right',                                // 20  .. 39
+        'down','select','print','execute','print screen','insert','delete','','0','1','2','3','4','5','6','7','8','9',':',';',                       // 40  .. 59
+        '<','=','>','?','@','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',                                                             // 60  .. 79
+        'p','q','r','s','t','u','v','w','x','y','z','left meta','right meta','menu','','','kp0','kp1','kp2','kp3',                                   // 80  .. 99
+        'kp4','kp5','kp6','kp7','kp8','kp9','kp_multiply','kp_plus','','kp_minus','kp_period','kp_divide','f1','f2','f3','f4','f5','f6','f7','f8',   // 100 .. 119
+        'f9','f10','f11','f12','','','','','','','','','','','','','','','','',                                                                      // 120 .. 139
+        '','','','','numlock','scrollock','','','','','','','','','','','','','','',                                                                 // 140 .. 159
+        '^','!','"','#','$','%','&','_','(',')','*','+','|','_','{','}','~','','','',                                                                // 160 .. 179
+        '','','','','','',';','=',',','-','.','/','`','','','','','','','',                                                                          // 180 .. 199
+        '','','','','','','','','','','','','','','','','','','','[',                                                                                // 200 .. 219
+        '\\',']','\'','','','','','','','','','','','','','','','','','',                                                                            // 220 .. 239
+        '','','','','','','','','','','','','','','',''];                                                                                            // 240 .. 255
+    // Definition of the conversion table to convert shift keycodes to OpenSesame codes.
+    events.KEY_SCODES = ['','','','','','','','','','','','','','','','','','','','pause',                                                           // 00  .. 19
+        '','','','','','','','','','','','','','','','','','','','',                                                                                 // 20  .. 39
+        '','','','','','','','',')','!','@','#','$','%','^','&','*','(','',':',                                                                      // 40  .. 59
+        '','+','','','','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o',                                                                 // 60  .. 79
+        'p','q','r','s','t','u','v','w','y','z','','','','','','','','','','',                                                                       // 80  .. 99
+        '','','','','','','','','','','','','','','','','','','','',                                                                                 // 100 .. 119
+        '','','','','','','','','','','','','','','','','','','','',                                                                                 // 120 .. 139
+        '','','','','','','','','','','','','','','','','','','','',                                                                                 // 140 .. 159
+        '','','','','','','','','','','','','','_','','','','','','',                                                                                // 160 .. 179
+        '','','','','','','','','<','','>','?','~','','','','','','','',                                                                             // 180 .. 199
+        '','','','','','','','','','','','','','','','','','','','{',                                                                                // 200 .. 219
+        '|','}','"','','','','','','','','','','','','','','','','','',                                                                              // 220 .. 239
+        '','','','','','','','','','','','','','','',''];                                                                                            // 240 .. 255
    
-    /*
-     * Definition of class methods (life cycle).   
-     */
+    // Definition of methods for general event processing.    
 
-    events._initialize = function()
-    {
+    events._initialize = function() {
 	// Initialize the keyboard event listeners.
         window.addEventListener("keydown", this._keyDown.bind(this), false); 
-        window.addEventListener("keyup"  , this._keyUp.bind(this)  , false);
+        window.addEventListener("keyup", this._keyUp.bind(this), false);
 
 	// Initialize the mouse event listeners.
     	osweb.runner._canvas.addEventListener("mousedown", this._mouseDown.bind(this), false);
-	osweb.runner._canvas.addEventListener("mousemove", this._mouseMove.bind(this)  , false);
-	osweb.runner._canvas.addEventListener("mouseup"  , this._mouseUp.bind(this)  , false);
+	osweb.runner._canvas.addEventListener("mousemove", this._mouseMove.bind(this), false);
+	osweb.runner._canvas.addEventListener("mouseup", this._mouseUp.bind(this), false);
+        
+    	// Initialize the mouse context event listeners.
+        osweb.runner._canvas.addEventListener("contextmenu", this._mouseContext.bind(this), false);
 
 	// Initialize the tick event listener.
 	createjs.Ticker.setInterval(15);
 	createjs.Ticker.addEventListener("tick", this._tick.bind(this));	
     };
  
-    events._finalize = function()
-    {
+    events._finalize = function() {
     	// Finalize the tick event listener.             
 	createjs.Ticker.removeEventListener("tick");
+
+	// Finalize the mouse context event listeners.
+	osweb.runner._canvas.removeEventListener("contextmenu", this._mouseContext, false);
 
 	// Finalize the mouse event listeners.
 	osweb.runner._canvas.removeEventListener("mousedown", this._mouseDown, false);
 	osweb.runner._canvas.removeEventListener("mousemove", this._mouseMove, false); 
-	osweb.runner._canvas.removeEventListener("mouseup"  , this._mouseUp  , false); 
+	osweb.runner._canvas.removeEventListener("mouseup", this._mouseUp, false); 
 
 	// Finalize the keyboard event listeners.
         window.removeEventListener("keydown", this._keyDown, false);
-	window.removeEventListener("keyup"  , this._keyUp  , false);
+	window.removeEventListener("keyup", this._keyUp, false);
     };
 	
-    events._run = function(pCaller, pTimeout, pResponse_type, pResponse_list)
-    {
-        console.log('running');
-        console.log(pCaller);
-        console.log(pTimeout);
-            
-	// Activate the event running mechanism.
-	this._caller        = pCaller;
-	this._response_list = pResponse_list;
-	this._response_type = pResponse_type;
-	this._timeout       = pTimeout;
+    events._run = function(caller, timeout, response_type, response_list) {
+	// Set the event running properties.     
+	this._caller = caller;
+	this._response_list = response_list;
+	this._response_type = response_type;
+	this._timeout = timeout;
 
-	// Activate the ticker process.
+	// Activate the event running.  
 	this._response_given = false;
-	this._sound_ended    = false;							    
-	this._video_ended    = false;
-        this._active         = true;	
+	this._sound_ended = false;							    
+	this._video_ended = false;
+        this._active = true;	
     };
 
-    events._update = function()
-    {
+    events._update = function() {
     	// Check if the duration is finisdhed.
-   	if (((this._timeout === -1) && (this._response_given === true)) ||
-   	    ((this._timeout === -1) && (this._sound_ended === true)) || 
-   	    ((this._timeout === -1) && (this._video_ended === true)) || 
+   	if (((this._timeout === -1) && ((this._response_given === true) || (this._sound_ended === true) || (this._video_ended === true))) ||
             ((this._timeout > 0) && ((this._response_type === osweb.constants.RESPONSE_KEYBOARD) || (this._response_type === osweb.constants.RESPONSE_MOUSE)) && (this._response_given === true)) ||
-            (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout)))  	   	
-        {
+            (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout))) {
+            // Set the status of the current item to finalize.
             this._current_item._status = osweb.constants.STATUS_FINALIZE;
   	}
-        else
-        {
+        else {
             // Update the current item.
             this._current_item.update();
         }    
     };
     
-    events._complete = function()
-    {
+    events._complete = function() {
         // Disable the ticker
         this._active = false;
         
@@ -6291,84 +6165,72 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this._current_item.complete();
     };
 
-    /*
-     * Definition of class methods (keyboard events).   
-     */
+    // Definition of methods for keyboard event processing.
 	
-    events._convertKeyCode = function(pEvent)
+    events._convertKeyCode = function(event)
     {
         // Check for special characters
         var key = '';
-        if ((pEvent.shiftKey === true) && (pEvent.keyCode !== 16))
+        if ((event.shiftKey === true) && (event.keyCode !== 16))
         {
             // Shift key pressed with other key, so convert shift keys.
-            key = this.keySCodes[pEvent.keyCode];
+            key = this.KEY_SCODES[event.keyCode];
         } 
-        else if ((pEvent.shiftKey === true) && (pEvent.keyCode === 16))
+        else if ((event.shiftKey === true) && (event.keyCode === 16))
         {
             // Shift code pressed, check for location (left or right)
-            key = (pEvent.location == 1) ? 'lshift' : 'rshift'; 
+            key = (event.location == 1) ? 'lshift' : 'rshift'; 
         } 
-        else if ((pEvent.ctrlKey === true) && (pEvent.keyCode === 17))
+        else if ((event.ctrlKey === true) && (event.keyCode === 17))
         {
             // Ctrl code pressed, check for location (left or right)
-            key = (pEvent.location == 1) ? 'lctrl' : 'rctrl'; 
+            key = (event.location == 1) ? 'lctrl' : 'rctrl'; 
         } 
-        else if ((pEvent.altKey === true) && (pEvent.keyCode === 18))
+        else if ((event.altKey === true) && (event.keyCode === 18))
         {
             // Alt code pressed, check for location (left or right)
-            key = (pEvent.location == 1) ? 'lalt' : 'ralt'; 
+            key = (event.location == 1) ? 'lalt' : 'ralt'; 
         } 
         else
         {
             // Convert standard keycode.
-            key  = this.keyCodes[pEvent.keyCode];
+            key  = this.KEY_CODES[event.keyCode];
         } 
         
         // Return function result.
         return key;
     };
         
-    events._keyDown = function(pEvent) 
-    {
+    events._keyDown = function(event) {
         // Store the keyboard event.    
-	this.keyboard_event = pEvent;
+	this.keyboard_event = event;
 
         // Only select this event when the collection mode is set for this.
-    	if ((this._keyboard_mode === osweb.constants.PRESSES_ONLY) || (this._keyboard_mode === osweb.constants.PRESSES_AND_RELEASES))
-    	{
+    	if ((this._keyboard_mode === osweb.constants.PRESSES_ONLY) || (this._keyboard_mode === osweb.constants.PRESSES_AND_RELEASES)) {
             // Process the event.
-            this._processKeyboardEvent(pEvent,1);
+            this._processKeyboardEvent(event, 1);
     	} 
     };	 
 
-    events._keyUp = function(pEvent) 
-    {
+    events._keyUp = function(event) {
     	// Only select this event when the collection mode is set for this.
-    	if ((this._keyboard_mode === osweb.constants.RELEASES_ONLY) || (this._keyboard_mode === osweb.constants.PRESSES_AND_RELEASES))
-    	{
+    	if ((this._keyboard_mode === osweb.constants.RELEASES_ONLY) || (this._keyboard_mode === osweb.constants.PRESSES_AND_RELEASES)) {
             // Process the event.
-            this._processKeyboardEvent(pEvent,0);
+            this._processKeyboardEvent(event, 0);
     	} 	 
     };
 
-    events._processKeyboardEvent = function(pKeyboardEvent, pKeyboardState)
-    {
+    events._processKeyboardEvent = function(event, keyboard_state) {
         // Create a new keyboard response object.
-        var KeyboardResponses = {'event': pKeyboardEvent, 'rtTime':  osweb.runner.experiment.clock.time(), 'state': pKeyboardState, 'type': osweb.constants.RESPONSE_KEYBOARD};
+        var KeyboardResponses = {'event': event, 'rtTime':  osweb.runner.experiment.clock.time(), 'state': keyboard_state, 'type': osweb.constants.RESPONSE_KEYBOARD};
       
         // Convert response to proper keyboard token. 
-        KeyboardResponses.resp = this._convertKeyCode(pKeyboardEvent);
+        KeyboardResponses.resp = this._convertKeyCode(event);
         
         // Process the response to the current object.
-        if ((this._response_type === osweb.constants.RESPONSE_KEYBOARD) && ((this._response_list === null) || (this._response_list.indexOf(KeyboardResponses.resp) >= 0))) 
-        {
-            // Set the caller response.
-            this._caller._set_response(KeyboardResponses);        	
-
+        if ((this._response_type === osweb.constants.RESPONSE_KEYBOARD) && ((this._response_list === null) || (this._response_list.indexOf(KeyboardResponses.resp) >= 0))) {
             // Process the current item.
-	    if (this._current_item !== null) 
-    	    {
+	    if (this._current_item !== null) {
                 // Process the response.
                 this._current_item.update_response(KeyboardResponses);
             } 	 
@@ -6378,56 +6240,51 @@ osweb.promoteClass = function(sub_class, prefix) {
         }
     };
 	
-    /*
-     * Definition of class methods (mouse events).   
-     */
+    // Definition of methods for mouse event processing.
  
-    events._mouseDown = function(pEvent) 
-    {
-        // Store the mouse event. 
-	this.mouse_event = pEvent;
+    events._mouseContext = function(event) {
+        // Prevent default action. 
+        event.preventDefault();
+        
+        // Return false to prevent the context menu from pushing up.
+        return false;
+    };            
+ 
+    events._mouseDown = function(event) {
+        // Store the mouse press status for use in the mousee class.
+        this._mouse_press = event;
 
 	// Only select this event when the collection mode is set for this.
-    	if ((this._mouse_mode === osweb.constants.PRESSES_ONLY) || (this._mouse_mode === osweb.constants.PRESSES_AND_RELEASES))
-    	{
+    	if ((this._mouse_mode === osweb.constants.PRESSES_ONLY) || (this._mouse_mode === osweb.constants.PRESSES_AND_RELEASES)) {
             // Process the event.
-            this._processMouseEvent(pEvent,1);
+            this._processMouseEvent(event, 1);
     	}	
     };	
 
-    events._mouseMove = function(pEvent) 
-    {
-        // Set the mouse coordinates.
-        this._mouse_move = {'event': pEvent, 'rtTime': osweb.runner.experiment.clock.time()};
+    events._mouseMove = function(event) {
+        // Store the mouse move event and its timestamp for use in the mouse class.
+        this._mouse_move = {'event': event, 'rtTime': osweb.runner.experiment.clock.time()};
     };	
 
-    events._mouseUp = function(pEvent) 
-    {
+    events._mouseUp = function(event) {
 	// Only select this event when the collection mode is set for this.
-    	if ((this._mouse_mode === osweb.constants.RELEASES_ONLY) || (this._mouse_mode === osweb.constants.PRESSES_AND_RELEASES))
-    	{
+    	if ((this._mouse_mode === osweb.constants.RELEASES_ONLY) || (this._mouse_mode === osweb.constants.PRESSES_AND_RELEASES)) {
             // Process the event.
-            this._processMouseEvent(pEvent,0);
+            this._processMouseEvent(event, 0);
     	} 	
     };
 
-    events._processMouseEvent = function(pMouseEvent, pMouseState)
-    {
+    events._processMouseEvent = function(event, mouse_state) {
         // Create a new mouse response object.
-        var MouseResponses = {'event': pMouseEvent, 'rtTime': osweb.runner.experiment.clock.time(), 'state': pMouseState, 'type': osweb.constants.RESPONSE_MOUSE};
+        var MouseResponses = {'event': event, 'rtTime': osweb.runner.experiment.clock.time(), 'state': mouse_state, 'type': osweb.constants.RESPONSE_MOUSE};
      	
      	// Adjust mouse response.  
-     	MouseResponses.resp = String(pMouseEvent.button + 1);  
+     	MouseResponses.resp = String(event.button + 1);  
      	 
         // Process the response to the current object.
-        if ((this._response_type === osweb.constants.RESPONSE_MOUSE) && ((this._response_list === null) || (this._response_list.indexOf(MouseResponses.resp) >= 0))) 
-        {
-            // Set the caller response.
-            this._caller._set_response(MouseResponses);        	
-
+        if ((this._response_type === osweb.constants.RESPONSE_MOUSE) && ((this._response_list === null) || (this._response_list.indexOf(MouseResponses.resp) >= 0))) {
             // Process the response to the current object.
-            if (this._current_item !== null)
-            {
+            if (this._current_item !== null) {
                 this._current_item.update_response(MouseResponses);
             }   
 
@@ -6436,47 +6293,33 @@ osweb.promoteClass = function(sub_class, prefix) {
 	}
     };
 	
-    /*
-     * Definition of class methods (sound events).   
-     */
+    // Definition of methods for sound event processing.
 
-    events._audioEnded = function()
-    {
+    events._audioEnded = function() {
         // If duration isequal to sound exit the sound item.
         osweb.events._sound_ended = true;
     };
 
-    /*
-     * Definition of class methods (video events).   
-     */
+    // Definition of methods for video event processing.
 
-    events._videoEnded = function()
-    {
+    events._videoEnded = function() {
+        osweb.events._video_ended = true;
     };
 
-    events._videoPlay = function(event)
-    {
+    events._videoPlay = function(event) {
     };
 
-    /*
-     * Definition of class methods (tick events).   
-     */
-
-    events._tick = function(event) 
-    {
+    // Definition of methods for tick event processing (timing).
+ 
+    events._tick = function(event) {
     	// Only check for status if there is a current item and the ticker is activated.
-        if ((this._current_item !== null) && (this._active === true)) 
-	{
-            switch (this._current_item._status)
-            {
+        if ((this._current_item !== null) && (this._active === true)) {
+            switch (this._current_item._status) {
                 case osweb.constants.STATUS_FINALIZE:
-
-                    // End action. Complete current active item.
+                   // End action. Complete current active item.
                     events._complete();
-
                 break;
 		default:
-                    
                     // Default action, update section of the current active item.
                     events._update();
             }

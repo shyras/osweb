@@ -1,28 +1,23 @@
-/*
- * Definition of the class sampler.
- */
 
-(function() 
-{
-    function sampler(pExperiment, pSrc, PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+(function() {
+    // Definition of the class sampler.
+    function sampler(experiment, src, volume, pitch, pan, duration, fade, block) {
       	// Set the class public properties. 
-	this.experiment = pExperiment;
+	this.experiment = experiment;
 	
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? false   : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? 'sound' : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? 0       : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? 0       : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? 1       : pPitch;	
-	this.src      = (typeof pSrc      === 'undefined') ? ''      : pSrc;	
-	this.volume   = (typeof pVolume   === 'undefined') ? 1       : pVolume;	
+	this.block = (typeof block === 'undefined') ? false : block;	
+	this.duration = (typeof duration === 'undefined') ? 'sound' : duration;	
+	this.fade = (typeof fade === 'undefined') ? 0 : fade;	
+	this.pan = (typeof pan === 'undefined') ? 0 : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? 1 : pitch;	
+	this.src = (typeof src === 'undefined') ? '' : src;	
+	this.volume = (typeof volume   === 'undefined') ? 1 : volume;	
 
 	// Create the sound instance
-	if (pSrc != null)
-	{
+	if (src !== null) {
             // Set the sound object.
-            this._instance = pSrc.data;
+            this._instance = src.data;
 		
             // Set the event anchor for 
             this._instance.on("ended", osweb.events._audioEnded.bind(this));
@@ -32,28 +27,25 @@
     // Extend the class from its base class.
     var p = sampler.prototype;
     
-    // Define the public properties. 
+    // Definition of public properties. 
     p.duration = 'sound';	
-    p.block    = false;
-    p.fade     = '0';
-    p.pan      = '0';
-    p.pitch    = '1';
-    p.src      = null;
-    p.volume   = 1;
+    p.block = false;
+    p.fade = '0';
+    p.pan = '0';
+    p.pitch = '1';
+    p.src = null;
+    p.volume = 1;
     
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of public methods.
 
-    p.play = function(PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+    p.play = function(volume, pitch, pan, duration, fade, block) {
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? this.block    : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? this.duration : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? this.fade     : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? this.pan      : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? this.pitch    : pPitch;	
-	this.volume   = (typeof pVolume   === 'undefined') ? this.volume   : pVolume;	
+	this.block = (typeof block === 'undefined') ? this.block : block;	
+	this.duration = (typeof duration === 'undefined') ? this.duration : duration;	
+	this.fade = (typeof fade === 'undefined') ? this.fade : fade;	
+	this.pan = (typeof pan === 'undefined') ? this.pan : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch;	
+	this.volume = (typeof volume === 'undefined') ? this.volume : volume;	
 
 	// Set the sound properties.
 	this._instance.volume = this.volume;
@@ -62,8 +54,7 @@
 	this._instance.play();	
     };
 
-    p.wait = function()
-    {
+    p.wait = function() {
         // Set the blocking of the sound.
         osweb.events._run(this, -1, osweb.constants.RESPONSE_SOUND,[]);
     };

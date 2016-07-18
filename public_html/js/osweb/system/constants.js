@@ -17,12 +17,15 @@
     constants.ERROR_009 = 'Unknown class definition within osweb script - ';
 
     // Definition of message constants. 
-    constants.MESSAGE_001 = 'OS';
+    constants.MESSAGE_001 = 'Os';
     constants.MESSAGE_002 = 'web - version ';
     constants.MESSAGE_003 = 'Start up osweb experiment session.';
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
+
+    // Definition of non-supported warnings.
+    constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
 
     // Definition of general constants. 
     constants.STATUS_NONE = 0;                   // Running status of an item.   
