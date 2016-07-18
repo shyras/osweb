@@ -10,4 +10,4 @@ type ..\widgets\form.js ..\widgets\widget.js ..\widgets\button.js ..\widgets\che
 type ..\system\events.js ..\system\parameters.js ..\system\parser.js ..\system\session.js ..\system\runner.js >> lib\system.js
 type lib\core.js lib\backends.js lib\classes.js lib\items.js lib\plugins.js lib\elements.js lib\widgets.js lib\system.js >> lib\osweb.js
 
-copy lib\osweb.js c:\xampp\htdocs\osweb_test\js\osweb.js
+copy lib\osweb.js ..\..\public_html\js\osweb.js
