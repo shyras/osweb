@@ -138,8 +138,8 @@ osweb.promoteClass = function(sub_class, prefix) {
 // Definition of the class canvas.
     function canvas(experiment, auto_prepare) {
 	// set the class public properties.
-        this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare; // Set autoprepare toggle (not supported yet). 	
-	this.experiment = experiment;                                                    // Anchor to the experiment object.
+        this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare;              // Set autoprepare toggle (not supported yet). 	
+        this.experiment = (typeof experiment === 'undefined') ? osweb.runner.experiment : experiment; // Anchor to the experiment object.
 		
         // Set the public properties. 
     	this.background_color = this.experiment.vars.background;                         // Backgropund color of canvas.     
