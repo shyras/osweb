@@ -492,12 +492,11 @@
             this.experiment.vars.avg_rt                = this.experiment.vars.average_response_time;
             this.experiment.vars.set('correct_' + this.name, this.vars.correct); 
 	} 
-   };	
+    };	
 	
-   p.process_response = function()
-   {
-   	console.log('stimulus response cycle' + this._responsetype);
-       // Start stimulus response cycle.
+    p.process_response = function()
+    {
+        // Start stimulus response cycle.
    	switch (this._responsetype)
    	{
             case osweb.constants.RESPONSE_NONE:
@@ -913,10 +912,11 @@
 
     p.end = function()
     {
-	this.running = false;
+	// Disable the run toggle.
+        this.running = false;
 	
-	//this._log.flush();
-	this._log.close();
+        // Close the log file.
+        this._log.close();
 		
 	// Disable the processing unit.
 	osweb.events._current_item = null;

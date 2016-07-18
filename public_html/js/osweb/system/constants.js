@@ -23,9 +23,8 @@
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
-
-    // Definition of non-supported warnings.
     constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
+    constants.MESSAGE_008 = 'Retrieving session information.';
 
     // Definition of general constants. 
     constants.STATUS_NONE = 0;                   // Running status of an item.   

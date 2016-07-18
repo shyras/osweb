@@ -240,7 +240,7 @@
     	var shape = new createjs.Shape();
 	shape.graphics.setStrokeStyle(penwidth);
 	shape.graphics.beginStroke(color);
-	if (fill === 1)
+	if (fill == 1)
 	{
             shape.graphics.beginFill(color);
 	}
@@ -536,8 +536,9 @@
     p.close = function() {
 	// Closes the current log.
 	if (this._log.length > 0) {
-            console.log(this._log.join(''));
-	}
+            // Echo the data to the runner.
+            osweb.runner.data = this._log.join('');    
+        };
 
 	// Clear the log file.
 	this._log = [];
@@ -740,31 +741,26 @@
     osweb.mouse = mouse;
 }()); 
 
-/*
- * Definition of the class sampler.
- */
 
-(function() 
-{
-    function sampler(pExperiment, pSrc, PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+(function() {
+    // Definition of the class sampler.
+    function sampler(experiment, src, volume, pitch, pan, duration, fade, block) {
       	// Set the class public properties. 
-	this.experiment = pExperiment;
+	this.experiment = experiment;
 	
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? false   : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? 'sound' : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? 0       : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? 0       : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? 1       : pPitch;	
-	this.src      = (typeof pSrc      === 'undefined') ? ''      : pSrc;	
-	this.volume   = (typeof pVolume   === 'undefined') ? 1       : pVolume;	
+	this.block = (typeof block === 'undefined') ? false : block;	
+	this.duration = (typeof duration === 'undefined') ? 'sound' : duration;	
+	this.fade = (typeof fade === 'undefined') ? 0 : fade;	
+	this.pan = (typeof pan === 'undefined') ? 0 : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? 1 : pitch;	
+	this.src = (typeof src === 'undefined') ? '' : src;	
+	this.volume = (typeof volume   === 'undefined') ? 1 : volume;	
 
 	// Create the sound instance
-	if (pSrc != null)
-	{
+	if (src !== null) {
             // Set the sound object.
-            this._instance = pSrc.data;
+            this._instance = src.data;
 		
             // Set the event anchor for 
             this._instance.on("ended", osweb.events._audioEnded.bind(this));
@@ -774,28 +770,25 @@
     // Extend the class from its base class.
     var p = sampler.prototype;
     
-    // Define the public properties. 
+    // Definition of public properties. 
     p.duration = 'sound';	
-    p.block    = false;
-    p.fade     = '0';
-    p.pan      = '0';
-    p.pitch    = '1';
-    p.src      = null;
-    p.volume   = 1;
+    p.block = false;
+    p.fade = '0';
+    p.pan = '0';
+    p.pitch = '1';
+    p.src = null;
+    p.volume = 1;
     
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of public methods.
 
-    p.play = function(PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+    p.play = function(volume, pitch, pan, duration, fade, block) {
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? this.block    : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? this.duration : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? this.fade     : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? this.pan      : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? this.pitch    : pPitch;	
-	this.volume   = (typeof pVolume   === 'undefined') ? this.volume   : pVolume;	
+	this.block = (typeof block === 'undefined') ? this.block : block;	
+	this.duration = (typeof duration === 'undefined') ? this.duration : duration;	
+	this.fade = (typeof fade === 'undefined') ? this.fade : fade;	
+	this.pan = (typeof pan === 'undefined') ? this.pan : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch;	
+	this.volume = (typeof volume === 'undefined') ? this.volume : volume;	
 
 	// Set the sound properties.
 	this._instance.volume = this.volume;
@@ -804,8 +797,7 @@
 	this._instance.play();	
     };
 
-    p.wait = function()
-    {
+    p.wait = function() {
         // Set the blocking of the sound.
         osweb.events._run(this, -1, osweb.constants.RESPONSE_SOUND,[]);
     };
@@ -814,29 +806,24 @@
     osweb.sampler_backend = sampler;
 }());
 
-/*
- * Definition of the class video.
- */
 
-(function() 
-{
-    function video(pExperiment, pSrc)
-    {
+(function() {
+    // Definition of the class video.
+    function video(experiment, src) {
       	// Set the class public properties. 
-	this.experiment = pExperiment;
+	this.experiment = experiment;
 	
         // Set the class pivate properties. 
         this._playing = false; 
-        this._script  = null;
+        this._script = null;
 
-	// Create the sound instance
-	if (pSrc != null)
-	{
-            // Set the sound object.
-            this._ctx   = osweb.runner._canvas.getContext('2d');
-            this._video = pSrc.data;
+	// Create the video instance
+	if (src !== null) {
+            // Set the video object.
+            this._ctx = osweb.runner._canvas.getContext('2d');
+            this._video = src.data;
             
-            // Set the event anchor for 
+            // Set the event anchors.
             this._video.on("ended", osweb.events._videoEnded.bind(this));
             this._video.on("play" , osweb.events._videoPlay.bind(this));
     	}
@@ -845,37 +832,29 @@
     // Extend the class from its base class.
     var p = video.prototype;
     
-    // Define the public properties. 
-    p.audio       = true;
-    p.duration    = 'keypress';	
+    // Definition of public properties. 
+    p.audio = true;
+    p.duration = 'keypress';	
     p.full_screen = false;
     
-    /*
-     * Definition of class private methods.
-     */
+    // Definition of private methods.
     
-    p._update_video_canvas = function()
-    {
-        // Clip the content of the video to the 
-        if (this._playing == true)
-        {    
+    p._update_video_canvas = function() {
+        // Clip the content of the video to the canvas.
+        if (this._playing === true) {    
             this._ctx.drawImage(this._video, 0, 0);
 
             // execute script.
-            if ((this._script !== null) && (this._event_handler_always === true))
-            {
+            if ((this._script !== null) && (this._event_handler_always === true)) {
                 // Start the parser
                 osweb.parser._run(null, this._script);    		
             }    
         }    
     };    
     
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of public methods.
     
-    p.play = function()
-    {
+    p.play = function() {
 	// Play the actual video.
         this._video.play();
         
@@ -883,8 +862,7 @@
         this._video.volume = (this.audio === true) ? 1 : 0;
         
         // Check if the video must be scaled.
-        if (this.full_screen == true)
-        {    
+        if (this.full_screen == true) {    
             // Draw the first image with scaling.
             var xScale = (this.experiment._canvas._width  / this._video.videoWidth);
             var yScale = (this.experiment._canvas._height / this._video.videoHeight);
@@ -898,15 +876,13 @@
         this._playing = true;
     };
 
-    p.stop = function()
-    {
+    p.stop = function() {
 	// Pause the actual sound.
 	this._video.pause();
         this._playing = false;
     };
 
-    p.wait = function()
-    {
+    p.wait = function() {
         // Set the blocking of the sound.
         osweb.events._run(this, -1, osweb.constants.RESPONSE_VIDEO,[]);
     };

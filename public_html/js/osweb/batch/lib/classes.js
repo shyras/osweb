@@ -1,21 +1,22 @@
 
 (function() {
     // Definition of the class debug.
-    function debug() 
-    {
+    function debug() {
     	throw 'The class debug cannot be instantiated!';
     }
 
     // Definition of public properties.
-    debug.enabled = true;                        // Enable the debugger  
+    debug.enabled = false;                        // Enable the debugger  
     debug.error = false;                         // true if an error occured.
     debug.messageLog = new Array();              // Arraty with alle log messages.
 
     // Definition of class private methods.               
    
     debug._initialize = function() {
+    	// Enabled/disable the debugger.
+    	this.debug = osweb.runner.debug;
     	// Clear the log.
-    	this.messageLog = [];
+        this.messageLog = [];
     };	
 
     debug._finalize = function() {

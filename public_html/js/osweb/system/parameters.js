@@ -1,29 +1,21 @@
 
-/*
- * Definition of the class Parameters.
- */
-
-(function() 
-{
-    function parameters()
-    {
-	throw "The class parameters cannot be instantiated!";
+(function() {
+    // Definition of the class Parameters.
+    function parameters() {
+	throw 'The class parameters cannot be instantiated!';
     } 
 
-    // Set the private properties. 
+    // Define the private properties. 
     parameters._itemCounter = 0;
     parameters._parameters  = new Array();
 
-    // Set the public properties. 
+    // Define the public properties. 
     parameters.displaySummary   = false;
     parameters.useDefaultValues = false;
 
-    /*
-     * Definition of private methods - initialize parameters.   
-     */
+    // Definition of private methods - initialize parameters.   
 
-    parameters._initialize = function()
-    {
+    parameters._initialize = function() {
       	// Set properties if defined.
     	var parameter = {dataType: '0', defaultValue: '0', name: 'subject_nr', prompt: 'Please enter the subject number', promptEnabled: true};
         
@@ -31,62 +23,48 @@
         this._parameters.push(parameter);
     };
 
-    /*
-     * Definition of private methods - process parameters.   
-     */
+    // Definition of private methods - process parameters.   
     
-    parameters._processParameters = function()
-    {
+    parameters._processParameters = function() {
     	// Process all items for which a user input is required.
-        if (this._itemCounter < this._parameters.length)
-        {	
+        if (this._itemCounter < this._parameters.length) {	
             // Process the Parameter.
-            if (this.useDefaultValues == false)
-            {
+            if (this.useDefaultValues == false) {
                 this._processParameter(this._parameters[this._itemCounter]);
             }
-            else
-            {
+            else {
                 // Transfer the startup info to the context.
                 this._transferParameters();
             }    
         }
-        else
-        {
+        else {
             // All items have been processed, contine the Runner processing.
-            if (this.displaySummary == true) 
-            {
+            if (this.displaySummary == true) {
                 // Show a summary of the the startup information. 
                 this._showParameters();
             }
-            else
-            {            
+            else {            
                 // Transfer the startup info to the context.
                 this._transferParameters();
             }
         }
     };
 
-    parameters._processParameter = function(parameter)
-    {
+    parameters._processParameter = function(parameter) {
         // Check if a user request is required.
-        if (parameter.promptEnabled == true)
-        {
+        if (parameter.promptEnabled == true) {
             this._showDialog(parameter.dataType);
 
             // Set the dialog interface.
-            if (parameter.response == '')
-            {
+            if (parameter.response == '') {
             	document.getElementById('qpdialoginput').value = parameter.defaultValue;
             }
-            else
-            {
+            else {
             	document.getElementById('qpdialoginput').value = parameter.defaultValue;
             }
 
             document.getElementById('dialogboxhead').innerHTML = parameter.prompt;
-            document.getElementById('qpbuttonyes').onclick = function()
-            {
+            document.getElementById('qpbuttonyes').onclick = function() {
                 // Get the response information
                 parameter.response = document.getElementById('qpdialoginput').value;
                             
@@ -101,21 +79,15 @@
 
             }.bind(this);
         	
-            document.getElementById('qpbuttonno').onclick = function()
-            {
+            document.getElementById('qpbuttonno').onclick = function() {
                 // Close the dialog.
 	        this._hideDialog();
                 
    		// Finalize the introscreen elements.
-		osweb.runner._finalizeIntroScreen();
-
-          	// Return to the QPrime object
-		// osweb.Runner._finalize();
-
+		osweb.runner._exit();
             }.bind(this);
         }
-        else
-        {
+        else {
             // Assign default value to the Startup item.
             parameter.response = parameter.defaultValue;
            
@@ -127,11 +99,9 @@
         }    
     };
 
-    parameters._showParameters = function()
-    {
+    parameters._showParameters = function() {
         document.getElementById('dialogboxhead').innerHTML = 'Summary of startup info';
-        document.getElementById('qpbuttonyes').onclick = function()
-	{
+        document.getElementById('qpbuttonyes').onclick = function() {
             // Close the dialog.
 	    this._hideDialog();
                         
@@ -140,8 +110,7 @@
         
         }.bind(this);    
         
-        document.getElementById('qpbuttonno').onclick = function()
-	{
+        document.getElementById('qpbuttonno').onclick = function() {
             // Close the dialog.
             this._hideDialog();
                        
@@ -153,25 +122,18 @@
             
         }.bind(this);    
 
-        document.getElementById('qpbuttoncancel').onclick = function()
-	{
+        document.getElementById('qpbuttoncancel').onclick = function() {
             // Close the dialog.
 	    this._hideDialog();
         
             // Finalize the introscreen elements.
-            osweb.runner._finalizeIntroScreen();
-    
-            // Return to the QPrime object
-            // osweb.Runner._finalize();
-
+            osweb.runner._exit();
         }.bind(this);    
        
   	// Set the dialog interface.
         var TmpString = '';
-        for (var i=0;i < this._parameters.length;i++)
-        {
-            if ((this._parameters[i].enabled != 0) && (this._parameters[i].promptEnabled != 0))
-            {
+        for (var i = 0;i < this._parameters.length; i++) {
+            if ((this._parameters[i].enabled != 0) && (this._parameters[i].promptEnabled != 0)) {
 		TmpString = TmpString + this._parameters[i].name + ': ' + this._parameters[i].response + '\r\n';  	        	
             }
         }
@@ -179,11 +141,9 @@
         document.getElementById('qpdialogtextarea').innerHTML = TmpString;
     };
 
-    parameters._transferParameters = function()
-    {
+    parameters._transferParameters = function() {
     	// Transfer the startup info items to the context.
-        for (var i=0;i < this._parameters.length;i++)
-        {
+        for (var i = 0;i < this._parameters.length; i++) {
             osweb.runner.experiment.vars.set(this._parameters[i].name,this._parameters[i].response);
         }
         
@@ -195,18 +155,17 @@
      * Definition of class methods (dialogs).   
      */
      
-    parameters._showDialog = function(dialogType) 
-    {
+    parameters._showDialog = function(dialog_type) {
         var dialogoverlay = document.getElementById('dialogoverlay');
-	var dialogbox     = document.getElementById('dialogbox');
+	var dialogbox = document.getElementById('dialogbox');
 		                
 	dialogoverlay.style.display = "block";
-	dialogoverlay.style.height  = window.innerHeight + "px";
-	dialogbox.style.left        = (window.innerWidth / 2) - (400 * .5) + "px";
-	dialogbox.style.top         = "200px";
-	dialogbox.style.display     = "inline";
+	dialogoverlay.style.height = window.innerHeight + "px";
+	dialogbox.style.left = (window.innerWidth / 2) - (400 * .5) + "px";
+	dialogbox.style.top = "200px";
+	dialogbox.style.display = "inline";
 
-	switch (dialogType)
+	switch (dialog_type)
         {
 	    case "0": 
                 document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
@@ -229,13 +188,11 @@
                 document.getElementById('qpdialogtextarea').focus();
             break;
 	}
-        
     };
 	 
-    parameters._hideDialog = function()
-    {
+    parameters._hideDialog = function() {
         dialogoverlay.style.display = "none";
-	dialogbox.style.display     = "none";
+	dialogbox.style.display = "none";
 	document.getElementById('dialogboxbody').innerHTML = '';
 	document.getElementById('dialogboxfoot').innerHTML = '';
     };	

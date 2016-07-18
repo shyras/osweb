@@ -326,10 +326,11 @@
 
     p.end = function()
     {
-	this.running = false;
+	// Disable the run toggle.
+        this.running = false;
 	
-	//this._log.flush();
-	this._log.close();
+        // Close the log file.
+        this._log.close();
 		
 	// Disable the processing unit.
 	osweb.events._current_item = null;

@@ -32,8 +32,9 @@
     p.close = function() {
 	// Closes the current log.
 	if (this._log.length > 0) {
-            console.log(this._log.join(''));
-	}
+            // Echo the data to the runner.
+            osweb.runner.data = this._log.join('');    
+        };
 
 	// Clear the log file.
 	this._log = [];

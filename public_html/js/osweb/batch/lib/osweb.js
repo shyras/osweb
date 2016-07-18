@@ -20,7 +20,7 @@ this.osweb = this.osweb||{};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME   = 'osweb';
-osweb.VERSION_NUMBER = '0.038 (18-07-2016)';
+osweb.VERSION_NUMBER = '0.039 (18-07-2016)';
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
@@ -100,9 +100,8 @@ osweb.promoteClass = function(sub_class, prefix) {
     constants.MESSAGE_004 = 'Retrieving stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
-
-    // Definition of non-supported warnings.
     constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
+    constants.MESSAGE_008 = 'Retrieving session information.';
 
     // Definition of general constants. 
     constants.STATUS_NONE = 0;                   // Running status of an item.   
@@ -376,7 +375,7 @@ osweb.promoteClass = function(sub_class, prefix) {
     	var shape = new createjs.Shape();
 	shape.graphics.setStrokeStyle(penwidth);
 	shape.graphics.beginStroke(color);
-	if (fill === 1)
+	if (fill == 1)
 	{
             shape.graphics.beginFill(color);
 	}
@@ -672,8 +671,9 @@ osweb.promoteClass = function(sub_class, prefix) {
     p.close = function() {
 	// Closes the current log.
 	if (this._log.length > 0) {
-            console.log(this._log.join(''));
-	}
+            // Echo the data to the runner.
+            osweb.runner.data = this._log.join('');    
+        };
 
 	// Clear the log file.
 	this._log = [];
@@ -876,31 +876,26 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.mouse = mouse;
 }()); 
 
-/*
- * Definition of the class sampler.
- */
 
-(function() 
-{
-    function sampler(pExperiment, pSrc, PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+(function() {
+    // Definition of the class sampler.
+    function sampler(experiment, src, volume, pitch, pan, duration, fade, block) {
       	// Set the class public properties. 
-	this.experiment = pExperiment;
+	this.experiment = experiment;
 	
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? false   : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? 'sound' : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? 0       : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? 0       : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? 1       : pPitch;	
-	this.src      = (typeof pSrc      === 'undefined') ? ''      : pSrc;	
-	this.volume   = (typeof pVolume   === 'undefined') ? 1       : pVolume;	
+	this.block = (typeof block === 'undefined') ? false : block;	
+	this.duration = (typeof duration === 'undefined') ? 'sound' : duration;	
+	this.fade = (typeof fade === 'undefined') ? 0 : fade;	
+	this.pan = (typeof pan === 'undefined') ? 0 : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? 1 : pitch;	
+	this.src = (typeof src === 'undefined') ? '' : src;	
+	this.volume = (typeof volume   === 'undefined') ? 1 : volume;	
 
 	// Create the sound instance
-	if (pSrc != null)
-	{
+	if (src !== null) {
             // Set the sound object.
-            this._instance = pSrc.data;
+            this._instance = src.data;
 		
             // Set the event anchor for 
             this._instance.on("ended", osweb.events._audioEnded.bind(this));
@@ -910,28 +905,25 @@ osweb.promoteClass = function(sub_class, prefix) {
     // Extend the class from its base class.
     var p = sampler.prototype;
     
-    // Define the public properties. 
+    // Definition of public properties. 
     p.duration = 'sound';	
-    p.block    = false;
-    p.fade     = '0';
-    p.pan      = '0';
-    p.pitch    = '1';
-    p.src      = null;
-    p.volume   = 1;
+    p.block = false;
+    p.fade = '0';
+    p.pan = '0';
+    p.pitch = '1';
+    p.src = null;
+    p.volume = 1;
     
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of public methods.
 
-    p.play = function(PVolume, pPitch, pPan, pDuration, pFade, pBlock)
-    {
+    p.play = function(volume, pitch, pan, duration, fade, block) {
 	// Check if optional parameters are defined.
-	this.block    = (typeof pBlock    === 'undefined') ? this.block    : pBlock;	
-	this.duration = (typeof pDuration === 'undefined') ? this.duration : pDuration;	
-	this.fade     = (typeof pFade     === 'undefined') ? this.fade     : pFade;	
-	this.pan      = (typeof pPan      === 'undefined') ? this.pan      : pPan;	
-	this.pitch    = (typeof pPitch    === 'undefined') ? this.pitch    : pPitch;	
-	this.volume   = (typeof pVolume   === 'undefined') ? this.volume   : pVolume;	
+	this.block = (typeof block === 'undefined') ? this.block : block;	
+	this.duration = (typeof duration === 'undefined') ? this.duration : duration;	
+	this.fade = (typeof fade === 'undefined') ? this.fade : fade;	
+	this.pan = (typeof pan === 'undefined') ? this.pan : pan;	
+	this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch;	
+	this.volume = (typeof volume === 'undefined') ? this.volume : volume;	
 
 	// Set the sound properties.
 	this._instance.volume = this.volume;
@@ -940,8 +932,7 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this._instance.play();	
     };
 
-    p.wait = function()
-    {
+    p.wait = function() {
         // Set the blocking of the sound.
         osweb.events._run(this, -1, osweb.constants.RESPONSE_SOUND,[]);
     };
@@ -950,29 +941,24 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.sampler_backend = sampler;
 }());
 
-/*
- * Definition of the class video.
- */
 
-(function() 
-{
-    function video(pExperiment, pSrc)
-    {
+(function() {
+    // Definition of the class video.
+    function video(experiment, src) {
       	// Set the class public properties. 
-	this.experiment = pExperiment;
+	this.experiment = experiment;
 	
         // Set the class pivate properties. 
         this._playing = false; 
-        this._script  = null;
+        this._script = null;
 
-	// Create the sound instance
-	if (pSrc != null)
-	{
-            // Set the sound object.
-            this._ctx   = osweb.runner._canvas.getContext('2d');
-            this._video = pSrc.data;
+	// Create the video instance
+	if (src !== null) {
+            // Set the video object.
+            this._ctx = osweb.runner._canvas.getContext('2d');
+            this._video = src.data;
             
-            // Set the event anchor for 
+            // Set the event anchors.
             this._video.on("ended", osweb.events._videoEnded.bind(this));
             this._video.on("play" , osweb.events._videoPlay.bind(this));
     	}
@@ -981,37 +967,29 @@ osweb.promoteClass = function(sub_class, prefix) {
     // Extend the class from its base class.
     var p = video.prototype;
     
-    // Define the public properties. 
-    p.audio       = true;
-    p.duration    = 'keypress';	
+    // Definition of public properties. 
+    p.audio = true;
+    p.duration = 'keypress';	
     p.full_screen = false;
     
-    /*
-     * Definition of class private methods.
-     */
+    // Definition of private methods.
     
-    p._update_video_canvas = function()
-    {
-        // Clip the content of the video to the 
-        if (this._playing == true)
-        {    
+    p._update_video_canvas = function() {
+        // Clip the content of the video to the canvas.
+        if (this._playing === true) {    
             this._ctx.drawImage(this._video, 0, 0);
 
             // execute script.
-            if ((this._script !== null) && (this._event_handler_always === true))
-            {
+            if ((this._script !== null) && (this._event_handler_always === true)) {
                 // Start the parser
                 osweb.parser._run(null, this._script);    		
             }    
         }    
     };    
     
-    /*
-     * Definition of class public methods.
-     */
+    // Definition of public methods.
     
-    p.play = function()
-    {
+    p.play = function() {
 	// Play the actual video.
         this._video.play();
         
@@ -1019,8 +997,7 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._video.volume = (this.audio === true) ? 1 : 0;
         
         // Check if the video must be scaled.
-        if (this.full_screen == true)
-        {    
+        if (this.full_screen == true) {    
             // Draw the first image with scaling.
             var xScale = (this.experiment._canvas._width  / this._video.videoWidth);
             var yScale = (this.experiment._canvas._height / this._video.videoHeight);
@@ -1034,15 +1011,13 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._playing = true;
     };
 
-    p.stop = function()
-    {
+    p.stop = function() {
 	// Pause the actual sound.
 	this._video.pause();
         this._playing = false;
     };
 
-    p.wait = function()
-    {
+    p.wait = function() {
         // Set the blocking of the sound.
         osweb.events._run(this, -1, osweb.constants.RESPONSE_VIDEO,[]);
     };
@@ -1053,21 +1028,22 @@ osweb.promoteClass = function(sub_class, prefix) {
 
 (function() {
     // Definition of the class debug.
-    function debug() 
-    {
+    function debug() {
     	throw 'The class debug cannot be instantiated!';
     }
 
     // Definition of public properties.
-    debug.enabled = true;                        // Enable the debugger  
+    debug.enabled = false;                        // Enable the debugger  
     debug.error = false;                         // true if an error occured.
     debug.messageLog = new Array();              // Arraty with alle log messages.
 
     // Definition of class private methods.               
    
     debug._initialize = function() {
+    	// Enabled/disable the debugger.
+    	this.debug = osweb.runner.debug;
     	// Clear the log.
-    	this.messageLog = [];
+        this.messageLog = [];
     };	
 
     debug._finalize = function() {
@@ -2480,12 +2456,11 @@ osweb.promoteClass = function(sub_class, prefix) {
             this.experiment.vars.avg_rt                = this.experiment.vars.average_response_time;
             this.experiment.vars.set('correct_' + this.name, this.vars.correct); 
 	} 
-   };	
+    };	
 	
-   p.process_response = function()
-   {
-   	console.log('stimulus response cycle' + this._responsetype);
-       // Start stimulus response cycle.
+    p.process_response = function()
+    {
+        // Start stimulus response cycle.
    	switch (this._responsetype)
    	{
             case osweb.constants.RESPONSE_NONE:
@@ -2901,10 +2876,11 @@ osweb.promoteClass = function(sub_class, prefix) {
 
     p.end = function()
     {
-	this.running = false;
+	// Disable the run toggle.
+        this.running = false;
 	
-	//this._log.flush();
-	this._log.close();
+        // Close the log file.
+        this._log.close();
 		
 	// Disable the processing unit.
 	osweb.events._current_item = null;
@@ -6035,11 +6011,8 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.label = osweb.promoteClass(label, "widget");
 }());
 
-/*
- * Class events - processing all user and system evens within osweb.
- */
-
 (function() {
+    // Class events - processing all user and system evens within osweb.
     function events() {
     	throw 'The class events cannot be instantiated!';
     }; 
@@ -6330,31 +6303,23 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.events = events;
 }());
 
-/*
- * Definition of the class Parameters.
- */
-
-(function() 
-{
-    function parameters()
-    {
-	throw "The class parameters cannot be instantiated!";
+(function() {
+    // Definition of the class Parameters.
+    function parameters() {
+	throw 'The class parameters cannot be instantiated!';
     } 
 
-    // Set the private properties. 
+    // Define the private properties. 
     parameters._itemCounter = 0;
     parameters._parameters  = new Array();
 
-    // Set the public properties. 
+    // Define the public properties. 
     parameters.displaySummary   = false;
     parameters.useDefaultValues = false;
 
-    /*
-     * Definition of private methods - initialize parameters.   
-     */
+    // Definition of private methods - initialize parameters.   
 
-    parameters._initialize = function()
-    {
+    parameters._initialize = function() {
       	// Set properties if defined.
     	var parameter = {dataType: '0', defaultValue: '0', name: 'subject_nr', prompt: 'Please enter the subject number', promptEnabled: true};
         
@@ -6362,62 +6327,48 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._parameters.push(parameter);
     };
 
-    /*
-     * Definition of private methods - process parameters.   
-     */
+    // Definition of private methods - process parameters.   
     
-    parameters._processParameters = function()
-    {
+    parameters._processParameters = function() {
     	// Process all items for which a user input is required.
-        if (this._itemCounter < this._parameters.length)
-        {	
+        if (this._itemCounter < this._parameters.length) {	
             // Process the Parameter.
-            if (this.useDefaultValues == false)
-            {
+            if (this.useDefaultValues == false) {
                 this._processParameter(this._parameters[this._itemCounter]);
             }
-            else
-            {
+            else {
                 // Transfer the startup info to the context.
                 this._transferParameters();
             }    
         }
-        else
-        {
+        else {
             // All items have been processed, contine the Runner processing.
-            if (this.displaySummary == true) 
-            {
+            if (this.displaySummary == true) {
                 // Show a summary of the the startup information. 
                 this._showParameters();
             }
-            else
-            {            
+            else {            
                 // Transfer the startup info to the context.
                 this._transferParameters();
             }
         }
     };
 
-    parameters._processParameter = function(parameter)
-    {
+    parameters._processParameter = function(parameter) {
         // Check if a user request is required.
-        if (parameter.promptEnabled == true)
-        {
+        if (parameter.promptEnabled == true) {
             this._showDialog(parameter.dataType);
 
             // Set the dialog interface.
-            if (parameter.response == '')
-            {
+            if (parameter.response == '') {
             	document.getElementById('qpdialoginput').value = parameter.defaultValue;
             }
-            else
-            {
+            else {
             	document.getElementById('qpdialoginput').value = parameter.defaultValue;
             }
 
             document.getElementById('dialogboxhead').innerHTML = parameter.prompt;
-            document.getElementById('qpbuttonyes').onclick = function()
-            {
+            document.getElementById('qpbuttonyes').onclick = function() {
                 // Get the response information
                 parameter.response = document.getElementById('qpdialoginput').value;
                             
@@ -6432,21 +6383,15 @@ osweb.promoteClass = function(sub_class, prefix) {
 
             }.bind(this);
         	
-            document.getElementById('qpbuttonno').onclick = function()
-            {
+            document.getElementById('qpbuttonno').onclick = function() {
                 // Close the dialog.
 	        this._hideDialog();
                 
    		// Finalize the introscreen elements.
-		osweb.runner._finalizeIntroScreen();
-
-          	// Return to the QPrime object
-		// osweb.Runner._finalize();
-
+		osweb.runner._exit();
             }.bind(this);
         }
-        else
-        {
+        else {
             // Assign default value to the Startup item.
             parameter.response = parameter.defaultValue;
            
@@ -6458,11 +6403,9 @@ osweb.promoteClass = function(sub_class, prefix) {
         }    
     };
 
-    parameters._showParameters = function()
-    {
+    parameters._showParameters = function() {
         document.getElementById('dialogboxhead').innerHTML = 'Summary of startup info';
-        document.getElementById('qpbuttonyes').onclick = function()
-	{
+        document.getElementById('qpbuttonyes').onclick = function() {
             // Close the dialog.
 	    this._hideDialog();
                         
@@ -6471,8 +6414,7 @@ osweb.promoteClass = function(sub_class, prefix) {
         
         }.bind(this);    
         
-        document.getElementById('qpbuttonno').onclick = function()
-	{
+        document.getElementById('qpbuttonno').onclick = function() {
             // Close the dialog.
             this._hideDialog();
                        
@@ -6484,25 +6426,18 @@ osweb.promoteClass = function(sub_class, prefix) {
             
         }.bind(this);    
 
-        document.getElementById('qpbuttoncancel').onclick = function()
-	{
+        document.getElementById('qpbuttoncancel').onclick = function() {
             // Close the dialog.
 	    this._hideDialog();
         
             // Finalize the introscreen elements.
-            osweb.runner._finalizeIntroScreen();
-    
-            // Return to the QPrime object
-            // osweb.Runner._finalize();
-
+            osweb.runner._exit();
         }.bind(this);    
        
   	// Set the dialog interface.
         var TmpString = '';
-        for (var i=0;i < this._parameters.length;i++)
-        {
-            if ((this._parameters[i].enabled != 0) && (this._parameters[i].promptEnabled != 0))
-            {
+        for (var i = 0;i < this._parameters.length; i++) {
+            if ((this._parameters[i].enabled != 0) && (this._parameters[i].promptEnabled != 0)) {
 		TmpString = TmpString + this._parameters[i].name + ': ' + this._parameters[i].response + '\r\n';  	        	
             }
         }
@@ -6510,11 +6445,9 @@ osweb.promoteClass = function(sub_class, prefix) {
         document.getElementById('qpdialogtextarea').innerHTML = TmpString;
     };
 
-    parameters._transferParameters = function()
-    {
+    parameters._transferParameters = function() {
     	// Transfer the startup info items to the context.
-        for (var i=0;i < this._parameters.length;i++)
-        {
+        for (var i = 0;i < this._parameters.length; i++) {
             osweb.runner.experiment.vars.set(this._parameters[i].name,this._parameters[i].response);
         }
         
@@ -6526,18 +6459,17 @@ osweb.promoteClass = function(sub_class, prefix) {
      * Definition of class methods (dialogs).   
      */
      
-    parameters._showDialog = function(dialogType) 
-    {
+    parameters._showDialog = function(dialog_type) {
         var dialogoverlay = document.getElementById('dialogoverlay');
-	var dialogbox     = document.getElementById('dialogbox');
+	var dialogbox = document.getElementById('dialogbox');
 		                
 	dialogoverlay.style.display = "block";
-	dialogoverlay.style.height  = window.innerHeight + "px";
-	dialogbox.style.left        = (window.innerWidth / 2) - (400 * .5) + "px";
-	dialogbox.style.top         = "200px";
-	dialogbox.style.display     = "inline";
+	dialogoverlay.style.height = window.innerHeight + "px";
+	dialogbox.style.left = (window.innerWidth / 2) - (400 * .5) + "px";
+	dialogbox.style.top = "200px";
+	dialogbox.style.display = "inline";
 
-	switch (dialogType)
+	switch (dialog_type)
         {
 	    case "0": 
                 document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
@@ -6560,13 +6492,11 @@ osweb.promoteClass = function(sub_class, prefix) {
                 document.getElementById('qpdialogtextarea').focus();
             break;
 	}
-        
     };
 	 
-    parameters._hideDialog = function()
-    {
+    parameters._hideDialog = function() {
         dialogoverlay.style.display = "none";
-	dialogbox.style.display     = "none";
+	dialogbox.style.display = "none";
 	document.getElementById('dialogboxbody').innerHTML = '';
 	document.getElementById('dialogboxfoot').innerHTML = '';
     };	
@@ -7137,23 +7067,15 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.parser = parser;
 }()); 
 
-/*
- * Definition of the class session.
- */
-
-(function() 
-{
-    function session() 
-    {
-    	throw "The class session cannot be instantiated!";
+(function() {
+    // Definition of the class session - store user session information. 
+    function session() {
+    	throw 'The class session cannot be instantiated!';
     }
 
-    /*
-     * Definition of session related methods.   
-     */
+    // Definition of private methods.   
 
-    session._initialize = function()
-    {
+    session._initialize = function() {
     	// Update the loader text.
     	osweb.runner._updateIntroScreen(osweb.constants.MESSAGE_008);
 	
@@ -7161,52 +7083,41 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this._getSessionInformation();
     };
 
-    /*
-     * Definition of session related methods.   
-     */
-
-    session._getSessionInformation = function()
-    {
-    	// Get the session information from the client system
-    	this.date    = new Date();
-	this.session = 
-        {
-            "browser": 
-            {
-                "codename"        : navigator.appCodeName,
-                "name"            : navigator.appName,
-                "version"         : navigator.appVersion
+    session._getSessionInformation = function() {
+    	// Get the session information from the client system.
+    	this._date = new Date();
+	this._session = {
+            'browser': {
+                'codename': navigator.appCodeName,
+                'name': navigator.appName,
+                'version': navigator.appVersion
             },
-            "date": 
-            {
-                "startdate"       : ('0' + this.date.getDate()).slice(-2) + '-' + ('0' + this.date.getMonth()).slice(-2) + '-' + ('0' + this.date.getFullYear()).slice(-2),
-                "starttime"       : ('0' + this.date.getHours()).slice(-2) + ':' + ('0' + this.date.getMinutes()).slice(-2) + ':' + ('0' + this.date.getSeconds()).slice(-2),
-                "startdateUTC"    : ('0' + this.date.getUTCDate()).slice(-2) + '-' + ('0' + this.date.getUTCMonth()).slice(-2) + '-' + ('0' + this.date.getUTCFullYear()).slice(-2)
+            'date': {
+                'startdate': ('0' + this._date.getDate()).slice(-2) + '-' + ('0' + this._date.getMonth()).slice(-2) + '-' + ('0' + this._date.getFullYear()).slice(-2),
+                'starttime': ('0' + this._date.getHours()).slice(-2) + ':' + ('0' + this._date.getMinutes()).slice(-2) + ':' + ('0' + this._date.getSeconds()).slice(-2),
+                'startdateUTC' : ('0' + this._date.getUTCDate()).slice(-2) + '-' + ('0' + this._date.getUTCMonth()).slice(-2) + '-' + ('0' + this._date.getUTCFullYear()).slice(-2)
             },
-            "experiment": 
-            {
-		"debug"		  : 0,
-                "parameters"	  : 0,
-		"pilot"           : 0,
-                "taskname"        : 0,
-                "taskversion"     : 0
+            'experiment': {
+		'debug': 0,
+                'parameters': 0,
+		'pilot': 0,
+                'taskname': 0,
+                'taskversion': 0
             },
-            "screen":
-            {
-                "availableHeight" : screen.availHeight,
-                "availableWidth"  : screen.availWidth,
-                "colorDepth"      : screen.colorDepth,
-                "height"          : screen.height,
-                "outerheight"     : window.outerheight,
-                "outerwidth"      : window.outerwidth,
-                "pixelDepth"      : screen.pixelDepth,
-                "screenX"         : window.screenX,
-                "screenY"         : window.screenY,
-                "width"           : screen.width
+            'screen': {
+                'availableHeight': screen.availHeight,
+                'availableWidth': screen.availWidth,
+                'colorDepth': screen.colorDepth,
+                'height': screen.height,
+                'outerheight': window.outerheight,
+                'outerwidth': window.outerwidth,
+                'pixelDepth': screen.pixelDepth,
+                'screenX': window.screenX,
+                'screenY': window.screenY,
+                'width': screen.width
             },
-            "system": 
-            {
-                "os"              : navigator.platform
+            'system': {
+                'os': navigator.platform
             }
         };
     };
@@ -7215,118 +7126,97 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.session = session;
 }()); 
 
-/*
- * Definition of the class runner.
- */
-
-(function() 
-{
-    function runner() 
-    {
-    	throw "The class runner cannot be instantiated!";
+(function() {
+    // Definition of the class runner.
+    function runner() {
+    	throw 'The class runner cannot be instantiated!';
     };
 
     // Show library name and library version number in the console.
     console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);	
-    // console.log(osweb);
 
     // Definition of private properties.
-    runner._canvas        = null;           // Canvas on which the experiment is shown.
-    runner._qualtrics     = null;           // Link to the qualtrics interface (optional)
-    runner._stage	  = null;           // Links to the stage object (CreateJS).
+    runner._canvas = null;                       // Canvas on which the experiment is shown.
+    runner._qualtrics = null;                    // Link to the qualtrics interface (optional)
+    runner._stage = null;                        // Links to the stage object (CreateJS).
 
     // Definition of public properties.
-    runner.debug          = false;          // Debug toggle.
-    runner.experiment     = null;           // The root experiment object to run.           
-    runner.onFinished	  = null;           // Event triggered on finishing the experiment.
-    runner.screenIntro    = true;           // Show introscreen toggle.
-    runner.screenClick    = true;           // Show clickscreen toggle
-    runner.script         = null;           // Container for the JSON script definition of the experiment.
-    runner.scriptID       = 0;              // Id used when retrieving the script from the database.
-    runner.scriptURL      = '';             // Path pointing to the AMFPHP database files.
-    runner.session	  = null;           // Container for the JSON session information.
+    runner.data = null;                          // Container for the experiment result data (if defined).
+    runner.debug = false;                        // Debug toggle.
+    runner.experiment = null;                    // The root experiment object to run.           
+    runner.onFinished = null;                    // Event triggered on finishing the experiment.
+    runner.screenIntro = true;                   // Show introscreen toggle.
+    runner.screenClick = true;                   // Show clickscreen toggle
+    runner.script = null;                        // Container for the JSON script definition of the experiment.
+    runner.scriptID = 0;                         // Id used when retrieving the script from the database.
+    runner.scriptURL = '';                       // Path pointing to the AMFPHP database files.
+    runner.session = null;                       // Container for the JSON session information.
     
     /*
-     * Definition of the private setup methods.      
+    // Definition of private methods - setup runner.      
      */
 
-    runner._setupContent = function(pContent)
-    {
+    runner._setupContent = function(content) {
     	// Check if the experiment container is defined.                     
-	if (typeof pContent !== "undefined") 
-	{
+	if (typeof content !== "undefined") {
             // Get the canvas from the DOM Element tree.
-            this._canvas = (typeof pContent === 'string') ? document.getElementById(pContent) : pContent; 		
+            this._canvas = (typeof content === 'string') ? document.getElementById(content) : content; 		
 		
             // Set the stage object (easelJS). 
-            this._stage                    = new createjs.Stage(this._canvas);
+            this._stage = new createjs.Stage(this._canvas);
             this._stage.snapToPixelEnabled = true;
-            this._stage.regX               = -.5;
-            this._stage.regY 		   = -.5;
+            this._stage.regX = -.5;
+            this._stage.regY = -.5;
 		
             // Build the initialization screen.
             this._setupIntroScreen();
 	}
-	else
-	{
+	else {
             osweb.debug.addError(osweb.constants.ERROR_002);
 	}
     };
 
-    runner._setupContext = function(pContext)
-    {
+    runner._setupContext = function(context) {
 	// Check if the script parameter is defined.                        
-	if (typeof pContext !== "undefined") 
-	{
-            // Set the context container.
-            this._context = pContext;
-			
+	if (typeof context !== "undefined") {
             // Initialize the context parameters.
-            this.debug        = (typeof this._context.debug       !== 'undefined') ? this._context.debug       : false; 
-            this.file         = (typeof this._context.file        !== 'undefined') ? this._context.file        : null;
-            this.onFinished   = (typeof this._context.onFinished  !== 'undefined') ? this._context.onFinished  : null;
-            this.screenClick  = (typeof this._context.screenClick !== 'undefined') ? this._context.screenClick : true;				      
-            this.screenIntro  = (typeof this._context.screenIntro !== 'undefined') ? this._context.screenIntro : true; 
-            this.script       = (typeof this._context.script      !== 'undefined') ? this._context.script      : null;      
-            this.scriptID     = (typeof this._context.scriptID    !== 'undefined') ? this._context.scriptID    : 0;         
-            this.scriptURL    = (typeof this._context.scriptURL   !== 'undefined') ? this._context.scriptURL   : '';		 
-            this.session      = (typeof this._context.session     !== 'undefined') ? this._context.session     : null;
+            this.debug = (typeof context.debug !== 'undefined') ? context.debug : false; 
+            this.file = (typeof context.file !== 'undefined') ? context.file : null;
+            this.onFinished = (typeof context.onFinished !== 'undefined') ? context.onFinished : null;
+            this.screenClick = (typeof context.screenClick !== 'undefined') ? context.screenClick : true;				      
+            this.screenIntro = (typeof context.screenIntro !== 'undefined') ? context.screenIntro : true; 
+            this.script = (typeof context.script !== 'undefined') ? context.script : null;      
+            this.scriptID = (typeof context.scriptID !== 'undefined') ? context.scriptID : 0;         
+            this.scriptURL = (typeof context.scriptURL !== 'undefined') ? context.scriptURL : '';		 
+            this.session = (typeof context.session !== 'undefined') ? context.session : null;
 					
             // Check if an osexp script is given as parameter.                            
-            if (this.script !== null) 
-            {	
+            if (this.script !== null) {	
                 // Start building the experiment structure.      
 		this._buildExperiment();
             }
             // Check if an osexp file is given as parameter. 
-            else if (this.file !== null)
-            {
+            else if (this.file !== null) {
                 this._setupScriptFromFile();
             }	
-            else
-            {
+            else {
                 // Retrieve the script from an external location.
 		this._setupScriptFromDatabase();
             }
 	}
-	else
-	{
+	else {
             osweb.debug.addError(osweb.constants.ERROR_003);
 	}
     };
 
-    runner._setupScriptFromFile = function()
-    {
+    runner._setupScriptFromFile = function() {
         // Check for binary or text file definition.
-        if (this.file.substring(0,3) == '---')
-        {
+        if (this.file.substring(0,3) == '---') {
             this.script = String(this.file);
         } 
-        else
-        {
+        else {
             // Decompress the gizp file and splitt the tar result.	
-            GZip.loadlocal(this.file, function(h) 
-            {
+            GZip.loadlocal(this.file, function(h) {
                 var tar = new TarGZ;
                 tar.parseTar(h.data.join(''));
                 tar.files.forEach(this.setupScriptFromFileResult.bind(this)); 
@@ -7337,45 +7227,35 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this._buildExperiment();
     };
 
-    runner.setupScriptFromFileAlert = function()
-    {
+    runner.setupScriptFromFileAlert = function() {
     };
 
-    runner.setupScriptFromFileProgress = function()
-    {
+    runner.setupScriptFromFileProgress = function() {
     };
 
-    runner.setupScriptFromFileResult = function(pFile)
-    {
+    runner.setupScriptFromFileResult = function(pFile) {
 	// Check if the file is the scriptfile.
-    	if (pFile.filename === 'script.opensesame') 
-	{
+    	if (pFile.filename === 'script.opensesame') {
             // Create the script.
             this.script = String(pFile.data);
    	}
-	else if ((pFile.data !== null) && (pFile.data !== ''))
-	{
+	else if ((pFile.data !== null) && (pFile.data !== '')) {
             // Create a file pool element.
             osweb.pool.add_from_local_source(pFile);			
 	}
     };
 
-    runner._setupScriptFromDatabase = function()
-    {
+    runner._setupScriptFromDatabase = function() {
 	// Check if the URL and ID is propertly defined.
-       	if ((this.scriptID >= 0) && (this.scriptURL !== ''))
-       	{
-            var url        = this.scriptURL + '/php/index.php?/ajax/group/get_status';
+       	if ((this.scriptID >= 0) && (this.scriptURL !== '')) {
+            var url = this.scriptURL + '/php/index.php?/ajax/group/get_status';
             var parameters = {group_id: 99, task_number: this.scriptID};
 		
-            new Ajax.Request(url,
-            {
+            new Ajax.Request(url, {
             	parameters: parameters,
-		onCreate: function(response) 
-		{
+		onCreate: function(response) {
                     var t = response.transport;
-                    t.setRequestHeader = t.setRequestHeader.wrap(function(original, k, v) 
-                    {
+                    t.setRequestHeader = t.setRequestHeader.wrap(function(original, k, v) {
 			if (/^(accept|accept-language|content-language)$/i.test(k))
                             return original(k, v);
 			if (/^content-type$/i.test(k) &&
@@ -7384,17 +7264,14 @@ osweb.promoteClass = function(sub_class, prefix) {
 			return;
                     });
 		},
-		onSuccess: function(transport) 
-		{
+		onSuccess: function(transport) {
                     // Process the response
-                    if (transport.responseText)
-                    {
+                    if (transport.responseText) {
                         // Retrieve the response text.
 			var jsonresponse = JSON.parse(transport.responseText);
 					
 			// Check if the task is available.
-			if (jsonresponse.task_available === '1') 
-			{
+			if (jsonresponse.task_available === '1') {
                             // Set the script parameter.
                             this.script = jsonresponse.data_available;
                             this.files  = jsonresponse.file_available.split('\r\n');    
@@ -7402,41 +7279,33 @@ osweb.promoteClass = function(sub_class, prefix) {
                             // Create a file pool element.
                             osweb.pool.add_from_server_source(this.scriptURL + '/user/4/', this.files);			
                         }
-			else
-			{
+			else {
                             // Show erorr message within the concole.
                             osweb.debug.addError(osweb.constants.ERROR_007);
 			}
                     }	
-                    else
-                    {
+                    else {
 			// Show erorr message within the concole.
 			osweb.debug.addError(osweb.constants.ERROR_006);
                     }
 		}.bind(this),
-		onFailure: function()
-		{
+		onFailure: function() {
                     // Show erorr message within the concole.
                     osweb.debug.addError(osweb.constants.ERROR_005);
 		}.bind(this) 
             }); 
 	}
-	else
-	{
+	else {
             // Show erorr message within the concole.
             osweb.debug.addError(osweb.constants.ERROR_004);
 	} 
     };
 
-    /*
-     * Definition of the private introscreen methods.      
-     */
+    // Definition of private methods - Introduction screen.
 
-    runner._setupIntroScreen =  function() 
-    {
+    runner._setupIntroScreen =  function() {
     	// Set the introscreen elements.
-	if (this.screenIntro === true)
-	{
+	if (this.screenIntro === true) {
             this._introScreen  = new createjs.Shape();
             this._introScreen.graphics.beginFill('#000000').drawRect(0,0,this._stage.width,this._stage.height);
             this._introLine    = new createjs.Shape();
@@ -7455,32 +7324,25 @@ osweb.promoteClass = function(sub_class, prefix) {
 	}
     };
 	
-    runner._clearIntroScreen = function()
-    {
+    runner._clearIntroScreen = function(){
         // Update the introscreen elements.
-	if (this.screenIntro === true)
-	{
+	if (this.screenIntro === true) {
             this._stage.removeChild(this._introScreen,this._introLine,this._introText1,this._introText2,this._introText3);
             this._stage.update();
 	}		
     };
 	
-    runner._updateIntroScreen = function(pText)
-    {
+    runner._updateIntroScreen = function(text) {
 	// Update the introscreen elements.
-	if (this.screenIntro === true)
-	{
-            this._introText3.text = pText;
+	if (this.screenIntro === true) {
+            this._introText3.text = text;
             this._stage.update();
 	}		
     };
 
-    /*
-     * Definition of the private build methods.      
-     */
+    // Definition of the private methods - build cycle.      
 
-    runner._buildExperiment = function()
-    {
+    runner._buildExperiment = function() {
     	// Build the base experiment object.
 	this.experiment = new osweb.experiment(null, 'test', this.script);
 	
@@ -7489,19 +7351,13 @@ osweb.promoteClass = function(sub_class, prefix) {
 	window['pool']  = osweb.file_pole_store;
 	window['vars']  = this.experiment.vars;
 		
-	// Create the global dynamic object classes.
-	window['keyboard'] = osweb.keyboard_backend;
-
 	// Pepare the experiment to run.
 	this._prepare();
     };
 
-    /*
-     * Definition of private methods (prepare cycle).   
-     */
+    // Definition of private methods - prepare cycle.   
 
-    runner._prepare = function()
-    {
+    runner._prepare = function() {
 	// Update inroscreen.
 	this._updateIntroScreen(osweb.constants.MESSAGE_004);
 		
@@ -7510,41 +7366,35 @@ osweb.promoteClass = function(sub_class, prefix) {
         osweb.functions._initialize();
 	osweb.session._initialize();
 
-        // Start the experiment.
+        // Start the parameter screen (subject number).
         this._prepareParameters();
     };
 
-    runner._prepareParameters = function()
-    {
+    runner._prepareParameters = function() {
         // Update inroscreen.
 	this._updateIntroScreen(osweb.constants.MESSAGE_005);
 
 	// Check if items must be processed. 
-	if (osweb.parameters._parameters.length > 0)
-	{
+	if (osweb.parameters._parameters.length > 0) {
 		// Process the Parameters.        
    	    osweb.parameters._processParameters();
 	}
-	else
-	{ 
+	else { 
             // Start the experiment.
    	    this._prepareStartScreen();
 	}
     };
 
-    runner._prepareStartScreen = function()
-    {
+    runner._prepareStartScreen = function() {
         // Check if the experiment must be clicked to start.
-        if (this.screenClick === true)
-	{
+        if (this.screenClick === true) {
             // Update inroscreen.
             this._updateIntroScreen(osweb.constants.MESSAGE_006);
 		
             // Setup the mouse click response handler.
-            var clickHandler = function(event)
-            {
+            var clickHandler = function(event) {
 		// Remove the handler.
-		this._canvas.removeEventListener("click",clickHandler);
+		this._canvas.removeEventListener("click", clickHandler);
 
 		// Finalize the introscreen elements.
 		this._clearIntroScreen();
@@ -7554,10 +7404,9 @@ osweb.promoteClass = function(sub_class, prefix) {
             }.bind(this); 
 
             // Set the temporary mouse click.
-            this._canvas.addEventListener("click", clickHandler,false);
+            this._canvas.addEventListener("click", clickHandler, false);
 	}
-	else
-	{
+	else {
             // Finalize the introscreen elements.
             this._clearIntroScreen();
 
@@ -7566,12 +7415,9 @@ osweb.promoteClass = function(sub_class, prefix) {
 	}
     };
 
-    /*
-     * Definition of private methods (run cycle).   
-     */
-
-    runner._initialize = function()
-    {
+    // Definition of private methods - run cycle.   
+    
+    runner._initialize = function() {
 	// Initialize the debugger. 
 	osweb.debug._initialize();
 
@@ -7583,36 +7429,39 @@ osweb.promoteClass = function(sub_class, prefix) {
 	this.experiment.run();
     };
 	
-    runner._finalize = function()
-    {   
+    runner._finalize = function() {   
         // Finalize the devices.
     	osweb.events._finalize();
         
     	// Finalize the debugger. 
 	osweb.debug._finalize();
-        	
-        // Set the cursor visibility to none (default).
+
+        // Exit the application.
+        this._exit();
+    };
+
+    runner._exit = function() {
+        // Clear the canvas.
+        this._stage.clear();
+        
+        // Set the cursor visibility to default.
         this._stage.canvas.style.cursor = "default";
 
         // Check if an event handler is attached.
-	if (this.onFinished) 
-	{
+	if (this.onFinished) {
             // Execute.
-            this.onFinished();
+            this.onFinished(this.data, osweb.session._session);
 	}
     };
 
-    /*
-     * Definition of the public run methods.      
-     */
+    // Definition of public methods - run cycle.      
 
-    runner.run = function(pContent, pContext) 
-    {
+    runner.run = function(content, context) {
         // Initialize the content container.
-	this._setupContent(pContent);
+	this._setupContent(content);
 
 	// Initialize the context parameter
-	this._setupContext(pContext);
+	this._setupContext(context);
     };
 
     // Bind the runner class to the osweb namespace.
