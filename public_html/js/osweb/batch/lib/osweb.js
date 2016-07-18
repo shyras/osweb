@@ -6505,84 +6505,62 @@ osweb.promoteClass = function(sub_class, prefix) {
     osweb.parameters = parameters;
 }());
 
-/*
- * Definition of the class session.
- */
-
-(function() 
-{
-    function parser() 
-    {
-	throw "The class parser cannot be instantiated!";
+(function() {
+    // Definition of the class session.
+    function parser() {
+	throw 'The class parser cannot be instantiated!';
     }
 
     // Definition of private properties.
-    parser._ast_tree      = null;    
-    parser._current_node  = null;
+    parser._ast_tree = null;    
+    parser._current_node = null;
     parser._inline_script = null;
-    parser._status        = 0;                      
+    parser._status = 0;                      
                 
-    /*
-     * Definition of private methods.   
-     */
+    // Definition of private methods - prepare cycle.   
 
-    parser._prepare = function(pScript)
-    {
-        if (pScript !== '')
-        {
+    parser._prepare = function(script) {
+        if (script !== '') {
             var locations = false;
-            var parseFn   = filbert_loose.parse_dammit;
-            var ranges    = false;
+            var parseFn = filbert_loose.parse_dammit;
+            var ranges = false;
         		
-	    try 
-	    {
-                var code  = pScript;
-           	var ast   = parseFn(code, { locations: locations, ranges: ranges });
-        
+	    try {
+                var code = script;
+           	var ast = parseFn(code, { locations: locations, ranges: ranges });
 	        return ast;
     	    }
-       	    catch (e) 
-            {
+       	    catch (e) {
         	console.log('error');
         	console.log(e.toString());
-    	 	
                 return null;
             }
-        }
-	else
+        } else
 	{
             return null;
         }	   	
     };
     
-    /*
-     * Definition of private methods - node types
-     */
+    // Definition of private methods - general parser functions.
 
-    parser._set_return_value = function(pNode, pValue)
-    {
-        var index=0;
-        while (typeof pNode['returnvalue' + String(index)] !== 'undefined')
-        {
+    parser._set_return_value = function(node, value) {
+        var index = 0;
+        while (typeof node['returnvalue' + String(index)] !== 'undefined') {
             index++;
         }    
         
         // Set the return value\
-        pNode['returnvalue' + String(index)] = pValue;
+        node['returnvalue' + String(index)] = value;
     };
     
-    /*
-     * Definition of private methods - node types
-     */
+    // Definition of private methods - node processing.
     
-    parser._node_binary_expression = function()
-    {
+    parser._node_binary_expression = function() {
         // Initialize status property.
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // process right expression;
                 this._current_node.status = 1;
@@ -6603,30 +6581,24 @@ osweb.promoteClass = function(sub_class, prefix) {
             break;        
             case 2: 
                 var left,right;
-                if  (typeof window[this._current_node.returnvalue0] === 'undefined')
-                {
+                if  (typeof window[this._current_node.returnvalue0] === 'undefined') {
                     var right = this._current_node.returnvalue0;
                 }
-                else
-                {
+                else {
                     var right = window[this._current_node.returnvalue0];
                 }
                 var left,right;
-                if  (typeof window[this._current_node.returnvalue1] === 'undefined')
-                {
+                if  (typeof window[this._current_node.returnvalue1] === 'undefined') {
                     var left = this._current_node.returnvalue1;
                 }
-                else
-                {
+                else {
                     var left = window[this._current_node.returnvalue1];
                 }
             
                 // Select the binary operator to perform.
-                switch (this._current_node.operator)
-                {
+                switch (this._current_node.operator) {
                     case '-':
                         // Process call - check for blocking methods.
-    
                         this._set_return_value(this._current_node.parent,left - right);
                     break;
                 }
@@ -6641,20 +6613,17 @@ osweb.promoteClass = function(sub_class, prefix) {
         }    
     };    
 
-    parser._node_call_expression = function()
-    {
+    parser._node_call_expression = function() {
         // Initialize status property.
         this._current_node.arguments = (typeof this._current_node.arguments === 'undefined') ? [] : this._current_node.arguments;
         this._current_node.index = (typeof this._current_node.index === 'undefined') ? 0  : this._current_node.index; 
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Process arguments.
-                if (this._current_node.index < this._current_node.arguments.length)		
-                {
+                if (this._current_node.index < this._current_node.arguments.length) {
                     // Set current node to next node in list.
                     this._current_node.index++;
                     this._current_node.arguments[this._current_node.index - 1].parent = this._current_node;
@@ -6663,8 +6632,7 @@ osweb.promoteClass = function(sub_class, prefix) {
                     // Return to the node processessor.
                     this._process_node();
                 } 
-                else
-                { 
+                else { 
                     // Set parent node.
                     this._current_node.status = 1;
 
@@ -6687,14 +6655,11 @@ osweb.promoteClass = function(sub_class, prefix) {
             
                 // Create the aruments array.
                 var tmp_arguments = [];
-                for (var i=0;i< this._current_node.arguments.length; i++)
-                {
-                    if (typeof window[this._current_node['returnvalue' + String(i)]] !== 'undefined')
-                    {
+                for (var i=0;i< this._current_node.arguments.length; i++) {
+                    if (typeof window[this._current_node['returnvalue' + String(i)]] !== 'undefined') {
                         tmp_arguments.push(window[this._current_node['returnvalue' + String(i)]]);
                     }    
-                    else
-                    {    
+                    else {    
                         tmp_arguments.push(this._current_node['returnvalue' + String(i)]);
                     }    
                 }    
@@ -6702,8 +6667,7 @@ osweb.promoteClass = function(sub_class, prefix) {
                 // Select the type of call to process
                 var callee = this._current_node['returnvalue' + String(this._current_node.arguments.length)];
                 var returnvalue = null;
-                if (callee.type == 'function')
-                {
+                if (callee.type == 'function') {
                     // function call
                     returnvalue = window[callee.obj].apply(null, tmp_arguments);
                     
@@ -6713,15 +6677,12 @@ osweb.promoteClass = function(sub_class, prefix) {
                     // Return to the node processessor.
                     this._process_node();
                 }    
-                else if (callee.type == 'object')
-                {
-                    if ((callee.obj == 'clock') && (callee.prop == 'sleep'))
-                    {
+                else if (callee.type == 'object') {
+                    if ((callee.obj == 'clock') && (callee.prop == 'sleep')) {
                         // Process special calls with blocking (no direct result processing).
                         window[callee.obj][callee.prop].apply(window[callee.obj], tmp_arguments);
                     }    
-                    else
-                    {    
+                    else {    
                         // object methods calls.
                         returnvalue = window[callee.obj][callee.prop]();
                     
@@ -6732,10 +6693,8 @@ osweb.promoteClass = function(sub_class, prefix) {
                         this._process_node();
                     }        
                 }
-                else
-                {
-                    switch (callee)
-                    {   
+                else {
+                    switch (callee) {   
                         case 'canvas':
                             returnvalue = new osweb.canvas();
                         break;    
@@ -6759,14 +6718,12 @@ osweb.promoteClass = function(sub_class, prefix) {
         }    
     };
 
-    parser._node_expression_statement = function()
-    {
+    parser._node_expression_statement = function() {
         // Initialize status property.
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0  : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Set parent node.
                 this._current_node.status = 1;
@@ -6787,11 +6744,9 @@ osweb.promoteClass = function(sub_class, prefix) {
         ;}    
     };
 
-    parser._node_identifier = function()
-    {
+    parser._node_identifier = function() {
         // Return function result.
-        if (typeof window[this._current_node.name] === 'undefined')
-        {
+        if (typeof window[this._current_node.name] === 'undefined') {
             // Item is undefined, create it without value/type definition.
             window[this._current_node.name] = null;
         }
@@ -6824,8 +6779,7 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Process object.
                 this._current_node.status = 1;
@@ -6849,12 +6803,10 @@ osweb.promoteClass = function(sub_class, prefix) {
                 //console.log('member->');
                 //console.log(typeof this._current_node.returnvalue0);
                     
-                if (typeof this._current_node.returnvalue0 == 'object')
-                {
+                if (typeof this._current_node.returnvalue0 == 'object') {
                     this._set_return_value(this._current_node.parent,{ 'obj': this._current_node.returnvalue1, 'prop': null, 'type': 'function'});
                 }
-                else
-                {    
+                else {    
                     this._set_return_value(this._current_node.parent,{ 'obj': this._current_node.returnvalue0, 'prop': this._current_node.returnvalue1,'type':'object'});
                 }
                 
@@ -6875,12 +6827,10 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Check if all nodes in script have been processed.
-                if (this._current_node.index < this._current_node.body.length)		
-            	{
+                if (this._current_node.index < this._current_node.body.length) {
                     // Set current node to next node in list.
                     this._current_node.index++;
                     this._current_node.body[this._current_node.index - 1].parent = this._current_node;
@@ -6889,8 +6839,7 @@ osweb.promoteClass = function(sub_class, prefix) {
                     // Return to the node processessor.
                     this._process_node();
                 }
-                else
-                {
+                else {
                     // End status.
                     this._current_node.status = 1;
                 
@@ -6906,8 +6855,7 @@ osweb.promoteClass = function(sub_class, prefix) {
                 this._status = 2;
         
                 // Complete the inline item.    
-                if (this._inline_script != null)
-                {    
+                if (this._inline_script != null) {    
                     this._inline_script.complete();
                 }    
             break;    
@@ -6921,12 +6869,10 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Check if all nodes in script have been processed.
-                if (this._current_node.index < this._current_node.declarations.length)		
-        	{
+                if (this._current_node.index < this._current_node.declarations.length) {
                     // Set current node to next node in list.
                     this._current_node.index++;
                     this._current_node.declarations[this._current_node.index - 1].parent = this._current_node;
@@ -6935,8 +6881,7 @@ osweb.promoteClass = function(sub_class, prefix) {
                     // Return to the node processessor.
                     this._process_node();
                 } 
-                else
-                {
+                else {
                     // Change the node stats.                                
                     this._current_node.status = 1;
 
@@ -6963,8 +6908,7 @@ osweb.promoteClass = function(sub_class, prefix) {
         this._current_node.status = (typeof this._current_node.status === 'undefined') ? 0 : this._current_node.status; 
         
         // Process the current status.
-        switch (this._current_node.status)
-        {
+        switch (this._current_node.status) {
             case 0: 
                 // Process init.
                 this._current_node.status      = 1;
@@ -6997,18 +6941,14 @@ osweb.promoteClass = function(sub_class, prefix) {
         }
     };
 
-    /*
-     * Definition of private methods - process node
-     */
+    // Definition of private methods - general node processing.
 
-    parser._process_node = function()
-    {
+    parser._process_node = function() {
         console.log('processing node');
         console.log(this._current_node);
         
         // Select the type of node to process
-        switch(this._current_node.type)
-        { 
+        switch(this._current_node.type) { 
             case 'BinaryExpression':
                 this._node_binary_expression();
             break;
@@ -7039,25 +6979,21 @@ osweb.promoteClass = function(sub_class, prefix) {
         }
     };
 
-    /*
-     * Definition of private methods - statements
-     */
+    // Definition of private methods - run cycle.
 
-    parser._runstatement = function(pNode)
-    {
+    parser._runstatement = function(node) {
         // Call the expression statement en return the value.       
-        return this._node_call_expression(pNode.expression);
+        return this._node_call_expression(node.expression);
     };
     
-    parser._run = function(pInline_script, pAst_tree)
-    {
+    parser._run = function(inline_script, ast_tree) {
         // Set the inline item. 
-	this._inline_script = pInline_script;
+	this._inline_script = inline_script;
 	
 	// Set the first node and its parent.
-	this._current_node        = pAst_tree;
+	this._current_node = ast_tree;
         this._current_node.parent = null;
-        this._status              = 1;
+        this._status = 1;
         
     	// Process the nodes. 
 	osweb.parser._process_node();
