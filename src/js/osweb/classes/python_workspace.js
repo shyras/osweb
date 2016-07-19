@@ -23,11 +23,19 @@
         }
         else if (typeof pBytecode === 'string')
         {
-            // Open sesame script, first check for paramter values. 
+            // Open sesame script, first check for parameter values. 
             pBytecode = osweb.syntax.eval_text(pBytecode);
-
+           
             // Evaluate the expression.
-            return eval(osweb.syntax.remove_quotes(pBytecode));    
+            eval_string = osweb.syntax.remove_quotes(pBytecode)
+            if(eval_string == "always"){
+                b;
+                return true;
+            }else if(eval_string == "never"){
+                return false;
+            }else{
+                return eval(eval_string);
+            }    
         }
         else
         {

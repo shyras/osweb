@@ -163,15 +163,17 @@
 
             // Increase the current index.
             this._index++;
+            current_item = this._items[this._index - 1]
 
             // Set the workspace.
             osweb.python_workspace['self'] = this;
 
+            console.log(current_item);
             // Check if the item may run.                            
-            if (osweb.python_workspace._eval(this._items[this._index - 1].cond) == true) 
+            if (osweb.python_workspace._eval(current_item.cond) == true) 
             {   
                 // run the current item of the sequence object.
-		osweb.item_store.run(this._items[this._index - 1].item, this);
+                osweb.item_store.run(current_item.item, this);
             }
   	    else
   	    {
