@@ -237,7 +237,8 @@
 	// Start the stimuli loader.
 	osweb.parameters._initialize();
         osweb.functions._initialize();
-	osweb.session._initialize();
+	osweb.python_workspace_api._initialize();
+        osweb.session._initialize();
 
         // Start the parameter screen (subject number).
         this._prepareParameters();

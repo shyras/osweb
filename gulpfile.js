@@ -33,12 +33,13 @@ var paths = {
     // Classes
     'src/js/osweb/classes/debug.js',
     'src/js/osweb/classes/file_pool_store.js',
-    'src/js/osweb/classes/functions.js',
     'src/js/osweb/classes/heartbeat.js',
     'src/js/osweb/classes/item_stack.js',
     'src/js/osweb/classes/item_store.js',
-    'src/js/osweb/classes/prng.js',
     'src/js/osweb/classes/python_workspace.js',
+    'src/js/osweb/classes/python_workspace_api.js',
+    'src/js/osweb/classes/response_info.js',
+    'src/js/osweb/classes/response_store.js',
     'src/js/osweb/classes/syntax.js',
     'src/js/osweb/classes/var_store.js',
     // Items
@@ -88,10 +89,12 @@ var paths = {
     'src/js/osweb/widgets/label.js',
     // Remaining system module
     'src/js/osweb/system/events.js', 
+    'src/js/osweb/system/functions.js', 
     'src/js/osweb/system/parameters.js',
     'src/js/osweb/system/parser.js',
+    'src/js/osweb/system/prng.js',
     'src/js/osweb/system/session.js',
-    'src/js/osweb/system/runner.js',
+    'src/js/osweb/system/runner.js'
   ],
   styles:[
     'src/scss/*.scss'
@@ -103,7 +106,7 @@ gulp.task('js', function() {
   return gulp
     .src(paths.scripts)
     .pipe(sourcemaps.init())
-      .pipe(uglify())
+//      .pipe(uglify())
       .pipe(concat('osweb.js'))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('public_html/js'));
