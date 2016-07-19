@@ -5,10 +5,8 @@
  */
 
 var gulp = require('gulp');
-var browserify = require('gulp-browserify');
 var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
-var order = require("gulp-order");
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
@@ -102,14 +100,13 @@ var paths = {
 };
 
 gulp.task('js', function() {
-  // Minify and copy all JavaScript (except vendor scripts)
   return gulp
     .src(paths.scripts)
     .pipe(sourcemaps.init())
-//      .pipe(uglify())
+      //.pipe(uglify())
       .pipe(concat('osweb.js'))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest('public_html/js'));
+    .pipe(gulp.dest('./public_html/js'));
 });
 
 gulp.task('css', function() {

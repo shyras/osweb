@@ -33,16 +33,16 @@
 
     p.reset = function() 
     {
-  	// Resets all item variables to their default value.
-  	this.vars.cols        = '2;2';
-	this.vars.rows        = '2;2';
-	this.vars.spacing     = 10;
-	this.vars._theme      = 'gray';
-	this.vars.only_render = 'no';
-	this.vars.timeout     = 'infinite';
-	this.vars.margins     = '50;50;50;50';
-	this._variables       = [];   
-	this._widgets         = [];
+      	// Resets all item variables to their default value.
+      	this.vars.cols        = '2;2';
+    	this.vars.rows        = '2;2';
+    	this.vars.spacing     = 10;
+    	this.vars._theme      = 'gray';
+    	this.vars.only_render = 'no';
+    	this.vars.timeout     = 'infinite';
+    	this.vars.margins     = '50;50;50;50';
+    	this._variables       = [];   
+    	this._widgets         = [];
     };    
 
     p.parse_line = function(pString)
@@ -84,9 +84,6 @@
 
     p.prepare = function()
     {
-        // Inherited.	
-    	this.item_prepare();
-
         // Retrieve the column, rows and margins.
         var cols    = this.vars.cols.split(';');
         var rows    = this.vars.rows.split(';');
@@ -101,10 +98,10 @@
         {    
             var timeout = this.vars.timeout;
         }    
-        
+               
         // Create the basic form.    
         this.form = new osweb.form(this.experiment, cols, rows, this.vars.spacing, margins, this.vars._theme, this, timeout, this.vars.form_clicks == 'yes');
-
+        
         for (var i=0;i < this._widgets.length; i++)
         {
             this.focus_widget = null;
@@ -166,6 +163,9 @@
                 }
             }    
         }
+
+        // Inherited.   
+        this.item_prepare();
     };
 
     p.run = function() 
@@ -173,6 +173,7 @@
         // Inherited.	
     	this.item_run();
 
+        console.log(this.form);
         // Set dimensions.
         this.form._parentform.style.width      = osweb.runner._canvas.width;
         this.form._parentform.style.height     = osweb.runner._canvas.height;
