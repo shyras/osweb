@@ -284,7 +284,7 @@
 		this._status = osweb.constants.STATUS_FINALIZE;
 
 		// Save the date and time, and the version of OpenSesame
-		this.vars.datetime            = new Date().toString();
+		this.vars.datetime = new Date().toString();
 		this.vars.opensesame_version  = osweb.VERSION_NUMBER; 
 		this.vars.opensesame_codename = osweb.VERSION_NAME; 
 		this.running = true;

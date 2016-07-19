@@ -151,9 +151,7 @@
         osweb.runner._prepareStartScreen();
     };
     
-    /*
-     * Definition of class methods (dialogs).   
-     */
+     // Definition of class methods (dialogs).   
      
     parameters._showDialog = function(dialog_type) {
         var dialogoverlay = document.getElementById('dialogoverlay');
@@ -165,8 +163,7 @@
 	dialogbox.style.top = "200px";
 	dialogbox.style.display = "inline";
 
-	switch (dialog_type)
-        {
+	switch (dialog_type) {
 	    case "0": 
                 document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
 	    	document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
