@@ -184,7 +184,7 @@
     p.image = function(fname, center, x, y, scale) {
 	// Set the class private properties. 
 	var image = new createjs.Bitmap();
-        image.image = fname.data;
+    image.image = fname.data;
 	image.scaleX = scale;
         image.scaleY = scale;
         image.snapToPixel = true;

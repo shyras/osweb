@@ -29,7 +29,6 @@
             // Evaluate the expression.
             eval_string = osweb.syntax.remove_quotes(pBytecode)
             if(eval_string == "always"){
-                b;
                 return true;
             }else if(eval_string == "never"){
                 return false;
