@@ -158,10 +158,7 @@
         var dialogbox = document.getElementById('dialogbox');
 
         dialogoverlay.style.display = "block";
-        dialogoverlay.style.height = window.innerHeight + "px";
-        dialogbox.style.left = (window.innerWidth / 2) - (400 * .5) + "px";
-        dialogbox.style.top = "200px";
-        dialogbox.style.display = "inline";
+        dialogbox.style.display = "block";
 
         switch (dialog_type) {
             case "0":
@@ -193,6 +190,17 @@
         document.getElementById('dialogboxbody').innerHTML = '';
         document.getElementById('dialogboxfoot').innerHTML = '';
     };
+
+    /**
+     * Resizes the container div (osweb_div), which contains all elements on display
+     * @param  {int} width  width to set
+     * @param  {int} height height to set
+     * @return void
+     */
+    parameters._resizeOswebDiv = function(width, height) {
+        document.getElementById('osweb_div').style.width = width + 'px';
+        document.getElementById('osweb_div').style.height = height + 'px';
+    }
 
     // Bind the parameters class to the osweb namespace.
     osweb.parameters = parameters;
