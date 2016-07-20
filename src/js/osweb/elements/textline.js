@@ -35,10 +35,13 @@
     {
         // Inherited.	
     	this.base_element_draw();
-		
+
+        // Decode text so unicode is converted properly. 
+        var text = decodeURIComponent(escape(this._properties.text));
+        
     	// Set the font style and draw the text element to the canvas of the sketchpad.
 	this.sketchpad.canvas.set_font(this._properties.font_family, this._properties.font_size, this._properties.font_italic == 'yes', this._properties.font_bold == 'yes', this._properties.font_underline == 'yes');		
-        this.sketchpad.canvas.text(this._properties.text, this._properties.center, this._properties.x, this._properties.y, this._properties.color, this._properties.html);
+        this.sketchpad.canvas.text(text, this._properties.center, this._properties.x, this._properties.y, this._properties.color, this._properties.html);
     };
     
     // Bind the Text class to the osweb namespace.

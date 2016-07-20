@@ -13,16 +13,16 @@ and open the template in the editor.
   
         <!-- Head - link definitions -->
         <link rel="stylesheet" href="css/osweb.css"/>
-		<script type="text/javascript" src="js/osweb.js"></script>
+	<script type="text/javascript" src="js/osweb.js"></script>
     </head>
     <body>
 	<!-- Body - HTML definitions -->
- 		<div id="body_div">
+ 	    <div id="body_div">
             <div id="command_div">
-				<input id="button1" type="file">
-				<input id="button2" type="reset" onclick="loadDatabase();" value="Load from database">
-				<input id="button3" type="reset" onclick="loadScript();" value="Load from script">
-				<input id="button4" type="reset" onclick="runExperiment();" value="run experiment" disabled>
+	        <input id="button1" type="file">
+		<input id="button2" type="reset" onclick="loadDatabase();" value="Load from database">
+		<input id="button3" type="reset" onclick="loadScript();" value="Load from script">
+		<input id="button4" type="reset" onclick="runExperiment();" value="run experiment" disabled>
             </div>
             <div id="osweb_div">
                 <canvas id="osweb_canvas" width="800" height="600" style="background-color:#000000;">&nbsp;</canvas>
@@ -121,8 +121,10 @@ and open the template in the editor.
 				 '	set reset_variables "no"' + '\n' +
 				 '	set duration "keypress"' + '\n' +
 				 '	set description "Displays stimuli"' + '\n' +
-				 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
-	                
+				 //'	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
+                                 '      draw textline center=1 color=white font_bold=no font_family=arabic font_italic=no font_size=32 html=yes show_if=always text="النص العربي" x=0 y=0 z_index=0' + '\n';
+
+                        
 	                // Definition of the experiment object and its properties.
 				Experiment = {'onFinished': onFinished, 'script': Script};
 		    };  

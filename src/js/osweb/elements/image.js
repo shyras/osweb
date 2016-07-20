@@ -34,7 +34,7 @@
         // Inherited.	
 	this.base_element_draw();
 
-    	// Retrieve the content from the file pool.
+        // Retrieve the content from the file pool.
 	this._file = osweb.pool[this._properties['file']];  
 
 	// Draw the image element to the canvas of the sketchpad.

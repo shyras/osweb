@@ -45,7 +45,7 @@
 
     p.from_string = function(pString)
     {
-	var tokens = osweb.syntax.parse_cmd(pString);
+ 	var tokens = osweb.syntax.parse_cmd(pString);
 	
 	// Set the default properties.
 	this.properties = {};

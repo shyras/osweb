@@ -107,7 +107,7 @@
     };
 
     runner.setupScriptFromFileResult = function(pFile) {
-	// Check if the file is the scriptfile.
+        // Check if the file is the scriptfile.
     	if (pFile.filename === 'script.opensesame') {
             // Create the script.
             this.script = String(pFile.data);

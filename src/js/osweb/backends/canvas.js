@@ -165,8 +165,8 @@
             this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
 	}
         else if (style.indexOf('cross') !== -1)	{
-            this.line(x, y - s, x, y + s);
-            this.line(x - s, y, x + s, y);
+            this.line(x, y - s, x, y + s, color, 1);
+            this.line(x - s, y, x + s, y, color, 1);
 	}
 	else {
             osweb.debug.addError('Unknown style: ' + style);
