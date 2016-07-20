@@ -40,18 +40,16 @@
      * Definition of public methods - building cycle.         
      */
 
-    p.from_string = function(pString)
-    {
- 	var tokens = osweb.syntax.parse_cmd(pString);
-	
-	// Set the default properties.
-	this.properties = {};
-			
-	// Set the define properties.
-	for (var i=0; i < tokens.length; i++)
-	{
-            var name  = tokens[i].slice(0,tokens[i].indexOf('='));
-            var value = tokens[i].slice(tokens[i].indexOf('=') + 1,tokens[i].length);
+    p.from_string = function(pString) {
+        var tokens = osweb.syntax.parse_cmd(pString);
+
+        // Set the default properties.
+        this.properties = {};
+
+        // Set the define properties.
+        for (var i = 0; i < tokens.length; i++) {
+            var name = tokens[i].slice(0, tokens[i].indexOf('='));
+            var value = tokens[i].slice(tokens[i].indexOf('=') + 1, tokens[i].length);
             var value = osweb.syntax.remove_quotes(value);
 
             // Set (and overwrite) the properties.

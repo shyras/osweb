@@ -154,12 +154,10 @@
             this.ellipse(x - h, y - h, 2 * h, 2 * h, 1, 'black', 1);
         } else if (style.indexOf('filled') !== -1) {
             this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
-	}
-        else if (style.indexOf('cross') !== -1)	{
+        } else if (style.indexOf('cross') !== -1) {
             this.line(x, y - s, x, y + s, color, 1);
             this.line(x - s, y, x + s, y, color, 1);
-	}
-	else {
+        } else {
             osweb.debug.addError('Unknown style: ' + style);
         }
     };
