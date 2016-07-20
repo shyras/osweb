@@ -16,20 +16,20 @@
 "use strict";
 
 // Set osweb namespace.
-this.osweb = this.osweb||{};
+this.osweb = this.osweb || {};
 
 // Definition of osweb version constants. 
-osweb.VERSION_NAME   = 'osweb';
+osweb.VERSION_NAME = 'osweb';
 osweb.VERSION_NUMBER = '0.041 (19-07-2016)';
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
-    function o() { 
-        this.constructor = sub_class; 
+    function o() {
+        this.constructor = sub_class;
     }
     o.prototype = super_class.prototype;
     return (sub_class.prototype = new o());
-}; 
+};
 
 osweb.isClass = function(class_name) {
     // Return true if the classname is defined within the osweb namespace.
@@ -39,10 +39,10 @@ osweb.isClass = function(class_name) {
 osweb.newItemClass = function(type, experiment, name, string) {
     // Create the element.
     var element = new this[type](experiment, name, string);
-   
+
     // Set the type of the item.
     element.type = type;
-    
+
     // Return the element
     return element;
 };
@@ -50,7 +50,7 @@ osweb.newItemClass = function(type, experiment, name, string) {
 osweb.newElementClass = function(type, sketchpad, string) {
     // Create the element.
     var element = new this[type](sketchpad, string);
-    
+
     // Return the element
     return element;
 };
@@ -58,20 +58,21 @@ osweb.newElementClass = function(type, sketchpad, string) {
 osweb.newWidgetClass = function(type, form, variables) {
     // Create the element.
     var widget = new this[type](form, variables);
-   	
+
     // Return the element
     return widget;
-}; 
+};
 
 osweb.promoteClass = function(sub_class, prefix) {
-    var subP = sub_class.prototype, supP = (Object.getPrototypeOf&&Object.getPrototypeOf(subP))||subP.__proto__;
+    var subP = sub_class.prototype,
+        supP = (Object.getPrototypeOf && Object.getPrototypeOf(subP)) || subP.__proto__;
     if (supP) {
-    	subP[(prefix+="_") + "constructor"] = supP.constructor; 
-    	for (var n in supP) {
+        subP[(prefix += "_") + "constructor"] = supP.constructor;
+        for (var n in supP) {
             if (subP.hasOwnProperty(n) && (typeof supP[n] === "function")) {
-                subP[prefix + n] = supP[n]; 
+                subP[prefix + n] = supP[n];
             }
-	}
+        }
     }
     return sub_class;
-}; 
+};

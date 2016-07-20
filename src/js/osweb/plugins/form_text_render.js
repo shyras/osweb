@@ -1,16 +1,13 @@
-
 /*
  * Definition of the class form_text_render.
  */
 
-(function() 
-{
-    function form_text_render(pExperiment, pName, pScript)
-    {
-	// Inherited.
-	this.form_base_constructor(pExperiment, pName, pScript);
-    }; 
-	
+(function() {
+    function form_text_render(pExperiment, pName, pScript) {
+        // Inherited.
+        this.form_base_constructor(pExperiment, pName, pScript);
+    };
+
     // Extend the class from its base class.
     var p = osweb.extendClass(form_text_render, osweb.form_base);
 

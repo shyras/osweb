@@ -1,16 +1,13 @@
-
 /*
  * Definition of the class form_consent.
  */
 
-(function() 
-{
-    function form_consent(pExperiment, pName, pScript)
-    {
+(function() {
+    function form_consent(pExperiment, pName, pScript) {
         // Inherited.
-	this.form_base_constructor(pName, pExperiment, pScript, 'form_consent', 'A simple consent form');
-    }; 
-	
+        this.form_base_constructor(pName, pExperiment, pScript, 'form_consent', 'A simple consent form');
+    };
+
     // Extend the class from its base class.
     var p = osweb.extendClass(form_consent, osweb.form_base);
 
@@ -21,16 +18,14 @@
      * Definition of public class methods - run cycle.
      */
 
-    p.run = function() 
-    {
+    p.run = function() {
         // Inherited.	
-    	this.form_base_run();
+        this.form_base_run();
     };
 
-    p.complete = function()
-    {
+    p.complete = function() {
         // Inherited.	
-    	this.form_base_complete();
+        this.form_base_complete();
     };
 
     // Bind the form_consent class to the osweb namespace.

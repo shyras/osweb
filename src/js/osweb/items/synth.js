@@ -1,16 +1,13 @@
-
 /*
  * Definition of the class synth.
  */
 
-(function() 
-{
-    function synth(pExperiment, pName, pScript)
-    {
-	// Inherited.
-	this.sampler_constructor(pExperiment, pName, pScript);
-    }; 
-	
+(function() {
+    function synth(pExperiment, pName, pScript) {
+        // Inherited.
+        this.sampler_constructor(pExperiment, pName, pScript);
+    };
+
     // Extend the class from its base class.
     var p = osweb.extendClass(synth, osweb.sampler);
 
