@@ -1,8 +1,7 @@
-
 (function() {
     // Definition of the class constants.
     function constants() {
-    	throw 'The class constants cannot be instantiated!';
+        throw 'The class constants cannot be instantiated!';
     }
 
     // Definition of error constants. 
@@ -27,32 +26,32 @@
     constants.MESSAGE_008 = 'Retrieving session information.';
 
     // Definition of general constants. 
-    constants.STATUS_NONE = 0;                   // Running status of an item.   
+    constants.STATUS_NONE = 0; // Running status of an item.   
     constants.STATUS_BUILD = 1;
     constants.STATUS_INITIALIZE = 2;
     constants.STATUS_EXECUTE = 3;
     constants.STATUS_FINALIZE = 4;
-    constants.PARSER_NONE = 0;                   // Running status of the parser.
+    constants.PARSER_NONE = 0; // Running status of the parser.
     constants.PARSER_EXECUTE = 1;
     constants.STATUS_PENDING = 2;
     constants.STATUS_DONE = 3;
-    constants.PRESSES_ONLY = 1;                  // Type of used collection mode.           
+    constants.PRESSES_ONLY = 1; // Type of used collection mode.           
     constants.RELEASES_ONLY = 2;
     constants.PRESSES_AND_RELEASES = 3;
-    constants.RESPONSE_NONE = 0;                 // Type of response used.
+    constants.RESPONSE_NONE = 0; // Type of response used.
     constants.RESPONSE_DURATION = 1;
     constants.RESPONSE_KEYBOARD = 2;
     constants.RESPONSE_MOUSE = 3;
     constants.RESPONSE_SOUND = 4;
     constants.RESPONSE_AUTOKEYBOARD = 5;
     constants.RESPONSE_AUTOMOUSE = 6;
-    constants.UPDATE_NONE = 0;                  // Item update status flag.
+    constants.UPDATE_NONE = 0; // Item update status flag.
     constants.UPDATE_ONSET = 1;
     constants.UPDATE_OFFSET = 2;
-    constants.SEQUENTIAL = 0;                   // Loop randomization type.
+    constants.SEQUENTIAL = 0; // Loop randomization type.
     constants.RANDOM = 1;
     constants.RANDOMREPLACEMENT = 2;
 
     // Bind the constants class to the osweb namespace.
     osweb.constants = constants;
-}()); 
+}());

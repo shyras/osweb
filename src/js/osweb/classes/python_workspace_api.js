@@ -1,31 +1,30 @@
-
 (function() {
     // Definition of the class python_workspace.
     function python_workspace_api() {
-    	throw 'The class python_workspace_api cannot be instantiated!';
-    }; 
-	
+        throw 'The class python_workspace_api cannot be instantiated!';
+    };
+
     // Definition of private methods.   
 
     python_workspace_api._initialize = function() {
-	// Create the global function calls for use in the inlide script item.
-	window['canvas'] = this.canvas;
-	window['copy_sketchpad'] = this.copy_sketchpad;
-	window['keyboard'] = this.keyboard;
-	window['mouse'] = this.mouse;
-	window['pause'] = this.pause;
-	window['reset_feedback'] = this.reset_feedback;	
-	window['sampler'] = this.sampler;
-	window['set_response'] = this.set_response;
-	window['set_subject_nr'] = this.set_subject_nr;	
-	window['sometimes'] = this.sometimes;
-	window['synth'] = this.synth;
-	window['xy_circle'] = this.xy_circle;
-	window['xy_distance'] = this.xy_distance;
-	window['xy_from_polar'] = this.xy_from_polar;
-	window['xy_grid'] = this.xy_grid;
-	window['xy_random'] = this.xy_random;
-	window['xy_to_polar'] = this.xy_to_polar;
+        // Create the global function calls for use in the inlide script item.
+        window['canvas'] = this.canvas;
+        window['copy_sketchpad'] = this.copy_sketchpad;
+        window['keyboard'] = this.keyboard;
+        window['mouse'] = this.mouse;
+        window['pause'] = this.pause;
+        window['reset_feedback'] = this.reset_feedback;
+        window['sampler'] = this.sampler;
+        window['set_response'] = this.set_response;
+        window['set_subject_nr'] = this.set_subject_nr;
+        window['sometimes'] = this.sometimes;
+        window['synth'] = this.synth;
+        window['xy_circle'] = this.xy_circle;
+        window['xy_distance'] = this.xy_distance;
+        window['xy_from_polar'] = this.xy_from_polar;
+        window['xy_grid'] = this.xy_grid;
+        window['xy_random'] = this.xy_random;
+        window['xy_to_polar'] = this.xy_to_polar;
     };
 
     // Definition of public methods - global functions.   
@@ -61,7 +60,7 @@
     python_workspace_api.set_response = function(response, response_time, correct) {
         osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'pause().');
     };
-	
+
     python_workspace_api.set_subject_nr = function(nr) {
         osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'pause().');
     };

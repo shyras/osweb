@@ -1,19 +1,16 @@
-
 /*
  * Definition of the class advanced_delay.
  */
 
-(function() 
-{
-    function advanced_delay(pExperiment, pName, pScript)
-    {
-	// Inherited.
-	this.item_constructor(pExperiment, pName, pScript);
-    
+(function() {
+    function advanced_delay(pExperiment, pName, pScript) {
+        // Inherited.
+        this.item_constructor(pExperiment, pName, pScript);
+
         // Set private properties.
         this._duration = -1;
-    }; 
-	
+    };
+
     // Extend the class from its base class.
     var p = osweb.extendClass(advanced_delay, osweb.item);
 
@@ -24,21 +21,19 @@
      * Definition of public class methods - build cycle.
      */
 
-    p.reset = function()
-    {
-    	// Resets all item variables to their default value.
-	this.vars.duration    = 1000;
-	this.vars.jitter      = 0;
-	this.vars.jitter_mode = 'Uniform';
-    }; 
-    
+    p.reset = function() {
+        // Resets all item variables to their default value.
+        this.vars.duration = 1000;
+        this.vars.jitter = 0;
+        this.vars.jitter_mode = 'Uniform';
+    };
+
     /*
      * Definition of public class methods - run cycle.
      */
 
-    p.prepare = function()
-    {
-	this._duration = this.vars.duration;
+    p.prepare = function() {
+        this._duration = this.vars.duration;
         /* # Sanity check on the duration value, which should be a positive numeric
 	# value.
 	if type(self.var.duration) not in (int, float) or self.var.duration < 0:
@@ -61,17 +56,16 @@
 	debug.msg(u"delay for %s ms" % self._duration) */
 
         // Inherited.	
-	this.item_prepare();
+        this.item_prepare();
     };
-    
-    p.run = function() 
-    {
+
+    p.run = function() {
         // Inherited.	
-    	this.item_run();
+        this.item_run();
 
         // Set the onset time.
         this.set_item_onset(this.time());
-        this.sleep(this._duration);		
+        this.sleep(this._duration);
     };
 
     // Bind the advanced_delay class to the osweb namespace.
