@@ -13,6 +13,7 @@
     runner._stage = null; // Links to the stage object (CreateJS).
 
     // Definition of public properties.
+    runner.break = false; // Exit flag.
     runner.data = null; // Container for the experiment result data (if defined).
     runner.debug = false; // Debug toggle.
     runner.experiment = null; // The root experiment object to run.           
@@ -319,6 +320,11 @@
     };
 
     // Definition of public methods - run cycle.      
+
+    runner.exit = function() {
+        // Set break flag
+        osweb.runner.break = true;
+    };
 
     runner.run = function(content, context) {
         // Initialize the content container.

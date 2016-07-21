@@ -275,8 +275,20 @@
     // Definition of methods for tick event processing (timing).
 
     events._tick = function(event) {
-        // Only check for status if there is a current item and the ticker is activated.
-        if ((this._current_item !== null) && (this._active === true)) {
+        // Check if the exit flag is set
+        if (osweb.runner.break === true)
+        {
+            // Prevent firing double.
+            osweb.runner.break = false;
+            
+            // Disable the ticker.
+            this._active = false;
+            
+            // End the experiment
+            osweb.runner.experiment.end();
+        }
+        else if ((this._current_item !== null) && (this._active === true)) {
+            // Only check for status if there is a current item and the ticker is activated.
             switch (this._current_item._status) {
                 case osweb.constants.STATUS_FINALIZE:
                     // End action. Complete current active item.
