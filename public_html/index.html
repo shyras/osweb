@@ -23,7 +23,8 @@ and open the template in the editor.
 					<input id="button1" type="file">
 					<input id="button2" type="reset" onclick="loadDatabase();" value="Load from database">
 					<input id="button3" type="reset" onclick="loadScript();" value="Load from script">
-					<input id="button4" type="reset" onclick="runExperiment();" value="run experiment" disabled>
+					<input id="button4" type="reset" onclick="runExperiment();" value="Run experiment" disabled>
+					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
 				</div>
 				<img id="os_logo" src='img/opensesame.png'>
             </div>
@@ -49,6 +50,31 @@ and open the template in the editor.
             var Experiment;
             var Script;
 
+            // Event listener for fullscreen errors
+            // Use alert() for now, but think of something prettier (sAlert?)
+            if (screenfull.enabled) {
+			    document.addEventListener(screenfull.raw.fullscreenerror, function(){
+			        console.error('Failed to enable fullscreen', event);
+			    });
+			}
+
+			// Resize canvas to fit screen, when resized to fullscreen
+			if (screenfull.enabled) {
+			    document.addEventListener(screenfull.raw.fullscreenchange, function(){
+			    	var c = document.getElementById('osweb_canvas');
+			        if(screenfull.isFullscreen) {
+			        	c.old_width = c.style.width;
+			        	c.old_height = c.style.height;
+						var rect = c.getBoundingClientRect();
+						c.style.width = rect.width;
+						c.style.height = rect.height;
+					} else {
+						c.style.width = c.old_width;
+						c.styleheight = c.old_height;
+					}
+			    });
+			}
+
             /**
              * Disable some buttons once an experiment is loaded.
              */
@@ -66,11 +92,23 @@ and open the template in the editor.
             	document.getElementById('button1').disabled = false;
 				document.getElementById('button2').disabled = false;
 				document.getElementById('button3').disabled = false;
+				document.getElementById('fullscreen_button').disabled = true;
 	            document.getElementById('command_div').style.display = 'inherit';
             }
 	    
-            function loadDatabase()
-	    	{
+	    	/**
+	    	 * Show canvas in fullscreen mode (Esc minimizes it again)
+	    	 * @return {void}
+	    	 */
+            function toggleFullscreen(){
+            	var c = document.getElementById('osweb_canvas');
+            	
+            	if (screenfull.enabled) {
+			        screenfull.request(c);
+			    }
+            }
+
+            function loadDatabase(){
 	    		// Update interface.
 	    		buttonsSetToFileLoaded();
 			  	// Definition of the experiment object and its properties.
@@ -78,8 +116,7 @@ and open the template in the editor.
 				//Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://127.0.0.1/osweb/public_html', 'scriptUserID': 99};
 		    };  
 
-		    function loadScript()
-		    {
+		    function loadScript(){
 				// Update interface.
 				buttonsSetToFileLoaded();
 
@@ -139,18 +176,30 @@ and open the template in the editor.
 				Experiment = {'onFinished': onFinished, 'script': Script};
 		    };  
 		    
-		    function runExperiment()
-		    {
+		    function runExperiment(){
 		    	// Update the interface.
-		    	document.getElementById('button4').disabled          = true;
-				document.getElementById('command_div').style.display = 'none';
-				
-		  		// Run the experiment within the Runner with the given canvas and experiment object.
-		        osweb.runner.run('osweb_canvas', Experiment); 
-		    };  
+		    	if(document.getElementById('button4').value == "Run experiment"){
+			    	document.getElementById('button4').value = "Stop experiment";
+			    	document.getElementById('fullscreen_button').disabled = false;
+					//document.getElementById('command_div').style.display = 'none';
+					
+			  		// Run the experiment within the Runner with the given canvas and experiment object.
+			        osweb.runner.run('osweb_canvas', Experiment); 
+			    }else{
+			    	osweb.runner._finalize();
+			    	// Stop the experiment
+			    }
+		    } 
 
-			function onFinished(pData, pSession_data)
-	        {
+			function onFinished(pData, pSession_data){
+	        	// Exit fullscreen mode, if applicable
+	        	if (screenfull.enabled && screenfull.isFullscreen) {
+				   screenfull.exit();
+				}
+
+				document.getElementById('button4').value = "Run experiment";
+				document.getElementById('button4').disabled = true;
+
 	            // Reset the input buttons
 	            buttonsSetToFileSelection();
 	        
@@ -158,8 +207,7 @@ and open the template in the editor.
 	            console.log(pSession_data);
 	        }
 
-		    function handleFileSelect(evt) 
-			{
+		    function handleFileSelect(evt){
 				// Update the interface.
 				buttonsSetToFileLoaded();
 
