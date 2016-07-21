@@ -189,6 +189,11 @@
         this._height = experiment.vars.height;
         this._width = experiment.vars.width;
 
+        // Resize the container div to the same size as the canvas
+        // This will make sure items other than the canvas (forms, videos)
+        // will also be displayed with the same dimensions.
+        osweb.parameters._resizeOswebDiv(this._width, this._height);
+
         // Initialize the display dimensions.
         osweb.runner._canvas.height = experiment.vars.height;
         osweb.runner._canvas.width = experiment.vars.width;

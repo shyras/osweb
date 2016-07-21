@@ -22,9 +22,6 @@
 	// Extend the class from its base class.
 	var p = osweb.extendClass(image, osweb.base_element);
 
-	// Retrieve the content from the file pool.
-	this._file = osweb.pool[this._properties['file']];
-
 	p.draw = function() {
 		// Inherited.	
 		this.base_element_draw();
