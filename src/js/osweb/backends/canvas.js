@@ -297,7 +297,7 @@
     p.text = function(text, center, x, y, color, html) {
         var text_element = this._text_create_element(text, this._font_string, color);
 
-        text_element.lineWidth = this.width();
+        text_element.lineWidth = this.width(); // max width before wrapping.
         text_element.lineHeight = 32;
         text_element.textAlign = "center";
 
@@ -308,18 +308,30 @@
             text_element.x = x + (text_element.getMeasuredWidth() / 2);
         }
         
-        // Set the text element properties.
-        text_element.y = y - (text_element.getMeasuredHeight() / 2);
+        if(center==1){
+            text_element.y = y - (text_element.getMeasuredHeight() / 2);
+        }else{
+            // y coordinate designates the top side of the element
+            text_element.y = y;
+        }
 
         // Add the text item to the parten frame.
         this._container.addChild(text_element);
     };
 
-    // Return the text size in pixels.
+    /**
+     * Return the text size in pixels. [! DOCSTRING NEEDS REVIEW !]
+     * @param  {string} text    The text to calculate the size of
+     * @param  {int} max_width  The maximum width of the text
+     * @param  {object}         Style_args Object containing the style args for the text
+     * @return {array}          The size of the text as [x,y]
+     */
     p.text_size = function(text, max_width, style_args) {
         //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
-        var text_element = this._text_create_element(text, this._font_string, color);
-        return text_element.getMeasuredWidth()
+        var text_element = this._text_create_element(text, this._font_string, 'red');
+        return [
+            Math.round(text_element.getMeasuredWidth()), 
+            Math.round(text_element.getMeasuredHeight())]
     };
 
     /**
