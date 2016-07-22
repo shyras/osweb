@@ -96,6 +96,14 @@ and open the template in the editor.
 	            document.getElementById('command_div').style.display = 'inherit';
             }
 	    
+            function resetCanvas(){
+            	document.getElementById('osweb_div').style.width = '800px';
+        		document.getElementById('osweb_div').style.height = '600px';
+        		document.getElementById('osweb_canvas').width = 800;
+        		document.getElementById('osweb_canvas').height = 600;
+        		document.getElementById('osweb_canvas').style.background = "#000";
+            }
+
 	    	/**
 	    	 * Show canvas in fullscreen mode (Esc minimizes it again)
 	    	 * @return {void}
@@ -180,6 +188,11 @@ and open the template in the editor.
 		    
 		    function runExperiment(){
 		    	// Update the interface.
+		    	
+		    	// Call again to make sure exp load buttons are disabled after
+		    	// 'Run experiment' has been clicked
+		    	buttonsSetToFileLoaded();
+
 		    	if(document.getElementById('button4').value == "Run experiment"){
 			    	document.getElementById('button4').value = "Stop experiment";
 			    	document.getElementById('fullscreen_button').disabled = false;
@@ -200,7 +213,9 @@ and open the template in the editor.
 				}
 
 				document.getElementById('button4').value = "Run experiment";
-				document.getElementById('button4').disabled = true;
+				
+				// Reset the canvas
+				resetCanvas();
 
 	            // Reset the input buttons
 	            buttonsSetToFileSelection();
