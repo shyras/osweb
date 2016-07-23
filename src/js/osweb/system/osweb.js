@@ -22,6 +22,15 @@ this.osweb = this.osweb || {};
 osweb.VERSION_NAME = 'osweb';
 osweb.VERSION_NUMBER = '0.041 (19-07-2016)';
 
+// Add replaceAll function to string prototype
+String.prototype.replaceAll = function(str1, str2, ignore){
+    return this.replace(
+        new RegExp(
+            str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
+            (ignore?"gi":"g")),
+            (typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+} 
+
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
     function o() {

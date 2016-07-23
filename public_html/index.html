@@ -96,6 +96,14 @@ and open the template in the editor.
 	            document.getElementById('command_div').style.display = 'inherit';
             }
 	    
+            function resetCanvas(){
+            	document.getElementById('osweb_div').style.width = '800px';
+        		document.getElementById('osweb_div').style.height = '600px';
+        		document.getElementById('osweb_canvas').width = 800;
+        		document.getElementById('osweb_canvas').height = 600;
+        		document.getElementById('osweb_canvas').style.background = "#000";
+            }
+
 	    	/**
 	    	 * Show canvas in fullscreen mode (Esc minimizes it again)
 	    	 * @return {void}
@@ -154,10 +162,12 @@ and open the template in the editor.
 				 '	set cycles 2' + '\n' +
 				 '	set column_order "stimulus;counter"' + '\n' +
 				 '	set break_if "never"' + '\n' +
-				 '	setcycle 0 stimulus "page 1"' + '\n' +
+				 '	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
 				 '	setcycle 0 counter "1"' + '\n' +
 				 '	setcycle 1 stimulus "page 2"' + '\n' +
 				 '	setcycle 1 counter "2"' + '\n' +
+				 '	setcycle 2 stimulus "page 3"' + '\n' +
+				 '	setcycle 2 counter "3"' + '\n' +
 				 '	run trial' + '\n' +
 				 '' + '\n' +
 				 'define sequence trial' + '\n' +
@@ -178,6 +188,11 @@ and open the template in the editor.
 		    
 		    function runExperiment(){
 		    	// Update the interface.
+		    	
+		    	// Call again to make sure exp load buttons are disabled after
+		    	// 'Run experiment' has been clicked
+		    	buttonsSetToFileLoaded();
+
 		    	if(document.getElementById('button4').value == "Run experiment"){
 			    	document.getElementById('button4').value = "Stop experiment";
 			    	document.getElementById('fullscreen_button').disabled = false;
@@ -198,7 +213,9 @@ and open the template in the editor.
 				}
 
 				document.getElementById('button4').value = "Run experiment";
-				document.getElementById('button4').disabled = true;
+				
+				// Reset the canvas
+				resetCanvas();
 
 	            // Reset the input buttons
 	            buttonsSetToFileSelection();

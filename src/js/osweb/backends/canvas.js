@@ -167,7 +167,7 @@
     };
 
     p.height = function() {
-        return this._heigth();
+        return this._heigth;
     };
 
     p.image = function(fname, center, x, y, scale) {
@@ -274,21 +274,72 @@
         return size;
     };
 
-    p.text = function(text, center, x, y, color, html) {
-        // Create the text element.          
-        var text_element = new createjs.Text(text, this._font_string, color);
+    /**
+     * Create an easeljs text element. Replace all <br> instances in the text
+     * with newline characters.
+     * @param  {string} text  The text to show
+     * @param  {string} font  The string specifying the font
+     * @param  {string} color The string specifying the color
+     * @return {createjs.Text}       The text element
+     */
+    p._text_create_element = function(text, font, color){
+         // Replace <br> for linebreaks
+        text = text.replaceAll('<br>','\n');
+        // Replace <br/> for linebreaks
+        text = text.replaceAll('<br/>','\n');
+        // Replace <br/ > for linebreaks (extra space behind slash)
+        text = text.replaceAll('<br />','\n');
 
-        // Set the text element properties.
-        text_element.x = x - (text_element.getMeasuredWidth() / 2);
-        text_element.y = y - (text_element.getMeasuredHeight() / 2);
+        // Create the text element.          
+        return new createjs.Text(text, font, color);
+    }
+
+    p.text = function(text, center, x, y, color, html) {
+        var text_element = this._text_create_element(text, this._font_string, color);
+
+        text_element.lineWidth = this.width(); // max width before wrapping.
+        text_element.lineHeight = 32;
+        text_element.textAlign = "center";
+
+        if(center==1){
+            text_element.x = x
+        }else{
+            // x coordinate designates the left side of the element
+            text_element.x = x + (text_element.getMeasuredWidth() / 2);
+        }
+        
+        if(center==1){
+            text_element.y = y - (text_element.getMeasuredHeight() / 2);
+        }else{
+            // y coordinate designates the top side of the element
+            text_element.y = y;
+        }
 
         // Add the text item to the parten frame.
         this._container.addChild(text_element);
     };
 
+    /**
+     * Return the text size in pixels. [! DOCSTRING NEEDS REVIEW !]
+     * @param  {string} text    The text to calculate the size of
+     * @param  {int} max_width  The maximum width of the text
+     * @param  {object}         Style_args Object containing the style args for the text
+     * @return {array}          The size of the text as [x,y]
+     */
     p.text_size = function(text, max_width, style_args) {
-        // Return the text size in pixels.
-        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
+        //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
+        var text_element = this._text_create_element(text, this._font_string, 'red');
+        return [
+            Math.round(text_element.getMeasuredWidth()), 
+            Math.round(text_element.getMeasuredHeight())]
+    };
+
+    /**
+     * Returns the canvas width
+     * @return {int} The width of the canvas in pixels.
+     */
+    p.width = function() {
+        return this._width;
     };
 
     // Bind the canvas class to the osweb namespace.
