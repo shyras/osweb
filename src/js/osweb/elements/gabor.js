@@ -33,7 +33,7 @@
 		// Inherited.	
 		this.base_element_draw();
 
-		// Draw the gabor element to the canvas of the sketchpad.
+                // Draw the gabor element to the canvas of the sketchpad.
 		this.sketchpad.canvas.gabor(this._properties.x, this._properties.y, this._properties.orient, this._properties.freq, this._properties.env,
 			this._properties.size, this._properties.stdev, this._properties.phase, this._properties.color1, this._properties.color2, this._properties.bgmode);
 	};

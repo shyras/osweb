@@ -33,8 +33,8 @@
 		this.base_element_draw();
 
 		// Draw the arrow element to the canvas of the sketchpad.
-		this.sketchpad.canvas.arrow(this._properties.x1, this._properties.y1, this._properties.x2, this._properties.y2, this._properties.color, this._properties.penwidth,
-			this._properties.arrow_head_width, this._properties.arrow_body_width, this._properties.arrow_body_length, this._properties.fill);
+		this.sketchpad.canvas.arrow(this._properties.x1, this._properties.y1, this._properties.x2, this._properties.y2, this._properties.arrow_body_width, this._properties.arrow_body_length, 
+                                            this._properties.arrow_head_width, this._properties.fill, this._properties.color, this._properties.penwidth);
 	};
 
 	// Bind the Arrow class to the osweb namespace.
