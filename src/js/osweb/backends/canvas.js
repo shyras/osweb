@@ -56,29 +56,148 @@
 
     p._color = function(colour) {
         // Method to convert color names and hex values to rgb object (used in gabor and noise).
-        var colours = {"aliceblue":"#f0f8ff","antiquewhite":"#faebd7","aqua":"#00ffff","aquamarine":"#7fffd4","azure":"#f0ffff",
-                       "beige":"#f5f5dc","bisque":"#ffe4c4","black":"#000000","blanchedalmond":"#ffebcd","blue":"#0000ff","blueviolet":"#8a2be2","brown":"#a52a2a","burlywood":"#deb887",
-                       "cadetblue":"#5f9ea0","chartreuse":"#7fff00","chocolate":"#d2691e","coral":"#ff7f50","cornflowerblue":"#6495ed","cornsilk":"#fff8dc","crimson":"#dc143c","cyan":"#00ffff",
-                       "darkblue":"#00008b","darkcyan":"#008b8b","darkgoldenrod":"#b8860b","darkgray":"#a9a9a9","darkgreen":"#006400","darkkhaki":"#bdb76b","darkmagenta":"#8b008b","darkolivegreen":"#556b2f",
-                       "darkorange":"#ff8c00","darkorchid":"#9932cc","darkred":"#8b0000","darksalmon":"#e9967a","darkseagreen":"#8fbc8f","darkslateblue":"#483d8b","darkslategray":"#2f4f4f","darkturquoise":"#00ced1",
-                       "darkviolet":"#9400d3","deeppink":"#ff1493","deepskyblue":"#00bfff","dimgray":"#696969","dodgerblue":"#1e90ff",
-                       "firebrick":"#b22222","floralwhite":"#fffaf0","forestgreen":"#228b22","fuchsia":"#ff00ff",
-                       "gainsboro":"#dcdcdc","ghostwhite":"#f8f8ff","gold":"#ffd700","goldenrod":"#daa520","gray":"#808080","green":"#008000","greenyellow":"#adff2f",
-                       "honeydew":"#f0fff0","hotpink":"#ff69b4","indianred ":"#cd5c5c","indigo":"#4b0082","ivory":"#fffff0","khaki":"#f0e68c",
-                       "lavender":"#e6e6fa","lavenderblush":"#fff0f5","lawngreen":"#7cfc00","lemonchiffon":"#fffacd","lightblue":"#add8e6","lightcoral":"#f08080","lightcyan":"#e0ffff","lightgoldenrodyellow":"#fafad2",
-                       "lightgrey":"#d3d3d3","lightgreen":"#90ee90","lightpink":"#ffb6c1","lightsalmon":"#ffa07a","lightseagreen":"#20b2aa","lightskyblue":"#87cefa","lightslategray":"#778899","lightsteelblue":"#b0c4de",
-                       "lightyellow":"#ffffe0","lime":"#00ff00","limegreen":"#32cd32","linen":"#faf0e6",
-                       "magenta":"#ff00ff","maroon":"#800000","mediumaquamarine":"#66cdaa","mediumblue":"#0000cd","mediumorchid":"#ba55d3","mediumpurple":"#9370d8","mediumseagreen":"#3cb371","mediumslateblue":"#7b68ee",
-                       "mediumspringgreen":"#00fa9a","mediumturquoise":"#48d1cc","mediumvioletred":"#c71585","midnightblue":"#191970","mintcream":"#f5fffa","mistyrose":"#ffe4e1","moccasin":"#ffe4b5",
-                       "navajowhite":"#ffdead","navy":"#000080",
-                       "oldlace":"#fdf5e6","olive":"#808000","olivedrab":"#6b8e23","orange":"#ffa500","orangered":"#ff4500","orchid":"#da70d6",
-                       "palegoldenrod":"#eee8aa","palegreen":"#98fb98","paleturquoise":"#afeeee","palevioletred":"#d87093","papayawhip":"#ffefd5","peachpuff":"#ffdab9","peru":"#cd853f","pink":"#ffc0cb","plum":"#dda0dd","powderblue":"#b0e0e6","purple":"#800080",
-                       "red":"#ff0000","rosybrown":"#bc8f8f","royalblue":"#4169e1",
-                       "saddlebrown":"#8b4513","salmon":"#fa8072","sandybrown":"#f4a460","seagreen":"#2e8b57","seashell":"#fff5ee","sienna":"#a0522d","silver":"#c0c0c0","skyblue":"#87ceeb","slateblue":"#6a5acd","slategray":"#708090","snow":"#fffafa","springgreen":"#00ff7f","steelblue":"#4682b4",
-                       "tan":"#d2b48c","teal":"#008080","thistle":"#d8bfd8","tomato":"#ff6347","turquoise":"#40e0d0",
-                       "violet":"#ee82ee",
-                       "wheat":"#f5deb3","white":"#ffffff","whitesmoke":"#f5f5f5",
-                       "yellow":"#ffff00","yellowgreen":"#9acd32"};
+        var colours = {
+            "aliceblue": "#f0f8ff",
+            "antiquewhite": "#faebd7",
+            "aqua": "#00ffff",
+            "aquamarine": "#7fffd4",
+            "azure": "#f0ffff",
+            "beige": "#f5f5dc",
+            "bisque": "#ffe4c4",
+            "black": "#000000",
+            "blanchedalmond": "#ffebcd",
+            "blue": "#0000ff",
+            "blueviolet": "#8a2be2",
+            "brown": "#a52a2a",
+            "burlywood": "#deb887",
+            "cadetblue": "#5f9ea0",
+            "chartreuse": "#7fff00",
+            "chocolate": "#d2691e",
+            "coral": "#ff7f50",
+            "cornflowerblue": "#6495ed",
+            "cornsilk": "#fff8dc",
+            "crimson": "#dc143c",
+            "cyan": "#00ffff",
+            "darkblue": "#00008b",
+            "darkcyan": "#008b8b",
+            "darkgoldenrod": "#b8860b",
+            "darkgray": "#a9a9a9",
+            "darkgreen": "#006400",
+            "darkkhaki": "#bdb76b",
+            "darkmagenta": "#8b008b",
+            "darkolivegreen": "#556b2f",
+            "darkorange": "#ff8c00",
+            "darkorchid": "#9932cc",
+            "darkred": "#8b0000",
+            "darksalmon": "#e9967a",
+            "darkseagreen": "#8fbc8f",
+            "darkslateblue": "#483d8b",
+            "darkslategray": "#2f4f4f",
+            "darkturquoise": "#00ced1",
+            "darkviolet": "#9400d3",
+            "deeppink": "#ff1493",
+            "deepskyblue": "#00bfff",
+            "dimgray": "#696969",
+            "dodgerblue": "#1e90ff",
+            "firebrick": "#b22222",
+            "floralwhite": "#fffaf0",
+            "forestgreen": "#228b22",
+            "fuchsia": "#ff00ff",
+            "gainsboro": "#dcdcdc",
+            "ghostwhite": "#f8f8ff",
+            "gold": "#ffd700",
+            "goldenrod": "#daa520",
+            "gray": "#808080",
+            "green": "#008000",
+            "greenyellow": "#adff2f",
+            "honeydew": "#f0fff0",
+            "hotpink": "#ff69b4",
+            "indianred ": "#cd5c5c",
+            "indigo": "#4b0082",
+            "ivory": "#fffff0",
+            "khaki": "#f0e68c",
+            "lavender": "#e6e6fa",
+            "lavenderblush": "#fff0f5",
+            "lawngreen": "#7cfc00",
+            "lemonchiffon": "#fffacd",
+            "lightblue": "#add8e6",
+            "lightcoral": "#f08080",
+            "lightcyan": "#e0ffff",
+            "lightgoldenrodyellow": "#fafad2",
+            "lightgrey": "#d3d3d3",
+            "lightgreen": "#90ee90",
+            "lightpink": "#ffb6c1",
+            "lightsalmon": "#ffa07a",
+            "lightseagreen": "#20b2aa",
+            "lightskyblue": "#87cefa",
+            "lightslategray": "#778899",
+            "lightsteelblue": "#b0c4de",
+            "lightyellow": "#ffffe0",
+            "lime": "#00ff00",
+            "limegreen": "#32cd32",
+            "linen": "#faf0e6",
+            "magenta": "#ff00ff",
+            "maroon": "#800000",
+            "mediumaquamarine": "#66cdaa",
+            "mediumblue": "#0000cd",
+            "mediumorchid": "#ba55d3",
+            "mediumpurple": "#9370d8",
+            "mediumseagreen": "#3cb371",
+            "mediumslateblue": "#7b68ee",
+            "mediumspringgreen": "#00fa9a",
+            "mediumturquoise": "#48d1cc",
+            "mediumvioletred": "#c71585",
+            "midnightblue": "#191970",
+            "mintcream": "#f5fffa",
+            "mistyrose": "#ffe4e1",
+            "moccasin": "#ffe4b5",
+            "navajowhite": "#ffdead",
+            "navy": "#000080",
+            "oldlace": "#fdf5e6",
+            "olive": "#808000",
+            "olivedrab": "#6b8e23",
+            "orange": "#ffa500",
+            "orangered": "#ff4500",
+            "orchid": "#da70d6",
+            "palegoldenrod": "#eee8aa",
+            "palegreen": "#98fb98",
+            "paleturquoise": "#afeeee",
+            "palevioletred": "#d87093",
+            "papayawhip": "#ffefd5",
+            "peachpuff": "#ffdab9",
+            "peru": "#cd853f",
+            "pink": "#ffc0cb",
+            "plum": "#dda0dd",
+            "powderblue": "#b0e0e6",
+            "purple": "#800080",
+            "red": "#ff0000",
+            "rosybrown": "#bc8f8f",
+            "royalblue": "#4169e1",
+            "saddlebrown": "#8b4513",
+            "salmon": "#fa8072",
+            "sandybrown": "#f4a460",
+            "seagreen": "#2e8b57",
+            "seashell": "#fff5ee",
+            "sienna": "#a0522d",
+            "silver": "#c0c0c0",
+            "skyblue": "#87ceeb",
+            "slateblue": "#6a5acd",
+            "slategray": "#708090",
+            "snow": "#fffafa",
+            "springgreen": "#00ff7f",
+            "steelblue": "#4682b4",
+            "tan": "#d2b48c",
+            "teal": "#008080",
+            "thistle": "#d8bfd8",
+            "tomato": "#ff6347",
+            "turquoise": "#40e0d0",
+            "violet": "#ee82ee",
+            "wheat": "#f5deb3",
+            "white": "#ffffff",
+            "whitesmoke": "#f5f5f5",
+            "yellow": "#ffff00",
+            "yellowgreen": "#9acd32"
+        };
 
         if (typeof colours[colour.toLowerCase()] !== 'undefined') {
             var colour = colours[colour.toLowerCase()];
@@ -96,32 +215,26 @@
         } : null;
     };
 
-    p._match_env = function(env)
-    {
+    p._match_env = function(env) {
         if ((env === 'c') || (env === 'circular') || (env === 'round')) {
             return 'c';
-        }
-        else if ((env === 'g') || (env === 'gaussian') || (env === 'gauss') || (env === 'normal') || (env === 'rect') || (env === 'square')) {
+        } else if ((env === 'g') || (env === 'gaussian') || (env === 'gauss') || (env === 'normal') || (env === 'rect') || (env === 'square')) {
             return 'g';
-        }
-        else if ((env === 'rectangular') || (env === 'rectangle')) {
+        } else if ((env === 'rectangular') || (env === 'rectangle')) {
             return 'r';
-        }
-        else if ((env === 'l') || (env === 'linear') || (env === 'lin') || (env === 'ln')) {
+        } else if ((env === 'l') || (env === 'linear') || (env === 'lin') || (env === 'ln')) {
             return 'l';
-        }
-        else 
-        {
+        } else {
             return 'g';
-        }    
+        }
     };
-    
+
     // Definition of public methods. 
 
     p.arrow = function(sx, sy, ex, ey, body_width, body_length, head_width, fill, color, penwidth) {
         // Calculate coordinate points for the arrow.
         var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width);
-        
+
         // Draw the arrow as a polygon.
         this.polygon(points, fill, color, penwidth);
     };
@@ -214,92 +327,87 @@
     };
 
     p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode) {
- 	// Returns a surface containing a Gabor patch. 
-	env = this._match_env(env);
-	
+        // Returns a surface containing a Gabor patch. 
+        env = this._match_env(env);
+
         /* # Generating a Gabor patch takes quite some time, so keep
 	# a cache of previously generated Gabor patches to speed up
 	# the process.
 	global canvas_cache
 	key = u"gabor_%s_%s_%s_%s_%s_%s_%s_%s_%s" % (orient, freq, env, size,
 		stdev, phase, col1, col2, bgmode)
-	if key in canvas_cache:
+	if key in canvas_cache
 		return canvas_cache[key] */
-    
+
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
-        var ctx=canvas.getContext("2d");
+        var ctx = canvas.getContext("2d");
         var px = ctx.getImageData(0, 0, size, size);
-        
+
         // Conver the orientation to radians.
-	orient = (orient * Math.PI / 180);
-	color1 = this._color(color1);
-	color2 = this._color(color2);
-	
+        orient = (orient * Math.PI / 180);
+        color1 = this._color(color1);
+        color2 = this._color(color2);
+
         // rx and ry reflect the real coordinates in the target image
-	for (var rx = 0; rx < size; rx++) {
-            for (var ry = 0; ry < size; ry ++) {
-		// Distance from the center
-		var dx = rx - 0.5 * size;
-		var dy = ry - 0.5 * size;
+        for (var rx = 0; rx < size; rx++) {
+            for (var ry = 0; ry < size; ry++) {
+                // Distance from the center
+                var dx = rx - 0.5 * size;
+                var dy = ry - 0.5 * size;
 
                 // Get the coordinates (x, y) in the unrotated Gabor patch.
-		var t = Math.atan2(dy, dx) + orient;
-		var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-		var ux = r * Math.cos(t);
-		var uy = r * Math.sin(t);
-		
+                var t = Math.atan2(dy, dx) + orient;
+                var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                var ux = r * Math.cos(t);
+                var uy = r * Math.sin(t);
+
                 // Get the amplitude without the envelope (0 .. 1).
-		var amp = 0.5 + 0.5 * Math.cos(2.0 * Math.PI * (ux * freq + phase));
-		
+                var amp = 0.5 + 0.5 * Math.cos(2.0 * Math.PI * (ux * freq + phase));
+
                 // The envelope adjustment
-		if (env === 'g') {
-		    f = Math.exp(Math.pow(-0.5 * (ux / stdev),2) - Math.pow(0.5 * (uy / stdev),2));
-                }
-                else if (env === 'l') {
+                if (env === 'g') {
+                    f = Math.exp(Math.pow(-0.5 * (ux / stdev), 2) - Math.pow(0.5 * (uy / stdev), 2));
+                } else if (env === 'l') {
                     f = Math.max(0, (0.5 * size - r) / (0.5 * size));
-                }
-                else if (env === 'c') {    
+                } else if (env === 'c') {
                     if (r > 0.5 * size) {
                         f = 0.0;
+                    } else {
+                        f = 1.0;
                     }
-                    else {
-			f = 1.0;
-                    }
-                }    
-                else {
+                } else {
                     f = 1.0;
-                }    
-		
-                // Apply the envelope
-		if (bgmode === 'avg') {
-                    amp = amp * f + 0.5 * (1.0 - f);
                 }
-                else {
+
+                // Apply the envelope
+                if (bgmode === 'avg') {
+                    amp = amp * f + 0.5 * (1.0 - f);
+                } else {
                     amp = amp * f;
                 }
 
                 // Recalculate the collor values.    
                 var r = color1.r * amp + color2.r * (1.0 - amp);
-		var g = color1.g * amp + color2.g * (1.0 - amp);
-		var b = color1.b * amp + color2.b * (1.0 - amp);
-		
+                var g = color1.g * amp + color2.g * (1.0 - amp);
+                var b = color1.b * amp + color2.b * (1.0 - amp);
+
                 // Set the color values at pixel level.
                 var position = rx * 4 + (ry * size * 4);
                 px.data[position] = r;
                 px.data[position + 1] = g;
                 px.data[position + 2] = b;
                 px.data[position + 3] = 255;
-           }     
+            }
         }
 
         // Put the calculated data back on the canvas and create an image of it.
-        ctx.putImageData(px,0,0);
+        ctx.putImageData(px, 0, 0);
         var img = document.createElement("img");
-        img.src = canvas.toDataURL("image/png"); 
-       
+        img.src = canvas.toDataURL("image/png");
+
         // Create an easeljs bitmap of the image.
         var image = new createjs.Bitmap();
         image.image = img;
@@ -308,9 +416,9 @@
         image.snapToPixel = true;
         image.x = x - (size / 2);
         image.y = y - (size / 2);
- 
+
         // Add the image item to the parten frame.
-        this._container.addChild(image); 
+        this._container.addChild(image);
     };
 
     p.height = function() {
@@ -355,6 +463,12 @@
         osweb.runner._canvas.focus();
     };
 
+    p.line = function(sx, sy, ex, ey, style_args) {
+        this.set_config(style_args)
+        // Do stuff
+        this.restore_config(style_args)
+    }
+
     p.line = function(sx, sy, ex, ey, color, penwidth) {
         var shape = new createjs.Shape();
         shape.graphics.setStrokeStyle(penwidth);
@@ -368,8 +482,8 @@
 
     p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
         // Returns a surface containing a noise patch. 
-	env = this._match_env(env);
-	
+        env = this._match_env(env);
+
         /* # Generating a noise patch takes quite some time, so keep
 	# a cache of previously generated noise patches to speed up
 	# the process.
@@ -377,73 +491,68 @@
 	key = u"noise_%s_%s_%s_%s_%s_%s" % (env, size, stdev, col1, col2, bgmode)
 	if key in canvas_cache:
 		return canvas_cache[key] */
-	
+
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement("canvas");
         canvas.width = size;
         canvas.height = size;
-        var ctx=canvas.getContext("2d");
+        var ctx = canvas.getContext("2d");
         var px = ctx.getImageData(0, 0, size, size);
-        
+
         // Create a surface
         color1 = this._color(color1);
-	color2 = this._color(color2);
-	
+        color2 = this._color(color2);
+
         // rx and ry reflect the real coordinates in the target image
-	for (var rx = 0; rx < size; rx++) {
-            for (var ry = 0; ry < size; ry ++) {
+        for (var rx = 0; rx < size; rx++) {
+            for (var ry = 0; ry < size; ry++) {
                 // Distance from the center
-		var ux = rx - 0.5 * size;
-		var uy = ry - 0.5 * size;
-		var r = Math.sqrt(Math.pow(ux, 2) + Math.pow(uy, 2));
-		// Get the amplitude without the envelope (0 .. 1)
-		var amp = Math.random();
-		// The envelope adjustment
-		if (env === 'g') {
+                var ux = rx - 0.5 * size;
+                var uy = ry - 0.5 * size;
+                var r = Math.sqrt(Math.pow(ux, 2) + Math.pow(uy, 2));
+                // Get the amplitude without the envelope (0 .. 1)
+                var amp = Math.random();
+                // The envelope adjustment
+                if (env === 'g') {
                     f = Math.exp(Math.pow(-0.5 * (ux / stdev), 2) - Math.pow(0.5 * (uy / stdev), 2));
-                } 
-                else if (env === 'l') {
+                } else if (env === 'l') {
                     f = Math.max(0, (0.5 * size - r) / (0.5 * size));
-                } 
-                else if (env === 'c') {
+                } else if (env === 'c') {
                     if (r > 0.5 * size) {
                         f = 0.0;
-                    } 
-                    else {    
-		        f = 1.0;
+                    } else {
+                        f = 1.0;
                     }
-                } 
-                else {
+                } else {
                     f = 1.0;
-                }    
-		
+                }
+
                 // Apply the envelope
-		if (bgmode === 'avg') {
+                if (bgmode === 'avg') {
                     amp = amp * f + 0.5 * (1.0 - f);
-                } 
-                else {
+                } else {
                     amp = amp * f;
-                }        
-                    
+                }
+
                 // Recalculate the collor values.    
                 var r = color1.r * amp + color2.r * (1.0 - amp);
-		var g = color1.g * amp + color2.g * (1.0 - amp);
-		var b = color1.b * amp + color2.b * (1.0 - amp);
-		
+                var g = color1.g * amp + color2.g * (1.0 - amp);
+                var b = color1.b * amp + color2.b * (1.0 - amp);
+
                 // Set the color values at pixel level.
                 var position = rx * 4 + (ry * size * 4);
                 px.data[position] = r;
                 px.data[position + 1] = g;
                 px.data[position + 2] = b;
                 px.data[position + 3] = 255;
-           }     
+            }
         }
 
         // Put the calculated data back on the canvas and create an image of it.
-        ctx.putImageData(px,0,0);
+        ctx.putImageData(px, 0, 0);
         var img = document.createElement("img");
-        img.src = canvas.toDataURL("image/png"); 
-       
+        img.src = canvas.toDataURL("image/png");
+
         // Create an easeljs bitmap of the image.
         var image = new createjs.Bitmap();
         image.image = img;
@@ -452,9 +561,9 @@
         image.snapToPixel = true;
         image.x = x - (size / 2);
         image.y = y - (size / 2);
-  
+
         // Add the image item to the parten frame.
-        this._container.addChild(image); 
+        this._container.addChild(image);
     };
 
     p.polygon = function(verticles, fill, color, penwidth) {
@@ -464,15 +573,15 @@
         if (fill == 1) {
             shape.graphics.beginFill(color);
         }
- 
+
         var x = verticles[0][0];
         var y = verticles[0][1];
-        shape.graphics.moveTo(verticles[0][0],verticles[0][1]);
+        shape.graphics.moveTo(verticles[0][0], verticles[0][1]);
         verticles.slice(1);
         verticles.slice(1).forEach(function(point) {
-            shape.graphics.lineTo(point[0],point[1]);
+            shape.graphics.lineTo(point[0], point[1]);
         });
-        shape.graphics.lineTo(x,y);
+        shape.graphics.lineTo(x, y);
 
         // Add the plygon item to container.
         this._container.addChild(shape);
@@ -533,13 +642,13 @@
      * @param  {string} color The string specifying the color
      * @return {createjs.Text}       The text element
      */
-    p._text_create_element = function(text, font, color){
-         // Replace <br> for linebreaks
-        text = text.replaceAll('<br>','\n');
+    p._text_create_element = function(text, font, color) {
+        // Replace <br> for linebreaks
+        text = text.replaceAll('<br>', '\n');
         // Replace <br/> for linebreaks
-        text = text.replaceAll('<br/>','\n');
+        text = text.replaceAll('<br/>', '\n');
         // Replace <br/ > for linebreaks (extra space behind slash)
-        text = text.replaceAll('<br />','\n');
+        text = text.replaceAll('<br />', '\n');
 
         // Create the text element.          
         return new createjs.Text(text, font, color);
@@ -552,16 +661,16 @@
         text_element.lineHeight = 32;
         text_element.textAlign = "center";
 
-        if(center==1){
+        if (center == 1) {
             text_element.x = x
-        }else{
+        } else {
             // x coordinate designates the left side of the element
             text_element.x = x + (text_element.getMeasuredWidth() / 2);
         }
-        
-        if(center==1){
+
+        if (center == 1) {
             text_element.y = y - (text_element.getMeasuredHeight() / 2);
-        }else{
+        } else {
             // y coordinate designates the top side of the element
             text_element.y = y;
         }
@@ -581,8 +690,9 @@
         //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
         var text_element = this._text_create_element(text, this._font_string, 'red');
         return [
-            Math.round(text_element.getMeasuredWidth()), 
-            Math.round(text_element.getMeasuredHeight())]
+            Math.round(text_element.getMeasuredWidth()),
+            Math.round(text_element.getMeasuredHeight())
+        ]
     };
 
     /**
