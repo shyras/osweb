@@ -15,7 +15,13 @@ and open the template in the editor.
         <link rel="stylesheet" href="css/osweb.css"/>
 		<script type="text/javascript" src="js/osweb.js"></script>
     </head>
-    <body>
+    <body onload="brython()">
+
+		<script type="text/python">
+		from browser import document, alert
+		alert("Brython works!")
+        </script>
+
 	<!-- Body - HTML definitions -->
  		<div id="body_div">
             <div id="command_div">
