@@ -43,7 +43,10 @@ define sketchpad new_sketchpad
 	set description "Displays stimuli"
 	draw gabor bgmode=avg color1=white color2=black env=gaussian freq=0.1 orient=0 phase=0 show_if=always size=96 stdev=12 x=288.0 y=0.0 z_index=0
 	draw noise bgmode=avg color1=white color2=black env=gaussian show_if=always size=96 stdev=12 x=-288.0 y=0.0 z_index=0
-	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=-32.0 x2=64.0 y1=0.0 y2=0.0 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=32.0 x2=128.0 y1=0.0 y2=0.0 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=-32 x2=-128 y1=0 y2=0 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=0 x2=0 y1=-32 y2=-128 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=0 x2=0 y1=32 y2=128 z_index=0
 
 define sketchpad welcome
 	set start_response_interval no
