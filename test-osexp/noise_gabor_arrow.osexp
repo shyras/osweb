@@ -1,0 +1,54 @@
+---
+API: 2
+OpenSesame: 3.1.1
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set subject_parity even
+set subject_nr 0
+set start experiment
+set height 768
+set foreground white
+set experiment_path "/Users/daniel/Github/OpenSesame/opensesame_resources/templates"
+set description "Default description"
+set coordinates uniform
+set compensation 0
+set canvas_backend xpyriment
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run getting_started always
+	run welcome always
+	run new_sketchpad always
+
+define notepad getting_started
+	__note__
+	Welcome to OpenSesame 3.1 "Jazzy James"!
+	If you are new to OpenSesame, it is a good idea to follow one of the tutorials,
+	which can be found on the documentation site:
+	- <http://osdoc.cogsci.nl/>
+	You can also check out the examples. These can be opened via:
+	- Menu -> Tools -> Example experiments.
+	And feel free to ask for help on the forum:
+	- <http://forum.cogsci.nl/>
+	Have fun with OpenSesame!
+	__end__
+	set description "A simple notepad to document your experiment. This plug-in does nothing."
+
+define sketchpad new_sketchpad
+	set duration keypress
+	set description "Displays stimuli"
+	draw gabor bgmode=avg color1=white color2=black env=gaussian freq=0.1 orient=0 phase=0 show_if=always size=96 stdev=12 x=288.0 y=0.0 z_index=0
+	draw noise bgmode=avg color1=white color2=black env=gaussian show_if=always size=96 stdev=12 x=-288.0 y=0.0 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=0 penwidth=1 show_if=always x1=-32.0 x2=64.0 y1=0.0 y2=0.0 z_index=0
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.1 <i>Jazzy James</i>" x=0 y=0 z_index=0
+
