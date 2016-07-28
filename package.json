@@ -27,6 +27,7 @@
     }
   ],
   "dependencies": {
+    "brython": "^3.2.7",
     "del": "^2.0.0",
     "gulp": "^3.0.0",
     "gulp-clean-css": "^2.0.11",

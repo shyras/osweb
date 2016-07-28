@@ -261,11 +261,18 @@
     };
 
     p.close_display = function(experiment) {
+        // Close the display (Needed in osweb?)
         osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.close_display().');
+
     };
 
-    p.copy = function(canvas) {
-        osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.copy().');
+    /**
+     * Copies the contents of the passed canvas onto current one.
+     * @param  {osweb.canvas} canvas The source canvas to copy
+     * @return {void}
+     */
+    p.copy = function(canvas) {        
+        this._container = canvas._container.clone(true);
     };
 
     p.ellipse = function(x, y, w, h, fill, color, penwidth) {
@@ -331,13 +338,13 @@
         env = this._match_env(env);
 
         /* # Generating a Gabor patch takes quite some time, so keep
-	# a cache of previously generated Gabor patches to speed up
-	# the process.
-	global canvas_cache
-	key = u"gabor_%s_%s_%s_%s_%s_%s_%s_%s_%s" % (orient, freq, env, size,
-		stdev, phase, col1, col2, bgmode)
-	if key in canvas_cache
-		return canvas_cache[key] */
+    	# a cache of previously generated Gabor patches to speed up
+    	# the process.
+    	global canvas_cache
+    	key = u"gabor_%s_%s_%s_%s_%s_%s_%s_%s_%s" % (orient, freq, env, size,
+    		stdev, phase, col1, col2, bgmode)
+    	if key in canvas_cache
+    		return canvas_cache[key] */
 
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement("canvas");
