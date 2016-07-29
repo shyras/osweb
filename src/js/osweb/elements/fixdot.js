@@ -27,7 +27,8 @@
 		this.base_element_draw();
 
 		// Draw the fixdot element to the canvas of the sketchpad.
-		this.sketchpad.canvas.fixdot(this._properties.x, this._properties.y, this._properties.color, this._properties.style);
+		this.sketchpad.canvas.fixdot(this._properties.x, this._properties.y, 
+			this._properties.color, this._properties.style);
 	};
 
 	// Bind the fixdot class to the osweb namespace.

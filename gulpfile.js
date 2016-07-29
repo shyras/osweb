@@ -40,6 +40,7 @@ var paths = {
     'src/js/osweb/classes/response_store.js',
     'src/js/osweb/classes/syntax.js',
     'src/js/osweb/classes/var_store.js',
+    'src/js/osweb/classes/styles.js',
     // Items
     'src/js/osweb/items/item.js',
     'src/js/osweb/items/generic_response.js',

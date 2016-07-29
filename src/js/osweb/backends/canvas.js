@@ -5,18 +5,24 @@
         this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare; // Set autoprepare toggle (not supported yet). 	
         this.experiment = (typeof experiment === 'undefined') ? osweb.runner.experiment : experiment; // Anchor to the experiment object.
 
+        // Initialize a new styles object to store the default styles in.
+        this.styles = new osweb.Styles();
+
         // Set the public properties. 
         this.background_color = this.experiment.vars.background; // Backgropund color of canvas.     
         this.bidi = (this.experiment.vars.bidi === 'yes'); // If true bidi mode is enabled.
-        this.color = this.experiment.vars.foregound; // Foreground color of canvas.
-        this.fill = false; // If true fill mode is used.
-        this.font_bold = (this.experiment.vars.font_bold === 'yes'); // If true font style bold is enabled.
-        this.font_family = (this.experiment.vars.font_family); // Family name of the font used.
-        this.font_italic = (this.experiment.vars.font_italic === 'yes'); // If true font style italic is enabled.
-        this.font_size = (this.experiment.vars.font_size); // Size of the font in pixels.
-        this.font_underline = (this.experiment.vars.font_underline === 'yes'); // If true font style underline is enabled.
+       
+        // Stimulus specific styles
+        this.styles.color = this.experiment.vars.foregound?this.experiment.vars.foregound:'white'; // Foreground color of canvas.
+        this.styles.fill = false; // If true fill mode is used.
+        this.styles.font_bold = (this.experiment.vars.font_bold === 'yes'); // If true font style bold is enabled.
+        this.styles.font_family = (this.experiment.vars.font_family); // Family name of the font used.
+        this.styles.font_italic = (this.experiment.vars.font_italic === 'yes'); // If true font style italic is enabled.
+        this.styles.font_size = (this.experiment.vars.font_size); // Size of the font in pixels.
+        this.styles.font_underline = (this.experiment.vars.font_underline === 'yes'); // If true font style underline is enabled.
+        this.styles.penwidth = 1; // Default penwidth for drawing shapes. 
+
         this.html = true; // If true html is used (not supported yet).
-        this.penwidth = 1; // Default penwidth for drawing shapes. 
 
         // Set the private properties.  
         this._container = new createjs.Container(); // EASELJS: Container which holds the shapes
@@ -32,6 +38,57 @@
     p.auto_prepare = false;
     p.experiment = null;
     p.uniform_coordinates = false;
+    
+    /**
+     * Decorator function for applying styles for only the current drawing
+     * operation
+     * @param  {function} target_func The drawing function
+     * @return {various}             Whatever the passed drawing function returns.
+     */
+    p._configurable = function(target_func){
+        return function(){
+            // Check if a style object was passed by iterating through the 
+            // arguments and check if one is an instance of Styles
+            for(var i=0, arg; i < arguments.length; i++){
+                arg = arguments[i];
+                if(arg instanceof osweb.Styles){
+                    // store the style object
+                    var styles_pos = i;
+                    break;
+                }
+            };
+
+            // If a styles object was found, activate it.
+            if(styles_pos !== undefined){
+                // Save original styles
+                var orig_styles = this.styles;
+                // Apply the style and remove the style object from the 
+                // arguments list.
+                this.styles = Array.prototype.splice.apply(arguments, 
+                    [styles_pos, 1])[0];
+
+                // Make sure all required style definitions are present in the 
+                // current styles object, and copy those who aren't from the 
+                // orig_styles object.
+                for (var attrname in orig_styles){ 
+                    if(!this.styles.hasOwnProperty(attrname)){
+                        this.styles[attrname] = orig_styles[attrname];
+                    } 
+                }
+            }
+
+            // Call the original target function
+            res = target_func.apply(this, arguments);
+            //console.log(res);
+
+            // Reset original styles if they were changed.
+            if(orig_styles !== undefined){
+                this.styles = orig_styles;
+            }
+            // Return the result of the original drawing function
+            return res;
+        }
+    }
 
     // Definition of private methods. 
 
@@ -229,28 +286,62 @@
         }
     };
 
-    // Definition of public methods. 
+    /**
+     * Create an easeljs text element. Replace all <br> instances in the text
+     * with newline characters.
+     * @param  {string} text  The text to show
+     * @param  {string} font  The string specifying the font
+     * @param  {string} color The string specifying the color
+     * @return {createjs.Text}       The text element
+     */
+    p._text_create_element = function(text, font, color) {
+        // Replace <br> for linebreaks
+        text = text.replaceAll('<br>', '\n');
+        // Replace <br/> for linebreaks
+        text = text.replaceAll('<br/>', '\n');
+        // Replace <br/ > for linebreaks (extra space behind slash)
+        text = text.replaceAll('<br />', '\n');
 
-    p.arrow = function(sx, sy, ex, ey, body_width, body_length, head_width, fill, color, penwidth) {
+        // Create the text element.          
+        return new createjs.Text(text, font, color);
+    }
+
+    /**
+     * Creates a EaselJS interpretable font string
+     * @return {string} the font string
+     */
+
+    p._create_font_string = function(){
+        var font_bold = (this.styles.font_bold === true) ? 'bold ' : '';
+        var font_italic = (this.styles.font_italic === true) ? 'italic ' : '';
+        var font_underline = (this.styles.underline === true) ? 'underline ' : '';
+
+        return font_bold + font_italic + font_underline + this.styles.font_size 
+            + 'px' + ' ' + this.styles.font_family;
+    }
+
+    // Definition of public methods.
+
+    p.arrow = p._configurable(function(sx, sy, ex, ey, body_width, body_length, head_width) {
         // Calculate coordinate points for the arrow.
         var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width);
 
         // Draw the arrow as a polygon.
-        this.polygon(points, fill, color, penwidth);
-    };
+        this.polygon(points);
+    });
 
-    p.circle = function(x, y, r, fill, color, penwidth) {
+    p.circle = p._configurable(function(x, y, r) {
         var shape = new createjs.Shape();
-        shape.graphics.setStrokeStyle(penwidth);
-        shape.graphics.beginStroke(color);
-        if (fill == 1) {
-            shape.graphics.beginFill(color);
+        shape.graphics.setStrokeStyle(this.styles.penwidth);
+        shape.graphics.beginStroke(this.styles.color);
+        if (this.styles.fill == 1) {
+            shape.graphics.beginFill(this.styles.color);
         }
         shape.graphics.drawCircle(x, y, r);
 
         // Add the line item to container.
         this._container.addChild(shape);
-    };
+    });
 
     p.clear = function(backround_color) {
         // Remove the container from the stage object.
@@ -263,7 +354,6 @@
     p.close_display = function(experiment) {
         // Close the display (Needed in osweb?)
         osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.close_display().');
-
     };
 
     /**
@@ -275,18 +365,18 @@
         this._container = canvas._container.clone(true);
     };
 
-    p.ellipse = function(x, y, w, h, fill, color, penwidth) {
+    p.ellipse = p._configurable(function(x, y, w, h) {
         var shape = new createjs.Shape();
-        shape.graphics.setStrokeStyle(penwidth);
-        shape.graphics.beginStroke(color);
-        if (fill == 1) {
-            shape.graphics.beginFill(color);
+        shape.graphics.setStrokeStyle(this.styles.penwidth);
+        shape.graphics.beginStroke(this.styles.color);
+        if (this.styles.fill == 1) {
+            shape.graphics.beginFill(this.styles.color);
         }
         shape.graphics.drawEllipse(x, y, w, h);
 
         // Add the text item to the parten frame.
         this._container.addChild(shape);
-    };
+    });
 
     p.fixdot = function(x, y, color, style) {
         // Check the color and style arguments.      
@@ -470,34 +560,28 @@
         osweb.runner._canvas.focus();
     };
 
-    p.line = function(sx, sy, ex, ey, style_args) {
-        this.set_config(style_args)
-        // Do stuff
-        this.restore_config(style_args)
-    }
-
-    p.line = function(sx, sy, ex, ey, color, penwidth) {
+    p.line = p._configurable(function(sx, sy, ex, ey) {
         var shape = new createjs.Shape();
-        shape.graphics.setStrokeStyle(penwidth);
-        shape.graphics.beginStroke(color);
+        shape.graphics.setStrokeStyle(this.styles.penwidth);
+        shape.graphics.beginStroke(this.styles.color);
         shape.graphics.moveTo(sx, sy);
         shape.graphics.lineTo(ex, ey);
 
         // Add the line item to container.
         this._container.addChild(shape);
-    };
+    });
 
     p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
         // Returns a surface containing a noise patch. 
         env = this._match_env(env);
 
         /* # Generating a noise patch takes quite some time, so keep
-	# a cache of previously generated noise patches to speed up
-	# the process.
-	global canvas_cache
-	key = u"noise_%s_%s_%s_%s_%s_%s" % (env, size, stdev, col1, col2, bgmode)
-	if key in canvas_cache:
-		return canvas_cache[key] */
+    	# a cache of previously generated noise patches to speed up
+    	# the process.
+    	global canvas_cache
+    	key = u"noise_%s_%s_%s_%s_%s_%s" % (env, size, stdev, col1, col2, bgmode)
+    	if key in canvas_cache:
+    		return canvas_cache[key] */
 
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement("canvas");
@@ -573,12 +657,12 @@
         this._container.addChild(image);
     };
 
-    p.polygon = function(verticles, fill, color, penwidth) {
+    p.polygon = p._configurable(function(verticles) {
         var shape = new createjs.Shape();
-        shape.graphics.setStrokeStyle(penwidth);
-        shape.graphics.beginStroke(color);
-        if (fill == 1) {
-            shape.graphics.beginFill(color);
+        shape.graphics.setStrokeStyle(this.styles.penwidth);
+        shape.graphics.beginStroke(this.styles.color);
+        if (this.styles.fill == 1) {
+            shape.graphics.beginFill(this.styles.color);
         }
 
         var x = verticles[0][0];
@@ -592,31 +676,44 @@
 
         // Add the plygon item to container.
         this._container.addChild(shape);
-    };
+    });
 
     p.prepare = function() {};
 
-    p.rect = function(x, y, w, h, fill, color, penwidth) {
+    p.rect = p._configurable(function(x, y, w, h) {
         var shape = new createjs.Shape();
-        shape.graphics.setStrokeStyle(penwidth);
-        shape.graphics.beginStroke(color);
-        if (fill == 1) {
-            shape.graphics.beginFill(color);
+        shape.graphics.setStrokeStyle(this.styles.penwidth);
+        shape.graphics.beginStroke(this.styles.color);
+        if (this.styles.fill == 1) {
+            shape.graphics.beginFill(this.styles.color);
         }
         shape.graphics.rect(x, y, w, h);
 
         // Add the line item to container..
         this._container.addChild(shape);
-    };
+    });
 
+    /**
+     * *DEPRECATED*
+     * Sets the font parameters. The new way is to set these directly, for
+     * instance:
+     *
+     *     canvas.styles.font_family = "Helvetica";
+     *     canvas.styles.size = 16;
+     * 
+     * @param {string} family    The font family
+     * @param {int} size      The font size
+     * @param {boolean} italic    true for italic fonts
+     * @param {boolean} bold      true for bold fonts
+     * @param {boolean} underline true for underlined fonts
+     */
     p.set_font = function(family, size, italic, bold, underline) {
         // Define the the font styles.
-        var font_bold = (bold === true) ? 'bold ' : '';
-        var font_italic = (italic === true) ? 'italic ' : '';
-        var font_underline = (underline === true) ? 'underline ' : '';
-
-        // Set the font string.
-        this._font_string = font_bold + font_italic + font_underline + size + 'px ' + family;
+        this.styles.font_family = family || this.styles.font_family;
+        this.styles.font_size = size || this.styles.font_size;
+        this.styles.font_italic = italic || this.styles.font_italic;
+        this.styles.font_bold = bold || this.styles.font_bold;
+        this.styles.font_underline = underline || this.styles.font_underline;
     };
 
     p.show = function() {
@@ -641,28 +738,11 @@
         return size;
     };
 
-    /**
-     * Create an easeljs text element. Replace all <br> instances in the text
-     * with newline characters.
-     * @param  {string} text  The text to show
-     * @param  {string} font  The string specifying the font
-     * @param  {string} color The string specifying the color
-     * @return {createjs.Text}       The text element
-     */
-    p._text_create_element = function(text, font, color) {
-        // Replace <br> for linebreaks
-        text = text.replaceAll('<br>', '\n');
-        // Replace <br/> for linebreaks
-        text = text.replaceAll('<br/>', '\n');
-        // Replace <br/ > for linebreaks (extra space behind slash)
-        text = text.replaceAll('<br />', '\n');
+    p.text = p._configurable(function(text, center, x, y, html) {
+        var font_string = this._create_font_string();
 
-        // Create the text element.          
-        return new createjs.Text(text, font, color);
-    }
-
-    p.text = function(text, center, x, y, color, html) {
-        var text_element = this._text_create_element(text, this._font_string, color);
+        var text_element = this._text_create_element(text, font_string, 
+            this.styles.color);
 
         text_element.lineWidth = this.width(); // max width before wrapping.
         text_element.lineHeight = 32;
@@ -684,23 +764,26 @@
 
         // Add the text item to the parten frame.
         this._container.addChild(text_element);
-    };
+    });
 
     /**
      * Return the text size in pixels. [! DOCSTRING NEEDS REVIEW !]
      * @param  {string} text    The text to calculate the size of
      * @param  {int} max_width  The maximum width of the text
      * @param  {object}         Style_args Object containing the style args for the text
-     * @return {array}          The size of the text as [x,y]
+     * @return {array}          The size of the text as [width, height]
      */
-    p.text_size = function(text, max_width, style_args) {
+    p.text_size = p._configurable(function(text, max_width) {
         //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
-        var text_element = this._text_create_element(text, this._font_string, 'red');
+        var font_string = this._create_font_string();
+        var text_element = this._text_create_element(text, font_string, this.styles.color);
+        text_element.lineWidth = max_width || this.width(); // max width before wrapping.
+
         return [
             Math.round(text_element.getMeasuredWidth()),
             Math.round(text_element.getMeasuredHeight())
         ]
-    };
+    });
 
     /**
      * Returns the canvas width
