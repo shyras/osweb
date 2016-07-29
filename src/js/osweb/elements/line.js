@@ -28,9 +28,14 @@
 		// Inherited.	
 		this.base_element_draw();
 
+		// Create a styles object containing style information
+		styles = new osweb.Styles();
+		styles.color = this._properties.color;
+		styles.penwidth = this._properties.penwidth;
+
 		// Draw the line element to the canvas of the sketchpad.
-		this.sketchpad.canvas.line(this._properties.x1, this._properties.y1, this._properties.x2, this._properties.y2,
-			this._properties.color, this._properties.penwidth);
+		this.sketchpad.canvas.line(this._properties.x1, this._properties.y1, 
+			this._properties.x2, this._properties.y2, styles);
 	};
 
 	// Bind the line class to the osweb namespace.

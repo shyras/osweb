@@ -30,7 +30,8 @@
 		this._file = osweb.pool[this._properties['file']];
 
 		// Draw the image element to the canvas of the sketchpad.
-		this.sketchpad.canvas.image(this._file, this._properties.center, this._properties.x, this._properties.y, this._properties.scale);
+		this.sketchpad.canvas.image(this._file, this._properties.center, 
+			this._properties.x, this._properties.y, this._properties.scale);
 	};
 
 	// Bind the image class to the osweb namespace.

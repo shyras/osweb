@@ -28,8 +28,15 @@
 		// Inherited.	
 		this.base_element_draw();
 
+		// Create a styles object containing style information
+		styles = new osweb.Styles();
+		styles.fill = this._properties.fill;
+		styles.color = this._properties.color;
+		styles.penwidth = this._properties.penwidth;
+
 		// Draw the circle element to the canvas of the sketchpad.
-		this.sketchpad.canvas.circle(this._properties.x, this._properties.y, this._properties.r, this._properties.fill, this._properties.color, this._properties.penwidth);
+		this.sketchpad.canvas.circle(this._properties.x, this._properties.y, 
+			this._properties.r, styles);
 	};
 
 	// Bind the Circle class to the osweb namespace.

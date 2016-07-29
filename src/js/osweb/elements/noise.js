@@ -31,8 +31,9 @@
         this.base_element_draw();
 
         // Draw the noise element to the canvas of the sketchpad.
-        this.sketchpad.canvas.noise( this._properties.x, this._properties.y, this._properties.env, this._properties.size,
-            this._properties.stdev, this._properties.color1, this._properties.color2, this._properties.bgmode );
+        this.sketchpad.canvas.noise( this._properties.x, this._properties.y, 
+            this._properties.env, this._properties.size, this._properties.stdev, 
+            this._properties.color1, this._properties.color2, this._properties.bgmode );
     };
 
     // Bind the noise class to the osweb namespace.

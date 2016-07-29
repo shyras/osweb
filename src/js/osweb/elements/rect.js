@@ -29,9 +29,15 @@
 		// Inherited.	
 		this.base_element_draw();
 
+		// Create a styles object containing style information
+		styles = new osweb.Styles();
+		styles.fill = this._properties.fill;
+		styles.color = this._properties.color;
+		styles.penwidth = this._properties.penwidth;
+
 		// Draw the rectangle element to the canvas of the sketchpad.
-		this.sketchpad.canvas.rect(this._properties.x, this._properties.y, this._properties.w, this._properties.h,
-			this._properties.fill, this._properties.color, this._properties.penwidth);
+		this.sketchpad.canvas.rect(this._properties.x, this._properties.y, 
+			this._properties.w, this._properties.h, styles);
 	};
 
 	// Bind the Rect class to the osweb namespace.
