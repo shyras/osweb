@@ -310,7 +310,6 @@
      * Creates a EaselJS interpretable font string
      * @return {string} the font string
      */
-
     p._create_font_string = function(){
         var font_bold = (this.styles.font_bold === true) ? 'bold ' : '';
         var font_italic = (this.styles.font_italic === true) ? 'italic ' : '';
