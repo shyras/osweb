@@ -26,9 +26,13 @@
 		// Inherited.	
 		this.base_element_draw();
 
+		// Create a styles object containing style information
+		styles = new osweb.Styles();
+		styles.color = this._properties.color;
+
 		// Draw the fixdot element to the canvas of the sketchpad.
 		this.sketchpad.canvas.fixdot(this._properties.x, this._properties.y, 
-			this._properties.color, this._properties.style);
+			this._properties.style, styles);
 	};
 
 	// Bind the fixdot class to the osweb namespace.
