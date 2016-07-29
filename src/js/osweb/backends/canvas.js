@@ -9,8 +9,8 @@
         this.styles = new osweb.Styles();
 
         // Set the public properties. 
-        this.background_color = this.experiment.vars.background; // Backgropund color of canvas.     
-        this.bidi = (this.experiment.vars.bidi === 'yes'); // If true bidi mode is enabled.
+        this.styles.background_color = this.experiment.vars.background; // Backgropund color of canvas.     
+        this.styles.bidi = (this.experiment.vars.bidi === 'yes'); // If true bidi mode is enabled.
        
         // Stimulus specific styles
         this.styles.color = this.experiment.vars.foregound?this.experiment.vars.foregound:'white'; // Foreground color of canvas.
@@ -377,10 +377,11 @@
         this._container.addChild(shape);
     });
 
-    p.fixdot = function(x, y, color, style) {
+    p.fixdot = p._configurable(function(x, y, style) {
         // Check the color and style arguments.      
-        color = (typeof color === 'undefined') ? 'white' : color;
         style = (typeof style === 'undefined') ? 'default' : style;
+        color = this.styles.color;
+        bgcolor = this.styles.background_color;
 
         if (typeof x === 'undefined') {
             if (this.uniform_coordinates === true) {
@@ -409,18 +410,26 @@
             osweb.debug.addError('Unknown style: ' + style);
         }
 
+        var styles = new osweb.Styles()
         if ((style.indexOf('open') !== -1) || (style === 'default')) {
-            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
-            this.ellipse(x - h, y - h, 2 * h, 2 * h, 1, 'black', 1);
+            styles.fill = 1;
+            styles.color = color;
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, styles);
+            styles.color = bgcolor;
+            this.ellipse(x - h, y - h, 2 * h, 2 * h, 1, styles);
         } else if (style.indexOf('filled') !== -1) {
-            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, color, 1);
+            styles.fill = 1;
+            styles.color = color;
+            this.ellipse(x - s, y - s, 2 * s, 2 * s, 1, styles);
         } else if (style.indexOf('cross') !== -1) {
-            this.line(x, y - s, x, y + s, color, 1);
-            this.line(x - s, y, x + s, y, color, 1);
+            styles.penwidth = 1;
+            styles.color = color;
+            this.line(x, y - s, x, y + s, styles);
+            this.line(x - s, y, x + s, y, styles);
         } else {
             osweb.debug.addError('Unknown style: ' + style);
         }
-    };
+    });
 
     p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode) {
         // Returns a surface containing a Gabor patch. 
@@ -528,8 +537,14 @@
         image.scaleX = scale;
         image.scaleY = scale;
         image.snapToPixel = true;
-        image.x = x - ((image.image.width * scale) / 2);
-        image.y = y - ((image.image.height * scale) / 2);
+
+        if([1,"1",true, "yes"].indexOf(center) !== -1){
+            image.x = x - ((image.image.width * scale) / 2);
+            image.y = y - ((image.image.height * scale) / 2);
+        }else{
+            image.x = x;
+            image.y = y;
+        }
 
         // Add the text item to the parten frame.
         this._container.addChild(image);
