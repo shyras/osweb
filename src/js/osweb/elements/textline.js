@@ -37,6 +37,7 @@
 
         // Create a styles object containing style information
         styles = new osweb.Styles();
+        styles.color = this._properties.color;
         styles.font_family = this._properties.font_family;
         styles.font_size = this._properties.font_size;
         styles.font_italic = this._properties.font_italic == 'yes';
@@ -44,8 +45,8 @@
         styles.font_underline = this._properties.font_underline == 'yes';
 
         this.sketchpad.canvas.text(text, this._properties.center, 
-            this._properties.x, this._properties.y, this._properties.color, 
-            this._properties.html, styles);
+            this._properties.x, this._properties.y, this._properties.html, 
+            styles);
     };
 
     // Bind the Text class to the osweb namespace.
