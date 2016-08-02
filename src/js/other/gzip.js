@@ -1,32 +1,31 @@
 TarGZ = function(){};
 
 // Load and parse archive, calls onload after loading all files.
-TarGZ.load = function(url, onload, onstream, onerror) 
+TarGZ.load = function(url, onload, onprogress, onerror) 
 {
   var o = new TarGZ();
   o.onload = onload;
   o.onerror = onerror;
-  o.onstream = onstream;
+  o.onprogress = onprogress;
   o.load(url);
   return o;
 };
 
-// Streams an archive from the given url, calling onstream after loading each file in archive.
-// Calls onload after loading all files.
-TarGZ.stream = function(url, onstream, onload, onerror) 
+// Load and parse archive, calls onload after loading all files.
+TarGZ.loadLocal = function(file, onload, onprogress, onerror) 
 {
   var o = new TarGZ();
   o.onload = onload;
   o.onerror = onerror;
-  o.onstream = onstream;
-  o.load(url);
+  o.onprogress = onprogress;
+  o.loadLocal(file);
   return o;
 };
 
 TarGZ.prototype = {
   onerror : null,
   onload : null,
-  onstream : null,
+  onprogress: null,
   ondata : null,
   
   load : function(url) {
@@ -48,10 +47,53 @@ TarGZ.prototype = {
       function(xhr, e, h) {
         if (self.onerror)
           self.onerror(xhr, e, h);
-      }
+      },
+      function(e)
+      {
+        if (self.onprogress)
+          self.onprogress(e);       
+      }        
     );
   },
  
+  loadLocal: function(file) {
+    var self = this;
+    var offset = {chunkBytes: 0, chunks: 0};
+    var byteOffset = 0;
+    this.files = [];
+    
+    // Create file reader object.
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+        return function(event) {
+            GZip.loadlocal(event.target.result,
+                function(h) {
+                    byteOffset = self.processTarChunks(h.data, byteOffset, h.outputSize);
+                    if (self.onload)
+                        self.onload(self.files, h);
+                },
+                function(h) {
+                },
+                function(xhr, e, h) {
+                    if (self.onerror)
+                    self.onerror(xhr, e, h);
+                },
+                function(e) {
+                }        
+            );
+        };	
+    })(file);
+    reader.onprogress = (function(theFile) {
+        return function(event) {
+        if (self.onprogress)
+          self.onprogress(event);       
+    };	
+    })(file);
+        
+    // Read in the image file as a data URL.
+    reader.readAsBinaryString(file);
+  },
+    
   cleanHighByte : function(s) {
     return s.replace(/./g, function(m) { 
       return String.fromCharCode(m.charCodeAt(0) & 0xff);
@@ -207,7 +249,7 @@ GZip = {
   FNAME:    1 << 3,
   FCOMMENT: 1 << 4,
 
-  loadlocal : function(data, onload, onstream, onerror) 
+  loadlocal : function(data, onload, onstream, onerror, onprogress) 
   {
     var self = this;
     var h = null;
@@ -224,16 +266,17 @@ GZip = {
     } 
     catch(e) 
     {
-        console.log('error');
+        if (onerror)
+          onerror(xhr);
         return;
     }
     if (onload)
-	{
+    {
     	onload(h, null);
-	}
+    }
   },	
 
-  load : function(data, url, onload, onstream, onerror) 
+  load : function(url, onload, onstream, onerror, onprogress) 
   {
     var xhr = new XMLHttpRequest();
     var self = this;
@@ -242,11 +285,6 @@ GZip = {
       if (xhr.readyState == 4) {
         if (xhr.status == 200 || xhr.status == 0) {
           var s = xhr.responseText;
-
-	      console.log('data');		
-		  console.log(s);
-
-
           try {
             var t = new Date;
             if (!h) h = self.parseHeader(s);
@@ -280,11 +318,14 @@ GZip = {
         }
       }
     };
+    xhr.onprogress = function(event) {
+      if (onprogress)
+        onprogress(event); 
+    };
+   
     xhr.open("GET", url, true);
     xhr.overrideMimeType("text/plain; charset=x-user-defined");
     xhr.setRequestHeader("Content-Type", "text/plain");
-    
-    console.log('send');
     xhr.send(null);
   },
 

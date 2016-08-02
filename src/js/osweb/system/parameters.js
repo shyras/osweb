@@ -148,7 +148,7 @@
         }
 
         // Parameters are processed, next phase.
-        osweb.runner._prepareStartScreen();
+        osweb.screen._setupClickScreen();
     };
 
     // Definition of class methods (dialogs).   

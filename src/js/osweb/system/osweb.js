@@ -20,7 +20,7 @@ this.osweb = this.osweb || {};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME = 'osweb';
-osweb.VERSION_NUMBER = '0.042 (24-07-2016)';
+osweb.VERSION_NUMBER = '3.0.043 (01-08-2016)';
 
 // Add replaceAll function to string prototype
 String.prototype.replaceAll = function(str1, str2, ignore){

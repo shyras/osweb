@@ -8,7 +8,7 @@
 
     session._initialize = function() {
         // Update the loader text.
-        osweb.runner._updateIntroScreen(osweb.constants.MESSAGE_008);
+        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_008);
 
         // Get the session information.
         this._getSessionInformation();

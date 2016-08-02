@@ -92,7 +92,9 @@ var paths = {
     'src/js/osweb/system/parameters.js',
     'src/js/osweb/system/parser.js',
     'src/js/osweb/system/prng.js',
+    'src/js/osweb/system/screen.js',
     'src/js/osweb/system/session.js',
+    'src/js/osweb/system/transfer.js',
     'src/js/osweb/system/runner.js'
   ],
   styles:[

@@ -15,6 +15,14 @@
      * Definition of private class methods.   
      */
 
+    file_pool_store._add = function(item) {
+        // Add the item to the pool.
+        this._items.push(item);
+
+        // Link the item as property
+        this[item.name] = item;
+    }; 
+
     file_pool_store.add_from_local_source = function(pItem) {
         var ext = pItem.filename.substr(pItem.filename.lastIndexOf('.') + 1);
 

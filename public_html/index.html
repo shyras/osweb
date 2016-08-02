@@ -13,16 +13,20 @@ and open the template in the editor.
   
         <!-- Head - link definitions -->
         <link rel="stylesheet" href="css/osweb.css"/>
-		<script type="text/javascript" src="js/osweb.js"></script>
+	<script type="text/javascript" src="js/osweb.js"></script>
     </head>
+
     <body>
 	<!-- Body - HTML definitions -->
- 		<div id="body_div">
+ 	<div id="body_div">
             <div id="command_div">
             	<div id="command_buttons">
-					<input id="button1" type="file">
-					<input id="button2" type="reset" onclick="loadDatabase();" value="Load from database">
-					<input id="button3" type="reset" onclick="loadScript();" value="Load from script">
+                                        <input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
+                                        <input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
+                                        <input type="text" id="filename" readonly/>
+                                        <input id="button2" type="reset" onclick="loadServer();" value="Server file">
+                                        <input id="serverfile" type="text" value="capybaras.osexp" >
+                                        <input id="button3" type="reset" onclick="loadScript();" value="Internal script">
 					<input id="button4" type="reset" onclick="runExperiment();" value="Run experiment" disabled>
 					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
 				</div>
@@ -49,6 +53,9 @@ and open the template in the editor.
         <script>
             var Experiment;
             var Script;
+
+            // Hack to set the value of the file upload button
+            document.getElementById("button1").text = 'Select file'; 
 
             // Event listener for fullscreen errors
             // Use alert() for now, but think of something prettier (sAlert?)
@@ -104,7 +111,7 @@ and open the template in the editor.
         		document.getElementById('osweb_canvas').style.background = "#000";
             }
 
-	    	/**
+        	/**
 	    	 * Show canvas in fullscreen mode (Esc minimizes it again)
 	    	 * @return {void}
 	    	 */
@@ -116,12 +123,43 @@ and open the template in the editor.
 			    }
             }
 
-            function loadDatabase(){
+        	/**
+	    	 * Methods for handling the hidden file load button.             
+	    	 * @return {void}
+	    	 */
+    
+                function HandleBrowseClick() {
+                    // Update the interface.
+                    var fileinput = document.getElementById("browse");
+                    fileinput.click();
+                }
+
+                function Handlechange(event) {
+                    // Update the button status.
+                    buttonsSetToFileLoaded();
+
+                    // Update the interface.
+                    var fileinput = document.getElementById("browse");
+                    var textinput = document.getElementById("filename");
+                    textinput.value = fileinput.value;
+
+                    // Get the file.          
+      		    var file = event.target.files[0]; // Only select the first file.
+
+                    // Definition of the experiment object and its properties.
+                    Experiment = {'onFinished': onFinished, 'source': file};
+                }   
+    
+                    function loadServer(){
 	    		// Update interface.
 	    		buttonsSetToFileLoaded();
-			  	// Definition of the experiment object and its properties.
-				Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://www.gmw.rug.nl/~qweb/osweb/', 'scriptUserID': 99};
-				//Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://127.0.0.1/osweb/public_html', 'scriptUserID': 99};
+		
+                        // Get the file.          
+                        var file = 'files/' + document.getElementById("serverfile").value;
+                        
+                        // Definition of the experiment object and its properties.
+			Experiment = {'onFinished': onFinished, 'source': file};
+			//Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://127.0.0.1/osweb/public_html', 'scriptUserID': 99};
 		    };  
 
 		    function loadScript(){
@@ -183,7 +221,7 @@ and open the template in the editor.
 				 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
 	                
 	                // Definition of the experiment object and its properties.
-				Experiment = {'onFinished': onFinished, 'script': Script};
+			Experiment = {'onFinished': onFinished, 'source': Script};
 		    };  
 		    
 		    function runExperiment(){
@@ -223,33 +261,6 @@ and open the template in the editor.
 	            console.log(pData);
 	            console.log(pSession_data);
 	        }
-
-		    function handleFileSelect(evt){
-				// Update the interface.
-				buttonsSetToFileLoaded();
-
-				var files = evt.target.files; // FileList object
-
-				// files is a FileList of File objects. List some properties.
-				var output = [];
-				for (var i = 0, f; f = files[i]; i++) 
-				{
-					var reader = new FileReader();
-					reader.onload = (function(theFile) 
-					{
-						return function(e) 
-						{
-							// Definition of the experiment object and its properties.
-							Experiment = {'onFinished': onFinished, 'file': e.target.result};
-						};	
-					})(f);
-	     	   	
-					// Read in the image file as a data URL.
-					reader.readAsBinaryString(f);
-	        	}
-			}
-
-			document.getElementById('button1').addEventListener('change', handleFileSelect, false);
         
         </script>
       
