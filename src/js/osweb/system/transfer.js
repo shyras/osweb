@@ -139,13 +139,18 @@
 
     // Definition of private methods - writing data files.   
 
-    transfer._writeDataFile = function(target, resultdata) {
-        if (target != null)
+    transfer._writeDataFile = function(target, resultData) {
+        // Check if the target and resultData are defined.
+        if ((target != null) && (resultData !== null))
         {
+            // Add the data as a form element.
             var data = new FormData();
-            data.append("data" , resultdata);
+            data.append("data" , resultData.toString());
+            // Create the request.
             var xhr = new XMLHttpRequest(); 
             xhr.open('post', target + '?file=subject-' + osweb.runner.experiment.vars['subject_nr'], true);
+
+            // Send the actual data.
             xhr.send(data);
         }    
     };    

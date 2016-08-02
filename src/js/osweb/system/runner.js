@@ -144,10 +144,7 @@
         this._stage.canvas.style.cursor = "default";
 
         // Write result data to server.
-        console.log('write data 0');
-        console.log('write data 0');
-        
-        osweb.transfer._writeDataFile(this.target, this.data.toString());
+        osweb.transfer._writeDataFile(this.target, this.data);
 
         // Check if an event handler is attached.
         if (this.onFinished) {
