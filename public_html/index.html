@@ -25,7 +25,7 @@ and open the template in the editor.
                                         <input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
                                         <input type="text" id="filename" readonly/>
                                         <input id="button2" type="reset" onclick="loadServer();" value="Server file">
-                                        <input id="serverfile" type="text" value="capybaras.osexp" >
+                                        <input id="serverfile" type="text" value="stroop.osexp" >
                                         <input id="button3" type="reset" onclick="loadScript();" value="Internal script">
 					<input id="button4" type="reset" onclick="runExperiment();" value="Run experiment" disabled>
 					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
@@ -158,8 +158,7 @@ and open the template in the editor.
                         var file = 'files/' + document.getElementById("serverfile").value;
                         
                         // Definition of the experiment object and its properties.
-			Experiment = {'onFinished': onFinished, 'source': file};
-			//Experiment = {'onFinished': onFinished, 'scriptID': 4, 'scriptURL': 'https://127.0.0.1/osweb/public_html', 'scriptUserID': 99};
+			Experiment = {'onFinished': onFinished, 'source': file, 'target': 'php/data.php'};
 		    };  
 
 		    function loadScript(){

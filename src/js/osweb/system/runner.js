@@ -51,6 +51,7 @@
             this.onFinished = (typeof context.onFinished !== 'undefined') ? context.onFinished : null;
             this.session = (typeof context.session !== 'undefined') ? context.session : null;
             this.source = (typeof context.source !== 'undefined') ? context.source : null;
+            this.target = (typeof context.target !== 'undefined') ? context.target : null;
             
             // Build the initialization screen.
             osweb.screen._active = (typeof context.screenIntro !== 'undefined') ? context.screenIntro : true;
@@ -141,6 +142,12 @@
 
         // Set the cursor visibility to default.
         this._stage.canvas.style.cursor = "default";
+
+        // Write result data to server.
+        console.log('write data 0');
+        console.log('write data 0');
+        
+        osweb.transfer._writeDataFile(this.target, this.data.toString());
 
         // Check if an event handler is attached.
         if (this.onFinished) {

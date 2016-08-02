@@ -8,7 +8,7 @@
     transfer._counter = null;   // Counter used for processing the pool items.
     transfer._poolfiles = null; // Array containg the pool items.           
 
-    // Definition of private methods.   
+    // Definition of private methods - reading osexp files.   
 
     transfer._readOsexpFile = function(source) {    
         osweb.screen._updateIntroScreen('Loading experiment');
@@ -137,6 +137,19 @@
         }    
     };
 
+    // Definition of private methods - writing data files.   
+
+    transfer._writeDataFile = function(target, resultdata) {
+        if (target != null)
+        {
+            var data = new FormData();
+            data.append("data" , resultdata);
+            var xhr = new XMLHttpRequest(); 
+            xhr.open('post', target + '?file=subject-' + osweb.runner.experiment.vars['subject_nr'], true);
+            xhr.send(data);
+        }    
+    };    
+    
     // Bind the transfer class to the osweb namespace.
     osweb.transfer = transfer;
 }());
