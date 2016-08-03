@@ -6,6 +6,7 @@
 
     // Definition of private properties.
     events._active = false; // If true event processing is active.
+    events._break = false; // If true the experiment is forced to stop.
     events._caller = null; // The caller object (clock, keyboard, mouse).
     events._current_item = null; // Contain the current active item. 			
     events._keyboard_mode = osweb.constants.PRESSES_ONLY; // Keyboard collecting mode (down/up/both).
@@ -276,10 +277,10 @@
 
     events._tick = function(event) {
         // Check if the exit flag is set
-        if (osweb.runner.break === true)
+        if (this._break === true)
         {
             // Prevent firing double.
-            osweb.runner.break = false;
+            this._break = false;
             
             // Disable the ticker.
             this._active = false;

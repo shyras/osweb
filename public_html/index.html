@@ -147,7 +147,7 @@ and open the template in the editor.
       		    var file = event.target.files[0]; // Only select the first file.
 
                     // Definition of the experiment object and its properties.
-                    Experiment = {'onFinished': onFinished, 'source': file};
+                    Experiment = {'onfinished': onFinished, 'source': file};
                 }   
     
                     function loadServer(){
@@ -158,7 +158,7 @@ and open the template in the editor.
                         var file = 'files/' + document.getElementById("serverfile").value;
                         
                         // Definition of the experiment object and its properties.
-			Experiment = {'onFinished': onFinished, 'source': file, 'target': 'php/data.php'};
+			Experiment = {'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
 		    };  
 
 		    function loadScript(){
@@ -220,7 +220,7 @@ and open the template in the editor.
 				 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
 	                
 	                // Definition of the experiment object and its properties.
-			Experiment = {'onFinished': onFinished, 'source': Script};
+			Experiment = {'onfinished': onFinished, 'source': Script};
 		    };  
 		    
 		    function runExperiment(){

@@ -106,7 +106,7 @@
             this._queue.load();
         } else {
             // Build the experiment objects using the given script.
-            osweb.runner._buildExperiment();
+            osweb.runner._build();
         }
     };
 
@@ -137,7 +137,7 @@
         console.log(this._items);
 
         // Building is done, go to next phase.
-        osweb.runner._buildExperiment();
+        osweb.runner._build();
     };
 
     /*

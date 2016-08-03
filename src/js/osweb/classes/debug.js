@@ -38,6 +38,9 @@
         console.log(error_text);
         console.log(osweb.constants.ERROR_001);
 
+        // Set status of the runner.
+        osweb.runner.status = osweb.constants.RUNNER_ERRROR;
+
         // Throw the exception.
         throw new Error(error_text);
     };

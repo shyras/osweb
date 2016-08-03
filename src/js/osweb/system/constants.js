@@ -18,14 +18,22 @@
     // Definition of message constants. 
     constants.MESSAGE_001 = 'Os';
     constants.MESSAGE_002 = 'web - version ';
-    constants.MESSAGE_003 = 'Start up osweb experiment session.';
-    constants.MESSAGE_004 = 'Retrieving stimuli files.';
+    constants.MESSAGE_003 = 'Retrieving stimuli files.';
+    constants.MESSAGE_004 = 'Building stimuli files.';
     constants.MESSAGE_005 = 'Retrieving input parameters.';
     constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
     constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
     constants.MESSAGE_008 = 'Retrieving session information.';
 
     // Definition of general constants. 
+    constants.RUNNER_NONE = 0;
+    constants.RUNNER_READY = 1;
+    constants.RUNNER_RUNNING = 2;
+    constants.RUNNER_DONE = 3;
+    constants.RUNNER_ERROR = 4;
+    constants.RUNNER_BREAK = 5;
+       
+    
     constants.STATUS_NONE = 0; // Running status of an item.   
     constants.STATUS_BUILD = 1;
     constants.STATUS_INITIALIZE = 2;

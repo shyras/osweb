@@ -26,6 +26,9 @@
 
         // Add the subject parameter to the parameters list.
         this._parameters.push(parameter);
+        
+        // Process the Parameters.        
+        this._processParameters();
     };
 
     // Definition of private methods - process parameters.   

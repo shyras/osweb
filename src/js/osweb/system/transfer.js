@@ -11,7 +11,7 @@
     // Definition of private methods - reading osexp files.   
 
     transfer._readOsexpFile = function(source) {    
-        osweb.screen._updateIntroScreen('Loading experiment');
+        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_003);
         osweb.screen._updateProgressBar(-1);
         
         // Check type of object.
@@ -22,11 +22,14 @@
         else {
             // Check if the source is a script string.
             if (source.substr(0,3) === '---') {
+                // Disable the progressbar.    
+                osweb.screen._updateProgressBar(100);
+
                 // Set the script paramter.
-                osweb.runner.script = source;
+                osweb.runner._script = source;
                 
                 // Start buiding the experiment.
-                osweb.runner._buildExperiment();
+                osweb.runner._build();
             }
             else {
                 // Server source, check if the url is valid
@@ -69,11 +72,11 @@
 
     transfer._processOsexpFile = function(files) {
         // Update the intro screen.
-        osweb.screen._updateIntroScreen('Building stimuli files');
+        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_004);
         osweb.screen._updateProgressBar(-1);
       
         // First get the first element, which is the script.
-        osweb.runner.script = files[0].data; 
+        osweb.runner._script = files[0].data; 
     
         // Remove the script and the folder (pool) items.
         this.counter = 0;
@@ -133,7 +136,7 @@
             osweb.screen._updateProgressBar(100);
 
             // Continue the experiment build.
-            osweb.runner._buildExperiment();
+            osweb.runner._build();
         }    
     };
 

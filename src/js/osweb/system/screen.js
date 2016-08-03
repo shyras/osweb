@@ -25,7 +25,7 @@
             this._introText2 = new createjs.Text(osweb.constants.MESSAGE_002 + osweb.VERSION_NUMBER, "14px Arial", "#FFFFFF");
             this._introText2.x = 231;
             this._introText2.y = 142;
-            this._introText3 = new createjs.Text(osweb.constants.MESSAGE_003, "12px Arial", "#FFFFFF");
+            this._introText3 = new createjs.Text('', "12px Arial", "#FFFFFF");
             this._introText3.x = 200;
             this._introText3.y = 168;
             osweb.runner._stage.addChild(this._introScreen, this._introLine, this._introText1, this._introText2, this._introText3);

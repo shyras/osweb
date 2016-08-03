@@ -1,35 +1,29 @@
 (function() {
-    // Definition of the class runner.
+    // Definition of the class runner - core module to run an Osexp experiment.
     function runner() {
         throw 'The class runner cannot be instantiated!';
     };
 
-    // Show library name and library version number in the console.
-    console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
-
     // Definition of private properties.
     runner._canvas = null; // Canvas on which the experiment is shown.
-    runner._stage = null; // Links to the stage object (CreateJS).
-
+    runner._onfinished = null; // Event triggered on finishing the experiment.
+    runner._script = null; // Container for the script definition of the experiment.
+    runner._source = null; // Link to the source experiment file. 
+    runner._stage = null; // Link to the stage object (EASELJS).
+    runner._target = null; // Link to the target location for thr data. 
+    
     // Definition of public properties.
-    runner.break = false; // Exit flag.
-    runner.data = null; // Container for the experiment result data (if defined).
+    runner.data = null; // Container for the result data.
     runner.debug = false; // Debug toggle.
     runner.experiment = null; // The root experiment object to run.           
-    runner.onFinished = null; // Event triggered on finishing the experiment.
-    runner.screenIntro = true; // Show introscreen toggle.
-    runner.screenClick = true; // Show clickscreen toggle
-    runner.script = null; // Container for the JSON script definition of the experiment.
-    runner.session = null; // Container for the JSON session information.
-
-    /*
+    runner.status = osweb.constants.RUNNER_NONE; // Status of the runner.
+    
     // Definition of private methods - setup runner.      
-     */
 
     runner._setupContent = function(content) {
         // Check if the experiment container is defined.                     
         if (typeof content !== "undefined") {
-            // Get the canvas from the DOM Element tree.
+            // Get the canvas from the DOM element tree.
             this._canvas = (typeof content === 'string') ? document.getElementById(content) : content;
 
             // Set the stage object (easelJS). 
@@ -48,18 +42,17 @@
         if (typeof context !== "undefined") {
             // Initialize the context parameters.
             this.debug = (typeof context.debug !== 'undefined') ? context.debug : false;
-            this.onFinished = (typeof context.onFinished !== 'undefined') ? context.onFinished : null;
-            this.session = (typeof context.session !== 'undefined') ? context.session : null;
-            this.source = (typeof context.source !== 'undefined') ? context.source : null;
-            this.target = (typeof context.target !== 'undefined') ? context.target : null;
+            this._onfinished = (typeof context.onfinished !== 'undefined') ? context.onfinished : null;
+            this._source = (typeof context.source !== 'undefined') ? context.source : null;
+            this._target = (typeof context.target !== 'undefined') ? context.target : null;
             
-            // Build the initialization screen.
-            osweb.screen._active = (typeof context.screenIntro !== 'undefined') ? context.screenIntro : true;
-            osweb.screen._click = (typeof context.screenClick !== 'undefined') ? context.screenClick : true;
+            // Build the introduction screen.
+            osweb.screen._active = (typeof context.introscreen !== 'undefined') ? context.introscreen : true;
+            osweb.screen._click = (typeof context.introclick !== 'undefined') ? context.introclick : true;
             osweb.screen._setupIntroScreen();
 
             // Load the script file, using the source parameter.
-            osweb.transfer._readOsexpFile(this.source);
+            osweb.transfer._readOsexpFile(this._source);
         } 
         else {
             osweb.debug.addError(osweb.constants.ERROR_003);
@@ -68,11 +61,14 @@
 
     // Definition of the private methods - build cycle.      
 
-    runner._buildExperiment = function() {
+    runner._build = function() {
+        // Set status of the runner.
+        this.status = osweb.constants.RUNNER_READY;
+        
         // Build the base experiment object.
-        this.experiment = new osweb.experiment(null, 'test', this.script);
+        this.experiment = new osweb.experiment(null, 'test', this._script);
 
-        // Create the global static object classes.
+        // Build the global static object classes.
         window['items'] = osweb.item_store;
         window['pool'] = osweb.file_pole_store;
         window['vars'] = this.experiment.vars;
@@ -85,30 +81,13 @@
 
     runner._prepare = function() {
         // Update inroscreen.
-        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_004);
+        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_005);
 
-        // Start the stimuli loader.
-        osweb.parameters._initialize();
+        // Initialize the helper classes.
         osweb.functions._initialize();
         osweb.python_workspace_api._initialize();
         osweb.session._initialize();
-
-        // Start the parameter screen (subject number).
-        this._prepareParameters();
-    };
-
-    runner._prepareParameters = function() {
-        // Update inroscreen.
-        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_005);
-
-        // Check if items must be processed. 
-        if (osweb.parameters._parameters.length > 0) {
-            // Process the Parameters.        
-            osweb.parameters._processParameters();
-        } else {
-            // Start the experiment.
-            osweb.screen._setupClickScreen();
-        }
+        osweb.parameters._initialize();
     };
 
     // Definition of private methods - run cycle.   
@@ -117,8 +96,11 @@
         // Initialize the debugger. 
         osweb.debug._initialize();
 
-        // Initialize the devices.
+        // Initialize the event system.
         osweb.events._initialize();
+
+        // Set status of the runner.
+        this.status = osweb.constants.RUNNER_RUNNING;
 
         // Prepare and execute the experiment item.
         this.experiment.prepare();
@@ -126,13 +108,13 @@
     };
 
     runner._finalize = function() {
-        // Finalize the devices.
+        // Finalize the event system.
         osweb.events._finalize();
 
         // Finalize the debugger.
         osweb.debug._finalize();
 
-        // Exit the application.
+        // Exit the runner.          
         this._exit();
     };
 
@@ -140,24 +122,27 @@
         // Clear the canvas.
         this._stage.clear();
 
-        // Set the cursor visibility to default.
+        // Set the cursor visibility to default (visible).
         this._stage.canvas.style.cursor = "default";
 
-        // Write result data to server.
-        osweb.transfer._writeDataFile(this.target, this.data);
+        // Write result data to target location (if defined).
+        osweb.transfer._writeDataFile(this._target, this.data);
 
-        // Check if an event handler is attached.
-        if (this.onFinished) {
-            // Execute.
-            this.onFinished(this.data, osweb.session._session);
+        // Check if a callback function is defined. 
+        if (this._onfinished) {
+            // Execute callback function.
+            this._onfinished(this.data, osweb.session._session);
         }
     };
 
     // Definition of public methods - run cycle.      
 
     runner.exit = function() {
-        // Set break flag
-        osweb.runner.break = true;
+        // Set status of the runner.
+        this.status = osweb.constants.RUNNER_BREAK;
+        
+        // Set break flag in the events class.
+        osweb.events._break = true;
     };
 
     runner.run = function(content, context) {
