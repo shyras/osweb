@@ -68,15 +68,21 @@ TarGZ.prototype = {
         return function(event) {
             GZip.loadlocal(event.target.result,
                 function(h) {
-                    byteOffset = self.processTarChunks(h.data, byteOffset, h.outputSize);
+                    if (typeof h === 'string') {
+                        var script = {'data': h};
+                        self.files.push(script);
+                    }    
+                    else { 
+                        byteOffset = self.processTarChunks(h.data, byteOffset, h.outputSize);
+                    }
                     if (self.onload)
                         self.onload(self.files, h);
                 },
                 function(h) {
                 },
-                function(xhr, e, h) {
+                function(e, h) {
                     if (self.onerror)
-                    self.onerror(xhr, e, h);
+                    self.onerror(e, h);
                 },
                 function(e) {
                 }        
@@ -251,28 +257,36 @@ GZip = {
 
   loadlocal : function(data, onload, onstream, onerror, onprogress) 
   {
-    var self = this;
-    var h = null;
-    var s = data;
+     // Added to load only text based script files local.
+      if (data.substr(0,3) === '---') {
+      if (onload) {
+        onload(data, null);
+      }
+    }
+    else {
+      var self = this;
+      var h = null;
+      var s = data;
 
-    try 
-    {
-    	var t = new Date;
-    	if (!h) h = self.parseHeader(s);
+      try 
+      {
+      	var t = new Date;
+      	if (!h) h = self.parseHeader(s);
     	self.parseAllBody(s, h, onstream);
     	self.parseFooter(s, h);
     	var elapsed = new Date() - t;
     	h.decompressionTime += elapsed;
-    } 
-    catch(e) 
-    {
-        if (onerror)
-          onerror(xhr);
-        return;
-    }
-    if (onload)
-    {
-    	onload(h, null);
+      }  
+      catch(e) 
+      {
+          if (onerror)
+            onerror(e);
+          return;
+      }
+      if (onload)
+      {
+      	onload(h, null);
+      }
     }
   },	
 
