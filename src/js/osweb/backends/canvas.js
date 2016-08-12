@@ -286,6 +286,11 @@
         }
     };
 
+    p._isHTML = function(str){
+        var doc = new DOMParser().parseFromString(str, "text/html");
+        return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
+    }
+
     /**
      * Create an easeljs text element. Replace all <br> instances in the text
      * with newline characters.
@@ -753,27 +758,116 @@
     };
 
     p.text = p._configurable(function(text, center, x, y, html) {
-        var font_string = this._create_font_string();
+        // Only jump through the HTML rendering hoops if the html == 'yes' and
+        // text actually contains HTML markup.
+        console.log(this.styles.font_family);
+        if(html === "yes" && this._isHTML(text) ){
+            var font_bold = (this.styles.font_bold === true) ? 'bold ' : '';
+            var font_italic = (this.styles.font_italic === true) ? 'italic ' : '';
+            var font_underline = (this.styles.underline === true) ? 'underline ' : '';
+            
+            // Create a div container to hold the html contents
+            var container = document.createElement("div");
+            // HTML in svg needs to be valid XML/XHTML with a namespace
+            container.setAttribute("xmlns", container.namespaceURI);
+            container.style.color = this.styles.color;
+            container.style.fontSize = this.styles.font_size + "px";
+            container.style.width = "auto";
+            container.style.height = "auto";
+            container.style.maxWidth = this._width;
+            container.style.maxHeight = this._height;
+            if(center == "1"){
+                container.style.textAlign = "center";
+            }
 
-        var text_element = this._text_create_element(text, font_string, 
-            this.styles.color);
+            if(this.styles.font_family){
+                // Check for spaces in font names
+                if(this.styles.font_family.indexOf(" ") != -1){
+                    // Encapsulate in quotes if font name contains spaces (e.g.
+                    // "Times New Roman")
+                    font_str = "'" + this.styles.font_family + "'";
+                }else{
+                    font_str = this.styles.font_family;
+                }
+                container.style.fontFamily = this.styles.font_family + ', Verdana, sans-serif';
+            }
+            if(font_bold){ 
+                container.style.fontWeight = font_bold;
+            }
+            if(font_italic){ 
+                container.style.fontStyle = font_italic;
+            }
+            if(font_underline){ 
+                font_underline += 'text-decoration: ' + font_underline + ';'
+                container.style.textDecoration = font_underline;
+            }
 
-        text_element.lineWidth = this.width(); // max width before wrapping.
-        text_element.lineHeight = 32;
-        text_element.textAlign = "center";
+            container.innerHTML = text;
 
-        if (center == 1) {
-            text_element.x = x
-        } else {
-            // x coordinate designates the left side of the element
-            text_element.x = x + (text_element.getMeasuredWidth() / 2);
-        }
+            // Now comes the hacky/tricky part. To actually measure the size of the text, we
+            // need to actually enter the div into the DOM, measure its dimensions, and remove it
+            // from the DOM again. The best is of course if the div is not visible during this, so we
+            // temporarily set 'visibility' to 'hidden' here.
+            
+            container.style.visibility = "hidden";
+            container.style.position = "absolute";
 
-        if (center == 1) {
-            text_element.y = y - (text_element.getMeasuredHeight() / 2);
-        } else {
-            // y coordinate designates the top side of the element
-            text_element.y = y;
+            document.body.appendChild(container);
+            container_width = container.clientWidth + 1;
+            container_height = container.clientHeight + 1;
+            container.parentNode.removeChild(container);
+
+            container.style.visibility = "visible";
+            container.style.position = "inherit";
+
+            // Get well-formed markup
+            if (typeof container.documentElement !== 'undefined') {
+                var html = (new XMLSerializer).serializeToString(container.documentElement);
+            }else{
+                // Account for IE quirk
+                var html = (new XMLSerializer).serializeToString(container);
+            }
+          
+            var svg = '<svg xmlns="http://www.w3.org/2000/svg">'+
+            '<style scoped="">html::-webkit-scrollbar { display: none; }</style>' + 
+            '<foreignObject x="0" y="0" width="'+container_width+'px" height="'+container_height+'px" style="float: left;">' +
+            html + 
+            '</foreignObject></svg>';
+
+            var data = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            var img = new Image();
+            img.src = data;
+            var text_element = new createjs.Bitmap(img);
+            this._container.addChild(text_element);
+
+            if (center === "1") {
+                text_element.x = x - container_width/2;
+                text_element.y = y - container_height/2;
+            } else {
+                text_element.x = x; 
+                text_element.y = y;
+            }
+        }else{
+            var font_string = this._create_font_string();
+
+            var text_element = this._text_create_element(text, font_string, 
+                this.styles.color);
+
+            text_element.lineWidth = this.width(); // max width before wrapping.
+            text_element.lineHeight = 32;
+            text_element.textAlign = "center";
+
+            width = text_element.getMeasuredWidth();
+            height = text_element.getMeasuredHeight()
+        
+            if (center === "1") {
+                text_element.x = x;
+                text_element.y = y - height/2;
+            } else {
+                // x coordinate designates the left side of the element
+                text_element.x = x + width/2;
+                text_element.y = y;
+            }
         }
 
         // Add the text item to the parten frame.
