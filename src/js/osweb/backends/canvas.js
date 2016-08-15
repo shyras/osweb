@@ -292,26 +292,6 @@
     }
 
     /**
-     * Create an easeljs text element. Replace all <br> instances in the text
-     * with newline characters.
-     * @param  {string} text  The text to show
-     * @param  {string} font  The string specifying the font
-     * @param  {string} color The string specifying the color
-     * @return {createjs.Text}       The text element
-     */
-    p._text_create_element = function(text, font, color) {
-        // Replace <br> for linebreaks
-        text = text.replaceAll('<br>', '\n');
-        // Replace <br/> for linebreaks
-        text = text.replaceAll('<br/>', '\n');
-        // Replace <br/ > for linebreaks (extra space behind slash)
-        text = text.replaceAll('<br />', '\n');
-
-        // Create the text element.          
-        return new createjs.Text(text, font, color);
-    }
-
-    /**
      * Creates a EaselJS interpretable font string
      * @return {string} the font string
      */
@@ -322,6 +302,67 @@
 
         return font_bold + font_italic + font_underline + this.styles.font_size 
             + 'px' + ' ' + this.styles.font_family;
+    }
+
+    /**
+     * Creates a div element for the supplied text.
+     *
+     * this.styles will be used to determine the appearance 
+     * @param  {string} text   The text to render
+     * @param  {string} center "1" uses the center point of the text area as the reference point
+     * in the coordinate system, "0" the top-left point
+     * @return {HTMLDivElement} The resulting div element
+     */
+    p._create_div_for_text = function(text, center){
+        // Account for ommission of center argument. Default to 1 if ommitted.
+        var center = typeof(center)=="undefined"?1:center;
+        // Already create some style strings.
+        var font_bold = (this.styles.font_bold === true) ? 'bold ' : '';
+        var font_italic = (this.styles.font_italic === true) ? 'italic ' : '';
+        var font_underline = (this.styles.underline === true) ? 'underline ' : '';
+
+        // Create DOM element
+        var container = document.createElement("div");
+        // HTML in svg needs to be valid XML/XHTML with a namespace
+        container.setAttribute("xmlns", container.namespaceURI);
+        // Set style variables following to this.styles
+        container.style.color = this.styles.color;
+        container.style.fontSize = this.styles.font_size + "px";
+        container.style.width = "auto";
+        container.style.height = "auto";
+        container.style.maxWidth = this._width;
+        container.style.maxHeight = this._height;
+        // If center variable == 1, center the text too.
+        if(center == "1"){
+            container.style.textAlign = "center";
+        }
+        // Set the correct font
+        if(this.styles.font_family){
+            // Check for spaces in font names
+            if(this.styles.font_family.indexOf(" ") != -1){
+                // Encapsulate in quotes if font name contains spaces (e.g.
+                // "Times New Roman")
+                font_str = "'" + this.styles.font_family + "'";
+            }else{
+                font_str = this.styles.font_family;
+            }
+            container.style.fontFamily = this.styles.font_family + ', Verdana, sans-serif';
+        }
+        if(font_bold){ 
+            container.style.fontWeight = font_bold;
+        }
+        if(font_italic){ 
+            container.style.fontStyle = font_italic;
+        }
+        if(font_underline){ 
+            font_underline += 'text-decoration: ' + font_underline + ';'
+            container.style.textDecoration = font_underline;
+        }
+
+        // Set the text of the div element
+        console.log(this.nl2br(text));
+        container.innerHTML = this.nl2br(text);
+        return container;
     }
 
     // Definition of public methods.
@@ -590,6 +631,11 @@
         this._container.addChild(shape);
     });
 
+    p.nl2br = function(str, is_xhtml) {
+        var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+        return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+    }
+
     p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
         // Returns a surface containing a noise patch. 
         env = this._match_env(env);
@@ -760,86 +806,37 @@
     p.text = p._configurable(function(text, center, x, y, html) {
         // Only jump through the HTML rendering hoops if the html == 'yes' and
         // text actually contains HTML markup.
-        console.log(this.styles.font_family);
-        if(html === "yes" && this._isHTML(text) ){
-            var font_bold = (this.styles.font_bold === true) ? 'bold ' : '';
-            var font_italic = (this.styles.font_italic === true) ? 'italic ' : '';
-            var font_underline = (this.styles.underline === true) ? 'underline ' : '';
-            
-            // Create a div container to hold the html contents
-            var container = document.createElement("div");
-            // HTML in svg needs to be valid XML/XHTML with a namespace
-            container.setAttribute("xmlns", container.namespaceURI);
-            container.style.color = this.styles.color;
-            container.style.fontSize = this.styles.font_size + "px";
-            container.style.width = "auto";
-            container.style.height = "auto";
-            container.style.maxWidth = this._width;
-            container.style.maxHeight = this._height;
-            if(center == "1"){
-                container.style.textAlign = "center";
-            }
+        if(html === "yes" && this._isHTML(text) ){ 
+            // Create a div container to hold the html contents.
+            var container = this._create_div_for_text(text, center);
+            // Calculate the text size of the text to render.
+            container_size = this.text_size(container);
+            container_width = container_size[0];
+            container_height = container_size[1];
 
-            if(this.styles.font_family){
-                // Check for spaces in font names
-                if(this.styles.font_family.indexOf(" ") != -1){
-                    // Encapsulate in quotes if font name contains spaces (e.g.
-                    // "Times New Roman")
-                    font_str = "'" + this.styles.font_family + "'";
-                }else{
-                    font_str = this.styles.font_family;
-                }
-                container.style.fontFamily = this.styles.font_family + ', Verdana, sans-serif';
-            }
-            if(font_bold){ 
-                container.style.fontWeight = font_bold;
-            }
-            if(font_italic){ 
-                container.style.fontStyle = font_italic;
-            }
-            if(font_underline){ 
-                font_underline += 'text-decoration: ' + font_underline + ';'
-                container.style.textDecoration = font_underline;
-            }
-
-            container.innerHTML = text;
-
-            // Now comes the hacky/tricky part. To actually measure the size of the text, we
-            // need to actually enter the div into the DOM, measure its dimensions, and remove it
-            // from the DOM again. The best is of course if the div is not visible during this, so we
-            // temporarily set 'visibility' to 'hidden' here.
-            
-            container.style.visibility = "hidden";
-            container.style.position = "absolute";
-
-            document.body.appendChild(container);
-            container_width = container.clientWidth + 1;
-            container_height = container.clientHeight + 1;
-            container.parentNode.removeChild(container);
-
-            container.style.visibility = "visible";
-            container.style.position = "inherit";
-
-            // Get well-formed markup
+            // Serialize the div container to a HTML string.
             if (typeof container.documentElement !== 'undefined') {
                 var html = (new XMLSerializer).serializeToString(container.documentElement);
             }else{
-                // Account for IE quirk
+                // Account for IE quirk (even though the rest won't work at all in IE)
                 var html = (new XMLSerializer).serializeToString(container);
             }
-          
+
+            // Create a SVG string to embed the HTML into.
             var svg = '<svg xmlns="http://www.w3.org/2000/svg">'+
             '<style scoped="">html::-webkit-scrollbar { display: none; }</style>' + 
-            '<foreignObject x="0" y="0" width="'+container_width+'px" height="'+container_height+'px" style="float: left;">' +
-            html + 
+            '<foreignObject x="0" y="0" width="'+container_width+'px" height="'+
+            container_height+'px" style="float: left;">' + html + 
             '</foreignObject></svg>';
-
+            // Convert the SVG string to a data stream
             var data = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            // Create an HTML Image object and set its source to the svg data stream.
             var img = new Image();
             img.src = data;
+            // Create a createJS bitmap.
             var text_element = new createjs.Bitmap(img);
             this._container.addChild(text_element);
-
+            // Calculate the coordinates to position the element at.
             if (center === "1") {
                 text_element.x = x - container_width/2;
                 text_element.y = y - container_height/2;
@@ -850,7 +847,7 @@
         }else{
             var font_string = this._create_font_string();
 
-            var text_element = this._text_create_element(text, font_string, 
+            var text_element = new createjs.Text(text, font_string, 
                 this.styles.color);
 
             text_element.lineWidth = this.width(); // max width before wrapping.
@@ -876,21 +873,58 @@
 
     /**
      * Return the text size in pixels. [! DOCSTRING NEEDS REVIEW !]
-     * @param  {string} text    The text to calculate the size of
+     * @param  {string or HTMLDivElement} text    The text to calculate the size of.
+     * When the text is HTML a div element is created of which the size is measured.
+     * It is also possible to pass a premade dive of which the size is measured.
      * @param  {int} max_width  The maximum width of the text
      * @param  {object}         Style_args Object containing the style args for the text
      * @return {array}          The size of the text as [width, height]
      */
     p.text_size = p._configurable(function(text, max_width) {
-        //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'canvas.text_size().');
-        var font_string = this._create_font_string();
-        var text_element = this._text_create_element(text, font_string, this.styles.color);
-        text_element.lineWidth = max_width || this.width(); // max width before wrapping.
+        // Check if text is a string containing HTML, or is already supplied as a
+        // HTMLDivElement (by canvas.text for instance)
+        if((typeof(text) == "string" && this._isHTML(text)) || 
+            text instanceof HTMLDivElement){
+            // Now comes the hacky/tricky part. To measure the size of 
+            // the text, we need to actually enter the div into the DOM, measure 
+            // its dimensions, and remove it from the DOM again. It's best of 
+            // course if the div is not visible during this, so we
+            // temporarily set 'visibility' to 'hidden' here.
+            
+            if(typeof(text) == "string"){
+                // Convert the html string to a div object
+                container = this._create_div_for_text(text);
+            }else{
+                // text is already a Div object, so nothing else is needed here.
+                container = text;
+            }
+            
+            container.style.visibility = "hidden";
+            container.style.position = "absolute";
 
-        return [
-            Math.round(text_element.getMeasuredWidth()),
-            Math.round(text_element.getMeasuredHeight())
-        ]
+            document.body.appendChild(container);
+            container_width = container.clientWidth + 1;
+            container_height = container.clientHeight + 1;
+            container.parentNode.removeChild(container);
+
+            container.style.visibility = "visible";
+            container.style.position = "inherit";
+
+            return [
+                container_width,
+                container_height
+            ];
+        }else{
+            var font_string = this._create_font_string();
+            var text_element = new createjs.Text(text, font_string, 
+                    this.styles.color);
+            // max width before wrapping.
+            text_element.lineWidth = max_width || this.width(); 
+            return [
+                Math.round(text_element.getMeasuredWidth()),
+                Math.round(text_element.getMeasuredHeight())
+            ];
+        }
     });
 
     /**
