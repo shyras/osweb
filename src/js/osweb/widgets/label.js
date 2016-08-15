@@ -49,8 +49,7 @@
         }
 
         var w = this.rect.w - 2 * this.x_pad;
-
-        this.form.canvas.text(pText, this.center, x, y, w, pHtml);
+        this.form.canvas.text(pText, this.center, x, y, pHtml);
     };
 
     p.render = function() {

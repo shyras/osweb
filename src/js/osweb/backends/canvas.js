@@ -360,7 +360,6 @@
         }
 
         // Set the text of the div element
-        console.log(this.nl2br(text));
         container.innerHTML = this.nl2br(text);
         return container;
     }
