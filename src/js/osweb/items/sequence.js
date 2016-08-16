@@ -149,6 +149,8 @@
 
             // Set the workspace.
             osweb.python_workspace['self'] = this;
+            // console.log(current_item.cond);
+            // console.log(osweb.runner.experiment.vars);
 
             // Check if the item may run.                            
             if (osweb.python_workspace._eval(current_item.cond) == true) {

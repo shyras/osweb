@@ -58,7 +58,6 @@
     p.run = function() {
         this.set_item_onset();
         this.set_sri();
-        console.log("Playing sound");
         this._sampler.play();
         this.process_response();
     };

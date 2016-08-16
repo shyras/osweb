@@ -147,13 +147,13 @@
         this.experiment.vars.set('response_time_' + this.name, this.experiment.vars.get('response_time'));
         this.experiment._start_response_interval = null;
 
-        // But correctness information is only set for dedicated response items, such as keyboard_response items, because otherwise we might confound the feedback
+        // But correctness information is only set for dedicated response items, 
+        // such as keyboard_response items, because otherwise we might confound the feedback
         if (this.process_feedback == true) {
-            // debug.msg(u"processing feedback for '%s'" % self.name)
-            if (this.vars.correct_response != null) {
-                // If a correct_resbponse has been defined, we use it to determine accuracy etc.
+            if (this.vars.get('correct_response') != null) {
+                // If a correct_response has been defined, we use it to determine accuracy etc.
                 if (this.synonyms != null) {
-                    if (this.synonyms.indexOf(String(this.vars.get('correct_response'))) != -1) {
+                    if (this.synonyms.indexOf(String(this.vars.get('correct_response'))) != -1){
                         this.experiment.vars.correct = 1;
                         this.experiment.vars.total_correct = this.experiment.vars.total_correct + 1;
                     } else {

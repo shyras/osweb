@@ -14,7 +14,10 @@
 	        this.debug = osweb.debug.enabled;
 	        this.experiment = (pExperiment == null) ? this : pExperiment;
 	        this.name = pName;
-	        this.vars = (this.vars) ? this.vars : new osweb.var_store(this, null);
+	        
+	        // Determine the parent item varstore.
+	        var parent_varstore = (this.experiment == pExperiment) ? this.experiment.vars : null
+	        this.vars = (this.vars) ? this.vars : new osweb.var_store(this, parent_varstore);
 
 	        // Set the object realted properties.
 	        this.clock = this.experiment._clock;

@@ -26,15 +26,27 @@
 
         var value = null;
 
+        if(pVar == "correct_response"){
+            console.log(this._parent);
+            console.log(this._parent && pVar in this._parent);
+        }
+
         // Gets an experimental variable.
         if (pVar in this) {
             if (typeof this[pVar] == 'string') {
                 value = osweb.syntax.eval_text(this[pVar]);
-            } 
-            else {
+            } else {
                 value = this[pVar];
             }
-        } 
+        }
+        // If value is not found locally, look in experiment object.
+        if(value == null && this._parent && pVar in this._parent){
+            if (typeof this._parent[pVar] == 'string') {
+                value = osweb.syntax.eval_text(this._parent[pVar]);
+            } else {
+                value = this._parent[pVar];
+            } 
+        }
 
         // Return function result.
         return value;
