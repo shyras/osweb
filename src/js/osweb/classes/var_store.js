@@ -26,11 +26,6 @@
 
         var value = null;
 
-        if(pVar == "correct_response"){
-            console.log(this._parent);
-            console.log(this._parent && pVar in this._parent);
-        }
-
         // Gets an experimental variable.
         if (pVar in this) {
             if (typeof this[pVar] == 'string') {

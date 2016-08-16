@@ -104,7 +104,7 @@
     };
 
     events._update = function() {
-        // Check if the duration is finisdhed.
+        // Check if the duration is finished.
         if (((this._timeout === -1) && ((this._response_given === true) || (this._sound_ended === true) || (this._video_ended === true))) ||
             ((this._timeout > 0) && ((this._response_type === osweb.constants.RESPONSE_KEYBOARD) || (this._response_type === osweb.constants.RESPONSE_MOUSE)) && (this._response_given === true)) ||
             (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout))) {
@@ -260,9 +260,12 @@
 
     // Definition of methods for sound event processing.
 
-    events._audioEnded = function() {
+    events._audioEnded = function(event) {
         // If duration isequal to sound exit the sound item.
-        osweb.events._sound_ended = true;
+        sampler = this;
+        if(sampler.duration == "sound"){
+            osweb.events._sound_ended = true;
+        }
     };
 
     // Definition of methods for video event processing.

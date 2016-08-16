@@ -13,13 +13,14 @@
         this.src = (typeof src === 'undefined') ? '' : src;
         this.volume = (typeof volume === 'undefined') ? 1 : volume;
 
+        this._instance = null;
+
         // Create the sound instance
         if (src !== null) {
-            // Set the sound object.
+            // Set the sound object.  
             this._instance = src.data;
-
-            // Set the event anchor for 
-            this._instance.on("ended", osweb.events._audioEnded.bind(this));
+            // Set the event anchor for
+            this._stopEvent = this._instance.on("ended", osweb.events._audioEnded.bind(this));
         }
     };
 
@@ -36,7 +37,6 @@
     p.volume = 1;
 
     // Definition of public methods.
-
     p.play = function(volume, pitch, pan, duration, fade, block) {
         // Check if optional parameters are defined.
         this.block = (typeof block === 'undefined') ? this.block : block;
@@ -46,11 +46,13 @@
         this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch;
         this.volume = (typeof volume === 'undefined') ? this.volume : volume;
 
-        // Set the sound properties.
-        this._instance.volume = this.volume;
+        if(this._instance != null){
+            // Set the sound properties.
+            this._instance.volume = this.volume;
 
-        // Play the actual sound.
-        this._instance.play();
+            // Play the actual sound.
+            this._instance.play();
+        }
     };
 
     p.wait = function() {

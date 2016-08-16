@@ -46,6 +46,10 @@
             this._sample = osweb.pool[this.syntax.eval_text(this.vars.sample)];
             this._sampler = new osweb.sampler_backend(this.experiment, this._sample);
             this._sampler.volume = this.vars.volume;
+            this._sampler.duration = this.vars.duration;
+            this._sampler.fade = this.vars.fade;
+            this._sampler.pan = this.vars.pan;
+            this._sampler.pitch = this.vars.pitch;
         } else {
             /* raise osexception(
             u'No sample has been specified in sampler "%s"' % self.name) */
