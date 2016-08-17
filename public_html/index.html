@@ -10,28 +10,72 @@ and open the template in the editor.
         <title>osweb</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <!-- JavaScript -->
-		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
-
-		<!-- CSS -->
+	<!-- CSS -->
+		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css?v=2.0.1"/>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
-		<!-- Default theme -->
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/default.min.css"/>
 		<!-- Bootstrap theme -->
-		<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/bootstrap.min.css"/> -->
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/bootstrap.min.css"/>
+		<!-- Fonts-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
-  
-        <!-- Head - link definitions -->
+  		<link href='https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Ubuntu+Mono|Roboto+Slab' rel='stylesheet' type='text/css'>
+
         <link rel="stylesheet" href="css/osweb.css"/>
+
+	<!-- JavaScript -->
+		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
 		<script type="text/javascript" src="js/osweb.js"></script>
     </head>
 
     <body>
-	<!-- Body - HTML definitions -->
- 	<div id="body_div">
-            <div id="command_div">
-            	<div id="command_buttons">
+		<!-- Body - HTML definitions -->
+
+		<nav class="navbar navbar-fixed-top cogsci-navbar">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" style="padding: 7px" href="/">
+						<img style="height: 100%" alt="Brand" src='img/opensesame.png'>
+					</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse">
+					
+					<form class="navbar-form navbar-left">
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
+						<div class="input-group">
+					    	<span class="input-group-btn">
+					        	<button class="btn btn-primary" type="button" id="button1" onclick="HandleBrowseClick();">Local file</button>
+					      	</span>
+					      	<input type="text" class="form-control" id="filename" readonly />
+					    </div>
+						<div class="input-group">
+					    	<span class="input-group-btn">
+					        	<button class="btn btn-primary" type="button" id="button2" onclick="loadServer();">Server file</button>
+					      	</span>
+					      	<input type="text" class="form-control" id="serverfile" value="stroop.osexp" readonly />
+					    </div>
+					    <input class="btn btn-primary" id="button3" type="reset" onclick="loadScript();" value="Load Internal script">
+					</form>
+						
+				<form class="navbar-form navbar-right">	
+						<div class="form-group">
+							<button class="btn btn-success" id="button4" type="reset" onclick="runExperiment();" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
+							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen();" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
+						</div>
+					</form>
+				</div><!--/.nav-collapse -->
+			</div>
+		</nav>
+
+	 	<div id="body_div">
+	      <!--   <div id="command_div">
+	        	<div id="command_buttons">
 					<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
 					<input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
 					<input type="text" id="filename" readonly/>
@@ -42,28 +86,23 @@ and open the template in the editor.
 					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
 				</div>
 				<img id="os_logo" src='img/opensesame.png'>
-            </div>
-            <div id="osweb_div">
-                <canvas id="osweb_canvas" width="800" height="600"></canvas>
-                <div id="osweb_form" style=""></div>
-                <div id="dialogoverlay"></div>
-                <div id="dialogbox">
-                    <div>
-                        <div id="dialogboxhead"></div>
-                        <div id="dialogboxbody"></div>
-                        <div id="dialogboxfoot"></div>
-                    </div>
-                </div>	
-            </div>
+	        </div> -->
+	        <div id="osweb_div">
+	            <canvas id="osweb_canvas" width="800" height="600"></canvas>
+	            <div id="osweb_form" style=""></div>
+	            <div id="dialogoverlay"></div>
+	            <div id="dialogbox">
+	                <div>
+	                    <div id="dialogboxhead"></div>
+	                    <div id="dialogboxbody"></div>
+	                    <div id="dialogboxfoot"></div>
+	                </div>
+	            </div>	
+	        </div>
 		</div>
 
-        <!-- Body - Hidden experiment video player -->
-        <video id="video" width="1024" height="768"></video>
-
-        <!-- Body - Start up script -->
-        <script>
-
-        </script>
+	    <!-- Body - Hidden experiment video player -->
+	    <video id="video" width="1024" height="768"></video>
     </body>
 </html>
 
@@ -138,7 +177,7 @@ function buttonsSetToFileSelection(){
 	document.getElementById('button2').disabled = false;
 	document.getElementById('button3').disabled = false;
 	document.getElementById('fullscreen_button').disabled = true;
-    document.getElementById('command_div').style.display = 'inherit';
+    //document.getElementById('command_div').style.display = 'inherit';
 }
 
 function resetCanvas(){
@@ -263,7 +302,7 @@ Experiment = {'onfinished': onFinished, 'source': Script};
 
 function runExperiment(){
 	// Update the interface.
-	
+	alertify.alert("Whoop!");
 	// Call again to make sure exp load buttons are disabled after
 	// 'Run experiment' has been clicked
 	buttonsSetToFileLoaded();
@@ -299,3 +338,7 @@ function onFinished(pData, pSession_data){
     console.log(pSession_data);
 }        
 </script>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+<!-- Latest compiled and minified JavaScript -->
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
