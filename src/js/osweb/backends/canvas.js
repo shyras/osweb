@@ -917,8 +917,6 @@
             container_height = container.clientHeight + 1;
             container.parentNode.removeChild(container);
 
-            console.log("Measuring text size");
-
             container.style.visibility = "visible";
             container.style.position = "inherit";
 
