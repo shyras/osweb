@@ -23,6 +23,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
+set experiment_path "/Users/daniel/Sites/osweb/test-osexp"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -64,7 +65,9 @@ define sketchpad welcome
 	set reset_variables no
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=serif font_italic=yes font_size=32 html=yes show_if=always text="OpenSesame 3.1 <i>Jazzy James</i>" x=0 y=0 z_index=0
+	set background 55
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="<h2>OpenSesame 3.1 <i>Jazzy James</i></h2>" x=0 y=-160 z_index=0
 	draw line color=white penwidth=1 show_if=always x1=-32 x2=32 y1=0 y2=0 z_index=0
 	draw line color=white penwidth=1 show_if=always x1=0 x2=0 y1=-32 y2=32 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=32 html=yes show_if=always text="The <em>quick</em> <span style=color:brown>brown</span> fox <span style=text-decoration:underline>jumps</span> <strike>over</strike> the <b>lazy</b> dog.<p>What else can we try?</p><table style='border: 1px solid white'><thead/><tbody><tr><td>Name</td><td>OpenSesame</td></tr><tr><td>Version</td><td>3.1.2</td></tr></tbody></table>" x=0 y=0 z_index=0
 

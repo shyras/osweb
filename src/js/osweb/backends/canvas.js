@@ -111,6 +111,10 @@
         return [p1, p2, p3, p4, p5, p6, p7];
     };
 
+    //!!!!!!!!!!!!!!!!!!!!!!!
+    // Is the function below even required in a browser? I think it already has all 
+    // these values internally representend. -Daniel
+
     p._color = function(colour) {
         // Method to convert color names and hex values to rgb object (used in gabor and noise).
         var colours = {
@@ -286,7 +290,12 @@
         }
     };
 
-    p._isHTML = function(str){
+    /**
+     * Checks if the supplied string contains HTML markup
+     * @param  {string} str The string to check
+     * @return {boolean}     True if HTML markup was found, false if not.
+     */
+    p._containsHTML = function(str){
         var doc = new DOMParser().parseFromString(str, "text/html");
         return Array.from(doc.body.childNodes).some(node => node.nodeType === 1);
     }
@@ -332,7 +341,7 @@
         container.style.height = "auto";
         container.style.maxWidth = this._width;
         container.style.maxHeight = this._height;
-        // If center variable == 1, center the text too.
+        // // If center variable == 1, center the text too.
         if(center == "1"){
             container.style.textAlign = "center";
         }
@@ -805,7 +814,7 @@
     p.text = p._configurable(function(text, center, x, y, html) {
         // Only jump through the HTML rendering hoops if the html == 'yes' and
         // text actually contains HTML markup.
-        if(html === "yes" && this._isHTML(text) ){ 
+        if(html === "yes" && this._containsHTML(text) ){ 
             // Create a div container to hold the html contents.
             var container = this._create_div_for_text(text, center);
             // Calculate the text size of the text to render.
@@ -823,7 +832,9 @@
 
             // Create a SVG string to embed the HTML into.
             var svg = '<svg xmlns="http://www.w3.org/2000/svg">'+
-            '<style scoped="">html::-webkit-scrollbar { display: none; }</style>' + 
+            '<style scoped="">' +
+            'html::-webkit-scrollbar { display: none; }' +
+            '</style>' + 
             '<foreignObject x="0" y="0" width="'+container_width+'px" height="'+
             container_height+'px" style="float: left;">' + html + 
             '</foreignObject></svg>';
@@ -882,7 +893,7 @@
     p.text_size = p._configurable(function(text, max_width) {
         // Check if text is a string containing HTML, or is already supplied as a
         // HTMLDivElement (by canvas.text for instance)
-        if((typeof(text) == "string" && this._isHTML(text)) || 
+        if((typeof(text) == "string" && this._containsHTML(text)) || 
             text instanceof HTMLDivElement){
             // Now comes the hacky/tricky part. To measure the size of 
             // the text, we need to actually enter the div into the DOM, measure 
@@ -905,6 +916,8 @@
             container_width = container.clientWidth + 1;
             container_height = container.clientHeight + 1;
             container.parentNode.removeChild(container);
+
+            console.log("Measuring text size");
 
             container.style.visibility = "visible";
             container.style.position = "inherit";

@@ -262,7 +262,7 @@
 
     events._audioEnded = function(event) {
         // If duration isequal to sound exit the sound item.
-        sampler = this;
+        var sampler = this;
         if(sampler.duration == "sound"){
             osweb.events._sound_ended = true;
         }

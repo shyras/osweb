@@ -91,7 +91,18 @@
         // Inherited.	
         this.generic_response_run();
 
-        // Set the onset and start the stimulus response process.        
+        // Check if background color needs to be changed
+        var background_color = this.vars.get("background")
+        if(background_color){
+            // In case bgcolor is specified as a single int, convert it to a
+            // rgb string
+            if(this.canvas.styles.isInt(background_color)){
+                var val = background_color;
+                background_color = 'rgb('+val+','+val+','+val+')';
+            }
+            osweb.runner._canvas.style.backgroundColor = background_color;
+        }
+        // Set the onset and start the stimulus response process.  
         this.set_item_onset(this.canvas.show());
         this.set_sri(false);
         this.process_response();
