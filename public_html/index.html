@@ -10,10 +10,21 @@ and open the template in the editor.
         <title>osweb</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- JavaScript -->
+		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
+
+		<!-- CSS -->
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
+		<!-- Default theme -->
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/default.min.css"/>
+		<!-- Bootstrap theme -->
+		<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/bootstrap.min.css"/> -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
   
         <!-- Head - link definitions -->
         <link rel="stylesheet" href="css/osweb.css"/>
-	<script type="text/javascript" src="js/osweb.js"></script>
+		<script type="text/javascript" src="js/osweb.js"></script>
     </head>
 
     <body>
@@ -21,12 +32,12 @@ and open the template in the editor.
  	<div id="body_div">
             <div id="command_div">
             	<div id="command_buttons">
-                                        <input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
-                                        <input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
-                                        <input type="text" id="filename" readonly/>
-                                        <input id="button2" type="reset" onclick="loadServer();" value="Server file">
-                                        <input id="serverfile" type="text" value="stroop.osexp" >
-                                        <input id="button3" type="reset" onclick="loadScript();" value="Internal script">
+					<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
+					<input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
+					<input type="text" id="filename" readonly/>
+					<input id="button2" type="reset" onclick="loadServer();" value="Server file">
+					<input id="serverfile" type="text" value="stroop.osexp" >
+					<input id="button3" type="reset" onclick="loadScript();" value="Internal script">
 					<input id="button4" type="reset" onclick="runExperiment();" value="Run experiment" disabled>
 					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
 				</div>
@@ -51,217 +62,240 @@ and open the template in the editor.
 
         <!-- Body - Start up script -->
         <script>
-            var Experiment;
-            var Script;
 
-            // Hack to set the value of the file upload button
-            document.getElementById("button1").text = 'Select file'; 
-
-            // Event listener for fullscreen errors
-            // Use alert() for now, but think of something prettier (sAlert?)
-            if (screenfull.enabled) {
-			    document.addEventListener(screenfull.raw.fullscreenerror, function(){
-			        console.error('Failed to enable fullscreen', event);
-			    });
-			}
-
-			// Resize canvas to fit screen, when resized to fullscreen
-			if (screenfull.enabled) {
-			    document.addEventListener(screenfull.raw.fullscreenchange, function(){
-			    	var c = document.getElementById('osweb_canvas');
-			        if(screenfull.isFullscreen) {
-			        	c.old_width = c.style.width;
-			        	c.old_height = c.style.height;
-						var rect = c.getBoundingClientRect();
-						c.style.width = rect.width;
-						c.style.height = rect.height;
-					} else {
-						c.style.width = c.old_width;
-						c.styleheight = c.old_height;
-					}
-			    });
-			}
-
-            /**
-             * Disable some buttons once an experiment is loaded.
-             */
-            function buttonsSetToFileLoaded(){
-                document.getElementById('button1').disabled = true;
-                document.getElementById('button2').disabled = true;
-                document.getElementById('button3').disabled = true;
-                document.getElementById('button4').disabled = false;
-            }
-
-            /**
-             * Enable experiment loading buttons.
-             */
-            function buttonsSetToFileSelection(){
-            	document.getElementById('button1').disabled = false;
-				document.getElementById('button2').disabled = false;
-				document.getElementById('button3').disabled = false;
-				document.getElementById('fullscreen_button').disabled = true;
-	            document.getElementById('command_div').style.display = 'inherit';
-            }
-	    
-            function resetCanvas(){
-            	document.getElementById('osweb_div').style.width = '800px';
-        		document.getElementById('osweb_div').style.height = '600px';
-        		document.getElementById('osweb_canvas').width = 800;
-        		document.getElementById('osweb_canvas').height = 600;
-        		document.getElementById('osweb_canvas').style.background = "#000";
-            }
-
-        	/**
-	    	 * Show canvas in fullscreen mode (Esc minimizes it again)
-	    	 * @return {void}
-	    	 */
-            function toggleFullscreen(){
-            	var c = document.getElementById('osweb_canvas');
-            	
-            	if (screenfull.enabled) {
-			        screenfull.request(c);
-			    }
-            }
-
-        	/**
-	    	 * Methods for handling the hidden file load button.             
-	    	 * @return {void}
-	    	 */
-    
-                function HandleBrowseClick() {
-                    // Update the interface.
-                    var fileinput = document.getElementById("browse");
-                    fileinput.click();
-                }
-
-                function Handlechange(event) {
-                    // Update the button status.
-                    buttonsSetToFileLoaded();
-
-                    // Update the interface.
-                    var fileinput = document.getElementById("browse");
-                    var textinput = document.getElementById("filename");
-                    textinput.value = fileinput.value;
-
-                    // Get the file.          
-      		    var file = event.target.files[0]; // Only select the first file.
-
-                    // Definition of the experiment object and its properties.
-                    Experiment = {'onfinished': onFinished, 'source': file};
-                }   
-    
-                    function loadServer(){
-	    		// Update interface.
-	    		buttonsSetToFileLoaded();
-		
-                        // Get the file.          
-                        var file = 'files/' + document.getElementById("serverfile").value;
-                        
-                        // Definition of the experiment object and its properties.
-			Experiment = {'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
-		    };  
-
-		    function loadScript(){
-				// Update interface.
-				buttonsSetToFileLoaded();
-
-				Script = '---' + '\n' +
-				 'API: 2' + '\n' +
-				 'OpenSesame: 3.0.2' + '\n' +
-				 'Platform: nt' + '\n' +
-				 '---' + '\n' +
-				 'set width 800' + '\n' +
-				 'set uniform_coordinates "yes"' + '\n' +
-				 'set title "New experiment"' + '\n' +
-				 'set subject_parity "even"' + '\n' +
-				 'set subject_nr 0' + '\n' +
-				 'set start "block"' + '\n' +
-				 'set height 600' + '\n' +
-				 'set foreground "white"' + '\n' +
-				 'set description "Default description"' + '\n' +
-				 'set coordinates "uniform"' + '\n' +
-				 'set compensation 0' + '\n' +
-				 'set canvas_backend "xpyriment"' + '\n' +
-				 'set background "black"' + '\n' +
-				 '' + '\n' +
-				 'define sequence block' + '\n' +
-				 '	set flush_keyboard "yes"' + '\n' +
-				 '	set description "Runs a number of items in sequence"' + '\n' +
-				 '	run new_loop always' + '\n' +
-				 '' + '\n' +
-				 'define loop new_loop' + '\n' +
-				 '	set skip 0' + '\n' +
-				 '	set repeat 1' + '\n' +
-				 '	set order "sequential"' + '\n' +
-				 '	set offset "no"' + '\n' +
-				 '	set item "trial"' + '\n' +
-				 '	set description "Repeatedly runs another item"' + '\n' +
-				 '	set cycles 2' + '\n' +
-				 '	set column_order "stimulus;counter"' + '\n' +
-				 '	set break_if "never"' + '\n' +
-				 '	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
-				 '	setcycle 0 counter "1"' + '\n' +
-				 '	setcycle 1 stimulus "page 2"' + '\n' +
-				 '	setcycle 1 counter "2"' + '\n' +
-				 '	setcycle 2 stimulus "page 3"' + '\n' +
-				 '	setcycle 2 counter "3"' + '\n' +
-				 '	run trial' + '\n' +
-				 '' + '\n' +
-				 'define sequence trial' + '\n' +
-				 '	set flush_keyboard "yes"' + '\n' +
-				 '	set description "Runs a number of items in sequence"' + '\n' +
-				 '	run welcome always' + '\n' +
-				 '' + '\n' +
-				 'define sketchpad welcome' + '\n' +
-				 '	set start_response_interval "no"' + '\n' +
-				 '	set reset_variables "no"' + '\n' +
-				 '	set duration "keypress"' + '\n' +
-				 '	set description "Displays stimuli"' + '\n' +
-				 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
-	                
-	                // Definition of the experiment object and its properties.
-			Experiment = {'onfinished': onFinished, 'source': Script};
-		    };  
-		    
-		    function runExperiment(){
-		    	// Update the interface.
-		    	
-		    	// Call again to make sure exp load buttons are disabled after
-		    	// 'Run experiment' has been clicked
-		    	buttonsSetToFileLoaded();
-
-		    	if(document.getElementById('button4').value == "Run experiment"){
-			    	document.getElementById('button4').value = "Stop experiment";
-			    	document.getElementById('fullscreen_button').disabled = false;
-					//document.getElementById('command_div').style.display = 'none';
-					
-			  		// Run the experiment within the Runner with the given canvas and experiment object.
-			        osweb.runner.run('osweb_canvas', Experiment); 
-			    }else{
-			    	osweb.runner.exit();
-			    	// Stop the experiment
-			    }
-		    } 
-
-			function onFinished(pData, pSession_data){
-	        	// Exit fullscreen mode, if applicable
-	        	if (screenfull.enabled && screenfull.isFullscreen) {
-				   screenfull.exit();
-				}
-
-				document.getElementById('button4').value = "Run experiment";
-				
-				// Reset the canvas
-				resetCanvas();
-
-	            // Reset the input buttons
-	            buttonsSetToFileSelection();
-	        
-	            console.log(pData);
-	            console.log(pSession_data);
-	        }
-        
         </script>
-      
     </body>
 </html>
+
+<script>
+// Extend existing 'alert' dialog
+if(!alertify.errorAlert){
+	//define a new errorAlert base on alert
+	alertify.dialog('errorAlert',function factory(){
+		return{
+			build:function(){
+				var errorHeader = '<span class="fa fa-times-circle fa-2x" '
+				+    'style="vertical-align:middle;color:#e10000;">'
+				+ '</span> Application Error';
+				this.setHeader(errorHeader);
+			}
+		};
+	},true,'alert');
+}
+
+window.onerror = function(msg, url, line, col, error) {
+	var text = "<p><b>"+msg+"</b></p>" +
+	"<p>See console for further details</p>";
+	alertify.errorAlert(text);
+}
+
+var Experiment;
+var Script;
+
+// Hack to set the value of the file upload button
+document.getElementById("button1").text = 'Select file'; 
+
+// Event listener for fullscreen errors
+// Use alert() for now, but think of something prettier (sAlert?)
+if (screenfull.enabled) {
+    document.addEventListener(screenfull.raw.fullscreenerror, function(){
+        console.error('Failed to enable fullscreen', event);
+    });
+}
+
+// Resize canvas to fit screen, when resized to fullscreen
+if (screenfull.enabled) {
+    document.addEventListener(screenfull.raw.fullscreenchange, function(){
+    	var c = document.getElementById('osweb_canvas');
+        if(screenfull.isFullscreen) {
+        	c.old_width = c.style.width;
+        	c.old_height = c.style.height;
+			var rect = c.getBoundingClientRect();
+			c.style.width = rect.width;
+			c.style.height = rect.height;
+		} else {
+			c.style.width = c.old_width;
+			c.styleheight = c.old_height;
+		}
+    });
+}
+
+/**
+ * Disable some buttons once an experiment is loaded.
+ */
+function buttonsSetToFileLoaded(){
+    document.getElementById('button1').disabled = true;
+    document.getElementById('button2').disabled = true;
+    document.getElementById('button3').disabled = true;
+    document.getElementById('button4').disabled = false;
+}
+
+/**
+ * Enable experiment loading buttons.
+ */
+function buttonsSetToFileSelection(){
+	document.getElementById('button1').disabled = false;
+	document.getElementById('button2').disabled = false;
+	document.getElementById('button3').disabled = false;
+	document.getElementById('fullscreen_button').disabled = true;
+    document.getElementById('command_div').style.display = 'inherit';
+}
+
+function resetCanvas(){
+	document.getElementById('osweb_div').style.width = '800px';
+	document.getElementById('osweb_div').style.height = '600px';
+	document.getElementById('osweb_canvas').width = 800;
+	document.getElementById('osweb_canvas').height = 600;
+	document.getElementById('osweb_canvas').style.background = "#000";
+}
+
+/**
+ * Show canvas in fullscreen mode (Esc minimizes it again)
+ * @return {void}
+ */
+function toggleFullscreen(){
+	var c = document.getElementById('osweb_canvas');
+	
+	if (screenfull.enabled) {
+        screenfull.request(c);
+    }
+}
+
+/**
+ * Methods for handling the hidden file load button.             
+ * @return {void}
+ */
+
+function HandleBrowseClick() {
+    // Update the interface.
+    var fileinput = document.getElementById("browse");
+    fileinput.click();
+}
+
+function Handlechange(event) {
+    // Update the button status.
+    buttonsSetToFileLoaded();
+
+    // Update the interface.
+    var fileinput = document.getElementById("browse");
+    var textinput = document.getElementById("filename");
+    textinput.value = fileinput.value;
+
+    // Get the file.          
+    var file = event.target.files[0]; // Only select the first file.
+
+    // Definition of the experiment object and its properties.
+    Experiment = {'onfinished': onFinished, 'source': file};
+}   
+
+function loadServer(){
+	// Update interface.
+	buttonsSetToFileLoaded();
+
+    // Get the file.          
+    var file = 'files/' + document.getElementById("serverfile").value;
+    
+    // Definition of the experiment object and its properties.
+	Experiment = {'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
+};  
+
+function loadScript(){
+	// Update interface.
+	buttonsSetToFileLoaded();
+
+	Script = '---' + '\n' +
+	 'API: 2' + '\n' +
+	 'OpenSesame: 3.0.2' + '\n' +
+	 'Platform: nt' + '\n' +
+	 '---' + '\n' +
+	 'set width 800' + '\n' +
+	 'set uniform_coordinates "yes"' + '\n' +
+	 'set title "New experiment"' + '\n' +
+	 'set subject_parity "even"' + '\n' +
+	 'set subject_nr 0' + '\n' +
+	 'set start "block"' + '\n' +
+	 'set height 600' + '\n' +
+	 'set foreground "white"' + '\n' +
+	 'set description "Default description"' + '\n' +
+	 'set coordinates "uniform"' + '\n' +
+	 'set compensation 0' + '\n' +
+	 'set canvas_backend "xpyriment"' + '\n' +
+	 'set background "black"' + '\n' +
+	 '' + '\n' +
+	 'define sequence block' + '\n' +
+	 '	set flush_keyboard "yes"' + '\n' +
+	 '	set description "Runs a number of items in sequence"' + '\n' +
+	 '	run new_loop always' + '\n' +
+	 '' + '\n' +
+	 'define loop new_loop' + '\n' +
+	 '	set skip 0' + '\n' +
+	 '	set repeat 1' + '\n' +
+	 '	set order "sequential"' + '\n' +
+	 '	set offset "no"' + '\n' +
+	 '	set item "trial"' + '\n' +
+	 '	set description "Repeatedly runs another item"' + '\n' +
+	 '	set cycles 2' + '\n' +
+	 '	set column_order "stimulus;counter"' + '\n' +
+	 '	set break_if "never"' + '\n' +
+	 '	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
+	 '	setcycle 0 counter "1"' + '\n' +
+	 '	setcycle 1 stimulus "page 2"' + '\n' +
+	 '	setcycle 1 counter "2"' + '\n' +
+	 '	setcycle 2 stimulus "page 3"' + '\n' +
+	 '	setcycle 2 counter "3"' + '\n' +
+	 '	run trial' + '\n' +
+	 '' + '\n' +
+	 'define sequence trial' + '\n' +
+	 '	set flush_keyboard "yes"' + '\n' +
+	 '	set description "Runs a number of items in sequence"' + '\n' +
+	 '	run welcome always' + '\n' +
+	 '' + '\n' +
+	 'define sketchpad welcome' + '\n' +
+	 '	set start_response_interval "no"' + '\n' +
+	 '	set reset_variables "no"' + '\n' +
+	 '	set duration "keypress"' + '\n' +
+	 '	set description "Displays stimuli"' + '\n' +
+	 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
+        
+        // Definition of the experiment object and its properties.
+Experiment = {'onfinished': onFinished, 'source': Script};
+};  
+
+function runExperiment(){
+	// Update the interface.
+	
+	// Call again to make sure exp load buttons are disabled after
+	// 'Run experiment' has been clicked
+	buttonsSetToFileLoaded();
+
+	if(document.getElementById('button4').value == "Run experiment"){
+    	document.getElementById('button4').value = "Stop experiment";
+    	document.getElementById('fullscreen_button').disabled = false;
+		//document.getElementById('command_div').style.display = 'none';
+		
+  		// Run the experiment within the Runner with the given canvas and experiment object.
+        osweb.runner.run('osweb_canvas', Experiment); 
+    }else{
+    	osweb.runner.exit();
+    	// Stop the experiment
+    }
+} 
+
+function onFinished(pData, pSession_data){
+	// Exit fullscreen mode, if applicable
+	if (screenfull.enabled && screenfull.isFullscreen) {
+	   screenfull.exit();
+	}
+
+	document.getElementById('button4').value = "Run experiment";
+	
+	// Reset the canvas
+	resetCanvas();
+
+    // Reset the input buttons
+    buttonsSetToFileSelection();
+
+    console.log(pData);
+    console.log(pSession_data);
+}        
+</script>

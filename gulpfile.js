@@ -98,7 +98,8 @@ var paths = {
     'src/js/osweb/system/runner.js'
   ],
   styles:[
-    'src/scss/*.scss'
+    'src/scss/*.scss',
+    'src/scss/*.css'
   ]
 };
 

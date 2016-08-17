@@ -5,7 +5,7 @@
     }
 
     // Definition of error constants. 
-    constants.ERROR_001 = 'osweb has stopped running due a fatal error.';
+    constants.ERROR_001 = 'osweb has stopped running due to a fatal error.';
     constants.ERROR_002 = 'No content parameter specified.';
     constants.ERROR_003 = 'No context parameter specified.';
     constants.ERROR_004 = 'Invalid scriptID or scriptURL for retrieving script from external location.';
