@@ -45,7 +45,6 @@ and open the template in the editor.
 					</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
-					
 					<form class="navbar-form navbar-left">
 						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
 						<div class="input-group">
@@ -65,8 +64,8 @@ and open the template in the editor.
 						
 				<form class="navbar-form navbar-right">	
 						<div class="form-group">
-							<button class="btn btn-success" id="button4" type="reset" onclick="runExperiment();" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
-							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen();" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
+							<button class="btn btn-success" id="button4" status="run" onclick="runExperiment(); return false;" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
+							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
 						</div>
 					</form>
 				</div><!--/.nav-collapse -->
@@ -301,17 +300,16 @@ Experiment = {'onfinished': onFinished, 'source': Script};
 };  
 
 function runExperiment(){
-	// Update the interface.
-	alertify.alert("Whoop!");
 	// Call again to make sure exp load buttons are disabled after
 	// 'Run experiment' has been clicked
 	buttonsSetToFileLoaded();
 
-	if(document.getElementById('button4').value == "Run experiment"){
-    	document.getElementById('button4').value = "Stop experiment";
+	if(document.getElementById('button4').getAttribute('status') == "run"){
+		document.getElementById('button4').setAttribute('status','stop');
+    	document.getElementById('button4').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
+    	document.getElementById('button4').classList.remove("btn-success");
+    	document.getElementById('button4').classList.add("btn-danger");
     	document.getElementById('fullscreen_button').disabled = false;
-		//document.getElementById('command_div').style.display = 'none';
-		
   		// Run the experiment within the Runner with the given canvas and experiment object.
         osweb.runner.run('osweb_canvas', Experiment); 
     }else{
@@ -333,6 +331,11 @@ function onFinished(pData, pSession_data){
 
     // Reset the input buttons
     buttonsSetToFileSelection();
+
+    document.getElementById('button4').setAttribute('status','run');
+	document.getElementById('button4').innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Run';
+	document.getElementById('button4').classList.remove("btn-danger");
+	document.getElementById('button4').classList.add("btn-success");
 
     console.log(pData);
     console.log(pSession_data);
