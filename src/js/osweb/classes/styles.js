@@ -28,6 +28,20 @@
     var p = Styles.prototype;
 
     /**
+     * The default font mappings for OpenSesame
+     * @type {Object}
+     */
+    p.default_fonts = {
+        "sans" : "Droid Sans",
+        "serif" : "Droid Serif",
+        "mono" : "Droid Sans Mono",
+        "chinese-japanese-korean" : "WenQuanYi Micro Hei",
+        "arabic" : "Droid Arabic Naskh",
+        "hebrew" : "Droid Sans Hebrew",
+        "hindi" : "Lohit Hindi"
+    }
+
+    /**
      * Checks if the passed value is an integer
      * @param  value The value to check
      * @return {Boolean}  True if passed value is an integer
@@ -97,6 +111,17 @@
     Object.defineProperty(p, "fill", {
         get: function(){ return this._fill },
         set: function(val){ this._fill = this._check_val(val) }
+    });
+
+    Object.defineProperty(p, "font_family", {
+        get: function(){ return this._font_family },
+        set: function(val){
+            if(val in this.default_fonts){
+                this._font_family = this.default_fonts[val];
+            }else{
+                this._font_family = val;
+            }
+        }
     });
 
     Object.defineProperty(p, "font_italic", {
