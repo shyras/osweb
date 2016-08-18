@@ -12,20 +12,21 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+    <!-- JavaScript -->
+		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
+		<script type="text/javascript" src="js/osweb.js"></script>
+
 	<!-- CSS -->
-		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css?v=2.0.1"/>
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
 		<!-- Bootstrap theme -->
+		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css?v=2.0.1"/>
+		<!-- Alertify -->
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/default.min.css"/>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/bootstrap.min.css"/>
 		<!-- Fonts-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
   		<link href='https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Ubuntu+Mono|Roboto+Slab' rel='stylesheet' type='text/css'>
-
         <link rel="stylesheet" href="css/osweb.css"/>
-
-	<!-- JavaScript -->
-		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
-		<script type="text/javascript" src="js/osweb.js"></script>
     </head>
 
     <body>
@@ -45,47 +46,35 @@ and open the template in the editor.
 					</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
-					<form class="navbar-form navbar-left">
-						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
-						<div class="input-group">
-					    	<span class="input-group-btn">
-					        	<button class="btn btn-primary" type="button" id="button1" onclick="HandleBrowseClick();">Local file</button>
-					      	</span>
-					      	<input type="text" class="form-control" id="filename" readonly />
-					    </div>
-						<div class="input-group">
-					    	<span class="input-group-btn">
-					        	<button class="btn btn-primary" type="button" id="button2" onclick="loadServer();">Server file</button>
-					      	</span>
-					      	<input type="text" class="form-control" id="serverfile" value="stroop.osexp" readonly />
-					    </div>
-					    <input class="btn btn-primary" id="button3" type="reset" onclick="loadScript();" value="Load Internal script">
-					</form>
-						
-				<form class="navbar-form navbar-right">	
+					<form class="navbar-form navbar-right">
 						<div class="form-group">
-							<button class="btn btn-success" id="button4" status="run" onclick="runExperiment(); return false;" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
+							<button class="btn btn-success" id="button4" type="button" status="run" onclick="runExperiment(); return false;" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
 							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
 						</div>
 					</form>
+
+					<form class="navbar-form">
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
+						<div class="btn-group" style="display:inline;" role="group" aria-label="Load experiment">
+							<button class="btn btn-primary" type="button" id="button1" onclick="HandleBrowseClick();">Local file</button>
+							<button class="btn btn-primary" type="button" id="button2" onclick="loadServer();">Server file</button>
+						    <button class="btn btn-primary" id="button3" type="reset" onclick="loadScript();">Internal script</button>
+						</div>
+						
+						<div class="form-group" style="display:inline;">
+							<div class="input-group" style="display: table;">
+								<span style="width: 1%" class="input-group-addon" id="loaded-exp">Loaded:</span>
+								<input type="text" class="form-control" id="filename" placeholder="No experiment loaded" readonly />
+							</div>
+						</div>
+					</form>
+						
+
 				</div><!--/.nav-collapse -->
 			</div>
 		</nav>
 
 	 	<div id="body_div">
-	      <!--   <div id="command_div">
-	        	<div id="command_buttons">
-					<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
-					<input type="button" value="Local file" id="button1" onclick="HandleBrowseClick();"/>
-					<input type="text" id="filename" readonly/>
-					<input id="button2" type="reset" onclick="loadServer();" value="Server file">
-					<input id="serverfile" type="text" value="stroop.osexp" >
-					<input id="button3" type="reset" onclick="loadScript();" value="Internal script">
-					<input id="button4" type="reset" onclick="runExperiment();" value="Run experiment" disabled>
-					<input id="fullscreen_button" type="button" onclick="toggleFullscreen();" value="Show fullscreen" disabled>
-				</div>
-				<img id="os_logo" src='img/opensesame.png'>
-	        </div> -->
 	        <div id="osweb_div">
 	            <canvas id="osweb_canvas" width="800" height="600"></canvas>
 	            <div id="osweb_form" style=""></div>
@@ -106,6 +95,9 @@ and open the template in the editor.
 </html>
 
 <script>
+// Set position of notifications
+alertify.set('notifier', 'position', 'bottom-right');
+
 // Extend existing 'alert' dialog
 if(!alertify.errorAlert){
 	//define a new errorAlert base on alert
@@ -127,6 +119,13 @@ window.onerror = function(msg, url, line, col, error) {
 	alertify.errorAlert(text);
 }
 
+// Prevent the run/stop button from keeping focus after the subject nr dialog box is
+// closed. Otherwise the stop button is activated when users press spacebar for a
+// response to the canvas.
+document.getElementById('button4').onfocus = function(){
+	this.blur();
+};
+
 var Experiment;
 var Script;
 
@@ -137,7 +136,7 @@ document.getElementById("button1").text = 'Select file';
 // Use alert() for now, but think of something prettier (sAlert?)
 if (screenfull.enabled) {
     document.addEventListener(screenfull.raw.fullscreenerror, function(){
-        console.error('Failed to enable fullscreen', event);
+        alertify.errorAlert('Failed to activate fullscreen');
     });
 }
 
@@ -219,6 +218,8 @@ function Handlechange(event) {
     var textinput = document.getElementById("filename");
     textinput.value = fileinput.value;
 
+    alertify.message("Loaded local file: " + textinput.value);
+
     // Get the file.          
     var file = event.target.files[0]; // Only select the first file.
 
@@ -231,7 +232,12 @@ function loadServer(){
 	buttonsSetToFileLoaded();
 
     // Get the file.          
-    var file = 'files/' + document.getElementById("serverfile").value;
+    var file = 'files/stroop.osexp'; // + document.getElementById("serverfile").value;
+
+    var textinput = document.getElementById("filename");
+    textinput.value = file;
+
+    alertify.message("Loaded Remote file: " + textinput.value);
     
     // Definition of the experiment object and its properties.
 	Experiment = {'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
@@ -296,7 +302,10 @@ function loadScript(){
 	 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
         
         // Definition of the experiment object and its properties.
-Experiment = {'onfinished': onFinished, 'source': Script};
+	Experiment = {'onfinished': onFinished, 'source': Script};
+
+	alertify.message("Loaded internal script");
+	document.getElementById("filename").value = "Internal script";
 };  
 
 function runExperiment(){
@@ -313,8 +322,12 @@ function runExperiment(){
   		// Run the experiment within the Runner with the given canvas and experiment object.
         osweb.runner.run('osweb_canvas', Experiment); 
     }else{
-    	osweb.runner.exit();
     	// Stop the experiment
+    	alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?', 
+    	function(){ osweb.runner.exit() }, 
+    	function(){ /* What to do when cancelled */})
+    	.set('labels', {ok:'Yes', cancel:'No'}); ;
+    	
     }
 } 
 

@@ -20,6 +20,7 @@
             dataType: '0',
             defaultValue: '0',
             name: 'subject_nr',
+            title: 'Starting the experiment',
             prompt: 'Please enter the subject number',
             promptEnabled: true
         };
@@ -58,38 +59,27 @@
     parameters._processParameter = function(parameter) {
         // Check if a user request is required.
         if (parameter.promptEnabled == true) {
-            this._showDialog(parameter.dataType);
+            if(parameter.dataType !== "0"){
+                document.getElementById('qpbuttonyes').onclick = function() {
+                    //Get the response information
+                    parameter.response = value;
+                    // Close the dialog.
+                    this._hideDialog();
+                    // Increase the counter.
+                    this._itemCounter++;
+                    // Continue processing.
+                    this._processParameters();
+                }.bind(this);
 
-            // Set the dialog interface.
-            if (parameter.response == '') {
-                document.getElementById('qpdialoginput').value = parameter.defaultValue;
-            } else {
-                document.getElementById('qpdialoginput').value = parameter.defaultValue;
+                document.getElementById('qpbuttonno').onclick = function() {
+                    // Close the dialog.
+                    this._hideDialog();
+
+                    // Finalize the introscreen elements.
+                    osweb.runner._exit();
+                }.bind(this);
             }
-
-            document.getElementById('dialogboxhead').innerHTML = parameter.prompt;
-            document.getElementById('qpbuttonyes').onclick = function() {
-                // Get the response information
-                parameter.response = document.getElementById('qpdialoginput').value;
-
-                // Close the dialog.
-                this._hideDialog();
-
-                // Increase the counter.
-                this._itemCounter++;
-
-                // Continue processing.
-                this._processParameters();
-
-            }.bind(this);
-
-            document.getElementById('qpbuttonno').onclick = function() {
-                // Close the dialog.
-                this._hideDialog();
-
-                // Finalize the introscreen elements.
-                osweb.runner._exit();
-            }.bind(this);
+            this._showDialog(parameter);
         } else {
             // Assign default value to the Startup item.
             parameter.response = parameter.defaultValue;
@@ -149,25 +139,47 @@
         for (var i = 0; i < this._parameters.length; i++) {
             osweb.runner.experiment.vars.set(this._parameters[i].name, this._parameters[i].response);
         }
-
         // Parameters are processed, next phase.
         osweb.screen._setupClickScreen();
     };
 
     // Definition of class methods (dialogs).   
 
-    parameters._showDialog = function(dialog_type) {
-        var dialogoverlay = document.getElementById('dialogoverlay');
-        var dialogbox = document.getElementById('dialogbox');
+    parameters._showDialog = function(parameter) {
+        dialogtype = parameter.dataType;
 
-        dialogoverlay.style.display = "block";
-        dialogbox.style.display = "block";
+        // I don't know what the dialogtypes other than 0 signify, so I only integrated
+        // type 0 with alertify.js
+        if(dialogtype !== "0"){
+            var dialogoverlay = document.getElementById('dialogoverlay');
+            var dialogbox = document.getElementById('dialogbox');
 
-        switch (dialog_type) {
+            dialogoverlay.style.display = "block";
+            dialogbox.style.display = "block";
+        }
+
+        switch (dialogtype) {
             case "0":
-                document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
-                document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
-                document.getElementById('qpdialoginput').focus();
+                alertify.prompt( 
+                    parameter.title, 
+                    parameter.prompt, 
+                    parameter.defaultValue, 
+                    function(evt, value) {
+                        // Get the response information
+                        parameter.response = value;
+                        // Increase the counter.
+                        this._itemCounter++;
+                        // Continue processing.
+                        this._processParameters();
+                    }.bind(this), 
+                    function() {
+                        // Finalize the introscreen elements.
+                        osweb.runner._exit();
+                    }
+                );
+                // document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
+                // document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
+                // document.getElementById('qpdialoginput').focus();
                 break;
             case "1":
                 document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
