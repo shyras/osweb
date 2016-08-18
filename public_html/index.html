@@ -18,7 +18,8 @@ and open the template in the editor.
 
 	<!-- CSS -->
 		<!-- Bootstrap theme -->
-		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css?v=2.0.1"/>
+		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css"/>
+		<!-- <link rel="stylesheet" href="http://cogsci.nl/theme/css/bootstrap.min.css"/> -->
 		<!-- Alertify -->
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
 		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/default.min.css"/>
@@ -32,7 +33,7 @@ and open the template in the editor.
     <body>
 		<!-- Body - HTML definitions -->
 
-		<nav class="navbar navbar-fixed-top cogsci-navbar">
+		<nav class="navbar navbar-default navbar-fixed-top cogsci-navbar">
 			<div class="container">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -355,6 +356,10 @@ function onFinished(pData, pSession_data){
 }        
 </script>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script>
+// Activate noconflict mode of jQuery as it clashes with prototype.js
+jQuery.noConflict();
+</script>
 <!-- Latest compiled and minified JavaScript -->
-<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
