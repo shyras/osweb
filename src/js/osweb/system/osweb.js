@@ -15,8 +15,29 @@
 // Use strict mode.     
 "use strict";
 
-// Not required when encapsulated in CommonJS module code (see gulpfile.js)
-//this.osweb = this.osweb || {};
+// Check if we are running in a Node Js environment. If so, eliminate all
+// items that call to document or window
+var isNode = false;
+if(typeof(window) == "undefined"){
+    isNode = true;
+    console.log("Running in Node.js mode.");
+}
+
+// If not running in node.js, bind osweb and alertify to global namespace
+if(isNode == false){
+    var alertify = require('alertifyjs');
+    window.alertify = window.alertify || alertify;
+
+    var osweb = window.osweb || {};
+    window.osweb = osweb;
+}
+
+var uheprng = require('random-seed');
+var prototype = require('prototype');
+var filbert = require('filbert');
+
+//var createjs = require('createjs-combined');
+//console.log(createjs);
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME = 'osweb';

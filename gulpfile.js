@@ -11,9 +11,14 @@ var concat = require('gulp-concat');
 var wrapJS = require("gulp-wrap-js");
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
 var del = require('del');
 
 var paths = {
+  build_dir: './tmp',
+  dest_dir: './public_html/js',
+  dest_file: 'osweb.js',
   dependencies: [
     'src/js/dependencies/jquery.min.js',
     'src/js/dependencies/bootsrap.min.js',
@@ -106,16 +111,16 @@ var paths = {
   ]
 };
 
-gulp.task('js-osweb', function(){
+gulp.task('compose-osweb', function(){
     // Concatenate all osweb modules and wrap them as a commonjs module if not
     // run in a browser
     return gulp
         .src(paths.osweb_modules)
         .pipe(sourcemaps.init())
-            .pipe(concat('osweb.js'))
+            .pipe(concat(paths.dest_file))
               //.pipe(uglify())
             
-            // Create CommonJS module from whole osweb (takes some time)
+            // Create CommonJS module of the whole osweb (takes some time)
             .pipe(wrapJS("(function (root, mod) {"+
                 "if (typeof exports == 'object' && typeof module == 'object') return mod(exports);" +
                 "if (typeof define == 'function' && define.amd) return define(['exports'], mod);" +
@@ -123,15 +128,22 @@ gulp.task('js-osweb', function(){
                 "osweb(root.osweb || (root.osweb = {}));" +
                 "})(this, function (osweb) { %= body %});"))
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest('./public_html/js'));
+        .pipe(gulp.dest(paths.build_dir));
 });
 
-gulp.task('js-deps', function() {
+gulp.task('js-osweb', ['compose-osweb'], function(){
+    return browserify(paths.build_dir + '/' + paths.dest_file)
+        .bundle()
+        .pipe(source('bundle.js'))
+        .pipe(gulp.dest(paths.dest_dir));
+});
+
+gulp.task('js-interface', function() {
     return gulp
         .src(paths.dependencies)
         .pipe(sourcemaps.init())
           //.pipe(uglify())
-            .pipe(concat('dependencies.js'))
+            .pipe(concat('interface.js'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('./public_html/js'));
 });
@@ -147,7 +159,8 @@ gulp.task('css', function() {
         .pipe(gulp.dest('public_html/css'));
 });
 
-gulp.task('js', ['js-deps','js-osweb']);
+gulp.task('js', ['js-interface','js-osweb']);
+
 gulp.task('build', ['js','css']);
 
 // Rerun the task when a file changes

@@ -13,8 +13,8 @@ and open the template in the editor.
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- JavaScript -->
-    	<script type="text/javascript" src="js/dependencies.js"></script>
-		<script type="text/javascript" src="js/osweb.js"></script>
+    	<script type="text/javascript" src="js/bundle.js"></script>
+    	<script type="text/javascript" src="js/interface.js"></script>
 
 	<!-- CSS -->
 		<link rel="stylesheet" href="css/osweb.css"/>
@@ -91,7 +91,7 @@ and open the template in the editor.
 
 <script>
 // Activate noconflict mode of jQuery as it clashes with prototype.js
-// jQuery.noConflict();
+jQuery.noConflict();
 
 // Set position of notifications
 alertify.set('notifier', 'position', 'bottom-right');

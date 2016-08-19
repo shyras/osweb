@@ -1,4 +1,4 @@
-var osweb = require("../public_html/js/osweb");
+var osweb = require("../tmp/osweb");
 var expect = require("chai").expect;
 var should = require('should');
 
