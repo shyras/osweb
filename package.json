@@ -26,8 +26,12 @@
       "url": "http://cogsci.nl/smathot"
     }
   ],
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --reporter spec"
+  },
   "dependencies": {
     "brython": "^3.2.7",
+    "createjs": "0.0.0",
     "del": "^2.0.0",
     "gulp": "^3.0.0",
     "gulp-clean-css": "^2.0.11",
@@ -35,9 +39,19 @@
     "gulp-sass": "latest",
     "gulp-sourcemaps": "^1.0.0",
     "gulp-uglify": "^1.0.0",
-    "screenfull": "^3.0.0"
+    "prototype": "0.0.5",
+    "screenfull": "^3.0.0",
+    "source-map": "^0.5.6",
+    "uglify-js": "^2.7.3"
   },
   "devDependencies": {
-    "gulp-sass": "^2.3.2"
+    "chai": "^3.5.0",
+    "createjs": "0.0.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-wrap-js": "^0.4.1",
+    "mocha": "^3.0.2",
+    "prototype": "0.0.5",
+    "random-seed": "^0.3.0",
+    "should": "^11.1.0"
   }
 }

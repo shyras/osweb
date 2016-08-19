@@ -146,7 +146,7 @@
     // Definition of class methods (dialogs).   
 
     parameters._showDialog = function(parameter) {
-        dialogtype = parameter.dataType;
+        var dialogtype = parameter.dataType;
 
         // I don't know what the dialogtypes other than 0 signify, so I only integrated
         // type 0 with alertify.js

@@ -145,7 +145,7 @@
 
             // Increase the current index.
             this._index++;
-            current_item = this._items[this._index - 1]
+            var current_item = this._items[this._index - 1]
 
             // Set the workspace.
             osweb.python_workspace['self'] = this;

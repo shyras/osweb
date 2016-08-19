@@ -13,21 +13,14 @@ and open the template in the editor.
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- JavaScript -->
-		<script src="//cdn.jsdelivr.net/alertifyjs/1.8.0/alertify.min.js"></script>
 		<script type="text/javascript" src="js/osweb.js"></script>
 
 	<!-- CSS -->
-		<!-- Bootstrap theme -->
-		<link rel="stylesheet" href="http://forum.cogsci.nl//themes/bootstrap/design/custom_cogsci.css"/>
+		<link rel="stylesheet" href="css/osweb.css"/>
 		<!-- <link rel="stylesheet" href="http://cogsci.nl/theme/css/bootstrap.min.css"/> -->
-		<!-- Alertify -->
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/alertify.min.css"/>
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/default.min.css"/>
-		<link rel="stylesheet" href="//cdn.jsdelivr.net/alertifyjs/1.8.0/css/themes/bootstrap.min.css"/>
 		<!-- Fonts-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
   		<link href='https://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono|Droid+Serif|Roboto|Roboto+Condensed|Ubuntu+Mono|Roboto+Slab' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="css/osweb.css"/>
     </head>
 
     <body>
@@ -96,6 +89,9 @@ and open the template in the editor.
 </html>
 
 <script>
+// Activate noconflict mode of jQuery as it clashes with prototype.js
+jQuery.noConflict();
+
 // Set position of notifications
 alertify.set('notifier', 'position', 'bottom-right');
 
@@ -355,11 +351,3 @@ function onFinished(pData, pSession_data){
     console.log(pSession_data);
 }        
 </script>
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script>
-// Activate noconflict mode of jQuery as it clashes with prototype.js
-jQuery.noConflict();
-</script>
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>

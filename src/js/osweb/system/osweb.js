@@ -15,7 +15,6 @@
 // Use strict mode.     
 "use strict";
 
-// Set osweb namespace.
 this.osweb = this.osweb || {};
 
 // Definition of osweb version constants. 
