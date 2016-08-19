@@ -30,7 +30,7 @@
 		this.base_element_draw();
 
 		// Create a styles object containing style information
-		styles = new osweb.Styles();
+		var styles = new osweb.Styles();
 		styles.fill = this._properties.fill;
 		styles.color = this._properties.color;
 		styles.penwidth = this._properties.penwidth;

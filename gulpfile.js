@@ -14,14 +14,12 @@ var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
 
 var paths = {
-  scripts: [
-    'src/js/modules/jquery.min.js',
-    'src/js/modules/bootsrap.min.js',
-    'src/js/modules/*.js',
+  dependencies: [
+    'src/js/dependencies/jquery.min.js',
+    'src/js/dependencies/bootsrap.min.js',
+    'src/js/dependencies/*.js',
   ],
   osweb_modules: [
-    // // CommonJS module open
-    // 'src/js/osweb/commonjs/open.js',
     // System
     'src/js/osweb/system/osweb.js',
     'src/js/osweb/system/constants.js',
@@ -101,8 +99,6 @@ var paths = {
     'src/js/osweb/system/session.js',
     'src/js/osweb/system/transfer.js',
     'src/js/osweb/system/runner.js',
-    // CommonJS module close
-    // 'src/js/osweb/commonjs/close.js'
   ],
   styles:[
     'src/scss/*.scss',
@@ -110,33 +106,32 @@ var paths = {
   ]
 };
 
-gulp.task('compile_osweb', function(){
+gulp.task('js-osweb', function(){
     // Concatenate all osweb modules and wrap them as a commonjs module if not
     // run in a browser
     return gulp
         .src(paths.osweb_modules)
-        
         .pipe(sourcemaps.init())
             .pipe(concat('osweb.js'))
               //.pipe(uglify())
             
-             // Create CommonJS module from whole osweb (takes some time)
-            // .pipe(wrapJS("(function (root, mod) {"+
-            //     "if (typeof exports == 'object' && typeof module == 'object') return mod(exports);" +
-            //     "if (typeof define == 'function' && define.amd) return define(['exports'], mod);" +
-            //     "osweb = mod.bind(root);"+
-            //     "osweb(root.osweb || (root.osweb = {}));" +
-            //     "})(this, function (osweb) { %= body %});"))
-        //.pipe(sourcemaps.write())
-        .pipe(gulp.dest('./src/js/modules'));
+            // Create CommonJS module from whole osweb (takes some time)
+            .pipe(wrapJS("(function (root, mod) {"+
+                "if (typeof exports == 'object' && typeof module == 'object') return mod(exports);" +
+                "if (typeof define == 'function' && define.amd) return define(['exports'], mod);" +
+                "osweb = mod.bind(root);"+
+                "osweb(root.osweb || (root.osweb = {}));" +
+                "})(this, function (osweb) { %= body %});"))
+        .pipe(sourcemaps.write())
+        .pipe(gulp.dest('./public_html/js'));
 });
 
-gulp.task('js', ['compile_osweb'], function() {
+gulp.task('js-deps', function() {
     return gulp
-        .src(paths.scripts)
-        //.pipe(sourcemaps.init())
+        .src(paths.dependencies)
+        .pipe(sourcemaps.init())
           //.pipe(uglify())
-        .pipe(concat('osweb.js'))
+            .pipe(concat('dependencies.js'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('./public_html/js'));
 });
@@ -152,9 +147,13 @@ gulp.task('css', function() {
         .pipe(gulp.dest('public_html/css'));
 });
 
+gulp.task('js', ['js-deps','js-osweb']);
+gulp.task('build', ['js','css']);
+
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-    gulp.watch(paths.osweb_modules, ['js']);
+    gulp.watch(paths.osweb_modules, ['js-osweb']);
+    gulp.watch(paths.dependencies, ['js-deps'])
     gulp.watch(paths.styles, ['css']);
 });
 

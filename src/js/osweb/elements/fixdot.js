@@ -27,7 +27,7 @@
 		this.base_element_draw();
 
 		// Create a styles object containing style information
-		styles = new osweb.Styles();
+		var styles = new osweb.Styles();
 		styles.color = this._properties.color;
 
 		// Draw the fixdot element to the canvas of the sketchpad.

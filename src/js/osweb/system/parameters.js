@@ -40,6 +40,8 @@
             // Process the Parameter.
             if (this.useDefaultValues == false) {
                 this._processParameter(this._parameters[this._itemCounter]);
+            
+            ////////// Is this condition below ever true?? -Daniel
             } else {
                 // Transfer the startup info to the context.
                 this._transferParameters();

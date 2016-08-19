@@ -15,7 +15,8 @@
 // Use strict mode.     
 "use strict";
 
-this.osweb = this.osweb || {};
+// Not required when encapsulated in CommonJS module code (see gulpfile.js)
+//this.osweb = this.osweb || {};
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME = 'osweb';

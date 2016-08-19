@@ -1,11 +1,10 @@
-var osweb = require("../src/js/modules/osweb");
+var osweb = require("../public_html/js/osweb");
 var expect = require("chai").expect;
 var should = require('should');
 
 describe('osweb.syntax', function(){
 	it("parse_cmd: Check whether OpenSesame syntax is correctly parsed", function(){
 		function checkCmd( s, cmd, arglist, kwdict ){
-			console.log('Checking: %s' % s);
 			// parse command into arguments
 			[_cmd, _arglist, _kwdict] = osweb.syntax.parse_cmd(s)
 			expect(cmd).to.equal(_cmd);

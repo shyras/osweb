@@ -78,7 +78,7 @@
             }
 
             // Call the original target function
-            res = target_func.apply(this, arguments);
+            var res = target_func.apply(this, arguments);
             //console.log(res);
 
             // Reset original styles if they were changed.
@@ -352,9 +352,9 @@
             if(this.styles.font_family.indexOf(" ") != -1){
                 // Encapsulate in quotes if font name contains spaces (e.g.
                 // "Times New Roman")
-                font_str = "'" + this.styles.font_family + "'";
+                var font_str = "'" + this.styles.font_family + "'";
             }else{
-                font_str = this.styles.font_family;
+                var font_str = this.styles.font_family;
             }
             container.style.fontFamily = this.styles.font_family + ', Verdana, sans-serif';
         }
@@ -435,8 +435,8 @@
     p.fixdot = p._configurable(function(x, y, style) {
         // Check the color and style arguments.      
         style = (typeof style === 'undefined') ? 'default' : style;
-        color = this.styles.color;
-        bgcolor = this.styles.background_color;
+        var color = this.styles.color;
+        var bgcolor = this.styles.background_color;
 
         if (typeof x === 'undefined') {
             if (this.uniform_coordinates === true) {
@@ -523,6 +523,7 @@
                 var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
                 var ux = r * Math.cos(t);
                 var uy = r * Math.sin(t);
+                var f;
 
                 // Get the amplitude without the envelope (0 .. 1).
                 var amp = 0.5 + 0.5 * Math.cos(2.0 * Math.PI * (ux * freq + phase));
@@ -819,9 +820,9 @@
             // Create a div container to hold the html contents.
             var container = this._create_div_for_text(text, center);
             // Calculate the text size of the text to render.
-            container_size = this.text_size(container);
-            container_width = container_size[0];
-            container_height = container_size[1];
+            var container_size = this.text_size(container);
+            var container_width = container_size[0];
+            var container_height = container_size[1];
 
             // Serialize the div container to a HTML string.
             if (typeof container.documentElement !== 'undefined') {
@@ -865,8 +866,8 @@
             text_element.lineHeight = 32;
             text_element.textAlign = "center";
 
-            width = text_element.getMeasuredWidth();
-            height = text_element.getMeasuredHeight()
+            var width = text_element.getMeasuredWidth();
+            var height = text_element.getMeasuredHeight()
         
             if (center === "1") {
                 text_element.x = x;
@@ -901,7 +902,7 @@
             // its dimensions, and remove it from the DOM again. It's best of 
             // course if the div is not visible during this, so we
             // temporarily set 'visibility' to 'hidden' here.
-            
+            var container;
             if(typeof(text) == "string"){
                 // Convert the html string to a div object
                 container = this._create_div_for_text(text);
@@ -914,8 +915,8 @@
             container.style.position = "absolute";
 
             document.body.appendChild(container);
-            container_width = container.clientWidth + 1;
-            container_height = container.clientHeight + 1;
+            var container_width = container.clientWidth + 1;
+            var container_height = container.clientHeight + 1;
             container.parentNode.removeChild(container);
 
             container.style.visibility = "visible";
