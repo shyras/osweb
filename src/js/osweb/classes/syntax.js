@@ -81,11 +81,12 @@
      };
 
      syntax.parse_cmd = function(pString) {
-         // split the astring.
-         var tokens = this.split(pString);
-         tokens.shift();
-         tokens.shift();
-         return tokens;
+        console.log("parse_cmd invoked: " + pString);
+        // split the astring.
+        var tokens = this.split(pString);
+        tokens.shift();
+        tokens.shift();
+        return tokens;
      };
 
      syntax.sanitize = function(pString, pStrict, pAllowVars) {

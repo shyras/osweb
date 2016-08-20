@@ -20,7 +20,7 @@
             // Set the sound object.  
             this._instance = src.data;
             // Set the event anchor for
-            this._stopEvent = this._instance.on("ended", osweb.events._audioEnded.bind(this));
+            this._instance.onEnded = osweb.events._audioEnded.bind(this);
         }
     };
 

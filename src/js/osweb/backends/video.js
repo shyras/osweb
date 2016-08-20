@@ -15,8 +15,8 @@
             this._video = src.data;
 
             // Set the event anchors.
-            this._video.on("ended", osweb.events._videoEnded.bind(this));
-            this._video.on("play", osweb.events._videoPlay.bind(this));
+            this._video.onEnded = osweb.events._videoEnded.bind(this);
+            this._video.onPlay = osweb.events._videoPlay.bind(this);
         }
     };
 
