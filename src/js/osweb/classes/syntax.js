@@ -81,7 +81,6 @@
      };
 
      syntax.parse_cmd = function(pString) {
-        console.log("parse_cmd invoked: " + pString);
         // split the astring.
         var tokens = this.split(pString);
         tokens.shift();
