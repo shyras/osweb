@@ -2,7 +2,7 @@
  * Definition of the class synth.
  */
 
-(function() {
+module.exports = function(osweb){
     function synth(pExperiment, pName, pScript) {
         // Inherited.
         this.sampler_constructor(pExperiment, pName, pScript);
@@ -19,5 +19,5 @@
      */
 
     // Bind the synth class to the osweb namespace.
-    osweb.synth = osweb.promoteClass(synth, "sampler");
-}());
+    return osweb.promoteClass(synth, "sampler");
+}

@@ -1,8 +1,7 @@
 /*
- * Definition of the class generic_response.
- */
-
-(function() {
+* Definition of the class generic_response.
+*/
+module.exports = function(osweb){
     function generic_response(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);
@@ -163,7 +162,7 @@
                     this.experiment.vars.correct = 'undefined';
                     /* if self.experiment.response in (correct_response, safe_decode(correct_response)):
                     	self.experiment.var.correct = 1
-			self.experiment.var.total_correct += 1
+    		self.experiment.var.total_correct += 1
                     else:
                     	self.experiment.var.correct = 0 */
                 }
@@ -256,7 +255,5 @@
             this.process_response_mouseclick(pResponse);
         }
     };
-
-    // Bind the generic_response class to the osweb namespace.
-    osweb.generic_response = osweb.promoteClass(generic_response, "item");
-}());
+    return osweb.promoteClass(generic_response, "item");
+}

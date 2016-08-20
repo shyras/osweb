@@ -2,7 +2,7 @@
  * Definition of the class sampler.
  */
 
-(function() {
+module.exports = function(osweb){
     function sampler(pExperiment, pName, pScript) {
         // Inherited.
         this.generic_response_constructor(pExperiment, pName, pScript);
@@ -67,5 +67,5 @@
     };
 
     // Bind the sampler class to the osweb namespace.
-    osweb.sampler = osweb.promoteClass(sampler, "generic_response");
-}());
+    return osweb.promoteClass(sampler, "generic_response");
+}

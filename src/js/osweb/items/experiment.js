@@ -1,8 +1,7 @@
 /*
- * Definition of the class experiment.
- */
-
-(function() {
+* Definition of the class experiment.
+*/
+module.exports = function(osweb){
 	function experiment(pExperiment, pName, pScript, pPool_folder, pExperiment_path, pFullscreen, pAuto_response, pLogfile, pSubject_nr, pWorkspace, pResources, pHeartbeat_interval) {
 		// Set the items property for this experiment.
 		osweb.item_store._experiment = this;
@@ -220,11 +219,11 @@
 		/* import random
 	random.seed()
 	try:
-            # Don't assume that numpy is available
-            import numpy
-            numpy.random.seed()
-            except:
-            pass */
+	        # Don't assume that numpy is available
+	        import numpy
+	        numpy.random.seed()
+	        except:
+	        pass */
 	};
 
 	p.init_sound = function() {
@@ -305,5 +304,5 @@
 	};
 
 	// Bind the experiment class to the osweb namespace.
-	osweb.experiment = osweb.promoteClass(experiment, "item");
-}());
+	return osweb.promoteClass(experiment, "item");
+}

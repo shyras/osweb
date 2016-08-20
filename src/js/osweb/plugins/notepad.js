@@ -2,7 +2,7 @@
  * Definition of the class notepad.
  */
 
-(function() {
+module.exports = function(osweb){
     function notepad(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -39,5 +39,5 @@
     };
 
     // Bind the notepad class to the osweb namespace.
-    osweb.notepad = osweb.promoteClass(notepad, "item");
-}());
+    return osweb.promoteClass(notepad, "item");
+};

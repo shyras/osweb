@@ -1,4 +1,5 @@
-(function() {
+
+module.exports = function(osweb){
     // Class events - processing all user and system evens within osweb.
     function events() {
         throw 'The class events cannot be instantiated!';
@@ -306,5 +307,5 @@
     };
 
     // Bind the events class to the osweb namespace.
-    osweb.events = events;
-}());
+    return events;
+}

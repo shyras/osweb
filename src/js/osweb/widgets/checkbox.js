@@ -2,7 +2,7 @@
  * Definition of the class checkbox.
  */
 
-(function() {
+module.exports = function(osweb){
     function checkbox(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);
@@ -61,5 +61,5 @@
     };
 
     // Bind the checkbox class to the osweb namespace.
-    osweb.checkbox = osweb.promoteClass(checkbox, "widget");
-}());
+    return osweb.promoteClass(checkbox, "widget");
+}

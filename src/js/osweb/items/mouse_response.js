@@ -2,7 +2,7 @@
  * Definition of the class mouse_response.
  */
 
-(function() {
+module.exports = function(osweb){
     function mouse_response(pExperiment, pName, pScript) {
         // Inherited create.
         this.generic_response_constructor(pExperiment, pName, pScript);
@@ -84,5 +84,5 @@
     };
 
     // Bind the mouse_response class to the osweb namespace.
-    osweb.mouse_response = osweb.promoteClass(mouse_response, "generic_response");
-}());
+    return osweb.promoteClass(mouse_response, "generic_response");
+}

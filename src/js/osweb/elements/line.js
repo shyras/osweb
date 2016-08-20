@@ -2,7 +2,7 @@
  * Definition of the class line.
  */
 
-(function() {
+module.exports = function(osweb){
 	function line(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -39,5 +39,5 @@
 	};
 
 	// Bind the line class to the osweb namespace.
-	osweb.line = osweb.promoteClass(line, "base_element");
-}());
+	return osweb.promoteClass(line, "base_element");
+}

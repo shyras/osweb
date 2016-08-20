@@ -2,7 +2,7 @@
  * Definition of the class circle.
  */
 
-(function() {
+module.exports = function(osweb){
 	function circle(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -40,5 +40,5 @@
 	};
 
 	// Bind the Circle class to the osweb namespace.
-	osweb.circle = osweb.promoteClass(circle, "base_element");
-}());
+	return osweb.promoteClass(circle, "base_element");
+}

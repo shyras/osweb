@@ -2,7 +2,7 @@
  * Definition of the class form_base.
  */
 
-(function() {
+module.exports = function(osweb){
     function form_base(pName, pExperiment, pScript, pItem_type, pDescription) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -173,5 +173,5 @@
     };
 
     // Bind the form_base class to the osweb namespace.
-    osweb.form_base = osweb.promoteClass(form_base, "item");
-}());
+    return osweb.promoteClass(form_base, "item");
+}

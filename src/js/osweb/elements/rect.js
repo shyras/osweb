@@ -2,7 +2,7 @@
  * Definition of the class rect.
  */
 
-(function() {
+module.exports = function(osweb){
 	function rect(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -41,5 +41,5 @@
 	};
 
 	// Bind the Rect class to the osweb namespace.
-	osweb.rect = osweb.promoteClass(rect, "base_element");
-}());
+	return osweb.promoteClass(rect, "base_element");
+}

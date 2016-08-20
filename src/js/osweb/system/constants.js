@@ -1,5 +1,6 @@
 // Export the contants class
-module.exports = constants = {}
+var constants = {}
+module.exports = constants;
 
 // Definition of error constants. 
 constants.ERROR_001 = 'osweb has stopped running due to a fatal error.';

@@ -2,7 +2,7 @@
  * Definition of the class touch_response.
  */
 
-(function() {
+module.exports = function(osweb){
     function touch_response(pExperiment, pName, pScript) {
         // Inherited.
         this.mouse_response_constructor(pExperiment, pName, pScript);
@@ -70,5 +70,5 @@
     };
 
     // Bind the touch_response class to the osweb namespace.
-    osweb.touch_response = osweb.promoteClass(touch_response, "mouse_response");
-}());
+    return osweb.promoteClass(touch_response, "mouse_response");
+}

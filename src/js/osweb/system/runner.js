@@ -1,5 +1,5 @@
-(function() {
-    // Definition of the class runner - core module to run an Osexp experiment.
+// Definition of the class runner - core module to run an Osexp experiment.
+module.exports = function(osweb){
     function runner() {
         throw 'The class runner cannot be instantiated!';
     };
@@ -11,13 +11,13 @@
     runner._source = null; // Link to the source experiment file. 
     runner._stage = null; // Link to the stage object (EASELJS).
     runner._target = null; // Link to the target location for thr data. 
-    
+
     // Definition of public properties.
     runner.data = null; // Container for the result data.
     runner.debug = false; // Debug toggle.
     runner.experiment = null; // The root experiment object to run.           
     runner.status = osweb.constants.RUNNER_NONE; // Status of the runner.
-    
+
     // Definition of private methods - setup runner.      
 
     runner._setupContent = function(content) {
@@ -154,5 +154,5 @@
     };
 
     // Bind the runner class to the osweb namespace.
-    osweb.runner = runner;
-}());
+    return runner;
+}

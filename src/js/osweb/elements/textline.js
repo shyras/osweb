@@ -2,7 +2,7 @@
  * Definition of the class textline.
  */
 
-(function() {
+module.exports = function(osweb){
     function textline(pSketchpad, pScript) {
         // Set the default properties.
         this.defaults = {};
@@ -50,5 +50,5 @@
     };
 
     // Bind the Text class to the osweb namespace.
-    osweb.textline = osweb.promoteClass(textline, "base_element");
-}());
+    return osweb.promoteClass(textline, "base_element");
+}

@@ -2,7 +2,7 @@
  * Definition of the class ellipse.
  */
 
-(function() {
+module.exports = function(osweb){
 	function ellipse(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -42,5 +42,5 @@
 	};
 
 	// Bind the ellipse class to the osweb namespace.
-	osweb.ellipse = osweb.promoteClass(ellipse, "base_element");
-}());
+	return osweb.promoteClass(ellipse, "base_element");
+}

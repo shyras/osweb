@@ -2,7 +2,7 @@
  * Definition of the class form_multiple_choice.
  */
 
-(function() {
+module.exports = function(osweb){
     function form_multiple_choice(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -15,5 +15,5 @@
     p.description = 'A simple multiple choice item';
 
     // Bind the form_base class to the osweb namespace.
-    osweb.form_multiple_choice = osweb.promoteClass(form_multiple_choice, "item");
-}());
+    return osweb.promoteClass(form_multiple_choice, "item");
+}

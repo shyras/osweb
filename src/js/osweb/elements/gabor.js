@@ -2,7 +2,7 @@
  * Definition of the class gabor.
  */
 
-(function() {
+module.exports = function(osweb){
 	function gabor(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -41,5 +41,5 @@
 	};
 
 	// Bind the gabor class to the osweb namespace.
-	osweb.gabor = osweb.promoteClass(gabor, "base_element");
-}());
+	return osweb.promoteClass(gabor, "base_element");
+}

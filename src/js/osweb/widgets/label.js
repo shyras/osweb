@@ -2,7 +2,7 @@
  * Definition of the class label.
  */
 
-(function() {
+module.exports = function(osweb){
     function label(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);
@@ -62,5 +62,5 @@
     };
 
     // Bind the label class to the osweb namespace.
-    osweb.label = osweb.promoteClass(label, "widget");
-}());
+    return osweb.promoteClass(label, "widget");
+}

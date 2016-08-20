@@ -2,7 +2,7 @@
  * Definition of the class media_player_vlc.
  */
 
-(function() {
+module.exports = function(osweb){
     function media_player_vlc(pExperiment, pName, pScript) {
         // Inherited.
         this.generic_response_constructor(pExperiment, pName, pScript);
@@ -82,5 +82,5 @@
     };
 
     // Bind the media_player_vlc class to the osweb namespace.
-    osweb.media_player_vlc = osweb.promoteClass(media_player_vlc, "generic_response");
-}());
+    return osweb.promoteClass(media_player_vlc, "generic_response");
+}

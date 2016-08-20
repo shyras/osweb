@@ -2,7 +2,7 @@
  * Definition of the class arrow.
  */
 
-(function() {
+module.exports = function(osweb){
 	function arrow(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -46,5 +46,5 @@
 	};
 
 	// Bind the Arrow class to the osweb namespace.
-	osweb.arrow = osweb.promoteClass(arrow, "base_element");
-}());
+	return osweb.promoteClass(arrow, "base_element");
+}

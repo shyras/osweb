@@ -2,7 +2,7 @@
  * Definition of the class sketchpad.
  */
 
-(function() {
+module.exports = function(osweb){
     function sketchpad(pExperiment, pName, pScript) {
         // Set publice properties.
         this.canvas = new osweb.canvas(pExperiment, false);
@@ -117,5 +117,5 @@
     };
 
     // Bind the sketchpad class to the osweb namespace.
-    osweb.sketchpad = osweb.promoteClass(sketchpad, "generic_response");
-}());
+    return osweb.promoteClass(sketchpad, "generic_response");
+}

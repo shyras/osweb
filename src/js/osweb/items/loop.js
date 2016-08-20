@@ -2,7 +2,7 @@
  * Definition of the class loop.
  */
 
-(function() {
+module.exports = function(osweb){
     function loop(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);
@@ -250,5 +250,5 @@
     };
 
     // Bind the loop class to the osweb namespace.
-    osweb.loop = osweb.promoteClass(loop, "item");
-}());
+    return osweb.promoteClass(loop, "item");
+}

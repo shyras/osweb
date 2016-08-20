@@ -2,7 +2,7 @@
  * Definition of the class button.
  */
 
-(function() {
+module.exports = function(osweb){
     function button(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);
@@ -79,5 +79,5 @@
     };
 
     // Bind the button class to the osweb namespace.
-    osweb.button = osweb.promoteClass(button, "widget");
-}());
+    return osweb.promoteClass(button, "widget");
+}

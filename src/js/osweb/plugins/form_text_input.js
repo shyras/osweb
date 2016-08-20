@@ -2,7 +2,7 @@
  * Definition of the class form_text_input.
  */
 
-(function() {
+module.exports = function(osweb){
     function form_text_input(pExperiment, pName, pScript) {
         // Inherited.
         this.form_base_constructor(pExperiment, pName, pScript);
@@ -15,5 +15,5 @@
     p.description = 'A simple text input form';
 
     // Bind the form_base class to the osweb namespace.
-    osweb.form_text_input = osweb.promoteClass(form_text_input, "form_base");
-}());
+    return osweb.promoteClass(form_text_input, "form_base");
+}

@@ -2,7 +2,7 @@
  * Definition of the class sequence.
  */
 
-(function() {
+module.exports = function(osweb){
     function sequence(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);
@@ -175,5 +175,5 @@
     };
 
     // Bind the sequence class to the osweb namespace.
-    osweb.sequence = osweb.promoteClass(sequence, "item");
-}());
+    return osweb.promoteClass(sequence, "item");
+}

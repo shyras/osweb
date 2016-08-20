@@ -2,7 +2,7 @@
  * Definition of the class inline_script.
  */
 
-(function() {
+module.exports = function(osweb){
     function inline_script(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -172,5 +172,5 @@
     };
 
     // Bind the Sequence class to the osweb namespace.
-    osweb.inline_script = osweb.promoteClass(inline_script, "item");
-}());
+    return osweb.promoteClass(inline_script, "item");
+}
