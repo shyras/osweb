@@ -30,8 +30,8 @@ if(typeof(window) == "undefined"){
 // If not running in node.js, bind osweb and alertify to global namespace
 if(isNode == false){
     // Make osweb globally available
-    osweb = window.osweb || {};
-    window.osweb = osweb;
+    // osweb = window.osweb || {};
+    // window.osweb = osweb;
     var alertify = require('alertifyjs');
     window.alertify = window.alertify || alertify;    
 }
