@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class functions.
 function functions() {
     throw 'The class functions cannot be instantiated!';

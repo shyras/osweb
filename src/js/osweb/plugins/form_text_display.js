@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function form_text_display(pExperiment, pName, pScript) {
         // Inherited.
         this.form_base_constructor(pName, pExperiment, pScript, 'form_text_display', 'A simple text display form');

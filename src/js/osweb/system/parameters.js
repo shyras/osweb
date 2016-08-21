@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class Parameters.
 function parameters() {
     throw 'The class parameters cannot be instantiated!';

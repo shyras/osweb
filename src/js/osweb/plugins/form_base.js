@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function form_base(pName, pExperiment, pScript, pItem_type, pDescription) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);

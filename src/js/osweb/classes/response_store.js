@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class response_store.
 function response_store(experiment) {
     // Definition of private properties.

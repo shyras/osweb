@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function checkbox(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);

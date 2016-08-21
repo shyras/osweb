@@ -1,7 +1,7 @@
 /*
 * Definition of the class widget.
 */
-
+"use strict";
 function widget(pForm) {
     // Set the class public properties.
     this.focus = false;

@@ -1,6 +1,7 @@
 /*
 * Definition of the class form.
 */
+"use strict";
 
 function form(pExperiment, pCols, pRows, pSpacing, pMargins, pTheme, pItem, pTimeout, pClicks) {
     // Set the class public properties.

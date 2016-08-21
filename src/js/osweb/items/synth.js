@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function synth(pExperiment, pName, pScript) {
         // Inherited.
         this.sampler_constructor(pExperiment, pName, pScript);

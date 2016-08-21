@@ -1,3 +1,4 @@
+"use strict";
 /*
 * Definition of the class prng.
 */

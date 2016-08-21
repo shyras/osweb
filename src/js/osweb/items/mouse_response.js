@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function mouse_response(pExperiment, pName, pScript) {
         // Inherited create.
         this.generic_response_constructor(pExperiment, pName, pScript);

@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function feedback(pExperiment, pName, pScript) {
         // Inherited create.
         this.sketchpad_constructor(pExperiment, pName, pScript);

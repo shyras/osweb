@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class python_workspace.
 function python_workspace_api() {
     throw 'The class python_workspace_api cannot be instantiated!';

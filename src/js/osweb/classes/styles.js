@@ -1,3 +1,4 @@
+"use strict";
 /** Definition of the class Style.
 
 Style is a simple class that holds information about the style with which

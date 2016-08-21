@@ -2,6 +2,7 @@
 * Definition of the class experiment.
 */
 module.exports = function(osweb){
+	"use strict";
 	function experiment(pExperiment, pName, pScript, pPool_folder, pExperiment_path, pFullscreen, pAuto_response, pLogfile, pSubject_nr, pWorkspace, pResources, pHeartbeat_interval) {
 		// Set the items property for this experiment.
 		osweb.item_store._experiment = this;

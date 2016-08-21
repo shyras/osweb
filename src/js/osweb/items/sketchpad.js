@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function sketchpad(pExperiment, pName, pScript) {
         // Set publice properties.
         this.canvas = new osweb.canvas(pExperiment, false);

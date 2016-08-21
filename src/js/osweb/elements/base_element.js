@@ -1,6 +1,7 @@
 /*
  * Definition of the class base_element.
  */
+"use strict";
 
 function base_element(pSketchpad, pScript, pDefaults) {
     // Set the public properties.		

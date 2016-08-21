@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class mouse.
 function mouse(experiment, timeout, buttonlist, visible) {
     // Set the class public properties. 

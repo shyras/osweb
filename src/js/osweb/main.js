@@ -15,6 +15,10 @@
 // Use strict mode.     
 "use strict";
 
+// Load prototype
+// var prototype = require('prototype');
+// Object.extend(global, prototype);
+
 // Check if we are running in a Node Js environment. If so, eliminate all
 // items that call to document or window
 var node_mode = false;
@@ -174,8 +178,8 @@ osweb.textline = require('./elements/textline.js')(osweb);
 osweb.form = require('./widgets/form.js');
 osweb.widget = require('./widgets/widget.js');
 osweb.button = require('./widgets/button.js')(osweb);
-osweb.constants = require('./widgets/checkbox.js')(osweb);
-osweb.checkbox = require('./widgets/label.js')(osweb);
+osweb.checkbox = require('./widgets/checkbox.js')(osweb);
+osweb.label = require('./widgets/label.js')(osweb);
 // Remaining system module
 osweb.events = require('./system/events.js')(osweb);
 osweb.functions = require('./system/functions.js'); 

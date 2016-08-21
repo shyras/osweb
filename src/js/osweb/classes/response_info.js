@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class response_info.
 function response_info(response_store, response, correct, response_time, item, feedback) {};
 

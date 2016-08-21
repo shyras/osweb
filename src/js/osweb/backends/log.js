@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class log.
 function log(experiment, path) {
     // Set the class private properties. 

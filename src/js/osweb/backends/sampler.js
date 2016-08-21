@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class sampler.
 function sampler(experiment, src, volume, pitch, pan, duration, fade, block) {
     // Set the class public properties. 

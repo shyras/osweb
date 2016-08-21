@@ -1,5 +1,6 @@
 
 module.exports = function(osweb){
+    "use strict";
     // Class events - processing all user and system evens within osweb.
     function events() {
         throw 'The class events cannot be instantiated!';

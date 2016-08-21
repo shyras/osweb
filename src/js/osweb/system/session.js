@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class session - store user session information. 
 function session() {
     throw 'The class session cannot be instantiated!';

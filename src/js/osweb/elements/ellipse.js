@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+	"use strict";
 	function ellipse(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};

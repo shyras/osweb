@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function label(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);

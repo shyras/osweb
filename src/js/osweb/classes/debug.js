@@ -1,3 +1,4 @@
+"use strict";
 function debug() {
     throw 'The class debug cannot be instantiated!';
 }

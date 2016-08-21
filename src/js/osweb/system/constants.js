@@ -1,3 +1,4 @@
+"use strict";
 // Export the contants class
 var constants = {}
 module.exports = constants;

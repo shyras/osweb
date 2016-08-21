@@ -1,4 +1,4 @@
-
+"use strict";
 // Definition of the class canvas.
 function canvas(experiment, auto_prepare) {
     // set the class public properties.
@@ -296,7 +296,6 @@ p._match_env = function(env) {
  * @return {boolean}     True if HTML markup was found, false if not.
  */
 p._containsHTML = function(str){
-    console.log("Calling");
     var doc = new DOMParser().parseFromString(str, "text/html");
     return [].slice.call(doc.body.childNodes).some(
         function(node){ return node.nodeType === 1} );

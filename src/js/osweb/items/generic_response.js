@@ -2,6 +2,7 @@
 * Definition of the class generic_response.
 */
 module.exports = function(osweb){
+    "use strict";
     function generic_response(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);

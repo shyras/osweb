@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class keyboard.
 function keyboard(experiment, timeout, keylist) {
     // Set the public properties. 

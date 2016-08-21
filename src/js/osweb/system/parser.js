@@ -1,4 +1,4 @@
-
+"use strict";
 // Definition of the class session.
 function parser() {
     throw 'The class parser cannot be instantiated!';

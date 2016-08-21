@@ -1,6 +1,7 @@
 /*
 * Definition of the class item.
 */
+"use strict";
 
 function item(pExperiment, pName, pScript) {
     // Set the class private properties.

@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+	"use strict";
 	function image(pSketchpad, pScript) {
 		// Set the class public properties.
 		this.defaults = {};

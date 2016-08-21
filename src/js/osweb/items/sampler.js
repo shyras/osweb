@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function sampler(pExperiment, pName, pScript) {
         // Inherited.
         this.generic_response_constructor(pExperiment, pName, pScript);

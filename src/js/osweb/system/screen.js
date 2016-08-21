@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class screen - startup screen.
 function screen() {
     throw 'The class screen cannot be instantiated!';

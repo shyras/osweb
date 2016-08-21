@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class video.
 function video(experiment, src) {
     // Set the class public properties. 

@@ -1,5 +1,6 @@
 // Definition of the class runner - core module to run an Osexp experiment.
 module.exports = function(osweb){
+    "use strict";
     function runner() {
         throw 'The class runner cannot be instantiated!';
     };

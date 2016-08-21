@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function touch_response(pExperiment, pName, pScript) {
         // Inherited.
         this.mouse_response_constructor(pExperiment, pName, pScript);

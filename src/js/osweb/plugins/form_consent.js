@@ -3,6 +3,7 @@
  */
 
 module.exports = function(osweb){
+    "use strict";
     function form_consent(pExperiment, pName, pScript) {
         // Inherited.
         this.form_base_constructor(pName, pExperiment, pScript, 'form_consent', 'A simple consent form');

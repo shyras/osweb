@@ -1,3 +1,4 @@
+"use strict";
 // Definition of the class transfer - tranfer information from/to file/server.
 function transfer() {
     throw 'The class transfer cannot be instantiated!';
