@@ -16,6 +16,7 @@
 "use strict";
 
 // Load prototype
+// Do we still need prototype?
 // var prototype = require('prototype');
 // Object.extend(global, prototype);
 

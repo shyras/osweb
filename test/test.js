@@ -11,12 +11,12 @@ if(node_mode){
 }
 
 describe('syntax', function(){
-	var checkCmd = function( s, cmd, arglist, kwdict ){
+	var checkCmd = function(s, cmd, arglist, kwdict ){
 		// parse command into arguments
-		result = osweb.syntax.parse_cmd(s);
-		expect(cmd).to.equal(_cmd);
-		expect(arglist).to.deep.equal(_arglist);
-		expect(kwdict).to.deep.equal(_kwdict);
+		[_cmd, _arglist, _kwdict] = osweb.syntax.parse_cmd(s);
+		expect(_cmd).to.equal(cmd);
+		expect(_arglist).to.deep.equal(arglist);
+		expect(_kwdict).to.deep.equal(kwdict);
 		// translate arguments back to command
 		expect(s).to.equal(osweb.syntax.create_cmd(_cmd, _arglist, _kwdict));
 	}
@@ -62,6 +62,9 @@ describe('canvas', function(){
 		});
 		it("should recognize a string without html markup", function(){
 			expect(osweb.canvas.prototype._containsHTML("Hey")).to.be.false;
+		});
+		it("should not mistake everything between < and > for html", function(){
+			expect(osweb.canvas.prototype._containsHTML("a < b && b > c")).to.be.false;
 		});
 	}
 });
