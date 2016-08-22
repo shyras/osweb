@@ -129,11 +129,12 @@ gulp.task('build', ['js','css']);
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-    gulp.watch(config.js.dependencies, ['js-deps'])
+    gulp.watch(config.js.dependencies, ['js-interface'])
     gulp.watch(config.css.styles, ['css']);
+    gulp.watch("public_html/*.html").on('change', browserSync.reload);
     build_osweb(true);
     // Start webserver
     browserSync.init(config.browserSync);
 });
 
-gulp.task('default', ['css','js','watch']);
+gulp.task('default', ['css','js-interface','watch']);
