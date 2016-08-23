@@ -343,7 +343,7 @@ p._create_div_for_text = function(text, center){
     container.style.maxWidth = this._width;
     container.style.maxHeight = this._height;
     // // If center variable == 1, center the text too.
-    if(center == "1"){
+    if(center == 1){
         container.style.textAlign = "center";
     }
     // Set the correct font
@@ -849,7 +849,7 @@ p.text = p._configurable(function(text, center, x, y, html) {
         var text_element = new createjs.Bitmap(img);
         this._container.addChild(text_element);
         // Calculate the coordinates to position the element at.
-        if (center === "1") {
+        if (center === 1) {
             text_element.x = x - container_width/2;
             text_element.y = y - container_height/2;
         } else {
@@ -869,7 +869,7 @@ p.text = p._configurable(function(text, center, x, y, html) {
         var width = text_element.getMeasuredWidth();
         var height = text_element.getMeasuredHeight()
     
-        if (center === "1") {
+        if (center === 1) {
             text_element.x = x;
             text_element.y = y - height/2;
         } else {

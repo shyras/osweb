@@ -13,7 +13,7 @@ if(node_mode){
 describe('syntax', function(){
 	var checkCmd = function(s, cmd, arglist, kwdict ){
 		// parse command into arguments
-		[_cmd, _arglist, _kwdict] = osweb.syntax.parse_cmd2(s);
+		[_cmd, _arglist, _kwdict] = osweb.syntax.parse_cmd(s);
 		expect(_cmd).to.equal(cmd);
 		expect(_arglist).to.deep.equal(arglist);
 		expect(_kwdict).to.deep.equal(kwdict);
@@ -31,17 +31,22 @@ describe('syntax', function(){
 		checkCmd('test', 'test', [], {});
 	});
 
-	it("should parse a set variable command", function(){
+	it("should parse command with escaped backslashes", function(){
 		checkCmd('set test "c:\\\\" x="d:\\\\"',
 			'set', ['test', 'c:\\'], {'x' : 'd:\\'});
 	});
 
-	it("should be able to handle quotes", function(){
+	it("should be able to handle spaces in quoted string variable values", function(){
+		checkCmd('draw fixdot color="#ff000b" show_if="[correct] = 0" x=0 y=0',
+			'draw', ['fixdot'], {color: "#ff000b", show_if: "[correct] = 0", x:0, y:0});
+	});
+
+	it("should be able to handle escaped backslashes", function(){
 		checkCmd('test "\\"quoted\\""',
 			'test', ['\"quoted\"'], {});
 	});
 
-	it("should be able to handle quotes in keyword arguments", function(){
+	it("should be able to handle escaped backslashes in keyword arguments", function(){
 		checkCmd('test test="\\"quoted\\""', 'test', [],
 			{'test' : '\"quoted\"'});
 	});

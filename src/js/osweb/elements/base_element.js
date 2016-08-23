@@ -40,21 +40,15 @@ p.vars = null;
  * Definition of public methods - building cycle.         
  */
 
+/**
+ * Parses the OpenSesame script string representing this item. Data are stored
+ * in the properties variable of this object.
+ * @param  {string} pString The OpenSesame string
+ * @return {void}
+ */
 p.from_string = function(pString) {
-    var tokens = osweb.syntax.parse_cmd(pString);
-
-    // Set the default properties.
-    this.properties = {};
-
-    // Set the define properties.
-    for (var i = 0; i < tokens.length; i++) {
-        var name = tokens[i].slice(0, tokens[i].indexOf('='));
-        var value = tokens[i].slice(tokens[i].indexOf('=') + 1, tokens[i].length);
-        var value = osweb.syntax.remove_quotes(value);
-
-        // Set (and overwrite) the properties.
-        this.properties[name] = value;
-    }
+    var cmd, args;
+    [cmd, args, this.properties] = osweb.syntax.parse_cmd(pString);
 };
 
 /*
@@ -96,7 +90,6 @@ p.eval_properties = function() {
 p.is_shown = function() {
     // Set the self of the current workspace.
     this.experiment.python_workspace['self'] = this.sketchpad;
-
     // Determines whether the element should be shown, based on the show-if statement.
     return this.experiment.python_workspace._eval(this.experiment.syntax.compile_cond(this.properties['show_if']));
 };

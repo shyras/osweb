@@ -96,8 +96,7 @@ p.from_string = function(pString) {
     if (pString != null) {
         var lines = pString.split('\n');
         for (var i = 0; i < lines.length; i++) {
-            if ((lines[i] != '') && (this.parse_variable(lines[i]) == false)) {
-
+            if ((lines[i] != '') && (this.parse_variable(lines[i]) == false)){
                 this.parse_line(lines[i]);
             }
         }
@@ -133,19 +132,15 @@ p.parse_variable = function(pLine) {
     if (this.parse_comment(pLine)) {
         return true;
     } else {
-        var tokens = osweb.syntax.split(pLine);
-        if ((tokens != null) && (tokens.length > 0) && (tokens[0] == 'set')) {
-            if (tokens.length != 3) {
+        var cmd, args, kwargs;
+        // Split the single line into a set of tokens.
+        [cmd, args, kwargs] = osweb.syntax.parse_cmd(pLine);
+        if (cmd == "set"){
+            if (args.length != 2) {
                 osweb.debug.addError('Error parsing variable definition: ' + pLine);
+                alertify.errorAlert('Error parsing variable definition: ' + pLine);
             } else {
-                // Rettrieve the value of the variable, remove additional quotes.
-                var value = osweb.syntax.remove_quotes(tokens[2]);
-
-                // Check for number types.
-                value = osweb.syntax.isNumber(value) ? Number(value) : value;
-
-                this.vars.set(tokens[1], value);
-
+                this.vars.set(args[0], args[1]);
                 return true;
             }
         } else {
