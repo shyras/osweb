@@ -56,7 +56,7 @@ describe('syntax', function(){
 			self.checkCmd('widget 0 0 1 1 label text="Tést 123',
 				'widget', [0, 0, 1, 1, 'label'],
 				{'text' : 'Tést 123'})
-		}).to.throw();
+		}).to.throw(Error);
 	})
 });
 

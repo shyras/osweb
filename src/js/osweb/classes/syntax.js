@@ -105,8 +105,20 @@ syntax.parse_cmd = function(pString) {
   tokens.forEach((function(value, key, tokens) {
     // parsed will have length 1 if the variable has no keyword, and will be
     // of length 2 (split over the = symbol) if the variable had a keyword
-    var parsed = value.split(/("(?:[^"\\]|.)*")|(\w+)=(.+?)(?= \w+=|$)/gm).filter(Boolean);
+    // var parsed = value.split(/("(?:[^"\\]|.)*")|(\w+)=(.+?)(?= \w+=|$)/gm).filter(Boolean);
 
+    // Monster regex, parses any keyword arguent occurrence of:
+    // a=some_var_value_including_underscores_and_d1g1ts
+    // a="some string with spaces or any chars. \" escaped slashes are ignored"
+    // a=100 (or any number format, including negative and float numbers)
+    // "Strings with = are ignored and returned as a single string"
+    // 
+    // Shorter but less powerfull version concerning numbers is:
+    // /(?:("(?:[^"\\]|.)*"))|(?:(\w+)=(?:([\w-.]+)|("(?:[^"\\]|.)*"))/gm
+    // Also allows things as x=334-23.342...333. The one used below guards for this
+    // and the (-?\d*\.{0,1}\d+) part makes sure numbers have a legal format.
+
+    var parsed = value.split(/(?:("(?:[^"\\]|.)*"))|(?:(\w+)=(?:(?:(-?\d*\.{0,1}\d+)|(\w+))|("(?:[^"\\]|.)*")))/gm).filter(Boolean);
     if(parsed.length < 2){
       args.push(this.convert_if_numeric(this.sanitize(parsed[0])));
     } else {
@@ -128,14 +140,36 @@ syntax.convert_if_numeric = function(val) {
   return Number.isNaN(res) ? val : res;
 };
 
+/**
+ * Strips escape slashes from the given string
+ * @param  {string} str The string to strip from escape backslashes
+ * @return {string}     The stripped string.
+ */
+syntax.strip_slashes = function(str){
+  return str.replace(/\\(.)/mg, "$1");
+}
+
+/**
+ * Add escape slashes to the given string
+ * @param  {string} str The string to escape.
+ * @return {string}     The escaped string.
+ */
+syntax.add_slashes = function(str){
+  return str.replace(/\\/g, '\\\\').
+    replace(/\u0008/g, '\\b').
+    replace(/\t/g, '\\t').
+    replace(/\n/g, '\\n').
+    replace(/\f/g, '\\f').
+    replace(/\r/g, '\\r').
+    replace(/'/g, '\\\'').
+    replace(/"/g, '\\"');
+}
+
 syntax.sanitize = function(pString, pStrict, pAllowVars) {
   // Removes invalid characters (notably quotes) from the string.
   //remove quotes
   pString = pString.replace(/^"(.+(?="$))"$/, '$1');
-
-  //replace escaped characters
-  pString = pString.replace(/\\"/g, '"');
-  return pString;
+  return this.strip_slashes(pString);
 };
 
 syntax.split = function(pLine) {
