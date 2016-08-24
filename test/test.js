@@ -18,7 +18,7 @@ describe('syntax', function(){
 		expect(_arglist).to.deep.equal(arglist);
 		expect(_kwdict).to.deep.equal(kwdict);
 		// translate arguments back to command
-		//expect(s).to.equal(osweb.syntax.create_cmd(_cmd, _arglist, _kwdict));
+		expect(s).to.equal(osweb.syntax.create_cmd(_cmd, _arglist, _kwdict));
 	}
 
 	it("should parse command with arguments and keyword arguments", function(){
@@ -36,9 +36,14 @@ describe('syntax', function(){
 			'set', ['test', 'c:\\'], {'x' : 'd:\\'});
 	});
 
-	it("should be able to handle spaces in quoted string variable values", function(){
+	it("should ignore/not parse contents quoted keyword argument values", function(){
 		checkCmd('draw fixdot color="#ff000b" show_if="[correct] = 0" x=0 y=0',
 			'draw', ['fixdot'], {color: "#ff000b", show_if: "[correct] = 0", x:0, y:0});
+	});
+
+	it("should not parse contents of a (non-keyword arg) string value", function(){
+		checkCmd('run correct_sound "[correct]=1"',
+			'run', ['correct_sound','[correct]=1'], {});
 	});
 
 	it("should be able to handle escaped backslashes", function(){
@@ -53,10 +58,10 @@ describe('syntax', function(){
 
 	it("should throw an exception when syntax can't be parsed", function(){
 		expect(function(){
-			self.checkCmd('widget 0 0 1 1 label text="Tést 123',
+			checkCmd('widget 0 0 1 1 label text="Tést 123',
 				'widget', [0, 0, 1, 1, 'label'],
 				{'text' : 'Tést 123'})
-		}).to.throw(Error);
+		}).to.throw();
 	})
 });
 
