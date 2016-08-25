@@ -41,7 +41,8 @@ var config = {
       'src/js/dependencies/jquery.min.js',
       'src/js/dependencies/bootsrap.min.js',
       'src/js/dependencies/*.js',
-    ]
+    ],
+    deps_dest: 'interface.js'
   },
   css : {
     dest_dir: './public_html/css',
@@ -105,7 +106,7 @@ gulp.task('js-interface', function() {
         .on('error', handleErrors)
         .pipe(sourcemaps.init())
           //.pipe(uglify())
-            .pipe(concat('interface.js'))
+            .pipe(concat(config.js.deps_dest))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(config.js.dest_dir))
         .pipe(browserSync.stream()); //reload webpage in browser

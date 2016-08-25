@@ -22,8 +22,6 @@ syntax._convertPython = function(pScript) {
  * @return {string}     The escaped string.
  */
 syntax.add_slashes = function(str){
-  console.log(str);
-  console.log(typeof(str));
   return str.replace(/\\/g, '\\\\').
     replace(/\u0008/g, '\\b').
     replace(/\t/g, '\\t').
@@ -156,7 +154,6 @@ syntax.safe_wrap = function(s){
     //see if there are any non-alphanumeric characters.
     //Wrap the value in quotes if so.
     if(/[^a-z0-9_]/i.test(s)){
-      console.log("Wrapping");
       s = "\"" + this.add_slashes(s) + "\"";
     }
   }else{
