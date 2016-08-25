@@ -27,8 +27,6 @@ if(typeof(window) == "undefined"){
     node_mode = true;
 }
 
-require('burp');
-
 // Create the osweb class and export it
 var osweb = {};
 module.exports = osweb;
