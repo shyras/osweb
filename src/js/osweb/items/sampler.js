@@ -2,7 +2,8 @@
  * Definition of the class sampler.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function sampler(pExperiment, pName, pScript) {
         // Inherited.
         this.generic_response_constructor(pExperiment, pName, pScript);
@@ -46,6 +47,10 @@
             this._sample = osweb.pool[this.syntax.eval_text(this.vars.sample)];
             this._sampler = new osweb.sampler_backend(this.experiment, this._sample);
             this._sampler.volume = this.vars.volume;
+            this._sampler.duration = this.vars.duration;
+            this._sampler.fade = this.vars.fade;
+            this._sampler.pan = this.vars.pan;
+            this._sampler.pitch = this.vars.pitch;
         } else {
             /* raise osexception(
             u'No sample has been specified in sampler "%s"' % self.name) */
@@ -58,11 +63,10 @@
     p.run = function() {
         this.set_item_onset();
         this.set_sri();
-        console.log("Playing sound");
         this._sampler.play();
         this.process_response();
     };
 
     // Bind the sampler class to the osweb namespace.
-    osweb.sampler = osweb.promoteClass(sampler, "generic_response");
-}());
+    return osweb.promoteClass(sampler, "generic_response");
+}

@@ -2,7 +2,8 @@
  * Definition of the class circle.
  */
 
-(function() {
+module.exports = function(osweb){
+	"use strict";
 	function circle(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -29,7 +30,7 @@
 		this.base_element_draw();
 
 		// Create a styles object containing style information
-		styles = new osweb.Styles();
+		var styles = new osweb.Styles();
 		styles.fill = this._properties.fill;
 		styles.color = this._properties.color;
 		styles.penwidth = this._properties.penwidth;
@@ -40,5 +41,5 @@
 	};
 
 	// Bind the Circle class to the osweb namespace.
-	osweb.circle = osweb.promoteClass(circle, "base_element");
-}());
+	return osweb.promoteClass(circle, "base_element");
+}

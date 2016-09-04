@@ -2,7 +2,8 @@
  * Definition of the class ellipse.
  */
 
-(function() {
+module.exports = function(osweb){
+	"use strict";
 	function ellipse(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -30,7 +31,7 @@
 		this.base_element_draw();
 
 		// Create a styles object containing style information
-		styles = new osweb.Styles();
+		var styles = new osweb.Styles();
 		styles.fill = this._properties.fill;
 		styles.color = this._properties.color;
 		styles.penwidth = this._properties.penwidth;
@@ -42,5 +43,5 @@
 	};
 
 	// Bind the ellipse class to the osweb namespace.
-	osweb.ellipse = osweb.promoteClass(ellipse, "base_element");
-}());
+	return osweb.promoteClass(ellipse, "base_element");
+}

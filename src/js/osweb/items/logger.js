@@ -2,7 +2,8 @@
  * Definition of the class logger.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function logger(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);
@@ -89,5 +90,5 @@
     };
 
     // Bind the logger class to the osweb namespace.
-    osweb.logger = osweb.promoteClass(logger, "item");
-}());
+    return osweb.promoteClass(logger, "item");
+}

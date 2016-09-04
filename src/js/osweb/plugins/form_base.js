@@ -2,7 +2,8 @@
  * Definition of the class form_base.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function form_base(pName, pExperiment, pScript, pItem_type, pDescription) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -85,7 +86,8 @@
         }
 
         // Create the basic form.    
-        this.form = new osweb.form(this.experiment, cols, rows, this.vars.spacing, margins, this.vars._theme, this, timeout, this.vars.form_clicks == 'yes');
+        this.form = new osweb.form(this.experiment, cols, rows, this.vars.spacing, 
+            margins, this.vars._theme, this, timeout, this.vars.form_clicks == 'yes');
 
         for (var i = 0; i < this._widgets.length; i++) {
             this.focus_widget = null;
@@ -98,7 +100,6 @@
                     var varValue = String(this._widgets[i][j]).substring(String(this._widgets[i][j]).indexOf('=') + 1, String(this._widgets[i][j]).length);
                     kwdict[varName] = osweb.syntax.remove_quotes(varValue);
                     kwdict[varName] = osweb.syntax.eval_text(kwdict[varName], this.vars);
-
                     parameters.push(osweb.syntax.remove_quotes(varValue));
                 }
             }
@@ -173,5 +174,5 @@
     };
 
     // Bind the form_base class to the osweb namespace.
-    osweb.form_base = osweb.promoteClass(form_base, "item");
-}());
+    return osweb.promoteClass(form_base, "item");
+}

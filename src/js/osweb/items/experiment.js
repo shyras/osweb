@@ -1,9 +1,11 @@
 /*
- * Definition of the class experiment.
- */
-
-(function() {
-	function experiment(pExperiment, pName, pScript, pPool_folder, pExperiment_path, pFullscreen, pAuto_response, pLogfile, pSubject_nr, pWorkspace, pResources, pHeartbeat_interval) {
+* Definition of the class experiment.
+*/
+module.exports = function(osweb){
+	"use strict";
+	function experiment(pExperiment, pName, pScript, pPool_folder, pExperiment_path, 
+		pFullscreen, pAuto_response, pLogfile, pSubject_nr, pWorkspace, pResources, 
+		pHeartbeat_interval) {
 		// Set the items property for this experiment.
 		osweb.item_store._experiment = this;
 
@@ -133,39 +135,46 @@
 		var line = pString.shift();
 		var def_str = '';
 		while ((line != null) && (line.length > 0) && (line.charAt(0) == '\t')) {
-			def_str = def_str + line + '\n';
+			def_str = def_str + line.substring(1) + '\n';
 			line = pString.shift();
 		}
 		return def_str;
 	};
 
+	/**
+	 * Construct the experiment object from OpenSesame script and store the data
+	 * in the object instance.
+	 * @param  {string} pString The opensesame script contents
+	 * @return {void}
+	 */
 	p.from_string = function(pString) {
 		// Set debug message.
 		osweb.debug.addMessage('building experiment');
 
-		// Split the string into an array of lines.  
+		// Split the string into an array of lines.
 		if (pString != null) {
 			this._source = pString.split('\n');
 			var l = this._source.shift();
 			while (l != null) {
 				// Set the processing of the next line.
 				var get_next = true;
-
 				try {
+					var cmd, args, kwargs;
 					// Split the single line into a set of tokens.
-					var t = osweb.syntax.split(l);
+					[cmd, args, kwargs] = osweb.syntax.parse_cmd(l);
 				} catch (e) {
-					// u"Failed to parse script. Maybe it contains illegal characters or unclosed quotes?", \
+					alertify.errorAlert("Failed to parse script. Maybe it " +
+						"contains illegal characters or unclosed quotes? " + e.message);
 				}
 
-				if ((t != null) && (t.length > 0)) {
+				if ((cmd != null) && (args.length > 0)) {
 					// Try to parse the line as variable (or comment)
 					if (this.parse_variable(l) == false) {
-						if (t[0] == 'define') {
-							if (t.length == 3) {
+						if (cmd == 'define') {
+							if (args.length == 2) {
 								// Get the type, name and definition string of an item.
-								var item_type = t[1];
-								var item_name = osweb.syntax.sanitize(t[2]);
+								var item_type = args[0];
+								var item_name = osweb.syntax.sanitize(args[1]);
 								var def_str = this.read_definition(this._source);
 
 								osweb.item_store.new(item_type, item_name, def_str);
@@ -220,11 +229,11 @@
 		/* import random
 	random.seed()
 	try:
-            # Don't assume that numpy is available
-            import numpy
-            numpy.random.seed()
-            except:
-            pass */
+	        # Don't assume that numpy is available
+	        import numpy
+	        numpy.random.seed()
+	        except:
+	        pass */
 	};
 
 	p.init_sound = function() {
@@ -305,5 +314,5 @@
 	};
 
 	// Bind the experiment class to the osweb namespace.
-	osweb.experiment = osweb.promoteClass(experiment, "item");
-}());
+	return osweb.promoteClass(experiment, "item");
+}

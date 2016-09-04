@@ -2,7 +2,8 @@
  * Definition of the class image.
  */
 
-(function() {
+module.exports = function(osweb){
+	"use strict";
 	function image(pSketchpad, pScript) {
 		// Set the class public properties.
 		this.defaults = {};
@@ -35,5 +36,5 @@
 	};
 
 	// Bind the image class to the osweb namespace.
-	osweb.image = osweb.promoteClass(image, "base_element");
-}());
+	return osweb.promoteClass(image, "base_element");
+}

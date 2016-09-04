@@ -1,17 +1,11 @@
 /*  osweb CSS Definitions */
 
-*{
-    margin              : 0;
-    padding             : 0;
-}
-
 body {
-    background-color: grey;
-    display: inline; 
-    color: #FFFFFF;
-    font-family: Arial;
-    font-size: 12px;
-    text-align: center;
+    // display: inline; 
+    // color: #FFFFFF;
+    // font-family: Arial;
+    // font-size: 12px;
+    // text-align: center;
     width: 100%;
     height: 100%;
 }
@@ -21,26 +15,8 @@ body {
     left: 50%;
     transform: translate3d(-50%,-50%, 0);
     position: absolute;
-    background-color: #grey;
 }
 
-#command_div{
-    background-color    : #AAAAAA;
-    height              : 30px;
-    text-align          : left;
-    width               : 100%;
-}
-
-#command_buttons{
-    padding: 6px;
-    float: left;
-}
-
-#os_logo{
-    float: right;
-    height: 80%;
-    margin: 3px;
-}
 
 #osweb_div{
     min-width: 100%;
@@ -66,8 +42,8 @@ body {
     height: 100%; 
 }
 
-video {
-    display             : none;
+#osweb_video {
+    display : none;
 }
 
 #dialogoverlay {
@@ -120,7 +96,6 @@ video {
         }
     }
 }
-
 
 :full-screen canvas,
 :-webkit-full-screen canvas,

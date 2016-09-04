@@ -1,6 +1,7 @@
 {
   "name": "osweb",
   "version": "1.0.0",
+  "main": "src/js/osweb/main.js",
   "description": "Online runtime for OpenSesame experiments",
   "license": "GPL-3.0",
   "keywords": [
@@ -26,18 +27,37 @@
       "url": "http://cogsci.nl/smathot"
     }
   ],
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --recursive --reporter spec"
+  },
   "dependencies": {
+    "alertifyjs": "^1.8.0",
     "brython": "^3.2.7",
+    "createjs-combined": "^2015.11.26",
+    "filbert": "^0.1.20",
+    "prototype": "0.0.5",
+    "random-seed": "^0.3.0",
+    "screenfull": "^3.0.0"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.14.0",
+    "browserify": "^13.1.0",
+    "chai": "^3.5.0",
     "del": "^2.0.0",
     "gulp": "^3.0.0",
     "gulp-clean-css": "^2.0.11",
     "gulp-concat": "^2.0.0",
-    "gulp-sass": "latest",
+    "gulp-notify": "^2.2.0",
+    "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^1.0.0",
     "gulp-uglify": "^1.0.0",
-    "screenfull": "^3.0.0"
-  },
-  "devDependencies": {
-    "gulp-sass": "^2.3.2"
+    "gulp-wrap-js": "^0.4.1",
+    "mocha": "^3.0.2",
+    "should": "^11.1.0",
+    "source-map": "^0.5.6",
+    "uglify-js": "^2.7.3",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
   }
 }

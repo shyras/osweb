@@ -2,7 +2,8 @@
  * Definition of the class reset_feedback.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function reset_feedback(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -41,5 +42,5 @@
     };
 
     // Bind the reset_feedback class to the osweb namespace.
-    osweb.reset_feedback = osweb.promoteClass(reset_feedback, "item");
-}());
+    return osweb.promoteClass(reset_feedback, "item");
+}

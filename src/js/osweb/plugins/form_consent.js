@@ -2,7 +2,8 @@
  * Definition of the class form_consent.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function form_consent(pExperiment, pName, pScript) {
         // Inherited.
         this.form_base_constructor(pName, pExperiment, pScript, 'form_consent', 'A simple consent form');
@@ -29,5 +30,5 @@
     };
 
     // Bind the form_consent class to the osweb namespace.
-    osweb.form_consent = osweb.promoteClass(form_consent, "form_base");
-}());
+    return osweb.promoteClass(form_consent, "form_base");
+}

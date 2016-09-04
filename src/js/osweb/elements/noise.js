@@ -2,7 +2,8 @@
  * Definition of the class noise.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function noise(pSketchpad, pScript) {
         // Set the default properties.
         this.defaults = {};
@@ -37,5 +38,5 @@
     };
 
     // Bind the noise class to the osweb namespace.
-    osweb.noise = osweb.promoteClass(noise, "base_element");
-}());
+    return osweb.promoteClass(noise, "base_element");
+}

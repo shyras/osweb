@@ -2,7 +2,8 @@
  * Definition of the class keyboard_response.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function keyboard_response(pExperiment, pName, pScript) {
         // Inherited create.
         this.generic_response_constructor(pExperiment, pName, pScript);
@@ -62,5 +63,5 @@
     };
 
     // Bind the keyboard_response class to the osweb namespace.
-    osweb.keyboard_response = osweb.promoteClass(keyboard_response, "generic_response");
-}());
+    return osweb.promoteClass(keyboard_response, "generic_response");
+}

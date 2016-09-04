@@ -2,7 +2,8 @@
  * Definition of the class label.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function label(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);
@@ -49,8 +50,7 @@
         }
 
         var w = this.rect.w - 2 * this.x_pad;
-
-        this.form.canvas.text(pText, this.center, x, y, w, pHtml);
+        this.form.canvas.text(pText, this.center, x, y, pHtml);
     };
 
     p.render = function() {
@@ -63,5 +63,5 @@
     };
 
     // Bind the label class to the osweb namespace.
-    osweb.label = osweb.promoteClass(label, "widget");
-}());
+    return osweb.promoteClass(label, "widget");
+}

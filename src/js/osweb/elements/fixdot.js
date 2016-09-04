@@ -2,7 +2,8 @@
  * Definition of the class fixdot.
  */
 
-(function() {
+module.exports = function(osweb){
+	"use strict";
 	function fixdot(pSketchpad, pScript) {
 		// Set the default properties.
 		this.defaults = {};
@@ -27,7 +28,7 @@
 		this.base_element_draw();
 
 		// Create a styles object containing style information
-		styles = new osweb.Styles();
+		var styles = new osweb.Styles();
 		styles.color = this._properties.color;
 
 		// Draw the fixdot element to the canvas of the sketchpad.
@@ -36,5 +37,5 @@
 	};
 
 	// Bind the fixdot class to the osweb namespace.
-	osweb.fixdot = osweb.promoteClass(fixdot, "base_element");
-}());
+	return osweb.promoteClass(fixdot, "base_element");
+}

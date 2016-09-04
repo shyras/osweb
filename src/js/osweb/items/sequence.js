@@ -2,7 +2,8 @@
  * Definition of the class sequence.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function sequence(pExperiment, pName, pScript) {
         // Inherited create.
         this.item_constructor(pExperiment, pName, pScript);
@@ -145,10 +146,12 @@
 
             // Increase the current index.
             this._index++;
-            current_item = this._items[this._index - 1]
+            var current_item = this._items[this._index - 1]
 
             // Set the workspace.
             osweb.python_workspace['self'] = this;
+            // console.log(current_item.cond);
+            // console.log(osweb.runner.experiment.vars);
 
             // Check if the item may run.                            
             if (osweb.python_workspace._eval(current_item.cond) == true) {
@@ -173,5 +176,5 @@
     };
 
     // Bind the sequence class to the osweb namespace.
-    osweb.sequence = osweb.promoteClass(sequence, "item");
-}());
+    return osweb.promoteClass(sequence, "item");
+}

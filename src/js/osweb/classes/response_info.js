@@ -1,16 +1,15 @@
-(function() {
-    // Definition of the class response_info.
-    function response_info(response_store, response, correct, response_time, item, feedback) {};
+"use strict";
+// Definition of the class response_info.
+function response_info(response_store, response, correct, response_time, item, feedback) {};
 
-    // Extend the class from its base class.
-    var p = response_info.prototype;
+// Extend the class from its base class.
+var p = response_info.prototype;
 
-    // Definition of public methods - properties.   
+// Definition of public methods - properties.   
 
-    p.match = function(kwdict) {};
+p.match = function(kwdict) {};
 
-    p.matchnot = function(kwdict) {};
+p.matchnot = function(kwdict) {};
 
-    // Bind the response_info class to the osweb namespace.
-    osweb.response_info = response_info;
-}());
+// Bind the response_info class to the osweb namespace.
+module.exports = response_info;

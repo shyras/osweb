@@ -2,7 +2,8 @@
  * Definition of the class advanced_delay.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function advanced_delay(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -69,5 +70,5 @@
     };
 
     // Bind the advanced_delay class to the osweb namespace.
-    osweb.advanced_delay = osweb.promoteClass(advanced_delay, "item");
-}());
+    return osweb.promoteClass(advanced_delay, "item");
+}

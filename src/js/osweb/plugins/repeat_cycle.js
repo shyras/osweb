@@ -2,7 +2,8 @@
  * Definition of the class repeat_cycle.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function repeat_cycle(pExperiment, pName, pScript) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
@@ -50,5 +51,5 @@
     };
 
     // Bind the repeat_cycle class to the osweb namespace.
-    osweb.repeat_cycle = osweb.promoteClass(repeat_cycle, "item");
-}());
+    return osweb.promoteClass(repeat_cycle, "item");
+}

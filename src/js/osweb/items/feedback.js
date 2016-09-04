@@ -2,7 +2,8 @@
  * Definition of the class feedback.
  */
 
-(function() {
+module.exports = function(osweb){
+    "use strict";
     function feedback(pExperiment, pName, pScript) {
         // Inherited create.
         this.sketchpad_constructor(pExperiment, pName, pScript);
@@ -50,5 +51,5 @@
     };
 
     // Bind the feedback class to the osweb namespace.
-    osweb.feedback = osweb.promoteClass(feedback, "sketchpad");
-}());
+    return osweb.promoteClass(feedback, "sketchpad");
+}
