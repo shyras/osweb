@@ -14,6 +14,11 @@ constants.ERROR_007 = 'Failure to retrieve script from external location (databa
 constants.ERROR_008 = 'Invalid script definition, parsing error.';
 constants.ERROR_009 = 'Unknown class definition within osweb script - ';
 
+// Definition of error constants - parser. 
+constants.ERROR_201 = 'Script parsing error - ';
+constants.ERROR_202 = 'Script parsing error - no script defined.';
+constants.ERROR_203 = 'Script running error - invalid node type to process: ';
+
 // Definition of message constants. 
 constants.MESSAGE_001 = 'Os';
 constants.MESSAGE_002 = 'web - version ';

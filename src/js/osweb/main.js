@@ -4,7 +4,7 @@
  * An experiment research tool written in Javascript and HTML to be used in 
  * Qualtrics or other web-based tools. Based upon OpenSesame.         
  *
- * Author: drs. J. Bos
+ * Author: drs. J. Bos, D. Schreij & S. Mathot
  *
  * Copyright (c) University of Groningen 
  * Faculty of Behavioural and Social Sciences
@@ -36,7 +36,7 @@ module.exports = osweb;
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME = 'osweb';
-osweb.VERSION_NUMBER = '3.0.044 (01-08-2016)';
+osweb.VERSION_NUMBER = '3.0.045 (05-09-2016)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
@@ -48,7 +48,17 @@ String.prototype.replaceAll = function(str1, str2, ignore){
             str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),
             (ignore?"gi":"g")),
             (typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
-} 
+}; 
+
+// Add _pySlide function to string prototype (HACK for the filbert interpreter).
+String.prototype._pySlice = function(start, end, step) {
+    if (end !== null) {
+        return this.slice(start, end);
+    }
+    else {
+        return this.slice(start);
+    }    
+};
 
 // Definition of osweb class utility methods.
 osweb.extendClass = function(sub_class, super_class) {
@@ -181,11 +191,16 @@ osweb.widget = require('./widgets/widget.js');
 osweb.button = require('./widgets/button.js')(osweb);
 osweb.checkbox = require('./widgets/checkbox.js')(osweb);
 osweb.label = require('./widgets/label.js')(osweb);
+
+// Python modules.
+osweb.python_math = require('./python/python_math.js')(osweb);
+osweb.python_string = require('./python/python_string.js')(osweb);
+osweb.python = require('./python/python.js')(osweb);
+
 // Remaining system module
 osweb.events = require('./system/events.js')(osweb);
 osweb.functions = require('./system/functions.js'); 
 osweb.parameters = require('./system/parameters.js');
-osweb.parser = require('./system/parser.js');
 osweb.prng = require('./system/prng.js');
 osweb.screen = require('./system/screen.js');
 osweb.session = require('./system/session.js');

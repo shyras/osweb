@@ -867,7 +867,7 @@ p.text = p._configurable(function(text, center, x, y, html) {
         text_element.textAlign = "center";
 
         var width = text_element.getMeasuredWidth();
-        var height = text_element.getMeasuredHeight()
+        var height = text_element.getMeasuredHeight();
     
         if (center === 1) {
             text_element.x = x;

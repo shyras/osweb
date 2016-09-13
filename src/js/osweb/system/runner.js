@@ -72,14 +72,14 @@ module.exports = function(osweb){
         // Build the global static object classes.
         window['items'] = osweb.item_store;
         window['pool'] = osweb.file_pole_store;
-        window['vars'] = this.experiment.vars;
+        window['var'] = this.experiment.vars;
 
         // Pepare the experiment to run.
         this._prepare();
     };
 
     // Definition of private methods - prepare cycle.   
-
+                   
     runner._prepare = function() {
         // Update inroscreen.
         osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_005);
@@ -87,6 +87,9 @@ module.exports = function(osweb){
         // Initialize the helper classes.
         osweb.functions._initialize();
         osweb.python_workspace_api._initialize();
+        
+        osweb.python._initialize();
+        
         osweb.session._initialize();
         osweb.parameters._initialize();
     };

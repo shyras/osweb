@@ -5,7 +5,7 @@
  */
 
 var gulp = require('gulp');
-var gutil = require('gulp-util')
+var gutil = require('gulp-util');
 var sass = require('gulp-sass');
 var cleanCSS = require('gulp-clean-css');
 var concat = require('gulp-concat');
@@ -16,7 +16,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer')
+var buffer = require('vinyl-buffer');
 var del = require('del');
 var browserSync = require('browser-sync').create();
 
@@ -28,7 +28,7 @@ var config = {
     standalone: 'osweb', 
     debug: debug,
     cache: {}, // required for watchify
-    packageCache: {}, // required for watchify
+    packageCache: {} // required for watchify
   },
   browserSync : {
     server: "./public_html",
@@ -40,7 +40,7 @@ var config = {
     dependencies: [
       'src/js/dependencies/jquery.min.js',
       'src/js/dependencies/bootsrap.min.js',
-      'src/js/dependencies/*.js',
+      'src/js/dependencies/*.js'
     ],
     deps_dest: 'interface.js'
   },
@@ -52,7 +52,7 @@ var config = {
       'src/scss/*.css'
     ]
   }
-}
+};
 
 function handleErrors() {
   var args = Array.prototype.slice.call(arguments);
@@ -67,11 +67,11 @@ function handleErrors() {
 
 function build_osweb(watch){
   var bundler, rebundle;
-  config.browserify.fullPaths = watch // required to be true only for watchify
+  config.browserify.fullPaths = watch; // required to be true only for watchify
 
   bundler = browserify(config.browserify);
   if(watch) {
-    bundler = watchify(bundler) 
+    bundler = watchify(bundler); 
   }
 
   rebundle = function() {
@@ -130,7 +130,7 @@ gulp.task('build', ['js','css']);
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-    gulp.watch(config.js.dependencies, ['js-interface'])
+    gulp.watch(config.js.dependencies, ['js-interface']);
     gulp.watch(config.css.styles, ['css']);
     gulp.watch("public_html/*.html").on('change', browserSync.reload);
     build_osweb(true);

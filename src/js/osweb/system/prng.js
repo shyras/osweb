@@ -10,7 +10,7 @@ function prng() {
 
 // Set the class private properties. 
 prng._previous = 0;
-prng._prng = uheprng();
+prng._prng = uheprng;
 prng._seed = '0';
 
 /*

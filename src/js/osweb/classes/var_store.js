@@ -48,17 +48,21 @@ p.get = function(pVar, pDefault, pEval, pValid) {
 };
 
 p.has = function(variable) {
+    // Check if the variable (property) is part of the class.         
+    return this.hasOwnProperty(variable);
 };
 
 p.inspect = function() {
+    // Get all variable values.
     var keys = [];
     for (var key in this) {
         keys.push(key);
     }
 
-    // Slide default properties. 
-    keys = keys.slice(2, keys.length - 3);
-
+    // Slide default properties (HACK for removing the defauly properties/methods from the log_list). 
+    keys = keys.slice(2, -7);
+    
+    // Return function result.
     return keys;
 };
 
@@ -71,6 +75,11 @@ p.set = function(variable, value) {
 };
 
 p.unset = function(variable){
+    // Check if the variable exists.
+    if (this.has(variable) === true) {
+        // Remove the variable as property from the object.
+        delete this[variable];
+    }
 };
 
 p.vars = function() {

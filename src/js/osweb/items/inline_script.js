@@ -21,35 +21,6 @@ module.exports = function(osweb){
     p.description = 'Executes Python code';
 
     /*
-     * Definition of private methods - compiling script.
-     */
-
-    p._compile = function(pScript) {
-        if (pScript != '') {
-            var locations = false;
-            var parseFn = filbert_loose.parse_dammit;
-            var ranges = false;
-
-            try {
-                var code = pScript;
-                var ast = parseFn(code, {
-                    locations: locations,
-                    ranges: ranges
-                });
-
-                return ast;
-            } catch (e) {
-                console.log('error');
-                console.log(e.toString());
-
-                return null;
-            }
-        } else {
-            return null;
-        }
-    };
-
-    /*
      * Definition of public methods - building item.         
      */
 
@@ -115,19 +86,19 @@ module.exports = function(osweb){
 
     p.prepare = function() {
         // Compile the script code to ast trees.
-        this._prepare_tree = osweb.parser._prepare(this.vars._prepare);
-        this._run_tree = osweb.parser._prepare(this.vars._run);
-
+        this._prepare_tree = osweb.python._parse(this.vars._prepare);
+        this._run_tree = osweb.python._parse(this.vars._run);
+        
         // Execute the run code.
         if (this._prepare_tree != null) {
             // Set the current item.
             osweb.events._current_item = this;
-
+        
             // Set the prepare run toggle.
             this._prepare_run = true;
 
             // Start the parser
-            osweb.parser._run(this, this._prepare_tree);
+            osweb.python._run(this, this._prepare_tree);
         } else {
             // Inherited.	
             this.item_prepare();
@@ -147,15 +118,15 @@ module.exports = function(osweb){
             this._prepare_run = false;
 
             // Start the parser
-            osweb.parser._run(this, this._run_tree);
+            osweb.python._run(this, this._run_tree);
         }
     };
 
     p.complete = function() {
-        // Check if the parser is ready. 
-        if (osweb.parser._status == 1) {
+        // Check if the parser is in pause mode and must be restarted. 
+        if (osweb.python._status == 1) {
             // Process the current active node.
-            osweb.parser._process_node();
+            osweb.python._process_nodes();
         } else {
             if (this._prepare_run === true) {
                 // Inherited prepare.	
@@ -174,4 +145,4 @@ module.exports = function(osweb){
 
     // Bind the Sequence class to the osweb namespace.
     return osweb.promoteClass(inline_script, "item");
-}
+};
