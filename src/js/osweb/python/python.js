@@ -1,5 +1,7 @@
 module.exports = function(osweb){
     "use strict";
+
+    var filbert = require('filbert');
     
     // Class python - parsing and running python script within osweb.      
     function python() {

@@ -32,10 +32,8 @@
   },
   "dependencies": {
     "alertifyjs": "^1.8.0",
-    "brython": "^3.2.7",
     "createjs-combined": "^2015.11.26",
     "filbert": "^0.1.20",
-    "prototype": "0.0.5",
     "random-seed": "^0.3.0",
     "screenfull": "^3.0.0"
   },

@@ -77,7 +77,7 @@ describe('syntax', function(){
 			expect(_kwdict).to.deep.equal(kwdict);
 			// translate arguments back to command
 			expect(s).to.equal(osweb.syntax.create_cmd(_cmd, _arglist, _kwdict));
-		}
+		};
 
 		it("should parse command with arguments and keyword arguments", function(){
 			checkCmd('widget 0 0 1 1 label text="Tést 123"',
@@ -118,9 +118,9 @@ describe('syntax', function(){
 			expect(function(){
 				checkCmd('widget 0 0 1 1 label text="Tést 123',
 					'widget', [0, 0, 1, 1, 'label'],
-					{'text' : 'Tést 123'})
+					{'text' : 'Tést 123'});
 			}).to.throw();
-		})
+		});
 	});
 
 	describe('eval_text()', function(){

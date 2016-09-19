@@ -40,6 +40,15 @@ osweb.VERSION_NUMBER = '3.0.045 (05-09-2016)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
+
+// If not running in node.js, bind osweb and alertify to global namespace
+if(node_mode === false){
+    // Make osweb globally available
+    var alertify = require('alertifyjs');
+    window.alertify = window.alertify || alertify;
+    var screenfull = require('screenfull'); 
+    window.screenfull = window.screenfull || screenfull;
+}
     
 // Add replaceAll function to string prototype
 String.prototype.replaceAll = function(str1, str2, ignore){
@@ -114,15 +123,6 @@ osweb.promoteClass = function(sub_class, prefix) {
     }
     return sub_class;
 };
-
-// If not running in node.js, bind osweb and alertify to global namespace
-if(node_mode == false){
-    // Make osweb globally available
-    var alertify = require('alertifyjs');
-    window.alertify = window.alertify || alertify;    
-}
-
-var filbert = require('filbert');
 
 osweb.constants = require("./system/constants");
 osweb.canvas = require("./backends/canvas");

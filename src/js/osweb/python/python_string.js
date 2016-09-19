@@ -1,6 +1,8 @@
 module.exports = function(osweb){
     "use strict";
     
+    var filbert = require('filbert');
+    
     // Definition of the class python_string.
     function python_string() {
         throw 'The class python_string cannot be instantiated!';
