@@ -1,5 +1,7 @@
 module.exports = function(osweb){
     "use strict";
+
+    var filbert = require('filbert');
     
     // Class python_math - Python math functions.      
     function python_math() {
