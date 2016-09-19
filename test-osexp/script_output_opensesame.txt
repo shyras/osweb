@@ -1,0 +1,97 @@
+step 1a - python basic variables: numbers
+('a:', 21)
+('b:', 10)
+('c:', 0)
+('d:', 3.1415926)
+('c = a + b - value of c is ', 31)
+('c = a - b - value of c is ', 11)
+('c = a * b - value of c is ', 210)
+('c = a / b - value of c is ', 2)
+('c = a % b - value of c is ', 1)
+('c = a ** b - value of c is ', 16679880978201L)
+('c = a//b - value of c is ', 2)
+
+step 1b - python basic variables: strings
+Hello World!
+H
+llo
+llo World!
+Hello World!Hello World!
+Hello World!TEST
+
+step 2a - python extended variables - list = array in javascript
+['abcd', 786, 2.23, 'john', 70.2]
+[123, 'john']
+abcd
+
+step 2b - python extended variables - tupple = JSON in javascript
+('abcd', 786, 2.23, 'john', 70.2)
+(123, 'john')
+
+step 2c - python extended variables - dictionary = JSON in javascript
+{}
+{'dept': 'sales', 'code': 6734, 'name': 'john'}
+
+step 3 - python basic operators
+var a = 10, var b = 10
+('a == b', True)
+('a != b', False)
+('a > b', False)
+('a < b', False)
+('a >= b', True)
+('a <= b', True)
+
+step 4 - if then else
+1 - Got a true expression value
+100
+2 - Got a false expression value
+0
+Expression value is less than 200
+Which is 100
+
+step 5 - loops
+(2, ' is prime')
+(3, ' is prime')
+(5, ' is prime')
+(7, ' is prime')
+(11, ' is prime')
+(13, ' is prime')
+(17, ' is prime')
+(19, ' is prime')
+(23, ' is prime')
+(29, ' is prime')
+(31, ' is prime')
+(37, ' is prime')
+(41, ' is prime')
+(43, ' is prime')
+(47, ' is prime')
+(53, ' is prime')
+(59, ' is prime')
+(61, ' is prime')
+(67, ' is prime')
+(71, ' is prime')
+(73, ' is prime')
+(79, ' is prime')
+(83, ' is prime')
+(89, ' is prime')
+(97, ' is prime')
+
+step 6 - Python libraries (math/string/time
+c = 3.14
+('floor(c)', 3.0)
+
+step 7 - OpenSesame vars
+0
+my_value
+my_value
+my_value2
+my_variable exists!
+
+step 8 - Open Sesame clock functions
+20285.0
+('This should be 5000: ', 5000.0)
+
+step 9 - Open Sesame canvas functions
+('Showing canvas1: ', 27103.0)
+('Showing canvas2: ', 28104.0)
+('Showing done: ', 29104.0)

@@ -140,7 +140,6 @@ osweb.heartbeat = require('./classes/heartbeat.js');
 osweb.item_stack = require('./classes/item_stack.js');
 osweb.item_store = require('./classes/item_store.js');
 osweb.python_workspace = require('./classes/python_workspace.js');
-osweb.python_workspace_api = require('./classes/python_workspace_api.js');
 osweb.response_info = require('./classes/response_info.js');
 osweb.response_store = require('./classes/response_store.js');
 osweb.syntax = require('./classes/syntax.js');
@@ -194,12 +193,13 @@ osweb.label = require('./widgets/label.js')(osweb);
 
 // Python modules.
 osweb.python_math = require('./python/python_math.js')(osweb);
+osweb.python_opensesame = require('./python/python_opensesame.js')(osweb);
+osweb.python_random = require('./python/python_random.js')(osweb);
 osweb.python_string = require('./python/python_string.js')(osweb);
 osweb.python = require('./python/python.js')(osweb);
 
 // Remaining system module
 osweb.events = require('./system/events.js')(osweb);
-osweb.functions = require('./system/functions.js'); 
 osweb.parameters = require('./system/parameters.js');
 osweb.prng = require('./system/prng.js');
 osweb.screen = require('./system/screen.js');

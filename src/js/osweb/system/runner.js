@@ -85,11 +85,7 @@ module.exports = function(osweb){
         osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_005);
 
         // Initialize the helper classes.
-        osweb.functions._initialize();
-        osweb.python_workspace_api._initialize();
-        
         osweb.python._initialize();
-        
         osweb.session._initialize();
         osweb.parameters._initialize();
     };

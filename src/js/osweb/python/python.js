@@ -1,8 +1,6 @@
 module.exports = function(osweb){
     "use strict";
 
-    var filbert = require('filbert');
-    
     // Class python - parsing and running python script within osweb.      
     function python() {
         throw 'The class python cannot be instantiated!';
@@ -19,17 +17,17 @@ module.exports = function(osweb){
     // Definition of private methods - parse cycle.   
 
     python._initialize = function() {
-        // Add default python classes to the the interpreter.
-        python._classes['math'] = osweb.python_math;
+         // Add internal libraries to the interpreter.
+        osweb.python_math._initialize();
+        osweb.python_opensesame._initialize();
+        osweb.python_random._initialize();
+        osweb.python_string._initialize();
+        console.log(filbert);
     
         // Add opensesame system classes to the interpreter.
-        python._classes['clock'] = window['clock'];
         python._classes['items'] = window['items'];
         python._classes['pool'] = window['pool'];
         python._classes['var'] = window['var'];
-
-        // Add opensesame uses classes to the interpreter.
-        python._classes['canvas'] = osweb.canvas;
     };
 
     // Definition of private methods - parsing script to ast nodes.
@@ -61,21 +59,17 @@ module.exports = function(osweb){
 
     // Definition of private methods - node processing support methods.
 
-    python._construct = function(constructor, args) {
-        function F() {
-            return constructor.apply(this, args);
-        }
-        F.prototype = constructor.prototype;
-    
-        return new F();
-    };
-
-    python._get_context = function(identifier) {
+     python._get_context = function(identifier) {
         // Split the identifer
         var items = identifier.split('.');
-        
-        // Return the object context
-        return window[items[0]];
+
+        if ((items[0] === '__pythonRuntime') && (items[1] === 'imports')) {
+            return window[items[2]];
+        }
+        else {
+            // Return the object context
+            return window[items[0]];
+        }     
     };
 
    python._get_item = function(identifier, new_arguments) {
@@ -96,11 +90,13 @@ module.exports = function(osweb){
                     else if (items[1] === 'ops') {
                         return filbert.pythonRuntime.ops[items[2]];
                     }
+                    else if (items[1] === 'imports') {
+                        var import_lib = filbert.pythonRuntime.imports[items[2]];
+                        return import_lib[items[3]];
+                    }
                     break;
                 default:
-                    if (items[0] === 'canvas') {
-                        return osweb[items[0]];
-                    } else if (window[items[0]] !== undefined) {
+                    if (window[items[0]] !== undefined) {
                         if (items.length === 1) {
                             return window[items[0]];
                         }
@@ -123,7 +119,7 @@ module.exports = function(osweb){
                         if (this._classes[items[0]] !== undefined) {
                             if (items.length === 1) {
                                 // 
-                                new_arguments.unshift(this._classes[items[0]]);
+                                arguments.unshift(this._classes[items[0]]);
                                 return this._new_object;
                             }
                             else {
@@ -131,7 +127,7 @@ module.exports = function(osweb){
                             }    
                         }
                         else {
-                            return items[0];        
+                            return items[0];
                         }    
                     }    
             }
@@ -188,7 +184,7 @@ module.exports = function(osweb){
         }    
     };
 
-   python._assignment_expression = function() {
+    python._assignment_expression = function() {
         // Initialize node specific properties.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -261,7 +257,7 @@ module.exports = function(osweb){
         }    
     };
 
-   python._binary_expression = function() {
+    python._binary_expression = function() {
          // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -336,7 +332,7 @@ module.exports = function(osweb){
         }    
     };
 
-   python._block_statement = function() {
+    python._block_statement = function() {
         // Initialize node specific properties.
         this._node.break = (typeof this._node.break === 'undefined') ? false : this._node.break;
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
@@ -413,7 +409,8 @@ module.exports = function(osweb){
                 var caller = this._get_item(return_value, tmp_arguments);
             
                 // Check if the call is a blocking call. 
-                if ((return_value === 'sleep') || (return_value === 'clock.sleep')) {
+                console.log(return_value);
+                if ((return_value === 'sleep') || (return_value === '__pythonRuntime.imports.clock.sleep')) {
                     // Adjust the status to special.
                     this._node.status = 2;
                 
@@ -421,15 +418,10 @@ module.exports = function(osweb){
                     caller.apply(context,tmp_arguments);
                 }            
                 else {
-                    // Handle new constructors (currently only canvas). 
-                    if (return_value === 'canvas') {
-                        return_value = this._construct(osweb[return_value],tmp_arguments);
-                    }
-                    else {
-                        return_value = caller.apply(context,tmp_arguments);
-                    }    
+                    // Execute the call.
+                    return_value = caller.apply(context,tmp_arguments);
                    
-                   // Set the return value.
+                    // Set the return value.
                     this._set_return_value(return_value);
 
                     // Reset node index and return to the parent node.
@@ -799,8 +791,11 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
             case 2:
-                // Set variable.
-                window[this._node.return_values[0]] = this._node.return_values[1];
+                // Process the init value.
+                var init = this._get_item(this._node.return_values[1], null);
+                
+                // Set the variable
+                window[this._node.return_values[0]] = init;
                 
                 // Reset node index and return to the parent node.
                 this._node.status = 0;
