@@ -17,17 +17,12 @@ module.exports = function(osweb){
     // Definition of private methods - parse cycle.   
 
     python._initialize = function() {
-         // Add internal libraries to the interpreter.
+        // Initialize internal libraries to the interpreter.
         osweb.python_math._initialize();
         osweb.python_opensesame._initialize();
         osweb.python_random._initialize();
         osweb.python_string._initialize();
         console.log(filbert);
-    
-        // Add opensesame system classes to the interpreter.
-        python._classes['items'] = window['items'];
-        python._classes['pool'] = window['pool'];
-        python._classes['var'] = window['var'];
     };
 
     // Definition of private methods - parsing script to ast nodes.
@@ -59,9 +54,9 @@ module.exports = function(osweb){
 
     // Definition of private methods - node processing support methods.
 
-     python._get_context = function(identifier) {
+    python._get_context = function(identifier) {
         // Split the identifer
-        var items = identifier.split('.');
+        var items = identifier.value.split('.');
 
         if ((items[0] === '__pythonRuntime') && (items[1] === 'imports')) {
             return window[items[2]];
@@ -72,71 +67,66 @@ module.exports = function(osweb){
         }     
     };
 
-   python._get_item = function(identifier, new_arguments) {
-        // Check for object methods.
-        if ((typeof identifier === 'number') || (typeof identifier === 'object') || (typeof identifier === 'boolean')) {
-            return identifier;
-        }        
-        else {
-            var items = identifier.split('.');
-            switch (items[0]) {
-                case '__pythonRuntime':
-                    if (items[1] === 'functions') {
-                        return filbert.pythonRuntime.functions[items[2]];
-                    }
-                    else if (items[1] === 'objects') {
-                        return filbert.pythonRuntime.objects[items[2]];
-                    }
-                    else if (items[1] === 'ops') {
-                        return filbert.pythonRuntime.ops[items[2]];
-                    }
-                    else if (items[1] === 'imports') {
-                        var import_lib = filbert.pythonRuntime.imports[items[2]];
-                        return import_lib[items[3]];
-                    }
-                    break;
-                default:
-                    if (window[items[0]] !== undefined) {
-                        if (items.length === 1) {
-                            return window[items[0]];
-                        }
-                        else {
-                            if (items[1] === '_pySlice') {
-                                return window[items[0]]['_pySlice'];
-                                /* if (typeof window[items[0]] === 'string') {
-                                    return window[items[0]]['substring'];
-                                }
-                                else {
-                                    return window[items[0]]['_pySlice'];
-                                } */
-                            }            
-                            else {   
-                                return window[items[0]][items[1]];
-                            }        
-                        }
+    python._get_element = function(element) {
+        // Split the identifier name space.
+        var items = element.value.split('.');
+
+        // Check if the identifier is part of the internal scope.
+        if (items[0] === '__pythonRuntime') {
+            // Check if the identifier is part of the import scope. 
+            if (items[1] === 'imports') {
+                var import_lib = filbert.pythonRuntime.imports[items[2]];
+                return import_lib[items[3]];
+            }
+            else {
+                var default_lib = filbert.pythonRuntime[items[1]];
+                return default_lib[items[2]];
+            }    
+        } else {
+            // No internal scope, check if it is defined in the global scope
+            if (window[items[0]] !== undefined) {
+                if (items.length === 1) {
+                    return window[items[0]];
+                }
+                else {
+                    return window[items[0]][items[1]];
+                }
+            }    
+        }
+    };    
+
+    python._get_element_value = function(element) {
+        switch (element.type) {
+            case 'identifier':
+                    // Split the identifier name space.
+                    var items = element.value.split('.');
+
+                    // Set the element value in the global scope.
+                    if (items.length === 1) {
+                        return window[items[0]];
                     }
                     else {
-                        if (this._classes[items[0]] !== undefined) {
-                            if (items.length === 1) {
-                                // 
-                                arguments.unshift(this._classes[items[0]]);
-                                return this._new_object;
-                            }
-                            else {
-                                return this._classes[items[0]][items[1]];
-                            }    
-                        }
-                        else {
-                            return items[0];
-                        }    
-                    }    
-            }
+                        return window[items[0]][items[1]];
+                    }
+                break;
+            case 'literal':
+                    // return the value of the literal.
+                    return element.value;
+                break;
         }        
-    };
-
-    python._new_object = function(Class) {
-        // Create a new object class.
-        return new (Function.prototype.bind.apply(Class, arguments));
+    };    
+    
+    python._set_element_value = function(element, value) {
+        // Split the identifier name space.
+        var items = element.value.split('.');
+        
+        // Set the element value in the global scope.
+        if (items.length === 1) {
+            window[items[0]] = value;
+        }
+        else {
+            window[items[0]][items[1]] = value;
+        }
     };
 
     python._set_node = function(node) {
@@ -145,7 +135,7 @@ module.exports = function(osweb){
         // Set the new node as the current node.
         this._node = node;
     };
-
+    
     python._set_return_value = function(value) {
         // Create or acces the return_values array.
         this._node.parent.return_values = (typeof this._node.parent.return_values === 'undefined') ? [] : this._node.parent.return_values;
@@ -170,8 +160,11 @@ module.exports = function(osweb){
             this._process_nodes();
         } 
         else {
-            // Define the return_values.
-            var return_value = this._node.return_values;
+            // Redefine the return values.
+            for (var i = 0; i < this._node.return_values.length; i++) {
+                this._node.return_values[i] = this._get_element_value(this._node.return_values[i]);
+            }
+            var return_value = {type: 'literal', value: this._node.return_values};
             
             // Set the return value.
             this._set_return_value(return_value);
@@ -208,42 +201,25 @@ module.exports = function(osweb){
                 break;
             case 2:
                 // define variables
-                var left  = this._node.return_values[0].split('.');
-                var right = this._get_item(this._node.return_values[1]);
-                
+                var tmp_value; 
+                        
                 // Select binary operator.
                 switch (this._node.operator) {
                     case '=': 
-                        if (left.length === 1) {
-                            window[left[0]] = right;
-                        }
-                        else {
-                            window[left[0]][left[1]] = right;
-                        }
+                        // Process the init value.
+                        this._set_element_value(this._node.return_values[0], this._get_element_value(this._node.return_values[1]));
                         break;    
                     case '-=': 
-                        if (left.length === 1) {
-                            window[left[0]] = window[left[0]] - right;
-                        }
-                        else {
-                            window[left[0]][left[1]] = window[left[0]][left[1]] - right;
-                        }
+                        tmp_value = this._get_element_value(this._node.return_values[0]);
+                        this._set_element_value(this._node.return_values[0], tmp_value - this._get_element_value(this._node.return_values[1]));
                         break;    
                     case '/=': 
-                        if (left.length === 1) {
-                            window[left[0]] = window[left[0]] / right;
-                        }
-                        else {
-                            window[left[0]][left[1]] = window[left[0]][left[1]] / right;
-                        }
+                        tmp_value = this._get_element_value(this._node.return_values[0]);
+                        this._set_element_value(this._node.return_values[0], tmp_value / this._get_element_value(this._node.return_values[1]));
                         break;    
                     case '%=': 
-                        if (left.length === 1) {
-                            window[left[0]] = window[left[0]] % right;
-                        }
-                        else {
-                            window[left[0]][left[1]] = window[left[0]][left[1]] % right;
-                        }
+                        tmp_value = this._get_element_value(this._node.return_values[0]);
+                        this._set_element_value(this._node.return_values[0], tmp_value % this._get_element_value(this._node.return_values[1]));
                         break;    
                 }
         
@@ -251,7 +227,6 @@ module.exports = function(osweb){
                 this._node.status = 0;
                 this._node.return_values = [];
                 this._node = this._node.parent;
-
                 this._process_nodes();
                 break;
         }    
@@ -268,7 +243,7 @@ module.exports = function(osweb){
                 this._node.status = 1;
                 this._set_node(this._node.left);
 
-                // Return to the node processessor.
+                // Return to the node processor.
                 this._process_nodes();
                 break;
             case 1:
@@ -276,47 +251,47 @@ module.exports = function(osweb){
                 this._node.status = 2;
                 this._set_node(this._node.right);
 
-                // Return to the node processessor.
+                // Return to the node processor.
                 this._process_nodes();
                 break;
             case 2:
-                // define variables
-                var right = this._get_item(this._node.return_values.pop());
-                var left = this._get_item(this._node.return_values.pop());
-                var return_value;
-                    
+                // define variables.
+                var left = this._get_element_value(this._node.return_values[0]);
+                var right = this._get_element_value(this._node.return_values[1]);
+                var return_value = {type: 'literal'};
+                 
                 // Select binary operator.
                 switch (this._node.operator) {
                     case '-':
-                        return_value = left - right;
+                        return_value.value = left - right;
                         break;
                     case '/':
-                        return_value = left / right;
+                        return_value.value = left / right;
                         break;
                     case '==':
-                        return_value = (left === right);
+                        return_value.value = (left === right);
                         break;
                     case '!=':
-                        return_value = (left !== right);
+                        return_value.value = (left !== right);
                         break;
                     case '>':
-                        return_value = (left > right);
+                        return_value.value = (left > right);
                         break;
                     case '<':
-                        return_value = (left < right);
+                        return_value.value = (left < right);
                         break;
                     case '>=':
-                        return_value = (left >= right);
+                        return_value.value = (left >= right);
                         break;
                     case '<=':
-                        return_value = (left <= right);
+                        return_value.value = (left <= right);
                         break;
                     case '%': 
                         if ((typeof left === 'number') && (typeof right === 'number')) {
-                            return_value = left % right;
+                            return_value.value = left % right;
                         }
                         else {
-                            return_value = left.replace(/%s/g, right);
+                            return_value.value = left.replace(/%s/g, right);
                         }    
                 }
             
@@ -368,7 +343,7 @@ module.exports = function(osweb){
         this._process_nodes();
     };    
 
-   python._call_expression = function() {
+    python._call_expression = function() {
         // Initialize status properties.
         this._node.arguments = (typeof this._node.arguments === 'undefined') ? [] : this._node.arguments;
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
@@ -394,33 +369,31 @@ module.exports = function(osweb){
                     // Return to the node processor.
                     this._process_nodes();
                 }
-              break;
-            case 1:
+                break;
+            case 1:    
                 // Get the first return value, which is the name of the caller element.
                 var return_value = this._node.return_values.pop();
 
-                // Get the argument used on the caller element.
+                // Get the arguments used on the caller element.
                 var tmp_arguments = [];
                 for (var i = 0; i < this._node.return_values.length; i++) {
-                    tmp_arguments.push(this._get_item(this._node.return_values[i]));
+                    tmp_arguments.push(this._get_element_value(this._node.return_values[i]));
                 }
-            
+
+                var caller = this._get_element(return_value);    
                 var context = this._get_context(return_value);
-                var caller = this._get_item(return_value, tmp_arguments);
-            
-                // Check if the call is a blocking call. 
-                console.log(return_value);
-                if ((return_value === 'sleep') || (return_value === '__pythonRuntime.imports.clock.sleep')) {
+        
+                if ((return_value.value === 'sleep') || (return_value.value === '__pythonRuntime.imports.clock.sleep')) {
                     // Adjust the status to special.
                     this._node.status = 2;
                 
                     // Execute the blocking call.
-                    caller.apply(context,tmp_arguments);
+                    caller.apply(context, tmp_arguments);
                 }            
                 else {
                     // Execute the call.
-                    return_value = caller.apply(context,tmp_arguments);
-                   
+                    var return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)};
+
                     // Set the return value.
                     this._set_return_value(return_value);
 
@@ -443,7 +416,7 @@ module.exports = function(osweb){
                 this._node = this._node.parent;
                 this._process_nodes();
                 break;
-        }
+        }        
     };
 
     python._empty_statement = function() {
@@ -478,8 +451,8 @@ module.exports = function(osweb){
     };
 
     python._identifier = function() {
-        // Set the return value.
-        var return_value = this._node.name;
+        // Retrieve the identifier information.
+        var return_value = {type: 'identifier', value: this._node.name};
 
         // Set the return value.
         this._set_return_value(return_value);
@@ -501,23 +474,23 @@ module.exports = function(osweb){
                 this._node.status = 1;
                 this._set_node(this._node.test);
 
-                // Return to the node processessor.
+                // Return to the node processor.
                 this._process_nodes();
                 break;
             case 1:
                 // Check if expression is true.
-                if (this._node.return_values[0] === true) {
+                if (this._node.return_values[0].value === true) {
                     this._node.status = 2;
                     this._set_node(this._node.consequent);
 
-                    // Return to the node processessor.
+                    // Return to the node processor.
                     this._process_nodes();
                 }
                 else if (this._node.alternate !== null) {
                     this._node.status = 2;
                     this._set_node(this._node.alternate);
 
-                    // Return to the node processessor.
+                    // Return to the node processor.
                     this._process_nodes();
                 }
                 else {
@@ -563,10 +536,13 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
             case 2:
+                // Retrieve the range on which the loop travels.
+                var tmp_range = this._get_element_value(this._node.return_values[1]);
+                
                 // Execute the range.
-                if (this._node.index < window[this._node.return_values[1]].length) {
+                if (this._node.index < tmp_range.length) {
                     // Set the value of the range.
-                    window[this._node.return_values[0]] = window[this._node.return_values[1]][this._node.index];
+                    this._set_element_value(this._node.return_values[0],tmp_range[this._node.index]);
                     
                     // Increase the index.
                     this._node.index++;
@@ -587,8 +563,10 @@ module.exports = function(osweb){
     };
 
     python._literal = function() {
+        // Retrieve the identifier information.
+        var return_value = {type: 'literal', value: this._node.value};
+        
         // Set the return value.
-        var return_value = this._node.value;
         this._set_return_value(return_value);
 
         // Set parent node.
@@ -619,9 +597,9 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
             case 2:
-                // Build member expression.
-                var return_value = this._node.return_values[0] + '.' + this._node.return_values[1];
-                
+                // Build the combing return value.
+                var return_value = {type: 'identifier', value: this._node.return_values[0].value + '.' + this._node.return_values[1].value};
+
                 // Set the return value
                 this._set_return_value(return_value);
 
@@ -632,7 +610,7 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;    
         }        
-    };   
+    };    
     
     python._new_expression = function() {
         // Initialize status properties.
@@ -661,19 +639,19 @@ module.exports = function(osweb){
             }
         }
         else {
-            // Get the caller element. 
+            // Get the caller and context element. 
             var return_value = this._node.return_values.pop();
+            var caller = this._get_element(return_value);    
             var context = this._get_context(return_value);
-            var caller = this._get_item(return_value);
-    
+        
             // Create the aruments array.
             var tmp_arguments = [];
             for (var i = 0; i < this._node.return_values.length; i++) {
-                tmp_arguments.push(this._get_item(this._node.return_values[i]));
+                tmp_arguments.push(this._get_element_value(this._node.return_values[i]));
             }
 
             // Execute the call.
-            var return_value = caller.apply(context,tmp_arguments);
+            var return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)};
 
             // Set the return value
             this._set_return_value(return_value);
@@ -687,7 +665,7 @@ module.exports = function(osweb){
         }
     };
 
-  python._program = function() {
+    python._program = function() {
         // Initialize node specific properties.
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
 
@@ -707,7 +685,7 @@ module.exports = function(osweb){
         
             // Complete the inline item.    
             if (this._inline_script !== null) {
-              this._inline_script.complete();
+                this._inline_script.complete();
             }
         }    
     };
@@ -726,12 +704,15 @@ module.exports = function(osweb){
             this._process_nodes();
         }
         else {
-            var return_value;
+            var return_value = {type: 'literal'};
 
             // process the operator.
             switch (this._node.operator) {
                 case '!' : 
-                    return_value = !(this._node.return_values[0]);
+                    return_value.value = !(this._node.return_values[0].value);
+                    break;        
+                case '-' : 
+                    return_value.value = -(this._node.return_values[0].value);
                     break;        
             }   
                         
@@ -792,10 +773,7 @@ module.exports = function(osweb){
                 break;
             case 2:
                 // Process the init value.
-                var init = this._get_item(this._node.return_values[1], null);
-                
-                // Set the variable
-                window[this._node.return_values[0]] = init;
+                this._set_element_value(this._node.return_values[0],this._get_element_value(this._node.return_values[1]));
                 
                 // Reset node index and return to the parent node.
                 this._node.status = 0;
@@ -828,13 +806,13 @@ module.exports = function(osweb){
                     this._node.status = 1;
                     this._set_node(this._node.test);
 
-                    // Return to the node processessor.
+                    // Return to the node processeor.
                     this._process_nodes();
                 }
                 break;
             case 1:
                 // Check if expression is true.
-                if (this._node.return_values[0] === true) {
+                if (this._node.return_values[0].value === true) {
                     // Reset the test
                     this._node.status = 0;
                     this._node.return_values = [];
@@ -842,7 +820,7 @@ module.exports = function(osweb){
                     // execute the body.
                     this._set_node(this._node.body);
 
-                    // Return to the node processessor.
+                    // Return to the node processor.
                     this._process_nodes();
                 }
                 else {
