@@ -55,23 +55,24 @@ syntax.remove_quotes = function(pString) {
  */
 
 syntax.compile_cond = function(pCnd, pBytecode) {
-  // Check for conditional paramters.
-  pBytecode = (typeof pBytecode === 'undefined') ? true : pBytecode;
+    // Check for conditional paramters.
+    pBytecode = (typeof pBytecode === 'undefined') ? true : pBytecode;
 
-  if (pCnd == 'always') {
-    return true;
-  } else if (pCnd == 'never') {
-    return false;
-  } else {
-    if (pCnd.substring(0, 1) == '=') {
-      // Python script, compile it to an ast tree.
-      console.log('python script is not supported yet');
-    } else {
-      // opensesame script, convert it to javascript.
-      pCnd = pCnd.replace(/[^(!=)][=]/g, '==');
+    if (pCnd == 'always') {
+        return true;
     }
-  }
-  return pCnd;
+    else if (pCnd == 'never') {
+        return false;
+    } 
+    else {
+        if (pCnd.substring(0, 1) == '=') {
+            return osweb.python._parse(pCnd.substr(1));
+        }
+        else {
+            pCnd = pCnd.replace(/[^(!=)][=]/g, '==');
+        }
+    }
+    return pCnd;
 };
 
 /**
@@ -115,6 +116,10 @@ syntax.count_quotes = function(s){
  * @return {[type]}              [description]
  */
 syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) { 
+  // if pTxt is an object then it is a parsed python expression.
+  if (typeof(pTxt) == 'object') {
+      return osweb.python._run_statement(pTxt);
+  };
   // if pTxt is already a number simply return it
   if (typeof(pTxt) == "number") {
     return pTxt;

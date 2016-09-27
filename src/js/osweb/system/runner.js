@@ -70,6 +70,7 @@ module.exports = function(osweb){
         this.experiment = new osweb.experiment(null, 'test', this._script);
 
         // Build the global static object classes.
+        window['exp'] = this.experiment;
         window['items'] = osweb.item_store;
         window['pool'] = osweb.file_pole_store;
         window['var'] = this.experiment.vars;

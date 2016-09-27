@@ -91,6 +91,9 @@ module.exports = function(osweb){
         
         // Execute the run code.
         if (this._prepare_tree != null) {
+            
+            console.log('running prepare script');
+            
             // Set the current item.
             osweb.events._current_item = this;
         

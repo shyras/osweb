@@ -9,6 +9,8 @@ module.exports = function(osweb){
     // Definition of private methods.   
 
     python_opensesame._initialize = function() {
+        this._objects = {};
+        
         // Insert clock class into the python interpreter.
         filbert.pythonRuntime.imports['clock'] = {};
         filbert.pythonRuntime.imports['clock']['sleep'] = window['clock'].sleep; 

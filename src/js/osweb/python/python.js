@@ -8,10 +8,12 @@ module.exports = function(osweb){
 
     // Definition of private properties.
     python._classes = {};               // Accessible classes within the script code.
+    python._function_stack = [];       // Function call stack.   
     python._inline_script = null;       // Parent inline_script item.
     python._node = null;                // Current active node.  
     python._global_return_value = null; // Global return value for blocking calls.
     python._stack = 0;                  // Stack counter (hack to precent stack overflow).
+    python._statement = null;           // process one statement or an script.
     python._status = 0;                 // Status of the walker.
     
     // Definition of private methods - parse cycle.   
@@ -52,7 +54,7 @@ module.exports = function(osweb){
         } 
     };
 
-    // Definition of private methods - node processing support methods.
+    // Definition of private methods - additionla processing methods. 
 
     python._get_context = function(identifier) {
         // Split the identifer
@@ -80,7 +82,7 @@ module.exports = function(osweb){
             }
             else {
                 var default_lib = filbert.pythonRuntime[items[1]];
-                return default_lib[items[2]];
+                 return default_lib[items[2]];
             }    
         } else {
             // No internal scope, check if it is defined in the global scope
@@ -106,7 +108,19 @@ module.exports = function(osweb){
                         return window[items[0]];
                     }
                     else {
-                        return window[items[0]][items[1]];
+                        if (items[0].indexOf('__filbertRight') !== -1) {
+                            if (items[1].indexOf('__filbertIndex') !== -1) {
+                                var container = window[items[0]];
+                                var index = window[items[1]];
+                                return container[index];
+                            }
+                            else { 
+                                return window[items[0]][items[1]];
+                            } 
+                        } 
+                        else {
+                            return window[items[0]][items[1]];
+                        } 
                     }
                 break;
             case 'literal':
@@ -292,7 +306,11 @@ module.exports = function(osweb){
                         }
                         else {
                             return_value.value = left.replace(/%s/g, right);
-                        }    
+                        }
+                        break;
+                    case 'instanceof':
+                        return_value.value = left instanceof right;
+                        break;
                 }
             
                 // Set the return value.
@@ -391,8 +409,13 @@ module.exports = function(osweb){
                     caller.apply(context, tmp_arguments);
                 }            
                 else {
-                    // Execute the call.
-                    var return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)};
+                    // Execute the call, check first for internal function call.
+                    if (this._node.callee.type === 'FunctionExpression') {
+                        return_value = {type: 'literal', value: caller};
+                    }
+                    else {
+                        return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)};
+                    }
 
                     // Set the return value.
                     this._set_return_value(return_value);
@@ -449,6 +472,140 @@ module.exports = function(osweb){
             this._process_nodes();
         }
     };
+
+    python._for_statement = function() {
+        // Initialize status property.
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+    
+        // Process the current status.
+        switch (this._node.status) {
+            case 0:
+                // Process object.
+                this._node.status = 1;
+                this._set_node(this._node.init);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+            case 1:
+                // Process object.
+                this._node.status = 2;
+                this._set_node(this._node.test);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+            case 2:
+                // Check if the test node has returned true.
+                if  (this._node.return_values[0].value === true) {
+                    // Process object.
+                    this._node.status = 3;
+                    this._node.return_values = [];
+                    this._set_node(this._node.body);
+                        
+                    // Return to the node processessor.
+                    this._process_nodes();
+                }    
+                else {
+                    // Range has ended.
+                    this._node.status = 0;
+                    this._node.return_values = [];
+                    this._node = this._node.parent;
+
+                    // Return to the node processessor.
+                    this._process_nodes();
+                }    
+                break;
+            case 3:
+                // Process object.
+                this._node.status = 1;
+                this._set_node(this._node.update);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+        }        
+    };
+    
+    python._for_in_statement = function() {
+        // Initialize status property.
+        this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+
+        // Process the current status.
+        switch (this._node.status) {
+            case 0:
+                // Process object.
+                this._node.status = 1;
+                this._set_node(this._node.left);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+            case 1:
+                // Process object.
+                this._node.status = 2;
+                this._set_node(this._node.right);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+            case 2:
+                // Retrieve the range on which the loop travels.
+                var tmp_range = this._get_element_value(this._node.return_values[1]);
+                
+                // Execute the range.
+                if (this._node.index < tmp_range.length) {
+                    // Set the value of the range.
+                    this._set_element_value(this._node.return_values[0],tmp_range[this._node.index]);
+                    
+                    // Increase the index.
+                    this._node.index++;
+                    
+                    // Execute the body.
+                    this._set_node(this._node.body);
+                    this._process_nodes();
+                }
+                else {
+                    this._node.index = 0;
+                    this._node.status = 0;
+                    this._node.return_values = [];
+                    this._node = this._node.parent;
+                    this._process_nodes();
+                }
+                break;
+        }        
+    };
+
+    python._function_expression = function() {
+        // Initialize status property.
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+
+        // Process the current status.
+        switch (this._node.status) {
+            case 0:
+                // Process defaults.
+                this._node.status = 1;
+                this._set_node(this._node.body);
+
+                // Return to the node processor.
+                this._process_nodes();
+                break;
+            case 1:
+                // Remove the last return value from the global function stack.
+                var return_value = this._function_stack.pop();
+
+                // Set the return value
+                this._set_return_value(return_value);
+                
+                // Set parent node.
+                this._node.status = 0;
+                this._node.return_values = [];
+                this._node = this._node.parent;
+                this._process_nodes();
+                break;
+        }        
+    };    
 
     python._identifier = function() {
         // Retrieve the identifier information.
@@ -512,56 +669,6 @@ module.exports = function(osweb){
         }        
     };
 
-    python._for_in_statement = function() {
-         // Initialize status property.
-        this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
-        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
-
-        // Process the current status.
-        switch (this._node.status) {
-            case 0:
-                // Process object.
-                this._node.status = 1;
-                this._set_node(this._node.left);
-
-                // Return to the node processessor.
-                this._process_nodes();
-                break;
-            case 1:
-                // Process object.
-                this._node.status = 2;
-                this._set_node(this._node.right);
-
-                // Return to the node processessor.
-                this._process_nodes();
-                break;
-            case 2:
-                // Retrieve the range on which the loop travels.
-                var tmp_range = this._get_element_value(this._node.return_values[1]);
-                
-                // Execute the range.
-                if (this._node.index < tmp_range.length) {
-                    // Set the value of the range.
-                    this._set_element_value(this._node.return_values[0],tmp_range[this._node.index]);
-                    
-                    // Increase the index.
-                    this._node.index++;
-                    
-                    // Execute the body.
-                    this._set_node(this._node.body);
-                    this._process_nodes();
-                }
-                else {
-                    this._node.index = 0;
-                    this._node.status = 0;
-                    this._node.return_values = [];
-                    this._node = this._node.parent;
-                    this._process_nodes();
-                }
-                break;
-        }        
-    };
-
     python._literal = function() {
         // Retrieve the identifier information.
         var return_value = {type: 'literal', value: this._node.value};
@@ -575,7 +682,7 @@ module.exports = function(osweb){
     };    
 
     python._member_expression = function() {
-         // Initialize status property.
+        // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
         // Process the current status.
@@ -683,12 +790,43 @@ module.exports = function(osweb){
             this._node.index = 0;
             this._status = 2;
         
+            console.log(window);
             // Complete the inline item.    
             if (this._inline_script !== null) {
                 this._inline_script.complete();
             }
         }    
     };
+
+    python._return_statement = function() {
+        // Initialize status property.
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+
+        // Process the current status.
+        switch (this._node.status) {
+            case 0:
+                // Process object.
+                this._node.status = 1;
+                this._set_node(this._node.argument);
+
+                // Return to the node processessor.
+                this._process_nodes();
+                break;
+            case 1:
+                // Set return value.
+                var return_value = {type: 'identifier', value: this._node.return_values[0].value};
+
+                // Set the return value
+                this._function_stack.push(return_value);
+            
+                // Reset node index and return to the parent node.
+                this._node.status = 0;
+                this._node.return_values = [];
+                this._node = this._node.parent;
+                this._process_nodes();
+                break;
+        }        
+    };     
 
     python._unary_expression = function() {
         // Initialize node specific properties.
@@ -726,6 +864,36 @@ module.exports = function(osweb){
             this._process_nodes();
         }
     };    
+
+    python._update_expression = function() {
+        // Initialize node specific properties.
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+
+        // Process the current status.
+        if (this._node.status === 0) {
+            // Set parent node.
+            this._node.status = 1;
+            this._set_node(this._node.argument);
+
+            // Return to the node processor.
+            this._process_nodes();
+        }
+        else {
+            // Process the init value.
+            switch (this._node.operator) {
+                case '++' : 
+                    this._set_element_value(this._node.return_values[0],this._get_element_value(this._node.return_values[0]) + 1);
+                    break;
+            }   
+            
+            // Return to the node processessor.
+            this._node.status = 0;
+            this._node.return_values = [];
+            this._node = this._node.parent;
+            this._process_nodes();
+        }
+    };    
+
 
     python._variable_declaration = function() {
         // Initialize node specific properties.
@@ -837,6 +1005,26 @@ module.exports = function(osweb){
     // Definition of private methods - processing nodes.
 
     python._process_nodes = function() {
+        // Select type of processing.
+        if (this._statement === null) {
+            // Script processing.
+            this._process_nodes_jump();
+        }
+        else {
+            if (this._node === this._statement) {
+                console.log('done');
+                // Return the result value of the expression.
+                return (this._node.body[0].return_values[0].value);
+            }
+            else {
+                // Statement processing.
+                console.log(this._node);
+                python._process_nodes_timeout();
+            }
+        }
+    };    
+
+    python._process_nodes_jump = function() {
         // Increase the stack counter.
         this._stack++;
         if (this._stack > 500) {
@@ -851,10 +1039,10 @@ module.exports = function(osweb){
             this._process_nodes_timeout();
         }
     };    
-
+    
     python._process_nodes_timeout = function() {
         // Select the type of node to process
-        // console.log(this._node);
+        //console.log(this._node);
         switch (this._node.type) {
             case 'ArrayExpression':
                 this._array_expression();
@@ -880,8 +1068,14 @@ module.exports = function(osweb){
             case 'ExpressionStatement':
                 this._expression_statement();
                 break;
+            case 'ForStatement':
+                this._for_statement();
+                break;
             case 'ForInStatement':
                 this._for_in_statement();
+                break;
+            case 'FunctionExpression':
+                this._function_expression();
                 break;
             case 'Identifier':
                 this._identifier();
@@ -901,8 +1095,14 @@ module.exports = function(osweb){
             case 'Program':
                 this._program();
                 break;
+            case 'ReturnStatement':
+                this._return_statement();
+                break;
             case 'UnaryExpression':
                 this._unary_expression();
+                break;
+            case 'UpdateExpression':
+                this._update_expression();
                 break;
             case 'VariableDeclaration':
                 this._variable_declaration();
@@ -914,19 +1114,39 @@ module.exports = function(osweb){
                 this._while_statement();
                 break;
             default:
-                osweb.debug.addError(osweb.constants.ERROR_203 + this._node.type);
+                throw 'Invalid node type to process: ' + this._node.type;
         }    
     };    
    
     // Definition of private methods - run cycle.
 
+    python._run_statement = function(ast_tree) {
+
+        this._node = ast_tree.body[0];
+        this._node.parent = ast_tree;
+        this._statement = ast_tree;
+
+        // Adjust status of partser to running and start the process.
+        this._status = 1;
+        
+        // Process the nodes.
+        this._process_nodes();
+        
+        // Return the result value of the expression.
+        return ast_tree.body[0].return_values[0].value;
+    };
+
     python._run = function(inline_script, ast_tree) {
         // Set the inline item. 
         this._inline_script = inline_script;
 
+        // set the self parameter.
+        window['self'] = inline_script;
+
         // Set the first node and its parent.
         this._node = ast_tree;
         this._node.parent = null;
+        this._statement = null;
         
         // Adjust status of partser to running and start the process.
         this._status = 1;
