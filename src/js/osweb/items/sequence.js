@@ -84,23 +84,6 @@ module.exports = function(osweb){
 
         // Prepare the items.
         this.prepare_complete();
-
-        /* this._items = [];
-	for (var i=0; i < this.items.length; i++)
-	{
-            if ((this.items[i].item in osweb.item_store._items) === false)
-            {
-		osweb.debug.addError('Could not find item ' + this.items[i].item.name + ' which is called by sequence item ' + this.name);
-            }
-            else 
-            {
-                // Prepare the items.
-                osweb.item_store.prepare(this.items[i].item);
-		
-                // Add the item to the internal list.
-                this._items.push({'item': this.items[i].item, 'cond': osweb.syntax.compile_cond(this.items[i].cond)});
-            }
-	} */
     };
 
     p.prepare_complete = function() {
@@ -128,8 +111,14 @@ module.exports = function(osweb){
             // Remove the prepare phase form the stack.    
             osweb.item_stack.pop();
 
-            // Execute the next cycle of the sequnce itself.
-            osweb.item_store.run(this.name, this._parent);
+            // Check if this secuence is part of a parent sequence and must jump back in the prepare phase.
+            if (this._parent.type === 'sequence') {
+                this._parent.prepare_complete();
+            }  
+            else {
+                // Execute the next cycle of the sequnce itself.
+                osweb.item_store.run(this.name, this._parent);
+            }
         }
     };
 

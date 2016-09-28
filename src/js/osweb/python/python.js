@@ -8,13 +8,14 @@ module.exports = function(osweb){
 
     // Definition of private properties.
     python._classes = {};               // Accessible classes within the script code.
-    python._function_stack = [];       // Function call stack.   
+    python._function_stack = [];        // Function call stack.   
     python._inline_script = null;       // Parent inline_script item.
     python._node = null;                // Current active node.  
     python._global_return_value = null; // Global return value for blocking calls.
     python._stack = 0;                  // Stack counter (hack to precent stack overflow).
     python._statement = null;           // process one statement or an script.
     python._status = 0;                 // Status of the walker.
+    python._variables = {};             // Object containing all global objects and variables. 
     
     // Definition of private methods - parse cycle.   
 
@@ -24,7 +25,13 @@ module.exports = function(osweb){
         osweb.python_opensesame._initialize();
         osweb.python_random._initialize();
         osweb.python_string._initialize();
-        console.log(filbert);
+ 
+        // Set the python variable connections with opensesame.  
+        python._variables['clock'] = osweb.runner.experiment.clock;
+        python._variables['exp'] = osweb.runner.experiment;
+        python._variables['items'] = osweb.item_store;
+        python._variables['pool'] = osweb.file_pole_store;
+        python._variables['var'] = osweb.runner.experiment.vars;
     };
 
     // Definition of private methods - parsing script to ast nodes.
@@ -61,11 +68,16 @@ module.exports = function(osweb){
         var items = identifier.value.split('.');
 
         if ((items[0] === '__pythonRuntime') && (items[1] === 'imports')) {
-            return window[items[2]];
+            return python._variables[items[2]];
         }
         else {
             // Return the object context
-            return window[items[0]];
+            if (python._variables[items[0]] !== undefined) {
+                return python._variables[items[0]];
+            }
+            else {
+                return window[items[0]];
+            }
         }     
     };
 
@@ -86,14 +98,24 @@ module.exports = function(osweb){
             }    
         } else {
             // No internal scope, check if it is defined in the global scope
-            if (window[items[0]] !== undefined) {
+            if (python._variables[items[0]] !== undefined) {
                 if (items.length === 1) {
-                    return window[items[0]];
+                    return python._variables[items[0]];
                 }
                 else {
-                    return window[items[0]][items[1]];
+                    return python._variables[items[0]][items[1]];
                 }
-            }    
+            } 
+            else {
+                if (window[items[0]] !== undefined) {
+                    if (items.length === 1) {
+                        return window[items[0]];
+                    }
+                    else {
+                        return window[items[0]][items[1]];
+                    }
+                }    
+            }
         }
     };    
 
@@ -105,21 +127,36 @@ module.exports = function(osweb){
 
                     // Set the element value in the global scope.
                     if (items.length === 1) {
-                        return window[items[0]];
+                        if (python._variables[items[0]] !== undefined) {
+                            return python._variables[items[0]];
+                        }    
+                        else {
+                            return window[items[0]];
+                        }    
                     }
                     else {
                         if (items[0].indexOf('__filbertRight') !== -1) {
                             if (items[1].indexOf('__filbertIndex') !== -1) {
-                                var container = window[items[0]];
-                                var index = window[items[1]];
+                                var container = python._variables[items[0]];
+                                var index = python._variables[items[1]];
                                 return container[index];
                             }
                             else { 
-                                return window[items[0]][items[1]];
+                                if (python._variables[items[0]] !== undefined) {
+                                    return python._variables[items[0]][items[1]];
+                                }
+                                else {
+                                    return window[items[0]][items[1]];
+                                }
                             } 
                         } 
                         else {
-                            return window[items[0]][items[1]];
+                            if (python._variables[items[0]] !== undefined) {
+                                return python._variables[items[0]][items[1]];
+                            }
+                            else {
+                                return window[items[0]][items[1]];
+                            }
                         } 
                     }
                 break;
@@ -136,10 +173,20 @@ module.exports = function(osweb){
         
         // Set the element value in the global scope.
         if (items.length === 1) {
-            window[items[0]] = value;
+            if (python._variables[items[0]] !== undefined) {
+                python._variables[items[0]] = value; 
+            }
+            else {
+                window[items[0]] = value; 
+            }
         }
         else {
-            window[items[0]][items[1]] = value;
+            if (python._variables[items[0]] !== undefined) {
+                python._variables[items[0]][items[1]] = value;
+            }
+            else {
+                window[items[0]][items[1]] = value;
+            }
         }
     };
 
@@ -270,6 +317,8 @@ module.exports = function(osweb){
                 break;
             case 2:
                 // define variables.
+                console.log(this._node.return_values);
+                
                 var left = this._get_element_value(this._node.return_values[0]);
                 var right = this._get_element_value(this._node.return_values[1]);
                 var return_value = {type: 'literal'};
@@ -790,7 +839,6 @@ module.exports = function(osweb){
             this._node.index = 0;
             this._status = 2;
         
-            console.log(window);
             // Complete the inline item.    
             if (this._inline_script !== null) {
                 this._inline_script.complete();
@@ -893,7 +941,6 @@ module.exports = function(osweb){
             this._process_nodes();
         }
     };    
-
 
     python._variable_declaration = function() {
         // Initialize node specific properties.
@@ -1141,7 +1188,7 @@ module.exports = function(osweb){
         this._inline_script = inline_script;
 
         // set the self parameter.
-        window['self'] = inline_script;
+        python._variables['self'] = inline_script;
 
         // Set the first node and its parent.
         this._node = ast_tree;

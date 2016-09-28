@@ -177,7 +177,7 @@ p.default_config = function() {
 
 p.flush = function() {
     // Clear all pending keyboard input, not limited to the keyboard.
-    osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'keyboard.flush().');
+    //osweb.debug.addMessage(osweb.constants.MESSAGE_007 + 'keyboard.flush().');
 };
 
 p.get_key = function(timeout, keylist) {
