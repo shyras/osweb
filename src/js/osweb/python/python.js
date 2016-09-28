@@ -173,19 +173,19 @@ module.exports = function(osweb){
         
         // Set the element value in the global scope.
         if (items.length === 1) {
-            if (python._variables[items[0]] !== undefined) {
-                python._variables[items[0]] = value; 
+            if (window[items[0]] !== undefined) {
+                window[items[0]] = value; 
             }
             else {
-                window[items[0]] = value; 
+                python._variables[items[0]] = value; 
             }
         }
         else {
-            if (python._variables[items[0]] !== undefined) {
-                python._variables[items[0]][items[1]] = value;
+            if (window[items[0]] !== undefined) {
+                window[items[0]][items[1]] = value;
             }
             else {
-                window[items[0]][items[1]] = value;
+                python._variables[items[0]][items[1]] = value;
             }
         }
     };
