@@ -3452,7 +3452,7 @@
                 }
                 var a = document.getElementById("osweb_console_text").value;
                 a = a + s + '\r\n';
-                document.getElementById("osweb_console_text").value = a;  
+                document.getElementById("osweb_console_text").value = a; 
             },
             range: function (start, stop, step) {
                 if (stop === undefined) {
