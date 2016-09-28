@@ -1,0 +1,196 @@
+---
+API: 2
+OpenSesame: 3.0.2
+Platform: nt
+---
+set width 800
+set uniform_coordinates "yes"
+set title "New experiment"
+set subject_parity "even"
+set subject_nr 0
+set start "experiment"
+set sampler_backend "legacy"
+set mouse_backend "xpyriment"
+set keyboard_backend "legacy"
+set height 600
+set foreground "white"
+set font_size 18
+set font_italic "no"
+set font_family "mono"
+set font_bold "no"
+set description "Default description"
+set coordinates "uniform"
+set compensation 0
+set color_backend "legacy"
+set clock_backend "legacy"
+set canvas_backend "xpyriment"
+set bidi "no"
+set background "black"
+
+define sketchpad BeginTest
+	set start_response_interval "no"
+	set reset_variables "no"
+	set duration "keypress"
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=no show_if=always text="Start prepare/run test with inline scripting" x=0.0 y=-32.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=no show_if=always text="Press key to start (take a few seconds to complete)" x=0.0 y=32.0 z_index=0
+
+define sketchpad EndTest
+	set duration "keypress"
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Prepare/run test is finished" x=0.0 y=-32.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Please look int the console window for result output" x=0.0 y=32.0 z_index=0
+
+define loop Loop1
+	set skip 0
+	set repeat 1
+	set order "random"
+	set offset "no"
+	set item "Sequence1"
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set column_order ""
+	set break_if "never"
+	run Sequence1
+
+define loop Loop2
+	set skip 0
+	set repeat 1
+	set order "random"
+	set offset "no"
+	set item "Sequence4"
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set column_order ""
+	set break_if "never"
+	run Sequence4
+
+define inline_script Scrip4
+	set description "Executes Python code"
+	___run__
+	print('Run script 4')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+	___prepare__
+	print('Prepare script 4')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+
+define sequence Sequence1
+	set flush_keyboard "yes"
+	set description "Runs a number of items in sequence"
+	run script1 always
+	run Sequence2 always
+
+define sequence Sequence2
+	set flush_keyboard "yes"
+	set description "Runs a number of items in sequence"
+	run script2 always
+	run Sequence3 always
+
+define sequence Sequence3
+	set flush_keyboard "yes"
+	set description "Runs a number of items in sequence"
+	run Loop2 always
+	run script3 always
+
+define sequence Sequence4
+	set flush_keyboard "yes"
+	set description "Runs a number of items in sequence"
+	run Scrip4 always
+
+define sequence experiment
+	set flush_keyboard "yes"
+	set description "Runs a number of items in sequence"
+	run BeginTest always
+	run new_sketchpad always
+	run Loop1 always
+	run EndTest always
+
+define sketchpad new_sketchpad
+	set duration 0
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Start prepare/run test with inline scripting" x=0.0 y=-32.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Please wait" x=0 y=32 z_index=0
+
+define inline_script script1
+	set description "Executes Python code"
+	___run__
+	print('Run script 1')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+	___prepare__
+	print('Pepare script 1')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+
+define inline_script script2
+	set description "Executes Python code"
+	___run__
+	print('Run script 2')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+	___prepare__
+	print('Prepare script 2')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+
+define inline_script script3
+	set description "Executes Python code"
+	___run__
+	print('Run script 3')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+	___prepare__
+	print('Prepare script 3')
+	
+	t0 = clock.time()
+	clock.sleep(500)
+	t1 = clock.time()
+	time_passed = t1 - t0
+	
+	print('This should be 500 (but in osweb between 500-530): ' , time_passed)
+	__end__
+

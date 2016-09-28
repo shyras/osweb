@@ -91,14 +91,14 @@ module.exports = function(osweb){
         
         // Execute the run code.
         if (this._prepare_tree != null) {
-            
-            console.log('running prepare script');
-            
             // Set the current item.
             osweb.events._current_item = this;
         
             // Set the prepare run toggle.
             this._prepare_run = true;
+
+            // Record the onset of the current item.
+            this.set_item_onset();
 
             // Start the parser
             osweb.python._run(this, this._prepare_tree);

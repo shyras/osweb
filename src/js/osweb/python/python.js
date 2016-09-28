@@ -317,8 +317,6 @@ module.exports = function(osweb){
                 break;
             case 2:
                 // define variables.
-                console.log(this._node.return_values);
-                
                 var left = this._get_element_value(this._node.return_values[0]);
                 var right = this._get_element_value(this._node.return_values[1]);
                 var return_value = {type: 'literal'};
