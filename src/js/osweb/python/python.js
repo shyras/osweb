@@ -1057,13 +1057,11 @@ module.exports = function(osweb){
         }
         else {
             if (this._node === this._statement) {
-                console.log('done');
                 // Return the result value of the expression.
                 return (this._node.body[0].return_values[0].value);
             }
             else {
                 // Statement processing.
-                console.log(this._node);
                 python._process_nodes_timeout();
             }
         }
@@ -1178,7 +1176,13 @@ module.exports = function(osweb){
         this._process_nodes();
         
         // Return the result value of the expression.
-        return ast_tree.body[0].return_values[0].value;
+        var return_value = ast_tree.body[0].return_values[0].value;
+        
+        // Clear the return value container for next cycle.
+        ast_tree.body[0].return_values = [];
+        
+        // Retur value of the statement.
+        return return_value;
     };
 
     python._run = function(inline_script, ast_tree) {

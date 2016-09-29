@@ -112,16 +112,23 @@ module.exports = function(osweb){
         // Inherited.	
         this.item_run();
 
+        // Set the prepare run toggle.
+        this._prepare_run = false;
+
         // Record the onset of the current item.
         this.set_item_onset();
 
         // Execute the run code.
         if (this._run_tree != null) {
-            // Set the prepare run toggle.
-            this._prepare_run = false;
-
             // Start the parser
             osweb.python._run(this, this._run_tree);
+        }
+        else {
+            // To prevent prepeare script from running twice.
+            osweb.python._status = 0;
+            
+            // No script, so jump to compelte.
+            this.complete();
         }
     };
 

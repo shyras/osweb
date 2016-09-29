@@ -137,7 +137,13 @@ syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) {
       var value = pVars[variable];
     }
 
-    result = result.replace('[' + variable + ']', value);
+    // Temporyary hack for string types.
+    if (typeof value === 'string') {
+        result = result.replace('[' + variable + ']', "'" + value + "'");
+    } 
+    else {
+        result = result.replace('[' + variable + ']', value);
+    }
     processing = result.search(/[^[\]]+(?=])/g);
   }
 
