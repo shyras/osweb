@@ -309,4 +309,4 @@ module.exports = function(osweb){
 
     // Bind the events class to the osweb namespace.
     return events;
-}
+};

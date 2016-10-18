@@ -139,7 +139,8 @@ syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) {
 
     // Temporyary hack for string types.
     if (typeof value === 'string') {
-        result = result.replace('[' + variable + ']', "'" + value + "'");
+        //result = result.replace('[' + variable + ']', "'" + value + "'");
+        result = result.replace('[' + variable + ']', value);
     } 
     else {
         result = result.replace('[' + variable + ']', value);

@@ -125,8 +125,9 @@ osweb.promoteClass = function(sub_class, prefix) {
 };
 
 osweb.constants = require("./system/constants");
-osweb.canvas = require("./backends/canvas");
 
+// Backends
+osweb.canvas = require("./backends/canvas");
 osweb.clock = require('./backends/clock.js');
 osweb.keyboard = require('./backends/keyboard.js'); 
 osweb.log = require('./backends/log.js');
@@ -184,6 +185,7 @@ osweb.line = require('./elements/line.js')(osweb);
 osweb.noise = require('./elements/noise.js')(osweb);
 osweb.rect = require('./elements/rect.js')(osweb);
 osweb.textline = require('./elements/textline.js')(osweb);
+
 // Widgets
 osweb.form = require('./widgets/form.js');
 osweb.widget = require('./widgets/widget.js');
