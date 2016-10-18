@@ -140,6 +140,14 @@ module.exports = function(osweb){
         this.response_bookkeeping();
     };
 
+    p.process_response_timeout = function() {
+        this.experiment._start_response_interval = this.sri;
+        this.experiment._end_response_interval = osweb.events._timestamp;
+        this.experiment.vars.response = 'None';
+        this.synonyms = ['None','none'];
+        this.response_bookkeeping();
+    };
+
     p.response_bookkeeping = function() {
         // The respone and response_time variables are always set, for every response item
         this.experiment.vars.set('response_time', this.experiment._end_response_interval - this.experiment._start_response_interval);
@@ -238,6 +246,17 @@ module.exports = function(osweb){
      * Definition of public methods - running item. 
      */
 
+    p.complete = function() {
+        // Check if a timeout has occured which must be treaded as a response.
+        if ((typeof this.vars.timeout !== 'undefined') && ((osweb.events._timestamp - this.experiment.vars.get('time_' + this.name)) > this.vars.timeout)) { 
+            // Process the timeout none response. 
+            this.process_response_timeout();
+        }
+
+        // Inherited.	
+        this.item_complete();
+    };
+    
     p.prepare = function() {
         // Implements the prepare phase of the item.
         this.prepare_timeout();
@@ -256,5 +275,6 @@ module.exports = function(osweb){
             this.process_response_mouseclick(pResponse);
         }
     };
+  
     return osweb.promoteClass(generic_response, "item");
-}
+};

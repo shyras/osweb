@@ -64,4 +64,4 @@ module.exports = function(osweb){
 
     // Bind the keyboard_response class to the osweb namespace.
     return osweb.promoteClass(keyboard_response, "generic_response");
-}
+};

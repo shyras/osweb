@@ -21,6 +21,7 @@ module.exports = function(osweb){
     events._response_list = null; // Items to respond on.
     events._sound_ended = false; // Sound play is finished.
     events._timeout = -1; // Duration for timeout.
+    events._timestamp = -1; // Moment of update checking.
     events._video_ended = false; // Video play is finished.
 
     // Definition of the conversion table to convert keycodes to OpenSesame codes.
@@ -106,13 +107,17 @@ module.exports = function(osweb){
     };
 
     events._update = function() {
+        // Set current time stamp
+        this._timestamp = this._current_item.clock.time();
+
         // Check if the duration is finished.
         if (((this._timeout === -1) && ((this._response_given === true) || (this._sound_ended === true) || (this._video_ended === true))) ||
             ((this._timeout > 0) && ((this._response_type === osweb.constants.RESPONSE_KEYBOARD) || (this._response_type === osweb.constants.RESPONSE_MOUSE)) && (this._response_given === true)) ||
-            (((this._timeout > 0) && (this._current_item.clock.time() - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout))) {
+            ((this._timeout > 0) && ((this._timestamp - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout))) {
             // Set the status of the current item to finalize.
             this._current_item._status = osweb.constants.STATUS_FINALIZE;
-        } else {
+        } 
+        else {
             // Update the current item.
             this._current_item.update();
         }

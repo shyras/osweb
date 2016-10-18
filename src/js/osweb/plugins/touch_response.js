@@ -52,8 +52,10 @@ module.exports = function(osweb){
 
         var rect = osweb.runner._canvas.getBoundingClientRect();
         if (this.experiment.vars.uniform_coordinates == 'yes') {
-            this._x = pRetval.event.clientX + (this.experiment.vars.width / 2);
-            this._y = pRetval.event.clientY + (this.experiment.vars.height / 2);
+            this._x = pRetval.event.clientX - rect.left;
+            this._y = pRetval.event.clientY - rect.top;
+            //this._x = pRetval.event.clientX - rect.left + (this.experiment.vars.width / 2);
+            //this._y = pRetval.event.clientY - rect.top + (this.experiment.vars.height / 2);
         } else {
             this._x = pRetval.event.clientX - rect.left;
             this._y = pRetval.event.clientY - rect.top;
