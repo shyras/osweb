@@ -5,26 +5,32 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <html>
-    <head>
-        <!-- Head - general definitions -->
-        <title>osweb</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <!-- JavaScript -->
-    	<script type="text/javascript" src="js/osweb.js"></script>
-    	<script type="text/javascript" src="js/interface.js"></script>
-
-	<!-- CSS -->
+	<head>
+		<!-- Head - general definitions -->
+		<title>osweb</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- JavaScript -->
+		<script type="text/javascript" src="js/osweb.js"></script>
+		<script type="text/javascript" src="js/interface.js"></script>
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		  ga('create', 'UA-26205412-1', 'auto');
+		  ga('send', 'pageview');
+		</script>
+		<!-- CSS -->
 		<link rel="stylesheet" href="css/osweb.css"/>
 		<!-- <link rel="stylesheet" href="http://cogsci.nl/theme/css/bootstrap.min.css"/> -->
 		<!-- Fonts-->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
   		<link href='https://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono|Droid+Serif|Roboto|Roboto+Condensed|Ubuntu+Mono|Roboto+Slab' rel='stylesheet' type='text/css'>
-    </head>
+	</head>
 
-    <body>
+	<body>				
 		<!-- Body - HTML definitions -->
 
 		<nav class="navbar navbar-default navbar-fixed-top cogsci-navbar">
@@ -54,7 +60,7 @@ and open the template in the editor.
 						<div class="btn-group" style="display:inline;" role="group" aria-label="Load experiment">
 							<button class="btn btn-primary" type="button" id="button1" onclick="HandleBrowseClick();">Local file</button>
 							<button class="btn btn-primary" type="button" id="button2" onclick="loadServer();">Server file</button>
-						    <button class="btn btn-primary" id="button3" type="reset" onclick="loadScript();">Internal script</button>
+							<button class="btn btn-primary" id="button3" type="reset" onclick="loadScript();">Internal script</button>
 						</div>
 						
 						<div class="form-group" style="display:inline;">
@@ -70,26 +76,36 @@ and open the template in the editor.
 			</div>
 		</nav>
 
-	 	<div id="body_div">
-	        <div id="osweb_div">
-	            <canvas id="osweb_canvas" width="800" height="600"></canvas>
-                    <div id="osweb_console" style="display: none;"><textarea id="osweb_console_text" rows="4" cols="80" style="width:100%;background-color:#000000;color:#00FF00;"></textarea>
-                    </div>
-                    <div id="osweb_form" style=""></div>
-	            <div id="dialogoverlay"></div>
-	            <div id="dialogbox">
-	                <div>
-	                    <div id="dialogboxhead"></div>
-	                    <div id="dialogboxbody"></div>
-	                    <div id="dialogboxfoot"></div>
-	                </div>
-	            </div>	
-	        </div>
+		<div class="container" style="margin-top:64px;">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="alert alert-warning">
+					This is a tech preview of osweb. It is under heavy development, and not ready for general use!
+					</div>
+				</div>
+			</div>
 		</div>
 
-	    <!-- Body - Hidden experiment video player -->
-	    <video id="osweb_video" width="1024" height="768"></video>
-    </body>
+	 	<div id="body_div">
+			<div id="osweb_div">
+				<canvas id="osweb_canvas" width="800" height="600"></canvas>
+					<div id="osweb_console" style="display: none;"><textarea id="osweb_console_text" rows="4" cols="80" style="width:100%;background-color:#000000;color:#00FF00;"></textarea>
+					</div>
+					<div id="osweb_form" style=""></div>
+				<div id="dialogoverlay"></div>
+				<div id="dialogbox">
+					<div>
+						<div id="dialogboxhead"></div>
+						<div id="dialogboxbody"></div>
+						<div id="dialogboxfoot"></div>
+					</div>
+				</div>	
+			</div>
+		</div>
+
+		<!-- Body - Hidden experiment video player -->
+		<video id="osweb_video" width="1024" height="768"></video>
+	</body>
 </html>
 
 <script>
@@ -106,7 +122,7 @@ if(!alertify.errorAlert){
 		return{
 			build:function(){
 				var errorHeader = '<span class="fa fa-times-circle fa-2x" '
-				+    'style="vertical-align:middle;color:#e10000;">'
+				+	'style="vertical-align:middle;color:#e10000;">'
 				+ '</span> Application Error';
 				this.setHeader(errorHeader);
 			}
@@ -136,18 +152,18 @@ document.getElementById("button1").text = 'Select file';
 // Event listener for fullscreen errors
 // Use alert() for now, but think of something prettier (sAlert?)
 if (screenfull.enabled) {
-    document.addEventListener(screenfull.raw.fullscreenerror, function(){
-        alertify.errorAlert('Failed to activate fullscreen');
-    });
+	document.addEventListener(screenfull.raw.fullscreenerror, function(){
+		alertify.errorAlert('Failed to activate fullscreen');
+	});
 }
 
 // Resize canvas to fit screen, when resized to fullscreen
 if (screenfull.enabled) {
-    document.addEventListener(screenfull.raw.fullscreenchange, function(){
-    	var c = document.getElementById('osweb_canvas');
-        if(screenfull.isFullscreen) {
-        	c.old_width = c.style.width;
-        	c.old_height = c.style.height;
+	document.addEventListener(screenfull.raw.fullscreenchange, function(){
+		var c = document.getElementById('osweb_canvas');
+		if(screenfull.isFullscreen) {
+			c.old_width = c.style.width;
+			c.old_height = c.style.height;
 			var rect = c.getBoundingClientRect();
 			c.style.width = rect.width;
 			c.style.height = rect.height;
@@ -155,17 +171,17 @@ if (screenfull.enabled) {
 			c.style.width = c.old_width;
 			c.styleheight = c.old_height;
 		}
-    });
+	});
 }
 
 /**
  * Disable some buttons once an experiment is loaded.
  */
 function buttonsSetToFileLoaded(){
-    document.getElementById('button1').disabled = true;
-    document.getElementById('button2').disabled = true;
-    document.getElementById('button3').disabled = true;
-    document.getElementById('button4').disabled = false;
+	document.getElementById('button1').disabled = true;
+	document.getElementById('button2').disabled = true;
+	document.getElementById('button3').disabled = true;
+	document.getElementById('button4').disabled = false;
 }
 
 /**
@@ -176,7 +192,7 @@ function buttonsSetToFileSelection(){
 	document.getElementById('button2').disabled = false;
 	document.getElementById('button3').disabled = false;
 	document.getElementById('fullscreen_button').disabled = true;
-    //document.getElementById('command_div').style.display = 'inherit';
+	//document.getElementById('command_div').style.display = 'inherit';
 }
 
 function resetCanvas(){
@@ -195,8 +211,8 @@ function toggleFullscreen(){
 	var c = document.getElementById('osweb_canvas');
 	
 	if (screenfull.enabled) {
-        screenfull.request(c);
-    }
+		screenfull.request(c);
+	}
 }
 
 /**
@@ -204,57 +220,57 @@ function toggleFullscreen(){
  * @return {void}
  */
 function toggleConsoleWindow(){
-    var c = document.getElementById('osweb_console');
-    if (c.style.display === 'none') {
-        c.style.display = '';
-        }
-    else {
-        c.style.display = 'none';
-    }    
+	var c = document.getElementById('osweb_console');
+	if (c.style.display === 'none') {
+		c.style.display = '';
+		}
+	else {
+		c.style.display = 'none';
+	}	
 };
 
 /**
- * Methods for handling the hidden file load button.             
+ * Methods for handling the hidden file load button.			 
  * @return {void}
  */
 
 function HandleBrowseClick() {
-    // Update the interface.
-    var fileinput = document.getElementById("browse");
-    fileinput.click();
+	// Update the interface.
+	var fileinput = document.getElementById("browse");
+	fileinput.click();
 }
 
 function Handlechange(event) {
-    // Update the button status.
-    buttonsSetToFileLoaded();
+	// Update the button status.
+	buttonsSetToFileLoaded();
 
-    // Update the interface.
-    var fileinput = document.getElementById("browse");
-    var textinput = document.getElementById("filename");
-    textinput.value = fileinput.value;
+	// Update the interface.
+	var fileinput = document.getElementById("browse");
+	var textinput = document.getElementById("filename");
+	textinput.value = fileinput.value;
 
-    alertify.message("Loaded local file: " + textinput.value);
+	alertify.message("Loaded local file: " + textinput.value);
 
-    // Get the file.          
-    var file = event.target.files[0]; // Only select the first file.
+	// Get the file.		  
+	var file = event.target.files[0]; // Only select the first file.
 
-    // Definition of the experiment object and its properties.
-    Experiment = {'onfinished': onFinished, 'source': file};
+	// Definition of the experiment object and its properties.
+	Experiment = {'onfinished': onFinished, 'source': file};
 }   
 
 function loadServer(){
 	// Update interface.
 	buttonsSetToFileLoaded();
 
-    // Get the file.          
-    var file = 'files/stroop.osexp'; // + document.getElementById("serverfile").value;
+	// Get the file.		  
+	var file = 'files/stroop.osexp'; // + document.getElementById("serverfile").value;
 
-    var textinput = document.getElementById("filename");
-    textinput.value = file;
+	var textinput = document.getElementById("filename");
+	textinput.value = file;
 
-    alertify.message("Loaded Remote file: " + textinput.value);
-    
-    // Definition of the experiment object and its properties.
+	alertify.message("Loaded Remote file: " + textinput.value);
+	
+	// Definition of the experiment object and its properties.
 	Experiment = {'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
 };  
 
@@ -315,8 +331,8 @@ function loadScript(){
 	 '	set duration "keypress"' + '\n' +
 	 '	set description "Displays stimuli"' + '\n' +
 	 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
-        
-        // Definition of the experiment object and its properties.
+		
+		// Definition of the experiment object and its properties.
 	Experiment = {'onfinished': onFinished, 'source': Script};
 
 	alertify.message("Loaded internal script");
@@ -330,26 +346,26 @@ function runExperiment(){
 
 	if(document.getElementById('button4').getAttribute('status') == "run"){
 		document.getElementById('button4').setAttribute('status','stop');
-    	document.getElementById('button4').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
-    	document.getElementById('button4').classList.remove("btn-success");
-    	document.getElementById('button4').classList.add("btn-danger");
-    	document.getElementById('fullscreen_button').disabled = false;
+		document.getElementById('button4').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
+		document.getElementById('button4').classList.remove("btn-success");
+		document.getElementById('button4').classList.add("btn-danger");
+		document.getElementById('fullscreen_button').disabled = false;
   		// Run the experiment within the Runner with the given canvas and experiment object.
-        osweb.runner.run('osweb_canvas', Experiment); 
-    }else{
-    	// Stop the experiment
-    	alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?', 
-    	function(){ osweb.runner.exit() }, 
-    	function(){ /* What to do when cancelled */})
-    	.set('labels', {ok:'Yes', cancel:'No'}); ;
-    	
-    }
+		osweb.runner.run('osweb_canvas', Experiment); 
+	}else{
+		// Stop the experiment
+		alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?', 
+		function(){ osweb.runner.exit() }, 
+		function(){ /* What to do when cancelled */})
+		.set('labels', {ok:'Yes', cancel:'No'}); ;
+		
+	}
 } 
 
 function onFinished(pData, pSession_data){
 	// Exit fullscreen mode, if applicable
 	if (screenfull.enabled && screenfull.isFullscreen) {
-	   screenfull.exit();
+		screenfull.exit();
 	}
 
 	document.getElementById('button4').value = "Run experiment";
@@ -357,15 +373,15 @@ function onFinished(pData, pSession_data){
 	// Reset the canvas
 	resetCanvas();
 
-    // Reset the input buttons
-    buttonsSetToFileSelection();
+	// Reset the input buttons
+	buttonsSetToFileSelection();
 
-    document.getElementById('button4').setAttribute('status','run');
+	document.getElementById('button4').setAttribute('status','run');
 	document.getElementById('button4').innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Run';
 	document.getElementById('button4').classList.remove("btn-danger");
 	document.getElementById('button4').classList.add("btn-success");
 
-    console.log(pData);
-    console.log(pSession_data);
+	console.log(pData);
+	console.log(pSession_data);
 }
 </script>
