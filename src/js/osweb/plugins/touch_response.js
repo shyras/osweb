@@ -74,4 +74,4 @@ module.exports = function(osweb){
 
     // Bind the touch_response class to the osweb namespace.
     return osweb.promoteClass(touch_response, "mouse_response");
-}
+};

@@ -98,7 +98,7 @@ module.exports = function(osweb){
                 // Add the item to the internal list.
                 this._items.push({
                     'item': this.items[this._index - 1].item,
-                    'cond': osweb.syntax.compile_cond(this.items[this._index - 1].cond)
+                    'cond': osweb.syntax.compile_cond_new(this.items[this._index - 1].cond)
                 });
 
                 // Prepare the item.

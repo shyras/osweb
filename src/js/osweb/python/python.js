@@ -728,6 +728,56 @@ module.exports = function(osweb){
         this._process_nodes();
     };    
 
+    python._logical_expression = function() {
+         // Initialize status property.
+        this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
+
+        // Process the current status.
+        switch (this._node.status) {
+            case 0:
+                // Process object.
+                this._node.status = 1;
+                this._set_node(this._node.left);
+
+                // Return to the node processor.
+                this._process_nodes();
+                break;
+            case 1:
+                // Process property
+                this._node.status = 2;
+                this._set_node(this._node.right);
+
+                // Return to the node processor.
+                this._process_nodes();
+                break;
+            case 2:
+                // define variables.
+                var left = this._get_element_value(this._node.return_values[0]);
+                var right = this._get_element_value(this._node.return_values[1]);
+                var return_value = {type: 'literal'};
+                 
+                // Select binary operator.
+                switch (this._node.operator) {
+                    case '&&':
+                        return_value.value = left && right;
+                        break;
+                    case '||':
+                        return_value.value = left || right;
+                        break;
+                }
+            
+                // Set the return value.
+                this._set_return_value(return_value);
+    
+                // Reset node index and return to the parent node.
+                this._node.status = 0;
+                this._node.return_values = [];
+                this._node = this._node.parent;
+                this._process_nodes();
+                break;
+        }    
+    };
+
     python._member_expression = function() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
@@ -1128,6 +1178,9 @@ module.exports = function(osweb){
                 break;
             case 'Literal':
                 this._literal();
+                break;
+            case 'LogicalExpression':
+                this._logical_expression();
                 break;
             case 'MemberExpression':
                 this._member_expression();

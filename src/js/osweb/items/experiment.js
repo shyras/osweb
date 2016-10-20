@@ -117,7 +117,7 @@ module.exports = function(osweb){
 	};
 
 	p.set_subject = function(pNr) {
-		// Sets the subject number and parity (even/ odd). This function is called automatically when an experiment is started, so you do not generally need to call it yourself.
+	        // Sets the subject number and parity (even/ odd). This function is called automatically when an experiment is started, so you do not generally need to call it yourself.
 		this.vars.subject_nr = pNr;
 		if ((pNr % 2) == 0) {
 			this.vars.subject_parity = 'even';

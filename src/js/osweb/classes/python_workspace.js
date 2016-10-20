@@ -29,8 +29,8 @@ python_workspace._eval = function(pBytecode) {
             return eval(eval_string);
         }
     } else {
-        console.log('>python script - not supported yet');
-        return eval(pBytecode);
+        // Python script, run the internal Python interpreter.
+        return osweb.python._run_statement(pBytecode);
     }
 };
 

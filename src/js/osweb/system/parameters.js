@@ -139,7 +139,13 @@ parameters._showParameters = function() {
 parameters._transferParameters = function() {
     // Transfer the startup info items to the context.
     for (var i = 0; i < this._parameters.length; i++) {
-        osweb.runner.experiment.vars.set(this._parameters[i].name, this._parameters[i].response);
+        // Additional run for subject_nr
+        if (this._parameters[i].name == 'subject_nr') {
+            osweb.runner.experiment.set_subject(this._parameters[i].response);
+        }
+        else {
+            osweb.runner.experiment.vars.set(this._parameters[i].name, this._parameters[i].response);
+        }    
     }
     // Parameters are processed, next phase.
     osweb.screen._setupClickScreen();

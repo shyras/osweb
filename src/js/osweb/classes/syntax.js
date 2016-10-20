@@ -54,6 +54,136 @@ syntax.remove_quotes = function(pString) {
  * Definition of public class methods.   
  */
 
+syntax.compile_cond_new = function(pCnd, pBytecode) {
+    // Check for conditional paramters.
+    pBytecode = (typeof pBytecode === 'undefined') ? true : pBytecode;
+    
+    if (pCnd.substring(0, 1) == '=') {
+        // Remove the first character.
+        pCnd = pCnd.substr(1);
+    }
+    else {
+        // Translate the condition 
+        var i = 0;
+        var in_quote = false;
+        var in_var = false;
+        var in_var_pos = 0;
+        var symbol_start = false;
+        var pCndResult = '';
+        // Remove first and last quote if present.
+        if (((pCnd[0] === '"') || (pCnd[0] === "'")) && ((pCnd[pCnd.length - 1] === '"') || (pCnd[pCnd.length - 1] === "'"))) {
+            pCnd = pCnd.slice(1, pCnd.length - 1);
+        }
+
+        // Parse through the condition.
+        for (var i = 0;i < pCnd.length;i++) {
+            // Check for string expressions.
+            if (pCnd[i] === '\\') {
+                continue;
+            } 
+            if ((pCnd[i] === '"') || (pCnd[i] === "'")) {
+
+                // Toggle the in_quote.
+                in_quote = !(in_quote);
+                
+                // Add element to result string
+                pCndResult = pCndResult + pCnd[i];
+
+                // Continue the parsing.
+                continue;
+            } 
+            // Check for start variables.
+            if ((pCnd[i] === '[') && (in_quote === false)) {
+                // Toggle the in_var.
+                in_var = true;
+                // preserve position.
+                in_var_pos = i;
+                // Continue the parsing.
+                continue;
+            }
+            // Check for end var.
+            if ((pCnd[i] === ']') && (in_quote === false) && (in_var === true)) {
+                // Toggle the in_var.
+                in_var = false;
+                
+                // Replace the var for valid name.
+                pCndResult = pCndResult + 'var.' + pCnd.substring(in_var_pos + 1, i);
+
+                // Continue the parsing.
+                continue;
+            }
+            // Check for symbol 
+            if ((in_quote === false) && (in_var === false)) {
+                if (symbol_start === false) {
+                    if ((pCnd[i] === '=') || (pCnd[i] === '!') || (pCnd[i] === ' ') ||(pCnd[i] === '<') || (pCnd[i] === '>')) {
+                        // Check special case ('=').
+                        if ((pCnd[i] === '=') && (pCnd[i - 1] !== '!')) {
+                            pCndResult = pCndResult + pCnd[i] + '=';
+                        } 
+                        else {
+                            pCndResult = pCndResult + pCnd[i];
+                        }
+                    }
+                    else {
+                        // Toggle the in_symbol.
+                        symbol_start = true; 
+                        // preserve position.
+                        in_var_pos = i;
+                    } 
+                }
+                else {
+                    // Check for closure of symbol.
+                    if ((pCnd[i] === '=') || (pCnd[i] === '!') || (pCnd[i] === ' ') ||(pCnd[i] === '<') || (pCnd[i] === '>') || (i == pCnd.length - 1)) {
+                        // Toggle the in_quote.
+                        symbol_start = false; 
+
+                        var symbol = (i == pCnd.length - 1) ? pCnd.substring(in_var_pos,i + 1) : pCnd.substring(in_var_pos,i);
+                        
+                        // Check if the symbol is a numeric value.
+                        if (((!isNaN(parseFloat(symbol)) && isFinite(symbol)) === false) &&
+                            ((symbol !== 'always') && (symbol !== 'never') && (symbol !== 'and') && (symbol !== 'or'))) {
+                            // Must qoate 
+                            if (i == pCnd.length - 1) {
+                                pCndResult = pCndResult + '"' + symbol + '"';
+                            }
+                            else {
+                                pCndResult = pCndResult + '"' + symbol + '"' + pCnd[i];
+                            }    
+                        }
+                        else {
+                            if (i == pCnd.length - 1) {
+                                pCndResult = pCndResult + symbol;
+                            }
+                            else {
+                                pCndResult = pCndResult + symbol + pCnd[i];
+                            }    
+                        }
+                    } 
+                }
+            }
+            else {
+                if (in_quote === true) {
+                    // Add element to result string
+                    pCndResult = pCndResult + pCnd[i];
+                }    
+            }
+        }
+
+	// Replace always and never words by True or False
+        pCndResult = pCndResult.replace(/\bnever\b/g,'False');
+	pCndResult = pCndResult.replace(/\balways\b/g,'True');
+    }
+    // Compile the condition to a valid expression using the parser.
+    
+    if (pBytecode === true) {
+        // Compile the condition using the internal parser.
+        return osweb.python._parse(pCndResult);
+    }
+    else {
+        return pCndResult;
+    } 
+};
+
 syntax.compile_cond = function(pCnd, pBytecode) {
     // Check for conditional paramters.
     pBytecode = (typeof pBytecode === 'undefined') ? true : pBytecode;
@@ -72,6 +202,7 @@ syntax.compile_cond = function(pCnd, pBytecode) {
             pCnd = pCnd.replace(/[^(!=)][=]/g, '==');
         }
     }
+   
     return pCnd;
 };
 
