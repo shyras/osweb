@@ -20,7 +20,7 @@ python_workspace._eval = function(pBytecode) {
         pBytecode = osweb.syntax.eval_text(pBytecode);
 
         // Evaluate the expression.
-        var eval_string = osweb.syntax.remove_quotes(pBytecode)
+        var eval_string = osweb.syntax.remove_quotes(pBytecode);
         if (eval_string == "always") {
             return true;
         } else if (eval_string == "never") {

@@ -60,14 +60,18 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
     
     if (pCnd.substring(0, 1) == '=') {
         // Remove the first character.
-        pCnd = pCnd.substr(1);
+        pCndResult = pCnd.substr(1);
     }
     else {
+        
         // Translate the condition 
         var i = 0;
         var in_quote = false;
         var in_var = false;
         var in_var_pos = 0;
+        var in_special = false;
+        
+        
         var symbol_start = false;
         var pCndResult = '';
         // Remove first and last quote if present.
@@ -77,7 +81,7 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
 
         // Parse through the condition.
         for (var i = 0;i < pCnd.length;i++) {
-            // Check for string expressions.
+            // Ignore slashes                 
             if (pCnd[i] === '\\') {
                 continue;
             } 
@@ -115,9 +119,8 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
             // Check for symbol 
             if ((in_quote === false) && (in_var === false)) {
                 if (symbol_start === false) {
-                    if ((pCnd[i] === '=') || (pCnd[i] === '!') || (pCnd[i] === ' ') ||(pCnd[i] === '<') || (pCnd[i] === '>')) {
-                        // Check special case ('=').
-                        if ((pCnd[i] === '=') && (pCnd[i - 1] !== '!')) {
+                    if (pCnd[i].search(/^[a-z0-9]+$/i) === -1) {
+                        if ((pCnd[i] === '=') && (pCnd[i - 1] !== '!') && (pCnd[i - 1] !== '=') && (pCnd[i + 1] !== '=')) {
                             pCndResult = pCndResult + pCnd[i] + '=';
                         } 
                         else {
@@ -133,17 +136,15 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
                 }
                 else {
                     // Check for closure of symbol.
-                    if ((pCnd[i] === '=') || (pCnd[i] === '!') || (pCnd[i] === ' ') ||(pCnd[i] === '<') || (pCnd[i] === '>') || (i == pCnd.length - 1)) {
+                    if ((pCnd[i].search(/^[a-z0-9]+$/i) === -1) || (i == pCnd.length - 1)) {
                         // Toggle the in_quote.
-                        symbol_start = false; 
-
-                        var symbol = (i == pCnd.length - 1) ? pCnd.substring(in_var_pos,i + 1) : pCnd.substring(in_var_pos,i);
+                        var symbol = ((i == pCnd.length - 1) && (pCnd[i].search(/^[a-z0-9]+$/i) !== -1))? pCnd.substring(in_var_pos,i + 1) : pCnd.substring(in_var_pos,i);
                         
                         // Check if the symbol is a numeric value.
                         if (((!isNaN(parseFloat(symbol)) && isFinite(symbol)) === false) &&
-                            ((symbol !== 'always') && (symbol !== 'never') && (symbol !== 'and') && (symbol !== 'or'))) {
-                            // Must qoate 
-                            if (i == pCnd.length - 1) {
+                            ((symbol.toLowerCase() !== 'always') && (symbol.toLowerCase() !== 'never') && (symbol !== 'and') && (symbol !== 'or'))) {
+                            // Must quote 
+                            if ((i == pCnd.length - 1) && (pCnd[i].search(/^[a-z0-9]+$/i) !== -1)) {
                                 pCndResult = pCndResult + '"' + symbol + '"';
                             }
                             else {
@@ -151,7 +152,7 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
                             }    
                         }
                         else {
-                            if (i == pCnd.length - 1) {
+                            if ((i == pCnd.length - 1) && (pCnd[i].search(/^[a-z0-9]+$/i) !== -1)) {
                                 pCndResult = pCndResult + symbol;
                             }
                             else {
@@ -171,9 +172,13 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
 
 	// Replace always and never words by True or False
         pCndResult = pCndResult.replace(/\bnever\b/g,'False');
+        pCndResult = pCndResult.replace(/\bNEVER\b/g,'False');
 	pCndResult = pCndResult.replace(/\balways\b/g,'True');
+	pCndResult = pCndResult.replace(/\bALWAYS\b/g,'True');
     }
     // Compile the condition to a valid expression using the parser.
+    console.log(pCnd);
+    console.log(pCndResult);
     
     if (pBytecode === true) {
         // Compile the condition using the internal parser.
@@ -182,7 +187,7 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
     else {
         return pCndResult;
     } 
-};
+}; 
 
 syntax.compile_cond = function(pCnd, pBytecode) {
     // Check for conditional paramters.

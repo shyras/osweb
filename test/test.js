@@ -149,20 +149,50 @@ describe('syntax', function(){
 	});
 
 	describe('compile_cond()', function(){
-		// self.checkCnd(u'[width] > 100', u'var.width > 100')
-		// self.checkCnd(u'always', u'True')
-		// self.checkCnd(u'ALWAYS', u'True')
-		// self.checkCnd(u'never', u'False')
-		// self.checkCnd(u'NEVER', u'False')
-		// self.checkCnd(u'[width] = 1024', u'var.width == 1024')
-		// self.checkCnd(u'[width] = 1024 and [height] == 768',
-		// 	u'var.width == 1024 and var.height == 768')
-		// self.checkCnd(u'=var.width > 100', u'var.width > 100')
-		// self.checkCnd(u'"yes" = yes', u'"yes" == "yes"')
-		// self.checkCnd(u'yes = \'yes\'', u'"yes" == \'yes\'')
-		// self.checkCnd(u'"y\'es" = \'y"es\'', u'"y\'es" == \'y"es\'')
-		// self.checkCnd(u'("a b c" = abc) or (x != 10) and ([width] == 100)',
-		// 	u'("a b c" == "abc") or ("x" != 10) and (var.width == 100)')
+		it("Should convert a variable within [] to a variable name within the var context", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'[width] > 100',false)).to.equal('var.width > 100');
+		});
+		it("Should convert always to True", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'always',false)).to.equal('True');
+		});
+		it("Should convert ALWAYS to True", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'ALWAYS',false)).to.equal('True');
+		});
+		it("Should convert never to False", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'never',false)).to.equal('False');
+		});
+		it("Should convert NEVER to False", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'NEVER',false)).to.equal('False');
+		});
+                it("Should convert numbers to numbers", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'[width] = 1024',false)).to.equal('var.width == 1024');
+		});
+                it("Should not quote reserved words such as and and should also process double ==", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'[width] = 1024 and [height] == 768',false)).to.equal('var.width == 1024 and var.height == 768');
+		});
+                it("Should process a line starting with the = character as python script", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'=var.width > 100',false)).to.equal('var.width > 100');
+		});
+                it("Should igonere existing quotes and add new quotes", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'"yes" = yes',false)).to.equal('"yes" == "yes"');
+		});
+                it("Should process backslashes in a proper way", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'yes = \'yes\'',false)).to.equal('"yes" == \'yes\'');
+		});
+                it("Should process more complex structures with brackets", function(){
+			expect(osweb.syntax.compile_cond_new(
+				'("a b c" = abc) or (x != 10) and ([width] == 100)',false)).to.equal('("a b c" == "abc") or ("x" != 10) and (var.width == 100)');
+		});
 	});
 });
 
