@@ -124,28 +124,49 @@ describe('syntax', function(){
 	});
 
 	describe('eval_text()', function(){
-		it("Should only parse real variables", function(){
+		var tmp_var_store = new osweb.var_store(this, null);
+                tmp_var_store.set('width',1024);
+                tmp_var_store.set('height',768);
+            
+                it("Should only parse real variables", function(){
 			expect(osweb.syntax.eval_text(
-				'\\[width] = \[width] = [width]')).to.equal('\[width] = [width] = 1024');
+				'\\\\[width] = \\[width] = [width]',tmp_var_store)).to.equal('\[width] = [width] = 1024');
 		});
 
 		it("Should not try to parse a variable if [] contents contain spaces", function(){
 			expect(osweb.syntax.eval_text(
-				'[no var]')).to.equal('[no var]');
+				'[no var]',tmp_var_store)).to.equal('[no var]');
 		});
 
 		it("Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters", function(){
 			expect(osweb.syntax.eval_text(
-				'[nóvar]')).to.equal('[nóvar]');
+				'[nóvar]',tmp_var_store)).to.equal('[nóvar]');
 		});
 
-
-		// self.checkEvalText(u'\[width]', u'[width]')
-		// self.checkEvalText(u'[width] x [height]', u'1024 x 768')
-		// self.checkEvalText(u'[=10*10]', u'100')
-		// self.checkEvalText(u'\[=10*10]', u'[=10*10]')
-		// self.checkEvalText(u'[=u"tést"]', u'tést')
-		// self.checkEvalText(u'[="\[test\]"]', u'[test]')
+                it("Should not try to parse a variable if it is preceded by a slash", function(){
+			expect(osweb.syntax.eval_text(
+				'\[width]',tmp_var_store)).to.equal('[width]');
+		});
+                it("Should ignore characters between variable definitions", function(){
+			expect(osweb.syntax.eval_text(
+				'[width] x [height]',tmp_var_store)).to.equal('1024 x 768');
+		});
+                it("Should process python code: [=10*10]", function(){
+			expect(osweb.syntax.eval_text(
+				'[=10*10]',tmp_var_store)).to.equal('100');
+		});
+                it("Should not process python code if if is preceded by a slash: /[=10*10]", function(){
+			expect(osweb.syntax.eval_text(
+				'/[=10*10]',tmp_var_store)).to.equal('[=10*10]');
+		});
+                it('Should process string code: [="tést"]', function(){
+			expect(osweb.syntax.eval_text(
+				'[="tést"]',tmp_var_store)).to.equal('tést');
+		});
+                it('Should process string code: [="\[test\]"]', function(){
+			expect(osweb.syntax.eval_text(
+				'[="\[test\]"]',tmp_var_store)).to.equal('[test]');
+		});
 	});
 
 	describe('compile_cond()', function(){
@@ -175,7 +196,7 @@ describe('syntax', function(){
 		});
                 it("Should not quote reserved words such as and and should also process double ==", function(){
 			expect(osweb.syntax.compile_cond_new(
-				'[width] = 1024 and [height] == 768',false)).to.equal('var.width == 1024 and var.height == 768');
+				'[width] == 1024 and [height] == 768',false)).to.equal('var.width == 1024 and var.height == 768');
 		});
                 it("Should process a line starting with the = character as python script", function(){
 			expect(osweb.syntax.compile_cond_new(

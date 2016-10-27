@@ -40,6 +40,7 @@ osweb.VERSION_NUMBER = '3.0.045 (05-09-2016)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
+console.log(osweb);
 
 // If not running in node.js, bind osweb and alertify to global namespace
 if(node_mode === false){
@@ -160,6 +161,7 @@ osweb.sequence = require('./items/sequence.js')(osweb);
 osweb.sketchpad = require('./items/sketchpad.js')(osweb); 
 osweb.feedback = require('./items/feedback.js')(osweb);
 osweb.synth = require('./items/synth.js')(osweb);
+
 // Plugins
 osweb.advanced_delay = require('./plugins/advanced_delay.js')(osweb);
 osweb.form_base = require('./plugins/form_base.js')(osweb);
@@ -173,6 +175,7 @@ osweb.notepad = require('./plugins/notepad.js')(osweb);
 osweb.repeat_cycle = require('./plugins/repeat_cycle.js')(osweb);
 osweb.reset_feedback = require('./plugins/reset_feedback.js')(osweb);
 osweb.touch_response = require('./plugins/touch_response.js')(osweb);
+
 // Elements
 osweb.base_element = require('./elements/base_element.js');
 osweb.arrow = require('./elements/arrow.js')(osweb);
@@ -189,9 +192,13 @@ osweb.textline = require('./elements/textline.js')(osweb);
 // Widgets
 osweb.form = require('./widgets/form.js');
 osweb.widget = require('./widgets/widget.js');
+osweb.themes = require('./widgets/themes.js')(osweb);
 osweb.button = require('./widgets/button.js')(osweb);
 osweb.checkbox = require('./widgets/checkbox.js')(osweb);
+osweb.image = require('./widgets/image.js')(osweb);
+osweb.image_button = require('./widgets/image_button.js')(osweb);
 osweb.label = require('./widgets/label.js')(osweb);
+osweb.text_input = require('./widgets/text_input.js')(osweb);
 
 // Python modules.
 osweb.python_math = require('./python/python_math.js')(osweb);

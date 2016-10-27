@@ -1,9 +1,7 @@
-/*
- * Definition of the class form_text_render.
- */
 
 module.exports = function(osweb){
     "use strict";
+    // Definition of the class form_text_render.
     function form_text_render(pExperiment, pName, pScript) {
         // Inherited.
         this.form_base_constructor(pExperiment, pName, pScript);
@@ -17,4 +15,4 @@ module.exports = function(osweb){
 
     // Bind the form_base class to the osweb namespace.
     return osweb.promoteClass(form_text_render, "form_base");
-}
+};

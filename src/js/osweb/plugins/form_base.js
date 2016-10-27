@@ -1,10 +1,8 @@
-/*
- * Definition of the class form_base.
- */
 
 module.exports = function(osweb){
     "use strict";
-    function form_base(pName, pExperiment, pScript, pItem_type, pDescription) {
+    // Definition of the class form_base.
+    function form_base(pExperiment, pName, pScript, pItem_type, pDescription) {
         // Inherited.
         this.item_constructor(pExperiment, pName, pScript);
 
@@ -22,6 +20,7 @@ module.exports = function(osweb){
     // Define and set the public properties. 
     p.cols = [];
     p.description = 'A generic form plug-in';
+    p.focus_widget = null;
     p.form = null;
     p.rows = [];
 
@@ -74,8 +73,8 @@ module.exports = function(osweb){
 
     p.prepare = function() {
         // Retrieve the column, rows and margins.
-        var cols = this.vars.cols.split(';');
-        var rows = this.vars.rows.split(';');
+        var cols = (typeof this.vars.cols === 'string') ? this.vars.cols.split(';') : [String(this.vars.cols)];
+        var rows = (typeof this.vars.rows === 'string') ? this.vars.rows.split(';') : [String(this.vars.rows)];
         var margins = this.vars.margins.split(';');
 
         // Get the time out paramter.
@@ -104,6 +103,8 @@ module.exports = function(osweb){
                 }
             }
 
+            console.log(kwdict);
+    
             /* # Process focus keyword
             focus = False
             if u'focus' in kwdict:
@@ -121,17 +122,15 @@ module.exports = function(osweb){
             // Create the widget.
             try {
                 var _w = osweb.newWidgetClass(_type, this.form, kwdict);
-                //console.log(parameters);
-                //var _w = osweb.newWidgetClass(_type, parameters);
             } catch (e) {
                 osweb.debug.addError('Failed to create widget ' + _type + ', error:' + e);
             }
 
-            // Set the width position and form.                    
+            // Add the widget to the parent form.                    
             this.form.set_widget(_w, [col, row], colspan, rowspan);
 
             // Add as focus widget
-            if (focus == true) {
+            if (focus === true) {
                 if (this.focus_widget != null) {
                     osweb.debug.addError('Osweb error: You can only specify one focus widget');
                 } else {
@@ -148,16 +147,13 @@ module.exports = function(osweb){
         // Inherited.	
         this.item_run();
 
-        console.log(this.form);
-        // Set dimensions.
-        this.form._parentform.style.width = osweb.runner._canvas.width;
-        this.form._parentform.style.height = osweb.runner._canvas.height;
-        this.form._parentform.style.background = this.experiment.vars.background;
-
-        // Hide the canvas, show the form.
-        osweb.runner._canvas.style.display = 'none';
-        this.form._parentform.style.display = 'block';
-        this.form._form.style.display = 'block';
+        // Execute the form.
+        if (this.vars.only_render === 'yes') {
+            this.form.render();
+        }    
+        else {
+            this.form._exec(this.focus_widget);
+        }    
     };
 
     p.complete = function() {
@@ -175,4 +171,4 @@ module.exports = function(osweb){
 
     // Bind the form_base class to the osweb namespace.
     return osweb.promoteClass(form_base, "item");
-}
+};

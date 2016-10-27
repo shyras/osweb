@@ -1,8 +1,8 @@
 
 module.exports = function(osweb){
     "use strict";
-    // Definition of the class button.
-    function button(pForm, pProperties) {
+    // Definition of the class text_input.
+    function text_input(pForm, pProperties) {
         // Inherited create.
         this.widget_constructor(pForm);
 
@@ -10,22 +10,24 @@ module.exports = function(osweb){
         this.center = (typeof pProperties['center'] == 'boolean') ? pProperties['center'] : false;
         this.frame = (typeof pProperties['frame'] == 'boolean') ? pProperties['frame'] : false;
         this.text = pProperties['text'];
-        this.type = 'button';
+        this.type = 'text_input';
 
         // Set the class private properties.
-        this._button = document.createElement("button");
-        this._button.style.width = '100%';
-        this._button.style.height = '100%';
+        this._text_input = document.createElement("textarea");
+        this._text_input.style.width = '100%';
+        this._text_input.style.height = '100%';
 
-        // Add the button to the element.
-        this._element.appendChild(this._button);
+        // Add the text_input to the element.
+        this._element.appendChild(this._text_input);
         
         // Add event listener to the element.
-        this._button.addEventListener("click", this.response.bind(this));
+        this._text_input.addEventListener("click", this.response.bind(this));
+        this._text_input.addEventListener("keydown", this.response.bind(this));
+
     };
 
     // Extend the class from its base class.
-    var p = osweb.extendClass(button, osweb.widget);
+    var p = osweb.extendClass(text_input, osweb.widget);
 
     // Definition of public properties. 
     p.center = false;
@@ -37,8 +39,10 @@ module.exports = function(osweb){
      */
 
     p.response = function(event) {
-        // Complete the parent form.
-        this.form.item.complete();
+        console.log('text_input');
+        console.log(event); 
+// Complete the parent form.
+        //this.form.item.complete();
     };
 
     p.draw_text = function(pText, pHtml) {
@@ -50,25 +54,19 @@ module.exports = function(osweb){
         this._element.style.color = this.form.experiment.vars.foreground;
         this._element.style.fontSize = this.form.experiment.vars.font_size + 'px';
         this._element.style.lineHeight = this._element.style.height;
-        
-        this._button.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
-        this._button.textContent = pText;
+        this._text_input.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
     };
 
     p.render = function() {
         // Draw the frame (if enabled).
         if (this.frame === true) {
-            this._element.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
-            this._element.style.borderColor = osweb.themes[this.form.theme].lineColorLeftTop + ' ' + osweb.themes[this.form.theme].lineColorRightBottom + ' ' + 
-               osweb.themes[this.form.theme].lineColorRightBottom + ' ' +osweb.themes[this.form.theme].lineColorLeftTop; 
-            this._element.style.borderWidth = "1px";
-            this._element.style.borderStyle = "solid";
+            this.draw_frame();
         }
     
         // Draw the text.
         this.draw_text(this.text);
     };
 
-    // Bind the button class to the osweb namespace.
-    return osweb.promoteClass(button, "widget");
+    // Bind the text_input class to the osweb namespace.
+    return osweb.promoteClass(text_input, "widget");
 };

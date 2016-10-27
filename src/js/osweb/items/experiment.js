@@ -150,7 +150,7 @@ module.exports = function(osweb){
 	p.from_string = function(pString) {
 		// Set debug message.
 		osweb.debug.addMessage('building experiment');
-
+            
 		// Split the string into an array of lines.
 		if (pString != null) {
 			this._source = pString.split('\n');
@@ -176,8 +176,7 @@ module.exports = function(osweb){
 								var item_type = args[0];
 								var item_name = osweb.syntax.sanitize(args[1]);
 								var def_str = this.read_definition(this._source);
-
-								osweb.item_store.new(item_type, item_name, def_str);
+        							osweb.item_store.new(item_type, item_name, def_str);
 							} else {
 								// raise osexception(u'Failed to parse definition',line=line);
 							}

@@ -70,8 +70,6 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
         var in_var = false;
         var in_var_pos = 0;
         var in_special = false;
-        
-        
         var symbol_start = false;
         var pCndResult = '';
         // Remove first and last quote if present.
@@ -86,7 +84,6 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
                 continue;
             } 
             if ((pCnd[i] === '"') || (pCnd[i] === "'")) {
-
                 // Toggle the in_quote.
                 in_quote = !(in_quote);
                 
@@ -139,7 +136,7 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
                     if ((pCnd[i].search(/^[a-z0-9]+$/i) === -1) || (i == pCnd.length - 1)) {
                         // Toggle the in_quote.
                         var symbol = ((i == pCnd.length - 1) && (pCnd[i].search(/^[a-z0-9]+$/i) !== -1))? pCnd.substring(in_var_pos,i + 1) : pCnd.substring(in_var_pos,i);
-                        
+                        symbol_start = false;                
                         // Check if the symbol is a numeric value.
                         if (((!isNaN(parseFloat(symbol)) && isFinite(symbol)) === false) &&
                             ((symbol.toLowerCase() !== 'always') && (symbol.toLowerCase() !== 'never') && (symbol !== 'and') && (symbol !== 'or'))) {
@@ -177,9 +174,6 @@ syntax.compile_cond_new = function(pCnd, pBytecode) {
 	pCndResult = pCndResult.replace(/\bALWAYS\b/g,'True');
     }
     // Compile the condition to a valid expression using the parser.
-    console.log(pCnd);
-    console.log(pCndResult);
-    
     if (pBytecode === true) {
         // Compile the condition using the internal parser.
         return osweb.python._parse(pCndResult);
@@ -251,6 +245,76 @@ syntax.count_quotes = function(s){
  * @param  {[type]} pVar         [description]
  * @return {[type]}              [description]
  */
+
+/* syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) { 
+    console.log('parse_text');
+    console.log(pTxt);
+    console.log(this.strip_slashes(pTxt));
+    
+    // if pTxt is an object then it is a parsed python expression.
+    if (typeof(pTxt) == 'object') {
+        return osweb.python._run_statement(pTxt);
+    };
+    // if pTxt is already a number simply return it
+    if (typeof(pTxt) == "number") {
+        return pTxt;
+    };
+    var result = '';
+    var in_var = false;
+    var in_var_pos = -1;
+    for (var i = 0;i < pTxt.length;i++) {
+        // Check status
+        if (in_var === false) {
+            if ((pTxt[i] === '[') && (((i > 0) && ((pTxt[i - 1] === '\\') || (pTxt[i - 1] === '/'))) === false)) {
+                in_var = true;
+                in_var_pos = i;
+            } 
+            else {
+                if (pTxt[i] !== '/') {
+                    result = result + pTxt[i];
+                }    
+            }    
+        }
+        else {
+            if (pTxt[i] === ']') {
+                var value;
+                var variable = pTxt.substring(in_var_pos + 1, i);
+                // Check if the string is python code.
+                if (variable[0] === '=') {
+                    variable = variable.slice(1);
+                    if ((variable[0] === '"') && (variable[variable.length - 1] === '"'))
+                        value = variable.slice(1,variable.length - 1);
+                    else {
+                        variable = osweb.python._parse(variable);
+                        value = osweb.python._run_statement(variable);
+                    }    
+                } else {
+                    if (typeof pVars === 'undefined') {
+                        value = osweb.runner.experiment.vars[variable];
+                    } 
+                    else {
+                        value = pVars[variable];
+                    }
+                }
+                
+                if (typeof value === 'undefined') {
+                    result = result + '[' + variable + ']';
+                }
+                else {
+                    result = result + value;
+                }
+                in_var = false;
+            } 
+            else {
+            }    
+        }
+    }    
+    //console.log('result');
+    //console.log(result);
+
+    return result;
+}; */
+
 syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) { 
   // if pTxt is an object then it is a parsed python expression.
   if (typeof(pTxt) == 'object') {
@@ -266,7 +330,6 @@ syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) {
   while (processing != -1) {
     // Replace the found value with the variable.
     var variable = result.slice(processing, result.indexOf(']'));
-
     if (typeof pVars === 'undefined') {
       var value = osweb.runner.experiment.vars[variable];
     } else {
@@ -283,9 +346,8 @@ syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) {
     }
     processing = result.search(/[^[\]]+(?=])/g);
   }
-
   return result;
-};
+}; 
 
 /**
  * Wraps and escapes a text so that it can safely be embedded in a
