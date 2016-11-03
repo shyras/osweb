@@ -7,9 +7,12 @@ module.exports = function(osweb){
         this.widget_constructor(pForm);
 
         // Set the class public properties.
-        this.center = (typeof pProperties['center'] == 'boolean') ? pProperties['center'] : false;
-        this.frame = (typeof pProperties['frame'] == 'boolean') ? pProperties['frame'] : false;
-        this.text = pProperties['text'];
+        this.center = (typeof pProperties['center'] !== 'undefined') ? (pProperties['center'] === 'yes') : false;
+        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
+        this.stub = (typeof pProperties['stub'] !== 'undefined') ? pProperties['stub'] : 'Type here...';
+        this.text = (typeof pProperties['text'] !== 'undefined') ? pProperties['text'] : '';
+        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : null;
+        this.return_accepts = (typeof pProperties['return_accepts'] !== 'undefined') ? pProperties['return_accepts'] === 'yes' : false;
         this.type = 'text_input';
 
         // Set the class private properties.
@@ -21,9 +24,7 @@ module.exports = function(osweb){
         this._element.appendChild(this._text_input);
         
         // Add event listener to the element.
-        this._text_input.addEventListener("click", this.response.bind(this));
         this._text_input.addEventListener("keydown", this.response.bind(this));
-
     };
 
     // Extend the class from its base class.
@@ -31,29 +32,47 @@ module.exports = function(osweb){
 
     // Definition of public properties. 
     p.center = false;
-    p.frame = null;
+    p.frame = false;
+    p.return_accepts = false;
+    p.stub = '';
     p.text = '';
+    p.var = null;
 
     /*
      * Definition of public class methods - build cycle.
      */
 
     p.response = function(event) {
-        console.log('text_input');
-        console.log(event); 
-// Complete the parent form.
-        //this.form.item.complete();
+        // Stop event to go through. 
+        event.stopPropagation();
+        
+        // Set the variable.
+        this.set_var(this._text_input.value, this.var);
+        
+        // Only respond to enter key.
+        if ((event.keyCode === 13) && (this.return_accepts === true)) {
+            // Remove event listener from the element.
+            this._text_input.removeEventListener("keydown", this.response.bind(this));
+
+            // Complete the item element.
+            if (this.form.timeout === null) {
+                this.form.item.complete();
+            } 
+            else {
+                osweb.events._current_item._status = osweb.constants.STATUS_FINALIZE; 
+            }    
+        } 
     };
 
     p.draw_text = function(pText, pHtml) {
-        this._element.style.textAlign = (this.center === true) ? 'center' : 'inherit';
-        this._element.style.padding = Number(this.form.spacing) + 'px';
-        this._element.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
-        this._element.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
-        this._element.style.fontFamily = this.form.experiment.vars.font_family;
-        this._element.style.color = this.form.experiment.vars.foreground;
-        this._element.style.fontSize = this.form.experiment.vars.font_size + 'px';
-        this._element.style.lineHeight = this._element.style.height;
+        this._text_input.style.padding = Number(this.form.spacing) + 'px';
+        this._text_input.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
+        this._text_input.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
+        this._text_input.style.fontFamily = this.form.experiment.vars.font_family;
+        this._text_input.style.color = this.form.experiment.vars.foreground;
+        this._text_input.style.fontSize = this.form.experiment.vars.font_size + 'px';
+        this._text_input.style.textAlign = (this.center === true) ? 'center' : 'left';
+        this._text_input.style.border = 'none';
         this._text_input.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
     };
 

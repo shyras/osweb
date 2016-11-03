@@ -49,7 +49,7 @@ p.experiment = null;
 p.height = -1;
 p.item = null;
 p.spacing = 0;
-p.timeout = -1;
+p.timeout = null;
 p.width = -1;
 
 /*
@@ -59,6 +59,20 @@ p.width = -1;
 p._exec = function(pFocus_widget) {
     // Render the form.
     this.render();
+
+    // Enabled the focus widget.
+    if (pFocus_widget != null) {
+        // Focus the HTML TextArea element.
+        pFocus_widget._text_input.focus();
+    }
+    
+    // Set the onset time.
+    this.item.set_item_onset();
+
+    // Set the duration parameter.
+    if ((this.timeout !== null) && (this.item !== null)) {
+        this.item.sleep(this.timeout);
+    };
 };
 
 p.timed_out = function() {

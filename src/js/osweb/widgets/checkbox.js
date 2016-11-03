@@ -6,57 +6,82 @@ module.exports = function(osweb){
         // Inherited create.
         this.widget_constructor(pForm);
 
-        // Set the class private properties.
-        this._element = document.createElement("LABEL");
-        this._element_check = document.createElement("INPUT");
-        this._element_check.setAttribute("type", "checkbox");
-        this._element.style.width = '100%';
-        this._element.style.height = '100%';
-        this._element.textContent = pProperties['text'];
+        // Set the class public properties.
+        this.checked = (typeof pProperties['checked'] !== 'undefined') ? pProperties['checked'] === 'yes' : false;
+        this.click_accepts = (typeof pProperties['click_accepts'] !== 'undefined') ? (pProperties['click_accepts'] === 'yes') : false;
+        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
+        this.group = (typeof pProperties['group'] !== 'undefined') ? pProperties['group'] : null;
+        this.text = (typeof pProperties['text'] !== 'undefined') ? pProperties['text'] : '';
+        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : null;
+        this.type = 'checkbox';
 
-        //this._element.innerHTML        = pProperties['text'];
-        this._element.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
-        this._element.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
-        this._element.style.fontFamily = this.form.experiment.vars.font_family;
-        this._element.style.color = this.form.experiment.vars.foreground;
-        this._element.style.fontSize = this.form.experiment.vars.font_size + 'px';
-        this._element.appendChild(this._element_check);
+        // Create the html elements. 
+        this.checkbox = document.createElement('input');
+        this.checkbox.class = "css-checkbox";
+        this.checkbox.type = "checkbox";
+        this.checkbox.name = "name";
+        this.checkbox.value = "value";
+        this.checkbox.id = "id";
+        this.checkbox.checked = this.checked;
+        this.label = document.createElement('label');
+        this.label.class = "css-label";
+        this.label.htmlFor = "id";
+        this.label.appendChild(document.createTextNode(this.text));
+
+        // Add the elements to the container.
+        this._element.appendChild(this.checkbox);
+        this._element.appendChild(this.label);
 
         // Add event listener to the element.
-        this._element.addEventListener("click", this.on_mouse_click.bind(this));
-
-        console.log('---');
-        console.log(pProperties);
-
-        // Set the class public properties.
-        this.click_accepts = (typeof pProperties.click_accepts === 'undefined') ? false : pProperties.click_accepts;
-        this.group = (typeof pProperties.group === 'undefined') ? null : pProperties.group;
-        this.type = 'checkbox';
-        this.var = (typeof pProperties.var === 'undefined') ? null : pProperties.var;
-        this.checked = (typeof pProperties.checked === 'checked') ? false : pProperties.checked;
-
+        this.checkbox.addEventListener("click", this.response.bind(this));
+ 
         // Set the current status of the checkbox.
-        this.set_var(this.checked);
+        this.set_var(this.checked, this.var);  
     };
 
     // Extend the class from its base class.
     var p = osweb.extendClass(checkbox, osweb.widget);
 
     // Definition of public properties. 
-    p.center = false;
+    p.checked = false;
     p.frame = null;
-    p.tab_str = '';
+    p.group = null;
     p.text = '';
-    p.x_pad = 0;
-    p.y_pad = 0;
+    p.var = null;
 
-    /*
-     * Definition of public class methods.
-     */
+    // Definition of public class methods.
+    
+    p.response = function(event) {
+        // Set the checked toggle.
+        this.checked = this.checkbox.checked;
+        
+        // Set the correspoding var.
+        this.set_var(this.checked, this.var);  
+    };
 
-    p.on_mouse_click = function(event) {
-        console.log('checkbox clicked');
+    p.draw_text = function(pText, pHtml) {
+        // Set the text 
+        this.label.innerHTML = pText;
+    
+        // Set the special label properties.
+        this.label.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
+        this.label.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
+        this.label.style.fontFamily = this.form.experiment.vars.font_family;
+        this.label.style.color = this.form.experiment.vars.foreground;
+        this.label.style.fontSize = this.form.experiment.vars.font_size + 'px';
+    };    
 
+    p.render = function() {
+        // Draw the frame (if enabled).
+        if (this.frame === true) {
+            this.draw_frame();
+        }
+
+        // Update the text.
+        var text = this.form.experiment.syntax.eval_text(this.text);
+
+        // Draw the text.
+        this.draw_text(this.text);
     };
 
     // Bind the checkbox class to the osweb namespace.

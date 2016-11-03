@@ -37,7 +37,6 @@ module.exports = function(osweb){
     // Definition of private methods - parsing script to ast nodes.
 
     python._parse = function(script) {
-        console.log('parsing' + script);
         // Check if the script exists.
         if (script != '""') {
             var locations = false;
@@ -46,8 +45,6 @@ module.exports = function(osweb){
 
             // Try to parse the script.
             try {
-                console.log('parsing2');
-
                 var code = script;
                 var ast = parseFn(code, {
                     locations: locations,

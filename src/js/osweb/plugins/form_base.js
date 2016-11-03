@@ -23,6 +23,7 @@ module.exports = function(osweb){
     p.focus_widget = null;
     p.form = null;
     p.rows = [];
+    p.timeout = null;
 
     /*
      * Definition of public class methods - build cycle.
@@ -37,7 +38,6 @@ module.exports = function(osweb){
         this.vars.only_render = 'no';
         this.vars.timeout = 'infinite';
         this.vars.margins = '50;50;50;50';
-        this._variables = [];
         this._widgets = [];
     };
 
@@ -46,7 +46,7 @@ module.exports = function(osweb){
         var list = this.syntax.split(pString);
 
         if ((this._form_text == true) && (list[0] != '__end__')) {
-            this.vars['form_text'] = this.vars['form_text'] + pString.replace('\t', '');
+            this.vars['form_text'] = this.vars['form_text'] + pString.replace('\t', '') + '<br />';
         };
 
         // Check for widget definition.
@@ -62,9 +62,6 @@ module.exports = function(osweb){
         } else if (list[0] == '__end__') {
             this._form_text = false;
         }
-
-        /* if u'var' in kwdict:
-	 self._variables.append(kwdict[u'var'])   */
     };
 
     /*
@@ -88,6 +85,7 @@ module.exports = function(osweb){
         this.form = new osweb.form(this.experiment, cols, rows, this.vars.spacing, 
             margins, this.vars._theme, this, timeout, this.vars.form_clicks == 'yes');
 
+        // Parse the widget definitions.    
         for (var i = 0; i < this._widgets.length; i++) {
             this.focus_widget = null;
             var kwdict = {};
@@ -95,22 +93,20 @@ module.exports = function(osweb){
             parameters.push(this.form);
             if (this._widgets[i].length > 5) {
                 for (var j = 5; j < this._widgets[i].length; j++) {
-                    var varName = String(this._widgets[i][j]).substr(0, String(this._widgets[i][j]).indexOf('='));
+                      var varName = String(this._widgets[i][j]).substr(0, String(this._widgets[i][j]).indexOf('='));
                     var varValue = String(this._widgets[i][j]).substring(String(this._widgets[i][j]).indexOf('=') + 1, String(this._widgets[i][j]).length);
                     kwdict[varName] = osweb.syntax.remove_quotes(varValue);
                     kwdict[varName] = osweb.syntax.eval_text(kwdict[varName], this.vars);
                     parameters.push(osweb.syntax.remove_quotes(varValue));
                 }
             }
-
-            console.log(kwdict);
-    
-            /* # Process focus keyword
-            focus = False
-            if u'focus' in kwdict:
-                if kwdict[u'focus'] == u'yes':
-                    focus = True
-                del kwdict[u'focus'] */
+        
+            // Process focus keyword.
+            var focus = false;
+            if ((typeof kwdict['focus'] !== 'undefined') && (kwdict['focus'] === 'yes')) {
+                delete(kwdict['focus']);
+                focus = true;
+            }    
 
             // Parse arguments
             var _type = this._widgets[i][4];

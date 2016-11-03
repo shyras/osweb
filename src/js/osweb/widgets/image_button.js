@@ -1,41 +1,48 @@
 
 module.exports = function(osweb) {
     "use strict";
-    // Definition of the class image_button.
+    // Definition of the class image.
     function image_button(pForm, pProperties) {
         // Inherited create.
-        this.widget_constructor(pForm);
+        this.image_constructor(pForm, pProperties);
 
         // Set the class public properties.
-        this.adjust = (typeof pProperties['adjust'] !== 'undefined') ? pProperties['adjust'] === 'true' : false;
-        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
-        this.path = (typeof pProperties['path'] !== 'undefined') ? pProperties['path'] : null;
         this.type = 'image_button';
+        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : null;
+
+        // Add event listener to the element.
+        this._image.addEventListener("click", this.response.bind(this));
     
-        // Set the class private properties.
-        this._image = document.createElement("image");
+        // Set the current status of the checkbox.
+        this.set_var(false, this.var);  
     };
 
     // Extend the class from its base class.
-    var p = osweb.extendClass(image_button, osweb.widget);
+    var p = osweb.extendClass(image_button, osweb.image);
 
     // Definition of public properties. 
     p.adjust = false;
-    p.frame = null;
+    p.frame = false;
     p.path = null;
 
     // Definition of public methods 
 
-    p.render = function() {
-        // Draw the frame (if enabled).
-        if (this.frame === true) {
-            this.draw_frame();
-        }
-        
-        // Draw the image.
+    p.response = function(event) {
+        // Remove event listener from the element.
+        this._image.removeEventListener("click", this.response.bind(this));
 
+        // Set the current status of the checkbox.
+        this.set_var(true, this.var);  
+    
+        // Complete the item element.
+        if (this.form.timeout === null) {
+            this.form.item.complete();
+        } 
+        else {
+            osweb.events._current_item._status = osweb.constants.STATUS_FINALIZE; 
+        }    
     };
 
     // Bind the image class to the osweb namespace.
-    return osweb.promoteClass(image_button, "widget");
+    return osweb.promoteClass(image_button, "image");
 };

@@ -4,7 +4,6 @@
 function widget(pForm) {
     // Set the class private properties.
     this._element = document.createElement("div");
-    //this._element.style.margin = '10px';
         
     // Set the class public properties.
     this.focus = false;
@@ -24,10 +23,9 @@ p.rect = null;
 p.type = '';
 p.vars = null;
 
-// Definition of public methods - general function.
+// Definition of private methods - general function.
 
 p.convert_value = function(pValue) {
-    console.log(pValue);
     // Convert html value types (number, px of % to number);
     if (typeof pValue === 'number') {
         return pValue;
@@ -45,6 +43,7 @@ p.convert_value = function(pValue) {
     }
 };
 
+// Definition of public methods - general function.
 
 p.draw_frame = function(pRect, PStyle) {
     // Draw a frame around the widget.    
@@ -65,7 +64,6 @@ p.theme_engine = function() {
     return null;
 };
 
-
 p.on_mouse_click = function(pEvent) {
 };
 
@@ -77,11 +75,11 @@ p.set_rect = function(pRect) {
 
 p.set_var = function(pVal, pVar) {
     // Sets an experimental variable.
-    if (pVar == null) {
+    if (pVar === null) {
         pVar = this.vars;
     }
 
-    if (pVar != null) {
+    if (pVar !== null) {
         this.form.experiment.vars.set(pVar, pVal);
     }
 };

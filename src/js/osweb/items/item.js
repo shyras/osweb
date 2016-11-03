@@ -16,9 +16,9 @@ function item(pExperiment, pName, pScript) {
     this.name = pName;
     
     // Determine the parent item varstore.
-    var parent_varstore = (this.experiment == pExperiment) ? this.experiment.vars : null
+    var parent_varstore = (this.experiment == pExperiment) ? this.experiment.vars : null;
     this.vars = (this.vars) ? this.vars : new osweb.var_store(this, parent_varstore);
-
+    
     // Set the object realted properties.
     this.clock = this.experiment._clock;
     this.log = this.experiment._log;

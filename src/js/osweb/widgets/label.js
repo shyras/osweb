@@ -11,6 +11,21 @@ module.exports = function(osweb) {
         this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
         this.text = pProperties['text'];
         this.type = 'label';
+
+        // Set the class private properties.
+        this._label_table = document.createElement("div");
+        this._label_table.style.display = 'table';
+        this._label_table.style.width = '100%';
+        this._label_table.style.height = '100%';
+    
+        this._label_cell = document.createElement("div");
+        this._label_cell.style.display = 'table-cell';
+        this._label_cell.style.width = '100%';
+        this._label_cell.style.height = '100%';
+        
+        // Add the text_input to the element.
+        this._element.appendChild(this._label_table);
+        this._label_table.appendChild(this._label_cell);
     };
 
     // Extend the class from its base class.
@@ -24,30 +39,34 @@ module.exports = function(osweb) {
     // Definition of public methods 
 
     p.draw_text = function(pText, pHtml) {
-        // Set the special label properties.
-        this._element.style.textAlign = (this.center === true) ? 'center' : 'inherit';
-        // this._element.style.margin = Number(this.form.spacing) + 'px';
-        this._element.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
-        this._element.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
-        this._element.style.fontFamily = this.form.experiment.vars.font_family;
-        this._element.style.color = this.form.experiment.vars.foreground;
-        this._element.style.fontSize = this.form.experiment.vars.font_size + 'px';
-        this._element.style.lineHeight = this._element.style.height;
-        
         // Set the text 
-        this._element.innerHTML = pText;
+        this._label_cell.innerHTML = pText;
+
+        // Set the special label properties.
+        this._label_cell.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
+        this._label_cell.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
+        this._label_cell.style.fontFamily = this.form.experiment.vars.font_family;
+        this._label_cell.style.color = this.form.experiment.vars.foreground;
+        this._label_cell.style.fontSize = this.form.experiment.vars.font_size + 'px';
+                
+        // Set the horizontal and vertical alignment.
+        if (this.center === true) {
+            this._label_cell.style.textAlign = 'center';
+            this._label_cell.style.verticalAlign = 'middle';
+        } 
+        else {
+            this._label_cell.style.textAlign = 'left';
+        }    
     };
 
     p.render = function() {
         // Draw the frame (if enabled).
         if (this.frame === true) {
-            this._element.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
-            //this._element.style.borderColor = "#babdb6 #555753 #555753 #babdb6";
-            this._element.style.borderColor = osweb.themes[this.form.theme].lineColorLeftTop + ' ' + osweb.themes[this.form.theme].lineColorRightBottom + ' ' + 
-               osweb.themes[this.form.theme].lineColorRightBottom + ' ' +osweb.themes[this.form.theme].lineColorLeftTop; 
-            this._element.style.borderWidth = "1px";
-            this._element.style.borderStyle = "solid";
+            this.draw_frame();
         }
+
+        // Update the text.
+        var text = this.form.experiment.syntax.eval_text(this.text);
 
         // Draw the text.
         this.draw_text(this.text);

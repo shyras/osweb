@@ -11,6 +11,7 @@ module.exports = function(osweb){
         this.frame = (typeof pProperties['frame'] == 'boolean') ? pProperties['frame'] : false;
         this.text = pProperties['text'];
         this.type = 'button';
+        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : null;
 
         // Set the class private properties.
         this._button = document.createElement("button");
@@ -22,6 +23,9 @@ module.exports = function(osweb){
         
         // Add event listener to the element.
         this._button.addEventListener("click", this.response.bind(this));
+    
+        // Set the current status of the checkbox.
+        this.set_var(false, this.var);  
     };
 
     // Extend the class from its base class.
@@ -31,14 +35,26 @@ module.exports = function(osweb){
     p.center = false;
     p.frame = null;
     p.text = '';
+    p.var = null;
 
     /*
      * Definition of public class methods - build cycle.
      */
 
     p.response = function(event) {
-        // Complete the parent form.
-        this.form.item.complete();
+        // Remove event listener from the element.
+        this._button.removeEventListener("click", this.response.bind(this));
+
+        // Set the attached variable.
+        this.set_var(true, this.var);  
+
+        // Complete the item element.
+        if (this.form.timeout === null) {
+            this.form.item.complete();
+        } 
+        else {
+            osweb.events._current_item._status = osweb.constants.STATUS_FINALIZE; 
+        }    
     };
 
     p.draw_text = function(pText, pHtml) {
@@ -49,7 +65,6 @@ module.exports = function(osweb){
         this._element.style.fontFamily = this.form.experiment.vars.font_family;
         this._element.style.color = this.form.experiment.vars.foreground;
         this._element.style.fontSize = this.form.experiment.vars.font_size + 'px';
-        this._element.style.lineHeight = this._element.style.height;
         
         this._button.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
         this._button.textContent = pText;
@@ -58,13 +73,9 @@ module.exports = function(osweb){
     p.render = function() {
         // Draw the frame (if enabled).
         if (this.frame === true) {
-            this._element.style.backgroundColor = osweb.themes[this.form.theme].backgroundColor;
-            this._element.style.borderColor = osweb.themes[this.form.theme].lineColorLeftTop + ' ' + osweb.themes[this.form.theme].lineColorRightBottom + ' ' + 
-               osweb.themes[this.form.theme].lineColorRightBottom + ' ' +osweb.themes[this.form.theme].lineColorLeftTop; 
-            this._element.style.borderWidth = "1px";
-            this._element.style.borderStyle = "solid";
+            this.draw_frame();
         }
-    
+
         // Draw the text.
         this.draw_text(this.text);
     };

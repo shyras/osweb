@@ -16,9 +16,6 @@ module.exports = function(osweb) {
         this._image = document.createElement("img");
         this._image.style.position = 'absolute';
         
-        // Add event listener to the element.
-        this._image.addEventListener("click", this.response.bind(this));
-
         // Add the image to the element.
         this._element.appendChild(this._image);
     };
@@ -28,7 +25,7 @@ module.exports = function(osweb) {
 
     // Definition of public properties. 
     p.adjust = false;
-    p.frame = null;
+    p.frame = false;
     p.path = null;
 
     // Definition of public methods 
@@ -70,11 +67,6 @@ module.exports = function(osweb) {
             this._image.style.left = ((pwidth - width) / 2) + 'px';
             this._image.style.top = ((pheight - height) / 2) + 'px';
         }
-    };
-
-    p.response = function(event) {
-        // Complete the parent form.
-        this.form.item.complete();
     };
 
     // Bind the image class to the osweb namespace.

@@ -330,7 +330,7 @@ syntax.eval_text = function(pTxt, pVars, pRound_float, pVar) {
   while (processing != -1) {
     // Replace the found value with the variable.
     var variable = result.slice(processing, result.indexOf(']'));
-    if (typeof pVars === 'undefined') {
+    if ((typeof pVars === 'undefined') || (typeof pVars[variable] === 'undefined')) {
       var value = osweb.runner.experiment.vars[variable];
     } else {
       var value = pVars[variable];
