@@ -193,11 +193,11 @@ osweb.textline = require('./elements/textline.js')(osweb);
 osweb.form = require('./widgets/form.js');
 osweb.widget = require('./widgets/widget.js');
 osweb.themes = require('./widgets/themes.js')(osweb);
-osweb.button = require('./widgets/button.js')(osweb);
 osweb.checkbox = require('./widgets/checkbox.js')(osweb);
 osweb.image = require('./widgets/image.js')(osweb);
 osweb.image_button = require('./widgets/image_button.js')(osweb);
 osweb.label = require('./widgets/label.js')(osweb);
+osweb.button = require('./widgets/button.js')(osweb);
 osweb.text_input = require('./widgets/text_input.js')(osweb);
 
 // Python modules.

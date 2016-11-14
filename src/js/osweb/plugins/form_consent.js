@@ -37,7 +37,7 @@ module.exports = function(osweb){
             // Check if the consent status is shown.
             if (this.experiment.vars.get('accept_status') === true) {
                 // Accept button is selected, check the checkbox status.
-                if (this.experiment.vars.get('checkbox_status') === true) {
+                if (this.experiment.vars.get('checkbox_status') === this.vars.get('checkbox_text')) {
                     // Go to the next form, so continue the closure.
                     this.form_base_complete();
                 }

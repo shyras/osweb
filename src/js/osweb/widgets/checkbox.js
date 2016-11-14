@@ -7,12 +7,12 @@ module.exports = function(osweb){
         this.widget_constructor(pForm);
 
         // Set the class public properties.
-        this.checked = (typeof pProperties['checked'] !== 'undefined') ? pProperties['checked'] === 'yes' : false;
-        this.click_accepts = (typeof pProperties['click_accepts'] !== 'undefined') ? (pProperties['click_accepts'] === 'yes') : false;
-        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
-        this.group = (typeof pProperties['group'] !== 'undefined') ? pProperties['group'] : null;
-        this.text = (typeof pProperties['text'] !== 'undefined') ? pProperties['text'] : '';
-        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : null;
+        this.checked = (typeof pProperties['checked'] !== 'undefined') ? pProperties['checked'] === 'yes' : this.checked;
+        this.click_accepts = (typeof pProperties['click_accepts'] !== 'undefined') ? (pProperties['click_accepts'] === 'yes') : this.click_accepts;
+        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : this.frame;
+        this.group = (typeof pProperties['group'] !== 'undefined') ? pProperties['group'] : this.group;
+        this.text = (typeof pProperties['text'] !== 'undefined') ? pProperties['text'] : this.text;
+        this.var = (typeof pProperties['var'] !== 'undefined') ? pProperties['var'] : this.var;
         this.type = 'checkbox';
 
         // Create the html elements. 
@@ -22,7 +22,6 @@ module.exports = function(osweb){
         this.checkbox.name = "name";
         this.checkbox.value = "value";
         this.checkbox.id = "id";
-        this.checkbox.checked = this.checked;
         this.label = document.createElement('label');
         this.label.class = "css-label";
         this.label.htmlFor = "id";
@@ -36,7 +35,7 @@ module.exports = function(osweb){
         this.checkbox.addEventListener("click", this.response.bind(this));
  
         // Set the current status of the checkbox.
-        this.set_var(this.checked, this.var);  
+        this.set_checked(this.checked);
     };
 
     // Extend the class from its base class.
@@ -44,7 +43,8 @@ module.exports = function(osweb){
 
     // Definition of public properties. 
     p.checked = false;
-    p.frame = null;
+    p.click_accepts = false;
+    p.frame = false;
     p.group = null;
     p.text = '';
     p.var = null;
@@ -52,11 +52,22 @@ module.exports = function(osweb){
     // Definition of public class methods.
     
     p.response = function(event) {
-        // Set the checked toggle.
-        this.checked = this.checkbox.checked;
-        
-        // Set the correspoding var.
-        this.set_var(this.checked, this.var);  
+        // Check if the checkbox is part of a group
+        if (this.group !== null) {
+            // Set group response.
+            for (var i = 0;i < this.form.widgets.length;i++) {
+                if ((this.form.widgets[i].type === 'checkbox') && (this.form.widgets[i] !== this) && (this.form.widgets[i].group === this.group)) {
+                    this.form.widgets[i].set_checked(false);
+                }
+            }
+            
+            // Set checkbox.    
+            this.set_checked(true);
+        }
+        else {
+            // Set single response.
+            this.set_checked(!this.checked);
+        }
     };
 
     p.draw_text = function(pText, pHtml) {
@@ -84,6 +95,40 @@ module.exports = function(osweb){
         this.draw_text(this.text);
     };
 
+    p.set_checked = function(pChecked) {
+        // Set the property.
+        this.checked = pChecked;
+    
+        // Set the checkbox html element.
+        this.checkbox.checked = this.checked;
+        
+        // Adjust the widget.
+        this.set_var(pChecked);
+    };
+    
+    p.set_var = function(pVal, pVar) {
+        // set variable.
+        var variable = (typeof pVar !== 'undefined') ? pVar : this.var;
+        
+        // Only set variable if it is defined.
+        if (variable !== null) {
+            var values = [];
+            for (var i = 0;i < this.form.widgets.length;i++) {
+                if ((this.form.widgets[i].type === 'checkbox') && (this.form.widgets[i].var === this.var) && (this.form.widgets[i].checked === true)) {
+                    values.push(this.form.widgets[i].text);
+                }
+            }
+            
+            // Inherited.
+            if (values === []) {
+                this.widget_set_var('no', variable);
+            } 
+            else {
+                this.widget_set_var(values.join(';'), variable);
+            }
+        }    
+    }; 
+    
     // Bind the checkbox class to the osweb namespace.
     return osweb.promoteClass(checkbox, "widget");
 };

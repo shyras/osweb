@@ -7,8 +7,8 @@ module.exports = function(osweb) {
         this.widget_constructor(pForm);
 
         // Set the class public properties.
-        this.center = (typeof pProperties['center'] !== 'undefined') ? (pProperties['center'] === 'yes') : true;
-        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : false;
+        this.center = (typeof pProperties['center'] !== 'undefined') ? (pProperties['center'] === 'yes') : this.center;
+        this.frame = (typeof pProperties['frame'] !== 'undefined') ? pProperties['frame'] === 'yes' : this.frame;
         this.text = pProperties['text'];
         this.type = 'label';
 
@@ -17,7 +17,6 @@ module.exports = function(osweb) {
         this._label_table.style.display = 'table';
         this._label_table.style.width = '100%';
         this._label_table.style.height = '100%';
-    
         this._label_cell = document.createElement("div");
         this._label_cell.style.display = 'table-cell';
         this._label_cell.style.width = '100%';
@@ -48,7 +47,9 @@ module.exports = function(osweb) {
         this._label_cell.style.fontFamily = this.form.experiment.vars.font_family;
         this._label_cell.style.color = this.form.experiment.vars.foreground;
         this._label_cell.style.fontSize = this.form.experiment.vars.font_size + 'px';
-                
+        this._label_cell.style.lineHeight = '110%';
+        this._label_cell.style.padding = '10px';   
+       
         // Set the horizontal and vertical alignment.
         if (this.center === true) {
             this._label_cell.style.textAlign = 'center';

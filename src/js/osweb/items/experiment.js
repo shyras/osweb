@@ -308,10 +308,16 @@ module.exports = function(osweb){
 		osweb.runner._canvas.style.cursor = 'default';
 		osweb.runner._stage.update();
 
+                // Clear the form elements.
+                var node = document.getElementById('osweb_form');
+                while (node.hasChildNodes()) {
+                    node.removeChild(node.lastChild);
+                }    
+                
 		// Finalize the parent (runner).	
 		osweb.runner._finalize();
 	};
 
 	// Bind the experiment class to the osweb namespace.
 	return osweb.promoteClass(experiment, "item");
-}
+};
