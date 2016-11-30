@@ -15,21 +15,30 @@ parameters.useDefaultValues = false;
 // Definition of private methods - initialize parameters.   
 
 parameters._initialize = function() {
-    // Set properties if defined.
-    var parameter = {
-        dataType: '0',
-        defaultValue: '0',
-        name: 'subject_nr',
-        title: 'Starting the experiment',
-        prompt: 'Please enter the subject number',
-        promptEnabled: true
-    };
+    // Check if subject parameter is already defined.
+    if (osweb.runner._subject !== null) {
+        // Set the subject number
+        osweb.runner.experiment.set_subject(osweb.runner._subject);
 
-    // Add the subject parameter to the parameters list.
-    this._parameters.push(parameter);
+        // Parameters are processed, next phase.
+        osweb.screen._setupClickScreen();
+    } else { 
+        // Set properties if defined.
+        var parameter = {
+            dataType: '0',
+            defaultValue: '0',
+            name: 'subject_nr',
+            title: 'Starting the experiment',
+            prompt: 'Please enter the subject number',
+            promptEnabled: true
+        };
+
+        // Add the subject parameter to the parameters list.
+        this._parameters.push(parameter);
     
-    // Process the Parameters.        
-    this._processParameters();
+        // Process the Parameters.        
+        this._processParameters();
+    }    
 };
 
 // Definition of private methods - process parameters.   

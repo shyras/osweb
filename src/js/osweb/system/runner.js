@@ -12,6 +12,7 @@ module.exports = function(osweb){
     runner._source = null; // Link to the source experiment file. 
     runner._stage = null; // Link to the stage object (EASELJS).
     runner._target = null; // Link to the target location for thr data. 
+    runner._subject = null; // Subject number (if given no dialog is shown)
 
     // Definition of public properties.
     runner.data = null; // Container for the result data.
@@ -45,6 +46,7 @@ module.exports = function(osweb){
             this.debug = (typeof context.debug !== 'undefined') ? context.debug : false;
             this._onfinished = (typeof context.onfinished !== 'undefined') ? context.onfinished : null;
             this._source = (typeof context.source !== 'undefined') ? context.source : null;
+            this._subject = (typeof context.subject !== 'undefined') ? context.subject : null;
             this._target = (typeof context.target !== 'undefined') ? context.target : null;
             
             // Build the introduction screen.

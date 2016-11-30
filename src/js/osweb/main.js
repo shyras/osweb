@@ -104,6 +104,11 @@ osweb.newElementClass = function(type, sketchpad, string) {
 };
 
 osweb.newWidgetClass = function(type, form, variables) {
+    // Hack for image elements.
+    if (type === 'image') {
+        type = type + '_widget';
+    }
+
     // Create the element.
     var widget = new this[type](form, variables);
 
@@ -194,7 +199,7 @@ osweb.form = require('./widgets/form.js');
 osweb.widget = require('./widgets/widget.js');
 osweb.themes = require('./widgets/themes.js')(osweb);
 osweb.checkbox = require('./widgets/checkbox.js')(osweb);
-osweb.image = require('./widgets/image.js')(osweb);
+osweb.image_widget = require('./widgets/image_widget.js')(osweb);
 osweb.image_button = require('./widgets/image_button.js')(osweb);
 osweb.label = require('./widgets/label.js')(osweb);
 osweb.button = require('./widgets/button.js')(osweb);
