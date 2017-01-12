@@ -1,3 +1,4 @@
+
 /*
  * Definition of the class touch_response.
  */

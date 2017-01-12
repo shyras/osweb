@@ -1,3 +1,4 @@
+
 /*
  * Definition of the class media_player_vlc.
  */

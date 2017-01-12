@@ -816,7 +816,7 @@ p.size = function() {
 p.text = p._configurable(function(text, center, x, y, html) {
     // Only jump through the HTML rendering hoops if the html == 'yes' and
     // text actually contains HTML markup.
-    if(html === "yes" && this._containsHTML(text) ){ 
+    if (html === "yes" && this._containsHTML(text)) { 
         // Create a div container to hold the html contents.
         var container = this._create_div_for_text(text, center);
         // Calculate the text size of the text to render.
@@ -827,36 +827,57 @@ p.text = p._configurable(function(text, center, x, y, html) {
         // Serialize the div container to a HTML string.
         if (typeof container.documentElement !== 'undefined') {
             var html = (new XMLSerializer).serializeToString(container.documentElement);
-        }else{
+        } else {
             // Account for IE quirk (even though the rest won't work at all in IE)
             var html = (new XMLSerializer).serializeToString(container);
         }
 
         // Create a SVG string to embed the HTML into.
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg">'+
-        '<style scoped="">' +
-        'html::-webkit-scrollbar { display: none; }' +
-        '</style>' + 
-        '<foreignObject x="0" y="0" width="'+container_width+'px" height="'+
-        container_height+'px" style="float: left;">' + html + 
-        '</foreignObject></svg>';
-        // Convert the SVG string to a data stream
-        var data = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        // Create an HTML Image object and set its source to the svg data stream.
+        var data = '<svg xmlns="http://www.w3.org/2000/svg" width="' +  container_width + '" height="' + container_height + '">' +
+           '<foreignObject width="100%" height="100%">' +
+           '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px">' + html + '</div>' +
+           '</foreignObject>' +
+           '</svg>';     
+
+        // Create a temporary canvas to make an image data array.        
+        var mycanvas = document.createElement("canvas");
+        mycanvas.width = container_width;
+        mycanvas.height = container_height;
+        var ctx = mycanvas.getContext("2d");
+    
+        var DOMURL = window.URL || window.webkitURL || window;
         var img = new Image();
-        img.src = data;
-        // Create a createJS bitmap.
-        var text_element = new createjs.Bitmap(img);
-        this._container.addChild(text_element);
-        // Calculate the coordinates to position the element at.
-        if (center === 1) {
-            text_element.x = x - container_width/2;
-            text_element.y = y - container_height/2;
-        } else {
-            text_element.x = x; 
-            text_element.y = y;
-        }
-    }else{
+        var svg = new Blob([data], {type: 'image/svg+xml'});
+        var url = DOMURL.createObjectURL(svg);
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+            DOMURL.revokeObjectURL(url);
+
+            var img2 = document.createElement("img");
+            img2.src = mycanvas.toDataURL("image/png"); 
+
+            // Create an easeljs bitmap of the image.
+            var image = new createjs.Bitmap();
+            image.image = img2;
+            image.scaleX = 1;
+            image.scaleY = 1;
+            image.snapToPixel = true;
+
+            if (center === 1) {
+                image.x = x - container_width/2;
+                image.y = y - container_height/2;
+            } else {
+                image.x = x; 
+                image.y = y;
+            }
+
+            // Add the image item to the parten frame.
+            this._container.addChild(image);
+
+        }.bind(this);
+
+        img.src = url;
+    } else {
         var font_string = this._create_font_string();
 
         var text_element = new createjs.Text(text, font_string, 
@@ -877,10 +898,10 @@ p.text = p._configurable(function(text, center, x, y, html) {
             text_element.x = x + width/2;
             text_element.y = y;
         }
-    }
 
-    // Add the text item to the parten frame.
-    this._container.addChild(text_element);
+        // Add the text item to the parten frame.
+        this._container.addChild(text_element);
+    }
 });
 
 /**
