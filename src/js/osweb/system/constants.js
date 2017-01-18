@@ -29,7 +29,7 @@ constants.MESSAGE_006 = 'Press with the mouse on this screen to continue.';
 constants.MESSAGE_007 = 'Warning: this method is not implemented in the current version of OsWeb - ';
 constants.MESSAGE_008 = 'Retrieving session information.';
 
-// Definition of general constants. 
+// Status of the runner.
 constants.RUNNER_NONE = 0;
 constants.RUNNER_READY = 1;
 constants.RUNNER_RUNNING = 2;
@@ -37,29 +37,39 @@ constants.RUNNER_DONE = 3;
 constants.RUNNER_ERROR = 4;
 constants.RUNNER_BREAK = 5;
    
-
-constants.STATUS_NONE = 0; // Running status of an item.   
+// Running status of an item.   
+constants.STATUS_NONE = 0; 
 constants.STATUS_BUILD = 1;
 constants.STATUS_INITIALIZE = 2;
 constants.STATUS_EXECUTE = 3;
 constants.STATUS_FINALIZE = 4;
-constants.PARSER_NONE = 0; // Running status of the parser.
+
+// Running status of the parser.
+constants.PARSER_NONE = 0; 
 constants.PARSER_EXECUTE = 1;
 constants.STATUS_PENDING = 2;
 constants.STATUS_DONE = 3;
-constants.PRESSES_ONLY = 1; // Type of used collection mode.           
+
+// Type of used collection mode.           
+constants.PRESSES_ONLY = 1; 
 constants.RELEASES_ONLY = 2;
 constants.PRESSES_AND_RELEASES = 3;
-constants.RESPONSE_NONE = 0; // Type of response used.
+
+// Type of response used.
+constants.RESPONSE_NONE = 0; 
 constants.RESPONSE_DURATION = 1;
 constants.RESPONSE_KEYBOARD = 2;
 constants.RESPONSE_MOUSE = 3;
 constants.RESPONSE_SOUND = 4;
 constants.RESPONSE_AUTOKEYBOARD = 5;
 constants.RESPONSE_AUTOMOUSE = 6;
-constants.UPDATE_NONE = 0; // Item update status flag.
+
+// Item update status flag.
+constants.UPDATE_NONE = 0; 
 constants.UPDATE_ONSET = 1;
 constants.UPDATE_OFFSET = 2;
-constants.SEQUENTIAL = 0; // Loop randomization type.
+
+// Loop randomization type.
+constants.SEQUENTIAL = 0; 
 constants.RANDOM = 1;
 constants.RANDOMREPLACEMENT = 2;

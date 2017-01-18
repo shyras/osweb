@@ -4,7 +4,7 @@ function debug() {
 }
 
 // Definition of public properties.
-debug.enabled = false; // Enable the debugger  
+debug.enabled = true; // Enable the debugger  
 debug.error = false; // true if an error occured.
 debug.messageLog = new Array(); // Arraty with alle log messages.
 

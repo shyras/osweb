@@ -205,6 +205,7 @@ module.exports = function(osweb){
 		// Initializes the canvas backend.
 		this._canvas.init_display(this);
 
+		// Initialize the python workspace.
 		this._python_workspace['win'] = window;
 	};
 

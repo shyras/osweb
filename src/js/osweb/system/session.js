@@ -4,8 +4,7 @@ function session() {
     throw 'The class session cannot be instantiated!';
 }
 
-// Definition of private methods.   
-
+/** Initialize the session. */
 session._initialize = function() {
     // Update the loader text.
     osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_008);
@@ -14,6 +13,7 @@ session._initialize = function() {
     this._getSessionInformation();
 };
 
+/** Retrieve session information from the client. */
 session._getSessionInformation = function() {
     // Get the session information from the client system.
     this._date = new Date();

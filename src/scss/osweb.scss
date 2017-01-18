@@ -1,11 +1,6 @@
 /*  osweb CSS Definitions */
 
 body {
-    // display: inline; 
-    // color: #FFFFFF;
-    // font-family: Arial;
-    // font-size: 12px;
-    // text-align: center;
     width: 100%;
     height: 100%;
 }
@@ -17,22 +12,14 @@ body {
     position: absolute;
 }
 
-
 #osweb_div{
-    min-width: 100%;
+    background-color: #000000;
     height: 100%;
-}
-
-#osweb_canvas{
-    background-color:#000000;
+    min-width: 800px;
+    min-height: 600px;
 }
 
 #osweb_form{ 
-    display: none;
-    background-color:#FF0000;
-    width: 100%;
-    height: 100%;
-    
     .cell { 
         display: table-cell; 
     }

@@ -8,12 +8,7 @@ function parameters() {
 parameters._itemCounter = 0;
 parameters._parameters = new Array();
 
-// Define the public properties. 
-parameters.displaySummary = false;
-parameters.useDefaultValues = false;
-
-// Definition of private methods - initialize parameters.   
-
+/** Initialize the parameters class. */
 parameters._initialize = function() {
     // Check if subject parameter is already defined.
     if (osweb.runner._subject !== null) {
@@ -41,56 +36,45 @@ parameters._initialize = function() {
     }    
 };
 
-// Definition of private methods - process parameters.   
-
+/** Process all parameters within the parameter list. */
 parameters._processParameters = function() {
     // Process all items for which a user input is required.
     if (this._itemCounter < this._parameters.length) {
-        // Process the Parameter.
-        if (this.useDefaultValues == false) {
-            this._processParameter(this._parameters[this._itemCounter]);
-        
-        ////////// Is this condition below ever true?? -Daniel
-        } else {
-            // Transfer the startup info to the context.
-            this._transferParameters();
-        }
+        // Process a  parameter.
+        this._processParameter(this._parameters[this._itemCounter]);
     } else {
-        // All items have been processed, contine the Runner processing.
-        if (this.displaySummary == true) {
-            // Show a summary of the the startup information. 
-            this._showParameters();
-        } else {
-            // Transfer the startup info to the context.
-            this._transferParameters();
-        }
+        // Transfer the startup info to the context.
+        this._transferParameters();
     }
 };
 
+/**
+ * Process a single parameter
+ * @param {Object} parameter - The parameter which must be processed.
+ */
 parameters._processParameter = function(parameter) {
     // Check if a user request is required.
     if (parameter.promptEnabled == true) {
-        if(parameter.dataType !== "0"){
-            document.getElementById('qpbuttonyes').onclick = function() {
-                //Get the response information
+        // Create the alertify prompt.
+        alertify.prompt( 
+            parameter.title, 
+            parameter.prompt, 
+            parameter.defaultValue, 
+            function(evt, value) {
+                // Get the response information
                 parameter.response = value;
-                // Close the dialog.
-                this._hideDialog();
+            
                 // Increase the counter.
                 this._itemCounter++;
+            
                 // Continue processing.
                 this._processParameters();
-            }.bind(this);
-
-            document.getElementById('qpbuttonno').onclick = function() {
-                // Close the dialog.
-                this._hideDialog();
-
+            }.bind(this), 
+            function() {
                 // Finalize the introscreen elements.
                 osweb.runner._exit();
-            }.bind(this);
-        }
-        this._showDialog(parameter);
+            }
+        );
     } else {
         // Assign default value to the Startup item.
         parameter.response = parameter.defaultValue;
@@ -103,124 +87,20 @@ parameters._processParameter = function(parameter) {
     }
 };
 
-parameters._showParameters = function() {
-    document.getElementById('dialogboxhead').innerHTML = 'Summary of startup info';
-    document.getElementById('qpbuttonyes').onclick = function() {
-        // Close the dialog.
-        this._hideDialog();
-
-        // Transfer the startup info to the context.
-        this._transferParameters();
-
-    }.bind(this);
-
-    document.getElementById('qpbuttonno').onclick = function() {
-        // Close the dialog.
-        this._hideDialog();
-
-        // Reset the item counter.
-        this._itemCounter = 0;
-
-        // Restat the input process.    
-        this._processParameters();
-
-    }.bind(this);
-
-    document.getElementById('qpbuttoncancel').onclick = function() {
-        // Close the dialog.
-        this._hideDialog();
-
-        // Finalize the introscreen elements.
-        osweb.runner._exit();
-    }.bind(this);
-
-    // Set the dialog interface.
-    var TmpString = '';
-    for (var i = 0; i < this._parameters.length; i++) {
-        if ((this._parameters[i].enabled != 0) && (this._parameters[i].promptEnabled != 0)) {
-            TmpString = TmpString + this._parameters[i].name + ': ' + this._parameters[i].response + '\r\n';
-        }
-    }
-
-    document.getElementById('qpdialogtextarea').innerHTML = TmpString;
-};
-
+/** Transfer the startup info items to the context. */
 parameters._transferParameters = function() {
     // Transfer the startup info items to the context.
     for (var i = 0; i < this._parameters.length; i++) {
         // Additional run for subject_nr
         if (this._parameters[i].name == 'subject_nr') {
             osweb.runner.experiment.set_subject(this._parameters[i].response);
-        }
-        else {
+        } else {
             osweb.runner.experiment.vars.set(this._parameters[i].name, this._parameters[i].response);
         }    
     }
+    
     // Parameters are processed, next phase.
     osweb.screen._setupClickScreen();
-};
-
-// Definition of class methods (dialogs).   
-
-parameters._showDialog = function(parameter) {
-    var dialogtype = parameter.dataType;
-
-    // I don't know what the dialogtypes other than 0 signify, so I only integrated
-    // type 0 with alertify.js
-    if(dialogtype !== "0"){
-        var dialogoverlay = document.getElementById('dialogoverlay');
-        var dialogbox = document.getElementById('dialogbox');
-
-        dialogoverlay.style.display = "block";
-        dialogbox.style.display = "block";
-    }
-
-    switch (dialogtype) {
-        case "0":
-            alertify.prompt( 
-                parameter.title, 
-                parameter.prompt, 
-                parameter.defaultValue, 
-                function(evt, value) {
-                    // Get the response information
-                    parameter.response = value;
-                    // Increase the counter.
-                    this._itemCounter++;
-                    // Continue processing.
-                    this._processParameters();
-                }.bind(this), 
-                function() {
-                    // Finalize the introscreen elements.
-                    osweb.runner._exit();
-                }
-            );
-            // document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
-            // document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
-            // document.getElementById('qpdialoginput').focus();
-            break;
-        case "1":
-            document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
-            document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
-            document.getElementById('qpdialoginput').focus();
-            break;
-        case "2":
-            document.getElementById('dialogboxbody').innerHTML = '<input id="qpdialoginput"></input>';
-            document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Ok</button><button id="qpbuttonno">Cancel</button>';
-            document.getElementById('qpdialoginput').focus();
-            break;
-        case "3":
-            document.getElementById('dialogboxbody').innerHTML = '<textarea id="qpdialogtextarea"></textarea>';
-            document.getElementById('dialogboxfoot').innerHTML = '<button id="qpbuttonyes">Yes</button><button id="qpbuttonno">No</button><button id="qpbuttoncancel">Cancel</button>';
-            document.getElementById('qpdialogtextarea').focus();
-            break;
-    }
-};
-
-parameters._hideDialog = function() {
-    dialogoverlay.style.display = "none";
-    dialogbox.style.display = "none";
-    document.getElementById('dialogboxbody').innerHTML = '';
-    document.getElementById('dialogboxfoot').innerHTML = '';
 };
 
 /**
@@ -230,9 +110,10 @@ parameters._hideDialog = function() {
  * @return void
  */
 parameters._resizeOswebDiv = function(width, height) {
-    document.getElementById('osweb_div').style.width = width + 'px';
-    document.getElementById('osweb_div').style.height = height + 'px';
-}
+    // Set the parent container dimensions.
+    osweb.runner._container.style.width = width + 'px';
+    osweb.runner._container.style.height = height + 'px';
+};
 
 // Bind the parameters class to the osweb namespace.
 module.exports = parameters;

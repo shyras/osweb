@@ -607,6 +607,7 @@ p.image = function(fname, center, x, y, scale) {
 };
 
 p.init_display = function(experiment) {
+    console.log('a');
     // Set the dimension properties.
     this._height = experiment.vars.height;
     this._width = experiment.vars.width;
@@ -628,6 +629,8 @@ p.init_display = function(experiment) {
 
     // Set focus to the experiment canvas.
     osweb.runner._canvas.focus();
+
+    console.log('b');
 };
 
 p.line = p._configurable(function(sx, sy, ex, ey) {
@@ -823,7 +826,7 @@ p.text = p._configurable(function(text, center, x, y, html) {
         var container_size = this.text_size(container);
         var container_width = container_size[0];
         var container_height = container_size[1];
-
+        
         // Serialize the div container to a HTML string.
         if (typeof container.documentElement !== 'undefined') {
             var html = (new XMLSerializer).serializeToString(container.documentElement);
@@ -839,23 +842,24 @@ p.text = p._configurable(function(text, center, x, y, html) {
            '</foreignObject>' +
            '</svg>';     
 
-        // Create a temporary canvas to make an image data array.        
+        // Create a temporary canvas 
         var mycanvas = document.createElement("canvas");
         mycanvas.width = container_width;
         mycanvas.height = container_height;
         var ctx = mycanvas.getContext("2d");
-    
-        var DOMURL = window.URL || window.webkitURL || window;
+
         var img = new Image();
-        var svg = new Blob([data], {type: 'image/svg+xml'});
-        var url = DOMURL.createObjectURL(svg);
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-            DOMURL.revokeObjectURL(url);
+        // instead of a blobURL, if we use a dataURL, chrome seems happy...
+        var url = 'data:image/svg+xml; charset=utf8, ' + encodeURIComponent(data);
 
-            var img2 = document.createElement("img");
-            img2.src = mycanvas.toDataURL("image/png"); 
-
+        // Virtual load the image and process it.
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0) ;
+            var dataURL = mycanvas.toDataURL();
+            
+            var img2 = new Image();
+            img2.src = dataURL;
+            
             // Create an easeljs bitmap of the image.
             var image = new createjs.Bitmap();
             image.image = img2;
@@ -873,9 +877,8 @@ p.text = p._configurable(function(text, center, x, y, html) {
 
             // Add the image item to the parten frame.
             this._container.addChild(image);
-
         }.bind(this);
-
+        // Load the image.
         img.src = url;
     } else {
         var font_string = this._create_font_string();

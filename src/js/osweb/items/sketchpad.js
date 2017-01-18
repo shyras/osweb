@@ -103,6 +103,7 @@ module.exports = function(osweb){
             }
             osweb.runner._canvas.style.backgroundColor = background_color;
         }
+        
         // Set the onset and start the stimulus response process.  
         this.set_item_onset(this.canvas.show());
         this.set_sri(false);

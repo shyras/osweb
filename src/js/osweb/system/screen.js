@@ -9,8 +9,7 @@ screen._container = null;     // EASELJS: Container which holds the shapes.
 screen._active    = true;     // If true the introduction screen is shown.
 screen._click     = true;     // If true the experiment is started with a mouse click.
 
-// Definition of private methods - Introduction screen.
-
+/** Set the introscreen elements. */
 screen._setupIntroScreen = function() {
     // Set the introscreen elements.
     if (this._active === true) {
@@ -32,6 +31,7 @@ screen._setupIntroScreen = function() {
     }
 };
 
+/** Check if the experiment must be clicked to start. */
 screen._setupClickScreen = function() {
     // Check if the experiment must be clicked to start.
     if (this._click === true) {
@@ -61,6 +61,7 @@ screen._setupClickScreen = function() {
     }
 };
 
+/** Clear the introscreen elements. */
 screen._clearIntroScreen = function() {
     // Update the introscreen elements.
     if (this._active === true) {
@@ -69,6 +70,10 @@ screen._clearIntroScreen = function() {
     }
 };
 
+/**
+ * Updates the progress bar used when loading the file pool.
+ * @param {Number} percentage - The progress percentage (0-100) of the progress bar.
+ */
 screen._updateProgressBar = function(percentage)
 {
     if (this._active === true) {
@@ -93,6 +98,10 @@ screen._updateProgressBar = function(percentage)
     }    
 };
 
+/**
+ * Update the introscreen elements.
+ * @param {String} text - The text which must be updated.
+ */
 screen._updateIntroScreen = function(text) {
     // Update the introscreen elements.
     if (this._active === true) {

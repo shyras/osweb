@@ -1,4 +1,3 @@
-
 module.exports = function(osweb){
     "use strict";
     // Class events - processing all user and system evens within osweb.
@@ -39,6 +38,7 @@ module.exports = function(osweb){
         '\\', ']', '\'', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', // 220 .. 239
         '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
     ]; // 240 .. 255
+
     // Definition of the conversion table to convert shift keycodes to OpenSesame codes.
     events.KEY_SCODES = ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 'pause', // 00  .. 19
         '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', // 20  .. 39
@@ -55,8 +55,7 @@ module.exports = function(osweb){
         '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
     ]; // 240 .. 255
 
-    // Definition of methods for general event processing.    
-
+    /** Initialize the event class. */
     events._initialize = function() {
         // Initialize the keyboard event listeners.
         window.addEventListener("keydown", this._keyDown.bind(this), false);
@@ -75,6 +74,7 @@ module.exports = function(osweb){
         createjs.Ticker.addEventListener("tick", this._tick.bind(this));
     };
 
+    /** Finalize the event class. */
     events._finalize = function() {
         // Finalize the tick event listener.             
         createjs.Ticker.removeEventListener("tick");
@@ -92,6 +92,13 @@ module.exports = function(osweb){
         window.removeEventListener("keyup", this._keyUp, false);
     };
 
+    /**
+     * Execute a wait period (stimulus/response) for a certain item.
+     * @param {Object} caller - item for which the wait period is created.
+     * @param {Number} timeout - maximum time to wait for a response.
+     * @param {Number} response_type - type of response to wait for.
+     * @param {Array} response_list - list of acceptable respones.
+     */
     events._run = function(caller, timeout, response_type, response_list) {
         // Set the event running properties.     
         this._caller = caller;
@@ -106,6 +113,7 @@ module.exports = function(osweb){
         this._active = true;
     };
 
+    /** Check if the current item must be updated or finalized. */
     events._update = function() {
         // Set current time stamp
         this._timestamp = this._current_item.clock.time();
@@ -116,13 +124,13 @@ module.exports = function(osweb){
             ((this._timeout > 0) && ((this._timestamp - this._current_item.experiment.vars.get('time_' + this._current_item.name)) > this._timeout))) {
             // Set the status of the current item to finalize.
             this._current_item._status = osweb.constants.STATUS_FINALIZE;
-        } 
-        else {
+        } else {
             // Update the current item.
             this._current_item.update();
         }
     };
 
+    /** Finalize the current item. */
     events._complete = function() {
         // Disable the ticker
         this._active = false;
@@ -134,8 +142,11 @@ module.exports = function(osweb){
         this._current_item.complete();
     };
 
-    // Definition of methods for keyboard event processing.
-
+    /**
+     * Convert a keyboard code to a OpenSesame code (including special characters ctrl/shift/alt).
+     * @param {Object} event - The keyboard event to process.
+     * @return {String} - The converted keyboard code.
+     */
     events._convertKeyCode = function(event) {
         // Check for special characters
         var key = '';
@@ -160,6 +171,10 @@ module.exports = function(osweb){
         return key;
     };
 
+    /**
+     * Event handler for retrieving key down events.
+     * @param {Object} event - system keydown event.
+     */
     events._keyDown = function(event) {
         // Store the keyboard event.    
         this.keyboard_event = event;
@@ -171,6 +186,10 @@ module.exports = function(osweb){
         }
     };
 
+    /**
+     * Event handler for retrieving key up events.
+     * @param {Object} event - system keyup event.
+     */
     events._keyUp = function(event) {
         // Only select this event when the collection mode is set for this.
         if ((this._keyboard_mode === osweb.constants.RELEASES_ONLY) || (this._keyboard_mode === osweb.constants.PRESSES_AND_RELEASES)) {
@@ -179,6 +198,11 @@ module.exports = function(osweb){
         }
     };
 
+    /**
+     * Process and convert keyboard events into response objects.
+     * @param {Object} event - system keyboard event.
+     * @param {Number} keyboard_state - type of keyboard event.
+     */
     events._processKeyboardEvent = function(event, keyboard_state) {
         // Create a new keyboard response object.
         var KeyboardResponses = {
@@ -204,8 +228,10 @@ module.exports = function(osweb){
         }
     };
 
-    // Definition of methods for mouse event processing.
-
+    /**
+     * Event handler to prevent the right mouse context menu from showing.
+     * @param {Object} event - system mousedown event.
+     */
     events._mouseContext = function(event) {
         // Prevent default action. 
         event.preventDefault();
@@ -214,6 +240,22 @@ module.exports = function(osweb){
         return false;
     };
 
+    /**
+     * Event handler to store the last mouse move for later usage.
+     * @param {Object} event - system mousedown event.
+     */
+    events._mouseMove = function(event) {
+        // Store the mouse move event and its timestamp for use in the mouse class.
+        this._mouse_move = {
+            'event': event,
+            'rtTime': osweb.runner.experiment.clock.time()
+        };
+    };
+
+    /**
+     * Event handler for retrieving mouse down events.
+     * @param {Object} event - system mousedown event.
+     */
     events._mouseDown = function(event) {
         // Store the mouse press status for use in the mousee class.
         this._mouse_press = event;
@@ -225,14 +267,10 @@ module.exports = function(osweb){
         }
     };
 
-    events._mouseMove = function(event) {
-        // Store the mouse move event and its timestamp for use in the mouse class.
-        this._mouse_move = {
-            'event': event,
-            'rtTime': osweb.runner.experiment.clock.time()
-        };
-    };
-
+    /**
+     * Event handler for retrieving mouse up events.
+     * @param {Object} event - system mouseup event.
+     */
     events._mouseUp = function(event) {
         // Only select this event when the collection mode is set for this.
         if ((this._mouse_mode === osweb.constants.RELEASES_ONLY) || (this._mouse_mode === osweb.constants.PRESSES_AND_RELEASES)) {
@@ -241,6 +279,11 @@ module.exports = function(osweb){
         }
     };
 
+    /**
+     * Process and convert mouse events into response objects.
+     * @param {Object} event - system mouse event.
+     * @param {Number} mouse_state - type of mouse event.
+     */
     events._processMouseEvent = function(event, mouse_state) {
         // Create a new mouse response object.
         var MouseResponses = {
@@ -265,26 +308,34 @@ module.exports = function(osweb){
         }
     };
 
-    // Definition of methods for sound event processing.
-
+    /**
+     * Event handler for sound event processing.
+     * @param {Object} event - sound end event.
+     */
     events._audioEnded = function(event) {
         // If duration isequal to sound exit the sound item.
         var sampler = this;
-        if(sampler.duration == "sound"){
+        if (sampler.duration == "sound") {
             osweb.events._sound_ended = true;
         }
     };
 
-    // Definition of methods for video event processing.
-
+    /** Definition of methods for video event processing. */
     events._videoEnded = function() {
         osweb.events._video_ended = true;
     };
 
-    events._videoPlay = function(event) {};
+    /** 
+     * Event handler for video play processing.
+     * @param {Object} event - sound end event. 
+     */
+    events._videoPlay = function(event) {
+    };
 
-    // Definition of methods for tick event processing (timing).
-
+    /**
+     * Real-time ticker for timing and control of the experiment process.
+     * @param {Object} event - timing event passed tough the event callback.
+     */
     events._tick = function(event) {
         // Check if the exit flag is set
         if (this._break === true)
@@ -297,8 +348,7 @@ module.exports = function(osweb){
             
             // End the experiment
             osweb.runner.experiment.end();
-        }
-        else if ((this._current_item !== null) && (this._active === true)) {
+        } else if ((this._current_item !== null) && (this._active === true)) {
             // Only check for status if there is a current item and the ticker is activated.
             switch (this._current_item._status) {
                 case osweb.constants.STATUS_FINALIZE:

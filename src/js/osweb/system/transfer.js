@@ -8,8 +8,10 @@ function transfer() {
 transfer._counter = null;   // Counter used for processing the pool items.
 transfer._poolfiles = null; // Array containg the pool items.           
 
-// Definition of private methods - reading osexp files.   
-
+/** 
+ * Read na osexp file.
+ * @param {Object|String} source - A file object or a String containing the experiment.
+ */
 transfer._readOsexpFile = function(source) {    
     osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_003);
     osweb.screen._updateProgressBar(-1);
@@ -18,8 +20,7 @@ transfer._readOsexpFile = function(source) {
     if (source.constructor === File) {
         // Source is a local loaded file, load binary.
         this._readOsexpFromFile(source);
-    }    
-    else {
+    } else {
         // Check if the source is a script string.
         if (source.substr(0,3) === '---') {
             // Disable the progressbar.    
@@ -30,14 +31,17 @@ transfer._readOsexpFile = function(source) {
             
             // Start buiding the experiment.
             osweb.runner._build();
-        }
-        else {
+        } else {
             // Server source, check if the url is valid
             this._readOsexpFromServer(source);
         }
     }    
 };
 
+/**
+ * Reading and extracting an osexp file from a file location.
+ * @param {Object} file - A file object containing the experiment.
+ */
 transfer._readOsexpFromFile = function(file) {
     // Reading and extracting an osexp file from a file location.
     TarGZ.loadLocal(file, 
@@ -54,6 +58,10 @@ transfer._readOsexpFromFile = function(file) {
         }.bind(this));
 };   
 
+/**
+ * Reading and extracting an osexp file from a server location.
+ * @param {String} url - An url location from which to load an osexp file.
+ */
 transfer._readOsexpFromServer = function(url) {
     // Reading and extracting an osexp file from a server location.
     TarGZ.load(url, 
@@ -70,6 +78,10 @@ transfer._readOsexpFromServer = function(url) {
         }.bind(this));
 };   
 
+/**
+ * Process the contence of an osexp file.
+ * @param {Array} files - A list of internal files extracted from the osexp file.
+ */
 transfer._processOsexpFile = function(files) {
     // Update the intro screen.
     osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_004);
@@ -87,6 +99,7 @@ transfer._processOsexpFile = function(files) {
     this._processOsexpPoolItems();
 }; 
 
+/** Process the individual pool file items. */
 transfer._processOsexpPoolItems = function() {
     if (this.counter < this.poolfiles.length)
     {
@@ -129,8 +142,7 @@ transfer._processOsexpPoolItems = function() {
 
         // Time out caller to prevent blocking.
         setTimeout(function(){ this._processOsexpPoolItems(); }.bind(this), 10);
-    }    
-    else
+    } else
     {
         // All files have been process, start the experiment process.
         osweb.screen._updateProgressBar(100);
@@ -140,8 +152,11 @@ transfer._processOsexpPoolItems = function() {
     }    
 };
 
-// Definition of private methods - writing data files.   
-
+/**
+ * Writing experiment result data to a location.
+ * @param {String} target - An addres to store result data.
+ * @param {Object} resultData - The result data itself to store.
+ */
 transfer._writeDataFile = function(target, resultData) {
     // Check if the target and resultData are defined.
     if ((target != null) && (resultData !== null))

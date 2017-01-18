@@ -36,7 +36,7 @@ module.exports = osweb;
 
 // Definition of osweb version constants. 
 osweb.VERSION_NAME = 'osweb';
-osweb.VERSION_NUMBER = '3.0.045 (05-09-2016)';
+osweb.VERSION_NUMBER = '3.0.046 (17-01-2017)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
