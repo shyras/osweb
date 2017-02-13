@@ -40,7 +40,7 @@ osweb.VERSION_NUMBER = '3.0.046 (17-01-2017)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
-console.log(osweb);
+// console.log(osweb);
 
 // If not running in node.js, bind osweb and alertify to global namespace
 if(node_mode === false){
@@ -149,7 +149,7 @@ osweb.item_store = require('./classes/item_store.js');
 osweb.python_workspace = require('./classes/python_workspace.js');
 osweb.response_info = require('./classes/response_info.js');
 osweb.response_store = require('./classes/response_store.js');
-osweb.syntax = require('./classes/syntax.js');
+osweb.syntax = require('./classes/syntax.js')(osweb);
 osweb.var_store = require('./classes/var_store.js');
 osweb.Styles = require('./classes/styles.js');
 // Items
