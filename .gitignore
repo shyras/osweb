@@ -2,3 +2,5 @@ node_modules/
 public_html/js/*
 public_html/css/*
 test-osexp/*.csv
+
+.vscode
