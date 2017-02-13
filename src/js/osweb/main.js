@@ -149,7 +149,7 @@ osweb.item_store = require('./classes/item_store.js');
 osweb.python_workspace = require('./classes/python_workspace.js');
 osweb.response_info = require('./classes/response_info.js');
 osweb.response_store = require('./classes/response_store.js');
-osweb.syntax = require('./classes/syntax.js');
+osweb.syntax = require('./classes/syntax.js')(osweb);
 osweb.var_store = require('./classes/var_store.js');
 osweb.Styles = require('./classes/styles.js');
 // Items
