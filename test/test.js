@@ -129,7 +129,6 @@ describe('syntax', function(){
 		var tmp_var_store = new osweb.var_store(this, null);
 		tmp_var_store.set('width',1024);
 		tmp_var_store.set('height',768);
-
             
         it("Should only parse real variables", function(){
 			expect(osweb.syntax.eval_text(

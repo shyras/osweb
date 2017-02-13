@@ -40,7 +40,7 @@ osweb.VERSION_NUMBER = '3.0.046 (17-01-2017)';
 
 // Show library name and library version number in the console.
 console.log(osweb.VERSION_NAME + ' - ' + osweb.VERSION_NUMBER);
-console.log(osweb);
+// console.log(osweb);
 
 // If not running in node.js, bind osweb and alertify to global namespace
 if(node_mode === false){
