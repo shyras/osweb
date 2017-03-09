@@ -3452,11 +3452,12 @@
                 }
                 
                 // Check if a callback function in osweb is defined. 
-                if (osweb.runner._onconsole) {
+                if ((runner) && (runner._onconsole)) {
                     // Execute callback function.
-                    osweb.runner._onconsole(s);
-                }    
-                /*                 var a = document.getElementById("osweb_console_text").value;
+                    runner._onconsole(s);
+                }     
+
+                /* var a = document.getElementById("osweb_console_text").value;
                 a = a + s + '\r\n';
                 document.getElementById("osweb_console_text").value = a; */ 
             },

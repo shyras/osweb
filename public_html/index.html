@@ -1,25 +1,30 @@
 <!DOCTYPE html>
+<!--
+    OSWEB is distributed under the terms of the GNU General Public License 3.
+    The full license should be included in the file COPYING, 
+    or can be obtained from: http://www.gnu.org/licenses/gpl.txt
+-->
 <html>
 	<head>
 		<!-- Head - general definitions -->
-		<title>osweb</title>
+		<title>OsWeb 2.0</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<!-- JavaScript -->
+		<script type="text/javascript" src="js/screenfull.min.js"></script>
+		<script type="text/javascript" src="js/alertify.min.js"></script>
+	   	<script type="text/javascript" src="js/filbert.js"></script>
+	   	<script type="text/javascript" src="js/gzip.js"></script>
+		<script type="text/javascript" src="js/pixi.min.js"></script>
+		<script type="text/javascript" src="js/pixi-sound.min.js"></script>
 		<script type="text/javascript" src="js/osweb.js"></script>
-		<script type="text/javascript" src="js/interface.js"></script>
 		<!-- CSS -->
 		<link rel="stylesheet" href="css/osweb.css"/>
 		<link rel="stylesheet" href="css/normalize.css"/>
-		<!-- Fonts-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
-  		<link href='https://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono|Droid+Serif|Roboto|Roboto+Condensed|Ubuntu+Mono|Roboto+Slab' rel='stylesheet' type='text/css'>
-		<style type="text/css">@import url('http://fonts.googleapis.com/css?family=serif|Lobster|Fontdiner+Swanky|Crafty+Girls|Pacifico|Satisfy|Gloria+Hallelujah|Bangers|Audiowide|Sacramento');</style>
 	</head>
-
-	<body>				
-		<!-- Body - Navigation bar -->
+    <body>				
+		<!-- Body - Command bar definitions -->
 		<nav class="navbar navbar-default navbar-fixed-top cogsci-navbar">
 			<div class="container">
 				<div class="navbar-header">
@@ -36,17 +41,15 @@
 				<div id="navbar" class="collapse navbar-collapse">
 					<form class="navbar-form navbar-right">
 						<div class="form-group">
-							<button class="btn btn-success" id="button4" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
+							<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
 							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
 							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsoleWindow(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i> Console</button>
 						</div>
 					</form>
 					<form class="navbar-form">
-						<input type="file" id="browse" name="fileupload" style="display: none" onChange="Handlechange(event);"/>
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="handleChange(event);"/>
 						<div class="btn-group" style="display:inline;" role="group" aria-label="Load experiment">
-							<button class="btn btn-primary" type="button" id="button1" onclick="HandleBrowseClick();">Local file</button>
-							<button class="btn btn-primary" type="button" id="button2" onclick="loadServer();">Server file</button>
-							<button class="btn btn-primary" id="button3" type="reset" onclick="loadScript();">Internal script</button>
+							<button class="btn btn-primary" type="button" id="file_button" onclick="handleBrowseClick();">Local file</button>
 						</div>
 						<div class="form-group" style="display:inline;">
 							<div class="input-group" style="display: table;">
@@ -58,8 +61,8 @@
 				</div>
 			</div>
 		</nav>
-		<!-- Body - Warning bar -->
-		<div class="container" style="margin-top:64px;">
+		<!-- Body - Alert container -->
+        <div class="container" style="margin-top:64px;">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="alert alert-warning">
@@ -68,8 +71,9 @@
 				</div>
 			</div>
 		</div>
-	 	<div id="body_div">
-			<!-- Body - OsWeb section -->
+		<!-- Body - Experiment canvas and form container -->
+    	<div id="body_div">
+	 		<!-- Body - OsWeb section -->
 			<div id="osweb_div">
 			</div>
 			<!-- Body - Console section -->
@@ -79,298 +83,239 @@
 				</div>
 			</div>
 		</div>
-	</body>
-</html>
+	</body>				
+    <script>
+		// Create the runner object within the given container.
+        var runner = new osweb.runner('osweb_div');
+		
+		// Create the context container for the experiment definitions.
+		var context = {};
 
-<script>
-	// Activate noconflict mode of jQuery as it clashes with prototype.js
-	jQuery.noConflict();
+	 	// Set position of notifications
+	    alertify.set('notifier', 'position', 'bottom-right');
 
-	// Set position of notifications
-	alertify.set('notifier', 'position', 'bottom-right');
+	    // Extend existing 'alert' dialog
+	    if (!alertify.errorAlert) {
+		    //define a new errorAlert base on alert
+		    alertify.dialog('errorAlert', function factory() {
+			    return {
+				   	build:function() {
+				        var errorHeader = '<span class="fa fa-times-circle fa-2x" ' +
+					  	    'style="vertical-align:middle;color:#e10000;">' + 
+							'</span> Application Error';
+					    this.setHeader(errorHeader);
+				    }
+			    };
+		    }, true, 'alert');
+	    }
 
-	// Extend existing 'alert' dialog
-	if (!alertify.errorAlert) {
-		//define a new errorAlert base on alert
-		alertify.dialog('errorAlert',function factory(){
-			return {
-				build: function() {
-					var errorHeader = '<span class="fa fa-times-circle fa-2x" '
-						+	'style="vertical-align:middle;color:#e10000;">'
-						+ '</span> Application Error';
-					this.setHeader(errorHeader);
-				}
-			};
-		},true,'alert');
-	}
+	    // Set event callback for handling error messages using alertify.
+	    window.onerror = function(msg, url, line, col, error) {
+		    var text = '<p><b>' + msg + '</b></p>' + '<p>See console for further details</p>';
+		    alertify.errorAlert(text);
+	    }
 
-	// Overife the general error message systeem to show errors using alertify.
-	window.onerror = function(msg, url, line, col, error) {
-		var text = "<p><b>"+msg+"</b></p>" +
-		"<p>See console for further details</p>";
-		alertify.errorAlert(text);
-	}
+	    // Prevent the run/stop button from keeping focus after the subject nr dialog box is
+	    // closed. Otherwise the stop button is activated when users press spacebar for a
+	    // response to the canvas.
+    	document.getElementById('run_button').onfocus = function(){
+		    this.blur();
+	    };
 
-	// Prevent the run/stop button from keeping focus after the subject nr dialog box is
-	// closed. Otherwise the stop button is activated when users press spacebar for a
-	// response to the canvas.
-	document.getElementById('button4').onfocus = function() {
-		this.blur();
-	}
+	    // Hack to set the value of the file upload button
+	    document.getElementById('file_button').text = 'Select file'; 
 
-	var Experiment;
-	var Script;
-
-	// Hack to set the value of the file upload button
-	document.getElementById("button1").text = 'Select file'; 
-
-	// Event handlers for full screen option.
-	if (screenfull.enabled) {
-
-		// Event listener for fullscreen errors
-		document.addEventListener(screenfull.raw.fullscreenerror, function() {
-			alertify.errorAlert('Failed to activate fullscreen');
-		});
-
-		// Resize canvas to fit screen, when resized to fullscreen
-		document.addEventListener(screenfull.raw.fullscreenchange, function() {
-			var c = document.getElementById('osweb_canvas');
-			if (screenfull.isFullscreen) {
-				c.old_width = c.style.width;
-				c.old_height = c.style.height;
-				var rect = c.getBoundingClientRect();
-				c.style.width = rect.width;
-				c.style.height = rect.height;
-			} else {
-				c.style.width = c.old_width;
-				c.styleheight = c.old_height;
-			}
-		});
-	}
-
-	/** Disable some buttons once an experiment is loaded. */
-	function buttonsSetToFileLoaded() {
-		document.getElementById('button1').disabled = true;
-		document.getElementById('button2').disabled = true;
-		document.getElementById('button3').disabled = true;
-		document.getElementById('button4').disabled = false;
-	}
-
-	/** Enable experiment loading buttons. */
-	function buttonsSetToFileSelection() {
-		document.getElementById('button1').disabled = false;
-		document.getElementById('button2').disabled = false;
-		document.getElementById('button3').disabled = false;
-		document.getElementById('fullscreen_button').disabled = true;
-	}
-
-	/** Enable experiment loading buttons. */
-	function resetCanvas() {
-		document.getElementById('osweb_div').style.width = '800px';
-		document.getElementById('osweb_div').style.height = '600px';
-		document.getElementById('osweb_div').style.background = "#000";
-	}
-
-	/** Show canvas in fullscreen mode (Esc minimizes it again). */
-	function toggleFullscreen()	{
-		var c = document.getElementById('osweb_canvas');
-	
+	    // Event listener for fullscreen errors
+	    // Use alert() for now, but think of something prettier (sAlert?)
 		if (screenfull.enabled) {
-			screenfull.request(c);
-		}
-	}
+		    document.addEventListener(screenfull.raw.fullscreenerror, function() {
+			    alertify.errorAlert('Failed to activate fullscreen');
+		    });
+	    }
 
-	/** Show/hide console window used by the interpreter print method. */
-	function toggleConsoleWindow() {
-		var c = document.getElementById('osweb_console');
-		if (c.style.display === 'none') {
-			c.style.display = '';
-		} else {
-			c.style.display = 'none';
-		}	
-	}
-
-	/** Methods for handling the hidden file load button. */
-	function HandleBrowseClick() {
-		// Update the interface.
-		var fileinput = document.getElementById("browse");
-		fileinput.click();
-	}
-
-	/** Handle an OpenSesame file from a local file location. */
-	function Handlechange(event) {
-		// Update the button status.
-		buttonsSetToFileLoaded();
-
-		// Update the interface.
-		var fileinput = document.getElementById("browse");
-		var textinput = document.getElementById("filename");
-		textinput.value = fileinput.value;
-
-		alertify.message("Loaded local file: " + textinput.value);
-
-		// Get the file.		  
-		var file = event.target.files[0]; // Only select the first file.
-
-		// Definition of the experiment object and its properties.
-		Experiment = {'onconsole': onConsole, 'onfinished': onFinished, 'source': file};
-	}   
-
-	/** Handle an OpenSesame file from a server location. */
-	function loadServer(){
-		// Update interface.
-		buttonsSetToFileLoaded();
-
-		// Get the file.		  
-		var file = 'files/stroop.osexp'; // + document.getElementById("serverfile").value;
-
-		var textinput = document.getElementById("filename");
-		textinput.value = file;
-
-		alertify.message("Loaded Remote file: " + textinput.value);
-	
-		// Definition of the experiment object and its properties.
-		Experiment = {'onconsole': onConsole, 'onfinished': onFinished, 'source': file, 'target': 'php/data.php'};
-	}  
-
-	/** Handle an OpenSesame file from javascript code. */
-	function loadScript(){
-		// Update interface.
-		buttonsSetToFileLoaded();
-
-		Script = '---' + '\n' +
-		 'API: 2' + '\n' +
-		 'OpenSesame: 3.0.2' + '\n' +
-		 'Platform: nt' + '\n' +
-		 '---' + '\n' +
-		 'set width 800' + '\n' +
-		 'set uniform_coordinates "yes"' + '\n' +
-		 'set title "New experiment"' + '\n' +
-		 'set subject_parity "even"' + '\n' +
-		 'set subject_nr 0' + '\n' +
-		 'set start "block"' + '\n' +
-		 'set height 600' + '\n' +
-		 'set foreground "white"' + '\n' +
-		 'set description "Default description"' + '\n' +
-		 'set coordinates "uniform"' + '\n' +
-		 'set compensation 0' + '\n' +
-		 'set canvas_backend "xpyriment"' + '\n' +
-		 'set background "black"' + '\n' +
-		 '' + '\n' +
-		 'define sequence block' + '\n' +
-		 '	set flush_keyboard "yes"' + '\n' +
-		 '	set description "Runs a number of items in sequence"' + '\n' +
-		 '	run new_loop always' + '\n' +
-		 '' + '\n' +
-		 'define loop new_loop' + '\n' +
-		 '	set skip 0' + '\n' +
-		 '	set repeat 1' + '\n' +
-		 '	set order "sequential"' + '\n' +
-		 '	set offset "no"' + '\n' +
-		 '	set item "trial"' + '\n' +
-		 '	set description "Repeatedly runs another item"' + '\n' +
-		 '	set cycles 2' + '\n' +
-		 '	set column_order "stimulus;counter"' + '\n' +
-		 '	set break_if "never"' + '\n' +
-		 '	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
-		 '	setcycle 0 counter "1"' + '\n' +
-		 '	setcycle 1 stimulus "page 2"' + '\n' +
-		 '	setcycle 1 counter "2"' + '\n' +
-		 '	setcycle 2 stimulus "page 3"' + '\n' +
-		 '	setcycle 2 counter "3"' + '\n' +
-		 '	run trial' + '\n' +
-		 '' + '\n' +
-		 'define sequence trial' + '\n' +
-		 '	set flush_keyboard "yes"' + '\n' +
-		 '	set description "Runs a number of items in sequence"' + '\n' +
-		 '	run welcome always' + '\n' +
-		 '' + '\n' +
-		 'define sketchpad welcome' + '\n' +
-		 '	set start_response_interval "no"' + '\n' +
-		 '	set reset_variables "no"' + '\n' +
-		 '	set duration "keypress"' + '\n' +
-		 '	set description "Displays stimuli"' + '\n' +
-		 '	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
-		 
-		// Definition of the experiment object and its properties.
-		Experiment = {'onconsole': onConsole, 'onfinished': onFinished, 'source': Script};
-
-		alertify.message("Loaded internal script");
-		document.getElementById("filename").value = "Internal script";
-	}  
-
-	/** Run the actual experiment in de osweb library. */
-	function runExperiment(){
-		// Call again to make sure exp load buttons are disabled after
-		// 'Run experiment' has been clicked
-		buttonsSetToFileLoaded();
-
-		if (document.getElementById('button4').getAttribute('status') == "run"){ 
-			document.getElementById('button4').setAttribute('status','stop');
-			document.getElementById('button4').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
-			document.getElementById('button4').classList.remove("btn-success");
-			document.getElementById('button4').classList.add("btn-danger");
+	    // Resize canvas to fit screen, when resized to fullscreen
+	    if (screenfull.enabled) {
+		    document.addEventListener(screenfull.raw.fullscreenchange, function() {
+			    var c = runner._renderer.view;
+			    if(screenfull.isFullscreen) {
+				    c.old_width = c.style.width;
+				    c.old_height = c.style.height;
+				    var rect = c.getBoundingClientRect();
+				    c.style.width = rect.width;
+				    c.style.height = rect.height;
+			    } else {
+				    c.style.width = c.old_width;
+				    c.styleheight = c.old_height;
+			    }
+		    });
+	    }
+	 
+   	    /**
+ 	     * Disable some buttons once an experiment is loaded.
+ 	     * @return {void}
+ 	     */
+	    function buttonsSetToFileLoaded() {
+			document.getElementById('file_button').disabled = true;
+			document.getElementById('run_button').disabled = false;
 			document.getElementById('fullscreen_button').disabled = false;
-  			// Run the experiment within the Runner with the given canvas and experiment object.
-			osweb.runner.run('osweb_div', Experiment); 
-		} else {
-			// Stop the experiment
-			alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?', 
-				function() { osweb.runner.exit() }, 
-				function() { /* What to do when cancelled */})
-				.set('labels', {ok:'Yes', cancel:'No'}); 
-		}
-	}	 
+			document.getElementById('console_button').disabled = false;
+	    }
 
-    /**
-     * Event handler to handle actions after an experiment is finished.
-	 * @param {String} pText - A line of text to print to a console element.
-     */
-	function onFinished(pData, pSession_data){
-		// Exit fullscreen mode, if applicable
-		if (screenfull.enabled && screenfull.isFullscreen) {
-			screenfull.exit();
+		/** 
+		 * Enable experiment loading buttons. 
+ 	     * @return {void}
+ 	     */
+		function buttonsSetToFileSelection() {
+			document.getElementById('file_button').disabled = false;
+			document.getElementById('run_button').disabled = true;
+			document.getElementById('fullscreen_button').disabled = true;
+			document.getElementById('console_button').disabled = true;
 		}
 
-		document.getElementById('button4').value = "Run experiment";
+	    /**
+ 	     * Method for handling the hidden file load button.			 
+ 	     * @return {void}
+ 	     */
+	    function handleBrowseClick() {
+		    // Simulate a file input click.
+		    var fileInput = document.getElementById('browse');
+		    fileInput.click();
+	    }
+
+	    /**
+ 	     * Method for handling the hidden file load button.			 
+	     * @param {Object} event  The change event.
+ 	     * @return {void}
+ 	     */
+	    function handleChange(event) {
+		    // Update the button status.
+		    buttonsSetToFileLoaded();
+
+		    // Update the interface.
+		    var fileInput = document.getElementById('browse');
+		    var textInput = document.getElementById('filename');
+		    textInput.value = fileInput.value;
+
+		    // Send feedback to the user.
+		    alertify.message('Loaded local file: ' + textInput.value);
+
+		    // Only select the first file.
+		    var file = event.target.files[0]; 
+
+		    // Set the experment context container.
+	        context = {
+				debug: true,
+				introscreen: true,
+				introclick: true,
+				onconsole: onConsole,
+				onfinished: onExperimentFinished,
+				name: 'test',
+				source: file, 
+				target: null
+			}
+		}   
+
+        /**
+ 	     * Show canvas in fullscreen mode (Esc minimizes it again)
+ 	     * @returns {void}
+ 	     */
+	    function toggleFullscreen() {
+    		if (screenfull.enabled) {
+	    		screenfull.request(runner._renderer.view);
+		    }
+	    }	
+
+	    /**
+ 	     * Show/hide console window used by the console print method.
+ 	     * @returns {void}
+ 	     */
+	    function toggleConsoleWindow() {
+		    var c = document.getElementById('osweb_console');
+		    if (c.style.display === 'none') {
+			    c.style.display = '';
+		    } else {
+			    c.style.display = 'none';
+		    }	
+	    }
 	
-		// Reset the canvas
-		resetCanvas();
+        /**
+ 	     * Runs an experiment loaded from file or server.
+ 	     * @returns {void}
+ 	     */
+	    function runExperiment(){
+			// 'Run experiment' has been clicked
+			buttonsSetToFileLoaded();
 
-		// Reset the input buttons
-		buttonsSetToFileSelection();
+			if (document.getElementById('run_button').getAttribute('status') === 'run'){ 
+				document.getElementById('run_button').setAttribute('status','stop');
+				document.getElementById('run_button').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
+				document.getElementById('run_button').classList.remove('btn-success');
+				document.getElementById('run_button').classList.add('btn-danger');
 
-		document.getElementById('button4').setAttribute('status','run');
-		document.getElementById('button4').innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Run';
-		document.getElementById('button4').classList.remove("btn-danger");
-		document.getElementById('button4').classList.add("btn-success");
+	    		// Run the experiment within the Runner with the given context.
+		    	runner.run(context);
+			} else {
+				// Stop the experiment
+				alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?', 
+					function() { 
+						runner.exit(); 
+					}, 
+					function() { 
+						/* What to do when cancelled */
+					})
+					.set('labels', {ok: 'Yes', cancel: 'No'}
+				); 
+			}
+	     } 
 
-		// Log the data to the console.
-		if (pData !== null) {
-			console.log('-- experiment result data --');
-			console.log(pData);
+	    /**
+ 	     * Callback function for optional data processing after an experiment is finished.
+	     * @param {Object} data - The result data in JSON format
+ 	     * @param {Object} sessionData - The session data in JSON format
+ 	     * @returns {void}
+ 	     */
+	    function onExperimentFinished(data, sessionData) {
+			// Exit fullscreen mode, if applicable.
+			if (screenfull.enabled && screenfull.isFullscreen) {
+				screenfull.exit();
+			}
+
+			// Reset the input buttons
+			buttonsSetToFileSelection();
+
+			// Reset the run button.
+			document.getElementById('run_button').value = 'Run experiment';
+			document.getElementById('run_button').setAttribute('status','run');
+			document.getElementById('run_button').innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Run';
+			document.getElementById('run_button').classList.remove('btn-danger');
+			document.getElementById('run_button').classList.add('btn-success');
+
+			// Log the optional data to the console.
+			if (data !== null) {
+				console.log('-- experiment result data --');
+				console.log(data);
+			}
+
+			// Log the o[ptional session data to the console.
+			if (sessionData !== null) {
+				console.log('-- experiment session data --');
+				console.log(sessionData);
+			}	
+	    }
+
+ 		/**
+     	 * Event handler to print console text to an HTML element.
+     	 * @param {String} consoleText - A line of text to print to a console element.
+         */
+ 		function onConsole(consoleText) {
+			// Log the session data to the console.
+			if (consoleText !== null) {
+        		// Add the text to the console window.
+				var a = document.getElementById('osweb_console_text').value;
+            	a = a + consoleText + '\r\n';
+            	document.getElementById('osweb_console_text').value = a;  
+			}	
 		}
 
-		// Log the session data to the console.
-		if (pSession_data !== null) {
-			console.log('-- experiment session data --');
-			console.log(pSession_data);
-		}	
-	}
-
-    /**
-     * Event handler to print console text to an HTML element.
-     * @param {String} pText - A line of text to print to a console element.
-     */
- 	function onConsole(pText) {
-		// Log the session data to the console.
-		if (pText !== null) {
-			console.log(pText);
-			
-        	var a = document.getElementById("osweb_console_text").value;
-            a = a + pText + '\r\n';
-            document.getElementById("osweb_console_text").value = a;  
-		}	
-	}
-
-</script>
+    </script>
+</html>
