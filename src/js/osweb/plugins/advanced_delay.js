@@ -1,40 +1,37 @@
-
-/*
- * Definition of the class advanced_delay.
+/**
+ * Class representing a advanced delay item.
+ * @extends Item
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function advanced_delay(pExperiment, pName, pScript) {
-        // Inherited.
-        this.item_constructor(pExperiment, pName, pScript);
-
-        // Set private properties.
-        this._duration = -1;
-    };
-
-    // Extend the class from its base class.
-    var p = osweb.extendClass(advanced_delay, osweb.item);
-
-    // Define and set the public properties. 
-    p.description = 'Waits for a specified duration';
-
-    /*
-     * Definition of public class methods - build cycle.
+osweb.advanced_delay = class AdvancedDelay extends osweb.item {
+    /**
+     * Create an advanced delay plugin item which delays for e specific duration the experiment.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
      */
+    constructor(experiment, name, script) {
+		// Inherited.
+		super(experiment, name, script);
 
-    p.reset = function() {
-        // Resets all item variables to their default value.
+        // Set public class properties.
+        this.description = 'Waits for a specified duration';
+
+        // Set private class properties.
+        this._duration = -1;
+    
+        // Process the script.
+        this.from_string(script);
+    }
+
+    /** Resets all item variables to their default value. */
+    reset() {
         this.vars.duration = 1000;
         this.vars.jitter = 0;
         this.vars.jitter_mode = 'Uniform';
-    };
+    }
 
-    /*
-     * Definition of public class methods - run cycle.
-     */
-
-    p.prepare = function() {
+    /** Implements the prepare phase of an item. */
+    prepare() {
         this._duration = this.vars.duration;
         /* # Sanity check on the duration value, which should be a positive numeric
 	# value.
@@ -58,18 +55,16 @@ module.exports = function(osweb){
 	debug.msg(u"delay for %s ms" % self._duration) */
 
         // Inherited.	
-        this.item_prepare();
+        super.prepare();
     };
 
-    p.run = function() {
+    /** Implements the run phase of an item. */
+    run() {
         // Inherited.	
-        this.item_run();
+        super.run();
 
         // Set the onset time.
         this.set_item_onset(this.time());
         this.sleep(this._duration);
-    };
-
-    // Bind the advanced_delay class to the osweb namespace.
-    return osweb.promoteClass(advanced_delay, "item");
+    }
 }

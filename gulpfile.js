@@ -5,54 +5,7 @@
  */
 
 var gulp = require('gulp');
-var gutil = require('gulp-util');
-var sass = require('gulp-sass');
-var cleanCSS = require('gulp-clean-css');
 var concat = require('gulp-concat');
-var wrapJS = require("gulp-wrap-js");
-var uglify = require('gulp-uglify');
-var notify = require("gulp-notify");
-var sourcemaps = require('gulp-sourcemaps');
-var browserify = require('browserify');
-var watchify = require('watchify');
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var del = require('del');
-var browserSync = require('browser-sync').create();
-
-var debug = true;
-
-var config = {
-  browserify : {
-    entries: ['./src/js/osweb/main.js'],
-    standalone: 'osweb', 
-    debug: debug,
-    cache: {}, // required for watchify
-    packageCache: {} // required for watchify
-  },
-  browserSync : {
-    server: "./public_html",
-    logFileChanges: false
-  },
-  js : {
-    dest_dir: './public_html/js',
-    dest_file: 'osweb.js',
-    dependencies: [
-      'src/js/dependencies/jquery.min.js',
-      'src/js/dependencies/bootsrap.min.js',
-      'src/js/dependencies/*.js'
-    ],
-    deps_dest: 'interface.js'
-  },
-  css : {
-    dest_dir: './public_html/css',
-    dest_file: 'osweb.css',
-    styles:[
-      'src/scss/*.scss',
-      'src/scss/*.css'
-    ]
-  }
-};
 
 function handleErrors() {
   var args = Array.prototype.slice.call(arguments);
@@ -63,79 +16,67 @@ function handleErrors() {
   this.emit('end'); // Keep gulp from hanging on this task
 }
 
-// Bundle function, when true watchify it.
-
-function build_osweb(watch){
-  var bundler, rebundle;
-  config.browserify.fullPaths = watch; // required to be true only for watchify
-
-  bundler = browserify(config.browserify);
-  if(watch) {
-    bundler = watchify(bundler); 
-  }
-
-  rebundle = function() {
-    return bundler.bundle()
-      .on('error', handleErrors)
-      .pipe(source(config.js.dest_file))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true})) // loads map from browserify file
-        //.pipe(uglify())
-      .pipe(sourcemaps.write())
-      .pipe(gulp.dest(config.js.dest_dir))
-      .pipe(browserSync.stream()); //reload webpage in browser
-  };
-
-  bundler.on('update', function(){
-    rebundle();
-    gutil.log('Rebundling osweb...');
-  });
-  bundler.on('log', gutil.log); // output build logs to terminal
-  return rebundle();
-}
-
-// Gulp tasks
-
-gulp.task('js-osweb', function(){
-    return build_osweb(false);    
-});
-
-gulp.task('js-interface', function() {
-    return gulp
-        .src(config.js.dependencies)
-        .on('error', handleErrors)
-        .pipe(sourcemaps.init())
-          //.pipe(uglify())
-            .pipe(concat(config.js.deps_dest))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.js.dest_dir))
-        .pipe(browserSync.stream()); //reload webpage in browser
-});
-
-gulp.task('css', function() {
-    return gulp
-        .src(config.css.styles)
-        .pipe(sass().on('error', handleErrors))
-        .pipe(sourcemaps.init())
-            .pipe(cleanCSS())
-            .pipe(concat(config.css.dest_file))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(config.css.dest_dir))
-        .pipe(browserSync.stream()); //reload webpage in browser
-});
-
-gulp.task('js', ['js-interface','js-osweb']);
-
-gulp.task('build', ['js','css']);
-
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-    gulp.watch(config.js.dependencies, ['js-interface']);
-    gulp.watch(config.css.styles, ['css']);
-    gulp.watch("public_html/*.html").on('change', browserSync.reload);
-    build_osweb(true);
-    // Start webserver
-    browserSync.init(config.browserSync);
-});
-
-gulp.task('default', ['css','js-interface','watch']);
+gulp.task('default', function() {
+  return gulp
+    .src(['src/js/osweb/system/header.js',
+          'src/js/osweb/system/constants.js',
+          'src/js/osweb/backends/canvas.js',
+          'src/js/osweb/backends/clock.js',
+          'src/js/osweb/backends/keyboard.js',
+          'src/js/osweb/backends/log.js',
+          'src/js/osweb/backends/mouse.js',
+          'src/js/osweb/backends/sampler.js',
+          'src/js/osweb/backends/styles.js',
+          'src/js/osweb/classes/file_pool_store.js',
+          'src/js/osweb/classes/item_stack.js',
+          'src/js/osweb/classes/item_store.js',
+          'src/js/osweb/classes/python_workspace.js',
+          'src/js/osweb/classes/response_info.js',
+          'src/js/osweb/classes/response_store.js',
+          'src/js/osweb/classes/syntax.js',
+          'src/js/osweb/classes/var_store.js',
+          'src/js/osweb/elements/base_element.js',
+          'src/js/osweb/elements/arrow.js',
+          'src/js/osweb/elements/circle.js',
+          'src/js/osweb/elements/ellipse.js',
+          'src/js/osweb/elements/fixdot.js',
+          'src/js/osweb/elements/gabor.js',
+          'src/js/osweb/elements/image.js',
+          'src/js/osweb/elements/line.js',
+          'src/js/osweb/elements/noise.js',
+          'src/js/osweb/elements/rect.js',
+          'src/js/osweb/elements/textline.js',
+          'src/js/osweb/items/item.js',
+          'src/js/osweb/items/experiment.js',
+          'src/js/osweb/items/generic_response.js',
+          'src/js/osweb/items/keyboard_response.js',
+          'src/js/osweb/items/mouse_response.js',
+          'src/js/osweb/items/inline_script.js',
+          'src/js/osweb/items/logger.js',
+          'src/js/osweb/items/loop.js',
+          'src/js/osweb/items/sampler.js',
+          'src/js/osweb/items/sequence.js',
+          'src/js/osweb/items/sketchpad.js',
+          'src/js/osweb/items/feedback.js',
+          'src/js/osweb/items/synth.js',
+          'src/js/osweb/plugins/advanced_delay.js',
+          'src/js/osweb/plugins/notepad.js',
+          'src/js/osweb/plugins/repeat_cycle.js',
+          'src/js/osweb/plugins/reset_feedback.js',
+          'src/js/osweb/plugins/touch_response.js',
+          'src/js/osweb/python/python.js',
+          'src/js/osweb/python/python_math.js',
+          'src/js/osweb/python/python_opensesame.js',
+          'src/js/osweb/python/python_random.js',
+          'src/js/osweb/python/python_string.js',
+          'src/js/osweb/system/debugger.js',
+          'src/js/osweb/system/events.js',
+          'src/js/osweb/system/parameters.js',
+          'src/js/osweb/system/screen.js',
+          'src/js/osweb/system/session.js',
+          'src/js/osweb/system/transfer.js',
+          'src/js/osweb/system/runner.js',
+          'src/js/osweb/system/footer.js'])
+    .pipe(concat('osweb.js'))
+    .pipe(gulp.dest('./public_html/js'));     
+});   

@@ -1,25 +1,27 @@
-module.exports = function(osweb){
-    "use strict";
-    
-    // Definition of the class python_random.
-    function python_random() {
-        throw 'The class python_random cannot be instantiated!';
+/** Class implementing a python random library. */
+osweb.python_random = class PythonRandom {
+    /**
+     * Create a python AST runner.
+     * @param {Object} runner - The runner to which the library belongs.
+     */
+    constructor(runner) {
+        // Set class parameter properties.
+        this._runner = runner; // Parent runner attached to the library.
     }
 
-    python_random._initialize = function() {
+    /** Initialization phase of the python_library class. */
+    _initialize() {
         // Insert math library methods into the python interpreter.
         filbert.pythonRuntime.imports['random'] = {};
         filbert.pythonRuntime.imports['random']['random'] = this.random; 
         filbert.pythonRuntime.imports['random']['shuffle'] = this.shuffle; 
    };
     
-    // Definition of public methods 
-
-    python_random.random = function() {
+    random() {
         return Math.random();
-    };
+    }
 
-    python_random.shuffle = function(x, random) {
+    shuffle(x, random) {
         // Fisher-Yates (aka Knuth) Shuffle.
         var currentIndex = x.length, temporaryValue, randomIndex;
 
@@ -35,8 +37,6 @@ module.exports = function(osweb){
             x[randomIndex] = temporaryValue;
         }       
         return x;
-    };
-
-    // Bind the python_string class to the osweb namespace.
-    return python_random;
-};
+    }
+}
+ 

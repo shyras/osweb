@@ -1,33 +1,54 @@
-/*
- * Definition of the class loop.
+/**
+ * Class representing a sequence item.
+ * @extends Item
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function loop(pExperiment, pName, pScript) {
+osweb.loop = class Loop extends osweb.item {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    constructor(experiment, name, script) {
         // Inherited create.
-        this.item_constructor(pExperiment, pName, pScript);
+        super(experiment, name, script);
+
+        // Definition of public properties. 
+        this.description = 'Repeatedly runs another item';
+        this.matrix = null;
 
         // Definition of private properties. 
         this._break_if = '';
         this._cycles = [];
         this._index = -1;
         this._keyboard = null;
-    };
+ 
+        // Process the script.
+        this.from_string(script);
+    }
 
-    // Extend the class from its base class.
-    var p = osweb.extendClass(loop, osweb.item);
+    /** Implements the complete phase of an item. */
+    _complete() {
+        // Check if if the cycle must be repeated.
+        if (this.experiment.vars.repeat_cycle == 1) {
+            this.experiment._runner._debugger.msg('Repeating cycle: ' + this._index);
 
-    // Definition of public properties. 
-    p.description = 'Repeatedly runs another item';
-    p.matrix = null;
+            this._cycles.push(this._index);
 
-    /*
-     * Definition of public methods - building cycle.         
-     */
+            if (this.vars.order == 'random') {
+                this.shuffle(this._cycles);
+            }
+        } else {
+            // All items are processed, set the status to finalized.
+            this._status = osweb.constants.STATUS_FINALIZE;
 
-    p.reset = function() {
-        // Resets all item variables to their default value.
+            // Inherited.	
+            super._complete();
+        }
+    }
+
+    /** Reset all item variables to their default value. */
+    reset() {
         this.matrix = {};
         this.vars.cycles = 1;
         this.vars.repeat = 1;
@@ -36,34 +57,38 @@ module.exports = function(osweb){
         this.vars.order = 'random';
         this.vars.item = '';
         this.vars.break_if = 'never';
-    };
+    }
 
-    p.from_string = function(pString) {
+    /**
+     * Parse a definition string and retrieve all properties of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    from_string(script) {
         // Creates a loop from a definition in a string.
         this.comments = [];
         this.variables = {};
         this.reset();
 
         // Split the string into an array of lines.  
-        if (pString != null) {
-            var lines = pString.split('\n');
+        if (script != null) {
+            var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
                 if ((lines[i] != '') && (this.parse_variable(lines[i]) == false)) {
-                    var tokens = osweb.syntax.split(lines[i]);
+                    var tokens = this.syntax.split(lines[i]);
                     if ((tokens[0] == 'run') && (tokens.length > 1)) {
                         this.vars.item = tokens[1];
                     } else if ((tokens[0] == 'setcycle') && (tokens.length > 3)) {
                         var cycle = tokens[1];
                         var name = tokens[2];
-                        var value = osweb.syntax.remove_quotes(tokens[3]);
+                        var value = this.syntax.remove_quotes(tokens[3]);
 
                         // Check if the value is numeric
-                        value = osweb.syntax.isNumber(value) ? Number(value) : value;
+                        value = this.syntax.isNumber(value) ? Number(value) : value;
 
                         // Convert the python expression to javascript.
                         if (value[0] == '=') {
                             // Parse the python statement. 
-                            value = osweb.parser._prepare(value.slice(1));
+                            value = this.experiment._runner._pythonParser._prepare(value.slice(1));
 
                             if (value !== null) {
                                 value = value.body[0];
@@ -79,13 +104,13 @@ module.exports = function(osweb){
                 }
             }
         }
-    };
-
-    /*
-     * Definition of public methods - runn cycle.         
+    }
+ 
+    /**
+     * Shuffles a array in ramdom order.
+     * @param {Array} list -The array to shffle.
      */
-
-    p.shuffle = function(list) {
+    shuffle(list) {
         var i, j, t;
         for (i = 1; i < list.length; i++) {
             j = Math.floor(Math.random() * (1 + i));
@@ -95,9 +120,13 @@ module.exports = function(osweb){
                 list[j] = t;
             }
         }
-    };
+    }
 
-    p.apply_cycle = function(cycle) {
+    /**
+     * Prepares the variables for one single cycle within the loop.
+     * @param {Number} cycle -The cycle to apply.
+     */
+    apply_cycle(cycle) {
         // Sets all the loop variables according to the cycle.
         if (cycle in this.matrix) {
             for (var variable in this.matrix[cycle]) {
@@ -109,10 +138,10 @@ module.exports = function(osweb){
                     // value contains ast tree, run the parser.
                     try {
                         // Evaluate the expression
-                        value = osweb.parser._runstatement(value);
+                        value = this.experiment._runner._pythonParser._runstatement(value);
                     } catch (e) {
                         // Error during evaluation.
-                        osweb.debug.addError('Failed to evaluate ' + value + ' in loop item ' + this.name);
+                        this.experiment._runner._debugger.addError('Failed to evaluate experssion in in loop item: ' + this.name + ' (' + value + ')');
                     }
                 }
 
@@ -120,11 +149,12 @@ module.exports = function(osweb){
                 this.experiment.vars.set(variable, value);
             }
         }
-    };
+    }
 
-    p.prepare = function() {
+    /** Implements the prepare phase of an item. */
+    prepare() {
         // Prepare the break if condition.
-        if ((this.vars.break_if != '') && (this.vars.break_if != 'never')) {
+        if ((this.vars.break_if !== '') && (this.vars.break_if !== 'never')) {
             this._break_if = this.syntax.compile_cond(this.vars.break_if);
         } else {
             this._break_if = null;
@@ -160,14 +190,14 @@ module.exports = function(osweb){
         }
 
         // Randomize the list if necessary.
-        if (this.vars.order == 'random') {
+        if (this.vars.order === 'random') {
             this.shuffle(this._cycles);
         } else {
             // In sequential order, the offset and the skip are relevant.
             if (this._cycles.length < this.vars.skip) {
-                osweb.debug.addError('The value of skip is too high in loop item ' + this.name + '. You cannot skip more cycles than there are.');
+                this.experiment._runner._debugger.addError('The value of skip is too high in loop item. You cannot skip more cycles than there are in: ' + this.name);
             } else {
-                if (this.vars.offset == 'yes') {
+                if (this.vars.offset === 'yes') {
                     // Get the skip elements.
                     var skip = this._cycles.slice(0, this.vars.skip);
 
@@ -187,19 +217,20 @@ module.exports = function(osweb){
 
         // Make sure the item to run exists.
         if (this.experiment.items._items[this.vars.item] === 'undefined') {
-            osweb.debug.addError('Could not find item ' + this.vars.item + ', which is called by loop item ' + this.name);
+            this.experiment._runner._debugger.addError('Could not find an item which is called by loop item: ' + this.name + ' (' + this.vars.item + ')');
         }
 
         // Inherited.	
-        this.item_prepare();
+        super.prepare();
 
         // Set the onset time.
         this.set_item_onset();
-    };
-
-    p.run = function() {
+    }
+    
+    /** Implements the run phase of an item. */
+    run() {
         // Inherited.	
-        this.item_run();
+        super.run();
 
         if (this._cycles.length > 0) {
             var exit = false;
@@ -209,7 +240,7 @@ module.exports = function(osweb){
             if (this._break_if != null) {
                 this.python_workspace['this'] = this;
 
-                var break_if = osweb.syntax.eval_text(this._break_if);
+                var break_if = this.syntax.eval_text(this._break_if);
 
                 if (this.python_workspace._eval(break_if) == true) {
                     exit = true;
@@ -219,37 +250,14 @@ module.exports = function(osweb){
             if (exit == false) {
                 this.experiment.vars.repeat_cycle = 0;
 
-                osweb.item_store.prepare(this.vars.item, this);
-                //osweb.item_store.execute(this.vars.item, this);
+                this.experiment._runner._itemStore.prepare(this.vars.item, this);
             } else {
                 // Break the loop.
-                this.complete();
+                this._complete();
             }
         } else {
             // Break the loop.
-            this.complete();
+            this._complete();
         }
-    };
-
-    p.complete = function() {
-        // Check if if the cycle must be repeated.
-        if (this.experiment.vars.repeat_cycle == 1) {
-            osweb.debug.msg('repeating cycle ' + this._index);
-
-            this._cycles.push(this._index);
-
-            if (this.vars.order == 'random') {
-                this.shuffle(this._cycles);
-            }
-        } else {
-            // All items are processed, set the status to finalized.
-            this._status = osweb.constants.STATUS_FINALIZE;
-
-            // Inherited.	
-            this.item_complete();
-        }
-    };
-
-    // Bind the loop class to the osweb namespace.
-    return osweb.promoteClass(loop, "item");
+    }
 }

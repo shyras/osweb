@@ -1,49 +1,78 @@
-/*
- * Definition of the class inline_script.
+/**
+ * Class representing an inline item.
+ * @extends Item
  */
+osweb.inline_script = class InlineScript extends osweb.item {
+    /**
+     * Create an inline item which executes inline python code.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    constructor(experiment, name, script) {
+        // Inherited create.
+        super(experiment, name, script);
 
-module.exports = function(osweb){
-    "use strict";
-    function inline_script(pExperiment, pName, pScript) {
-        // Inherited.
-        this.item_constructor(pExperiment, pName, pScript);
+        // Define and set the public properties. 
+        this.description = 'Executes Python code';
 
         // Define and set the public properties. 
         this._prepare_run = false;
         this._prepare_tree = null;
         this._run_tree = null;
-    };
 
-    // Extend the class from its base class.
-    var p = osweb.extendClass(inline_script, osweb.item);
+        // Process the script.
+        this.from_string(script);
+    }
 
-    // Define and set the public properties. 
-    p.description = 'Executes Python code';
 
-    /*
-     * Definition of public methods - building item.         
-     */
+    /** Implements the complete phase of an item. */ 
+    _complete() {
+        // Check if the parser is in pause mode and must be restarted. 
+        if (this.experiment._runner._pythonParser._status === 1) {
+            // Process the current active node.
+            this.experiment._runner._pythonParser._process_nodes();
+        } else {
+            if (this._prepare_run === true) {
+                // Inherited prepare.	
+                super.prepare();
+            } else {
+                // Inherited.           
+                super._complete();
+            }
+        }
+    }
 
-    p.reset = function() {
-        // Resets all item variables to their default value.
+    /** Implements the complete script phase of an item. */ 
+    _complete_script() {
+        // Added for video script functionaliry.
+        this._complete();
+    }
+
+    /** Reset all item variables to their default value. */
+    reset() {
         this._var_info = null;
         this.vars._prepare = '';
         this.vars._run = '';
-    };
+    }
 
-    p.from_string = function(pString) {
+     /**
+     * Parse a definition string and retrieve all properties of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    from_string(script) {
         // Parses a definition string.
         this.reset();
 
         // Split the string into an array of lines.  
-        if (pString != null) {
+        if (script !== null) {
             var read_run_lines = false;
             var read_prepare_lines = false;
-            var lines = pString.split('\n');
+            var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
-                var tokens = osweb.syntax.split(lines[i]);
+                var tokens = this.syntax.split(lines[i]);
 
-                if ((tokens != null) && (tokens.length > 0)) {
+                if ((tokens !== null) && (tokens.length > 0)) {
                     switch (tokens[0]) {
                         case 'set':
                             this.parse_variable(lines[i]);
@@ -63,36 +92,33 @@ module.exports = function(osweb){
 
                             break;
                         default:
-                            if (read_run_lines == true) {
+                            if (read_run_lines === true) {
                                 this.vars._run = this.vars._run + lines[i] + '\n';
-                            } else if (read_prepare_lines == true) {
+                            } else if (read_prepare_lines === true) {
                                 this.vars._prepare = this.vars._prepare + lines[i] + '\n';
                             }
                     }
                 } else {
-                    if (read_run_lines == true) {
+                    if (read_run_lines === true) {
                         this.vars._run = this.vars._run + lines[i] + '\n';
-                    } else if (read_prepare_lines == true) {
+                    } else if (read_prepare_lines === true) {
                         this.vars._prepare = this.vars._prepare + lines[i] + '\n';
                     }
                 }
             }
         }
-    };
+    }
 
-    /*
-     * Definition of public methods - running item.         
-     */
-
-    p.prepare = function() {
+    /** Implements the prepare phase of an item. */
+    prepare() {
         // Compile the script code to ast trees.
-        this._prepare_tree = osweb.python._parse(this.vars._prepare);
-        this._run_tree = osweb.python._parse(this.vars._run);
+        this._prepare_tree = this.experiment._runner._pythonParser._parse(this.vars._prepare);
+        this._run_tree = this.experiment._runner._pythonParser._parse(this.vars._run);
         
         // Execute the run code.
         if (this._prepare_tree != null) {
             // Set the current item.
-            osweb.events._current_item = this;
+            this.experiment._runner._events._currentItem = this;
         
             // Set the prepare run toggle.
             this._prepare_run = true;
@@ -101,16 +127,17 @@ module.exports = function(osweb){
             this.set_item_onset();
 
             // Start the parser
-            osweb.python._run(this, this._prepare_tree);
+            this.experiment._runner._pythonParser._run(this, this._prepare_tree);
         } else {
             // Inherited.	
-            this.item_prepare();
+            super.prepare();
         }
-    };
+    }
 
-    p.run = function() {
+    /** Implements the run phase of an item. */ 
+    run() {
         // Inherited.	
-        this.item_run();
+        super.run();
 
         // Set the prepare run toggle.
         this._prepare_run = false;
@@ -121,38 +148,14 @@ module.exports = function(osweb){
         // Execute the run code.
         if (this._run_tree != null) {
             // Start the parser
-            osweb.python._run(this, this._run_tree);
+            this.experiment._runner._pythonParser._run(this, this._run_tree);
         }
         else {
             // To prevent prepeare script from running twice.
-            osweb.python._status = 0;
+            this.experiment._runner._pythonParser._status = 0;
             
             // No script, so jump to compelte.
-            this.complete();
+            this._complete();
         }
-    };
-
-    p.complete = function() {
-        // Check if the parser is in pause mode and must be restarted. 
-        if (osweb.python._status == 1) {
-            // Process the current active node.
-            osweb.python._process_nodes();
-        } else {
-            if (this._prepare_run === true) {
-                // Inherited prepare.	
-                this.item_prepare();
-            } else {
-                // Inherited.           
-                this.item_complete();
-            }
-        }
-    };
-
-    p.complete_script = function() {
-        // Added for video script functionaliry.
-        this.complete();
-    };
-
-    // Bind the Sequence class to the osweb namespace.
-    return osweb.promoteClass(inline_script, "item");
-};
+    }
+}

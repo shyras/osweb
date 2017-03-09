@@ -1,39 +1,44 @@
-"use strict";
-/*
- * Definition of the class item_stack.
- */
+/** Class representing an item stack. */
+osweb.item_stack = class ItemStack {
+    /**
+     * Create an stack array for running items.
+     * @param {Object} runner - The runner to which the item stack belongs.
+     */
+    constructor(runner) {
+        // Create and set private properties. 
+        this._items = []; // Container for all items.
+        this._runner = runner; // Parent runner attached to the item stack class.    
+    }
 
-function item_stack() {
-    throw "The class item_stack cannot be instantiated!";
-};
+    /** Clear the entire item stack. */
+    clear() {
+        // Clears the stack.
+        this._items = [];
+    }
 
-// Definition of private class properties.
-item_stack._items = [];
+    /**
+     * Push a new item onto the item stack.
+     * @param {Object} item - The item to add to the item stack.
+     * @param {String} phase - The phase in which the stack exists.
+     */
+    push(item, phase) {
+        // Create the stack item.
+        var stackItem = {
+            'item': item,
+            'phase': phase
+        };
 
-/*
- * Definition of public class methods.   
- */
+        // Push the item onto the stack.
+        this._items.push(stackItem);
+    }
 
-item_stack.clear = function() {
-    // Clears the stack.
-    this._items = [];
-};
-
-item_stack.push = function(pItem, pPhase) {
-    // Create the stack item.
-    var StackItem = {
-        'item': pItem,
-        'phase': pPhase
-    };
-
-    // Push the item onto the stack.
-    this._items.push(StackItem);
-};
-
-item_stack.pop = function() {
-    // Pops the last item from the stack.
-    return this._items.pop();
-};
-
-// Bind the item_stack class to the osweb namespace.
-module.exports = item_stack;
+    /**
+     * Pops the last item from the stack.
+     * @return {Object} - The last added item from the stack.
+     */
+    pop() {
+        // Pops the last item from the stack.
+        return this._items.pop();
+    }
+}
+ 

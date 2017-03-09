@@ -1,42 +1,55 @@
-module.exports = function(osweb){
-    "use strict";
+/** Class implementing a python AST interpreter. */
+osweb.python_parser = class PythonParser {
+    /**
+     * Create a python AST runner.
+     * @param {Object} runner - The runner to which the AST object belongs.
+     */
+    constructor(runner) {
+        // Set class parameter properties.
+        this._runner = runner; // Parent runner attached to the AST object.
 
-    // Class python - parsing and running python script within osweb.      
-    function python() {
-        throw 'The class python cannot be instantiated!';
+        // Set class properties.
+        this.python_math = new osweb.python_math(this._runner);
+        this.python_opensesame = new osweb.python_opensesame(this._runner);
+        this.python_random = new osweb.python_random(this._runner);
+        this.python_string = new osweb.python_string(this._runner);
+
+        // Definition of private properties.
+        this._classes = {}; // Accessible classes within the script code.
+        this._function_stack = []; // Function call stack.   
+        this._inline_script = null; // Parent inline_script item.
+        this._node = null; // Current active node.  
+        this._global_return_value = null; // Global return value for blocking calls.
+        this._stack = 0; // Stack counter (hack to precent stack overflow).
+        this._statement = null; // process one statement or an script.
+        this._status = 0; // Status of the walker.
+        this._variables = {}; // Object containing all global objects and variables. 
     }
 
-    // Definition of private properties.
-    python._classes = {};               // Accessible classes within the script code.
-    python._function_stack = [];        // Function call stack.   
-    python._inline_script = null;       // Parent inline_script item.
-    python._node = null;                // Current active node.  
-    python._global_return_value = null; // Global return value for blocking calls.
-    python._stack = 0;                  // Stack counter (hack to precent stack overflow).
-    python._statement = null;           // process one statement or an script.
-    python._status = 0;                 // Status of the walker.
-    python._variables = {};             // Object containing all global objects and variables. 
-    
-    // Definition of private methods - parse cycle.   
-
-    python._initialize = function() {
-        // Initialize internal libraries to the interpreter.
-        osweb.python_math._initialize();
-        osweb.python_opensesame._initialize();
-        osweb.python_random._initialize();
-        osweb.python_string._initialize();
- 
+    /** Initialization phase of the python class. */
+    _initialize() {
+        
+        
+        
         // Set the python variable connections with opensesame.  
-        python._variables['clock'] = osweb.runner.experiment.clock;
-        python._variables['exp'] = osweb.runner.experiment;
-        python._variables['items'] = osweb.item_store;
-        python._variables['pool'] = osweb.file_pole_store;
-        python._variables['var'] = osweb.runner.experiment.vars;
-    };
+        this._variables['clock'] = this._runner._experiment.clock;
+        this._variables['exp'] = this._runner._experiment;
+        this._variables['items'] = this._runner._itemStore;
+        this._variables['pool'] = this._runner._pool;
+        this._variables['var'] = this._runner._experiment.vars;
 
-    // Definition of private methods - parsing script to ast nodes.
+        // Initialize internal libraries to the interpreter.
+        this.python_math._initialize();
+        this.python_opensesame._initialize();
+        this.python_random._initialize();
+        this.python_string._initialize();
+    }
 
-    python._parse = function(script) {
+    /**
+     * Create a python AST runner.
+     * @param {String} script - Parse a python script using the filbert library.
+     */
+    _parse(script) {
         // Check if the script exists.
         if (script != '""') {
             var locations = false;
@@ -52,36 +65,43 @@ module.exports = function(osweb){
                 return ast;
             } 
             catch (e) {
-                osweb.debug.addError(osweb.constants.ERROR_201 + e.toString);
+                this._runner._debugger.addError('Script parsing error: ' + e.toString);
                 return null;
             }
         } 
         else {
             return null;
         } 
-    };
+    }
 
-    // Definition of private methods - additionla processing methods. 
-
-    python._get_context = function(identifier) {
+    /**
+     * Get the context part of a identifier (before the dot '.').
+     * @param {String} identifier - Full name of the identifier.
+     */
+    _get_context(identifier) {
         // Split the identifer
         var items = identifier.value.split('.');
 
         if ((items[0] === '__pythonRuntime') && (items[1] === 'imports')) {
-            return python._variables[items[2]];
+            return this._variables[items[2]];
         }
         else {
             // Return the object context
-            if (python._variables[items[0]] !== undefined) {
-                return python._variables[items[0]];
+            if (this._variables[items[0]] !== undefined) {
+                return this._variables[items[0]];
             }
             else {
                 return window[items[0]];
             }
         }     
-    };
+    }
 
-    python._get_element = function(element) {
+    /**
+     * Get an element form a library of the variable container.
+     * @param {String} element - Full name of the element to retrieve.
+     * @return {Object} - The given element found in the context.
+     */
+    _get_element(element) {
         // Split the identifier name space.
         var items = element.value.split('.');
 
@@ -98,12 +118,12 @@ module.exports = function(osweb){
             }    
         } else {
             // No internal scope, check if it is defined in the global scope
-            if (python._variables[items[0]] !== undefined) {
+            if (this._variables[items[0]] !== undefined) {
                 if (items.length === 1) {
-                    return python._variables[items[0]];
+                    return this._variables[items[0]];
                 }
                 else {
-                    return python._variables[items[0]][items[1]];
+                    return this._variables[items[0]][items[1]];
                 }
             } 
             else {
@@ -117,9 +137,14 @@ module.exports = function(osweb){
                 }    
             }
         }
-    };    
+    }    
 
-    python._get_element_value = function(element) {
+    /**
+     * Get the value of an element form a library of the variable container.
+     * @param {String} element - Full name of the element to retrieve.
+     * @return {Boolean|Number|Object|String} - The value of the given element.
+     */
+    _get_element_value(element) {
         switch (element.type) {
             case 'identifier':
                     // Split the identifier name space.
@@ -127,8 +152,8 @@ module.exports = function(osweb){
 
                     // Set the element value in the global scope.
                     if (items.length === 1) {
-                        if (python._variables[items[0]] !== undefined) {
-                            return python._variables[items[0]];
+                        if (this._variables[items[0]] !== undefined) {
+                            return this._variables[items[0]];
                         }    
                         else {
                             return window[items[0]];
@@ -137,13 +162,13 @@ module.exports = function(osweb){
                     else {
                         if (items[0].indexOf('__filbertRight') !== -1) {
                             if (items[1].indexOf('__filbertIndex') !== -1) {
-                                var container = python._variables[items[0]];
-                                var index = python._variables[items[1]];
+                                var container = this._variables[items[0]];
+                                var index = this._variables[items[1]];
                                 return container[index];
                             }
                             else { 
-                                if (python._variables[items[0]] !== undefined) {
-                                    return python._variables[items[0]][items[1]];
+                                if (this._variables[items[0]] !== undefined) {
+                                    return this._variables[items[0]][items[1]];
                                 }
                                 else {
                                     return window[items[0]][items[1]];
@@ -151,8 +176,8 @@ module.exports = function(osweb){
                             } 
                         } 
                         else {
-                            if (python._variables[items[0]] !== undefined) {
-                                return python._variables[items[0]][items[1]];
+                            if (this._variables[items[0]] !== undefined) {
+                                return this._variables[items[0]][items[1]];
                             }
                             else {
                                 return window[items[0]][items[1]];
@@ -165,9 +190,14 @@ module.exports = function(osweb){
                     return element.value;
                 break;
         }        
-    };    
+    }    
     
-    python._set_element_value = function(element, value) {
+    /**
+     * Set the value of an element.
+     * @param {String} element - Full name of the element to set.
+     * @param {Boolean|Number|Object|String} value - The value for the given element.
+     */
+    _set_element_value(element, value) {
         // Split the identifier name space.
         var items = element.value.split('.');
         
@@ -177,7 +207,7 @@ module.exports = function(osweb){
                 window[items[0]] = value; 
             }
             else {
-                python._variables[items[0]] = value; 
+                this._variables[items[0]] = value; 
             }
         }
         else {
@@ -185,29 +215,37 @@ module.exports = function(osweb){
                 window[items[0]][items[1]] = value;
             }
             else {
-                python._variables[items[0]][items[1]] = value;
+                this._variables[items[0]][items[1]] = value;
             }
         }
-    };
+    }
 
-    python._set_node = function(node) {
+    /**
+     * Set the given node to the current node.
+     * @param {Object} node - The node to set as current node.
+     */
+    _set_node(node) {
         // Set the current node as the parent node
         node.parent = this._node;
+        
         // Set the new node as the current node.
         this._node = node;
-    };
+    }
     
-    python._set_return_value = function(value) {
+    /**
+     * Set the return value of a node.
+     * @param {Boolean|Number|Object|String} value - The return value for the processed node.
+     */
+    _set_return_value(value) {
         // Create or acces the return_values array.
         this._node.parent.return_values = (typeof this._node.parent.return_values === 'undefined') ? [] : this._node.parent.return_values;
 
         // Push the value. 
         this._node.parent.return_values.push(value);
-    };
+    }
 
-    // Definition of private methods - processing specific node types.
-
-    python._array_expression = function() {
+    /** Process an AST array expression. */
+    _array_expression() {
         // Initialize node specific properties.
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
 
@@ -236,9 +274,10 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }    
-    };
+    }
 
-    python._assignment_expression = function() {
+    /** Process an AST assignment expression. */
+    _assignment_expression() {
         // Initialize node specific properties.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -291,9 +330,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }    
-    };
+    }
 
-    python._binary_expression = function() {
+    /** Process an AST binary expression. */
+    _binary_expression() {
          // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -370,9 +410,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }    
-    };
+    }
 
-    python._block_statement = function() {
+    /** Process an AST block statement. */
+    _block_statement() {
         // Initialize node specific properties.
         this._node.break = (typeof this._node.break === 'undefined') ? false : this._node.break;
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
@@ -397,18 +438,20 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }    
-    };
+    }
 
-    python._break_statement = function() {
+    /** Process an AST break statement. */
+    _break_statement() {
         // Set break flag for parent element.
         this._node.parent.break = true; 
         
         // Return to the parent node.
         this._node = this._node.parent;
         this._process_nodes();
-    };    
+    }    
 
-    python._call_expression = function() {
+    /** Process an AST call expression. */
+    _call_expression() {
         // Initialize status properties.
         this._node.arguments = (typeof this._node.arguments === 'undefined') ? [] : this._node.arguments;
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
@@ -487,17 +530,19 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }        
-    };
+    }
 
-    python._empty_statement = function() {
+    /** Process an AST empty statment. */
+    _empty_statement() {
         // Set parent node.
         this._node = this._node.parent;
 
         // Return to the node processessor.
         this._process_nodes();
-    };
+    }
 
-    python._expression_statement = function() {
+    /** Process an AST expression statement. */
+    _expression_statement() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -518,9 +563,10 @@ module.exports = function(osweb){
             // Return to the node processessor.
             this._process_nodes();
         }
-    };
+    }
 
-    python._for_statement = function() {
+    /** Process an AST for statement. */
+    _for_statement() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
     
@@ -572,9 +618,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }        
-    };
+    }
     
-    python._for_in_statement = function() {
+    /** Process an AST for in statement. */
+    _for_in_statement() {
         // Initialize status property.
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
@@ -622,9 +669,10 @@ module.exports = function(osweb){
                 }
                 break;
         }        
-    };
+    }
 
-    python._function_expression = function() {
+    /** Process an AST function expression. */
+    _function_expression() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -652,9 +700,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }        
-    };    
+    }    
 
-    python._identifier = function() {
+    /** Process an AST identifier. */
+    _identifier() {
         // Retrieve the identifier information.
         var return_value = {type: 'identifier', value: this._node.name};
 
@@ -664,9 +713,10 @@ module.exports = function(osweb){
         // Set parent node.
         this._node = this._node.parent;
         this._process_nodes();
-    };
+    }
 
-    python._if_statement = function() {
+    /** Process an AST if statement. */
+    _if_statement() {
         // Initialize status property.
         this._node.break = (typeof this._node.break === 'undefined') ? false : this._node.break;
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
@@ -714,9 +764,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }        
-    };
+    }
 
-    python._literal = function() {
+    /** Process an AST literal. */
+    _literal() {
         // Retrieve the identifier information.
         var return_value = {type: 'literal', value: this._node.value};
         
@@ -726,9 +777,10 @@ module.exports = function(osweb){
         // Set parent node.
         this._node = this._node.parent;
         this._process_nodes();
-    };    
+    }    
 
-    python._logical_expression = function() {
+    /** Process an AST logical expression. */
+    _logical_expression() {
          // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -776,9 +828,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }    
-    };
+    }
 
-    python._member_expression = function() {
+    /** Process an AST member expression */
+    _member_expression() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -814,9 +867,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;    
         }        
-    };    
+    }    
     
-    python._new_expression = function() {
+    /** Process an AST new expression. */
+    _new_expression() {
         // Initialize status properties.
         this._node.arguments = (typeof this._node.arguments === 'undefined') ? [] : this._node.arguments;
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
@@ -867,9 +921,10 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }
-    };
+    }
 
-    python._program = function() {
+    /** Process an AST program. */
+    _program() {
         // Initialize node specific properties.
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
 
@@ -889,12 +944,13 @@ module.exports = function(osweb){
         
             // Complete the inline item.    
             if (this._inline_script !== null) {
-                this._inline_script.complete();
+                this._inline_script._complete();
             }
         }    
-    };
+    }
 
-    python._return_statement = function() {
+    /** Process an AST return statement. */
+    _return_statement() {
         // Initialize status property.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -922,9 +978,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }        
-    };     
+    }     
 
-    python._unary_expression = function() {
+    /** Process an AST unary expression. */
+    _unary_expression() {
         // Initialize node specific properties.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -959,9 +1016,10 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }
-    };    
+    }    
 
-    python._update_expression = function() {
+    /** Process an AST update expression. */
+    _update_expression() {
         // Initialize node specific properties.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -988,9 +1046,10 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }
-    };    
+    }    
 
-    python._variable_declaration = function() {
+    /** Process an AST variable declaration. */
+    _variable_declaration() {
         // Initialize node specific properties.
         this._node.index = (typeof this._node.index === 'undefined') ? 0 : this._node.index;
         
@@ -1010,9 +1069,10 @@ module.exports = function(osweb){
             this._node = this._node.parent;
             this._process_nodes();
         }
-    };    
+    }    
 
-    python._variable_declarator = function() {
+    /** Process an AST variable declarator. */
+    _variable_declarator() {
         // Initialize node specific properties.
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
 
@@ -1045,9 +1105,10 @@ module.exports = function(osweb){
                 this._process_nodes();
                 break;
         }
-    };   
+    }   
  
-    python._while_statement = function() {
+    /** Process an AST while statement. */
+    _while_statement() {
         // Initialize status property.
         this._node.break = (typeof this._node.break === 'undefined') ? false : this._node.break;
         this._node.status = (typeof this._node.status === 'undefined') ? 0 : this._node.status;
@@ -1095,11 +1156,10 @@ module.exports = function(osweb){
                 }
                 break;
         }        
-    };
+    }
 
-    // Definition of private methods - processing nodes.
-
-    python._process_nodes = function() {
+    /** Process all AST nodes. */
+    _process_nodes() {
         // Select type of processing.
         if (this._statement === null) {
             // Script processing.
@@ -1112,12 +1172,13 @@ module.exports = function(osweb){
             }
             else {
                 // Statement processing.
-                python._process_nodes_timeout();
+                this._process_nodes_timeout();
             }
         }
-    };    
+    }    
 
-    python._process_nodes_jump = function() {
+    /** Process a single AST nodes (timeout is for non-blocking) */
+    _process_nodes_jump() {
         // Increase the stack counter.
         this._stack++;
         if (this._stack > 500) {
@@ -1125,17 +1186,19 @@ module.exports = function(osweb){
             this._stack = 0;
             
             // Process nodes with a timeout (this is a hack for clearing the browser cache. 
-            setTimeout(function() { this._process_nodes_timeout();}.bind(this),1);
+            setTimeout(function() { 
+                this._process_nodes_timeout();
+            }.bind(this),1);
         }
         else {
             // Process the nodes without a timeout.
             this._process_nodes_timeout();
         }
-    };    
+    }    
     
-    python._process_nodes_timeout = function() {
+    /** Process a single AST nodes (timeout is for non-blocking) */
+    _process_nodes_timeout() {
         // Select the type of node to process
-        //console.log(this._node);
         switch (this._node.type) {
             case 'ArrayExpression':
                 this._array_expression();
@@ -1210,14 +1273,16 @@ module.exports = function(osweb){
                 this._while_statement();
                 break;
             default:
-                throw 'Invalid node type to process: ' + this._node.type;
+                this._runner._debugger.addError('Invalid node type to process: ' + this._node.type);
         }    
-    };    
+    }    
    
-    // Definition of private methods - run cycle.
-
-    python._run_statement = function(ast_tree) {
-
+    /**
+     * Run a single line python AST statement.
+     * @param {Object} ast_tree - The AST tree to run.
+     * @return {Boolean|Number|Object|String} - The result value of the AST evaluation.
+     */
+    _run_statement(ast_tree) {
         this._node = ast_tree.body[0];
         this._node.parent = ast_tree;
         this._statement = ast_tree;
@@ -1236,14 +1301,19 @@ module.exports = function(osweb){
         
         // Retur value of the statement.
         return return_value;
-    };
+    }
 
-    python._run = function(inline_script, ast_tree) {
+    /**
+     * Run an AST python script.
+     * @param {Object} inline_script - The Inline Script item to which the AST tree belongs.
+     * @param {Object} ast_tree - The AST tree to run.
+     */
+    _run(inline_script, ast_tree) {
         // Set the inline item. 
         this._inline_script = inline_script;
 
         // set the self parameter.
-        python._variables['self'] = inline_script;
+        this._variables['self'] = inline_script;
 
         // Set the first node and its parent.
         this._node = ast_tree;
@@ -1253,8 +1323,6 @@ module.exports = function(osweb){
         // Adjust status of partser to running and start the process.
         this._status = 1;
         this._process_nodes();
-    };
-
-    // Bind the python class to the osweb namespace.
-    return python;
-};
+    }
+}
+ 

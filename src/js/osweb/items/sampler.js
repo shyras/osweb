@@ -1,31 +1,33 @@
-/*
- * Definition of the class sampler.
- */
 
-module.exports = function(osweb){
-    "use strict";
-    function sampler(pExperiment, pName, pScript) {
-        // Inherited.
-        this.generic_response_constructor(pExperiment, pName, pScript);
+/**
+ * Class representing a sampler item.
+ * @extends GenericResponse
+ */
+osweb.sampler = class Sampler extends osweb.generic_response {
+    /**
+     * Create a sampler  item which plays a sound.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    constructor(experiment, name, script) {
+        // Inherited create.
+        super(experiment, name, script);
+
+        // Definition of public properties.
+        this.block = false;
+        this.description = 'Plays a sound file in .wav or .ogg format';
 
         // Definition of private properties.
         this._sample = null;
         this._sampler = null;
-    };
 
-    // Extend the class from its base class.
-    var p = osweb.extendClass(sampler, osweb.generic_response);
+        // Process the script.
+        this.from_string(script);
+    }
 
-    // Definition of public properties.
-    p.block = false;
-    p.description = 'Plays a sound file in .wav or .ogg format';
-
-    /*
-     * Definition of public methods - build cycle. 
-     */
-
-    p.reset = function() {
-        // Resets all item variables to their default value.
+    /** Reset all item variables to their default value. */
+    reset() {
         this.block = false;
         this.vars.sample = '';
         this.vars.pan = 0;
@@ -34,17 +36,14 @@ module.exports = function(osweb){
         this.vars.stop_after = 0;
         this.vars.volume = 1;
         this.vars.duration = 'sound';
-    };
+    }
 
-    /*
-     * Definition of public methods - run cycle. 
-     */
-
-    p.prepare = function() {
+    /** Implements the prepare phase of an item. */
+    prepare() {
         // Create the sample
-        if (this.vars.sample != '') {
+        if (this.vars.sample !== '') {
             // Retrieve the content from the file pool.
-            this._sample = osweb.pool[this.syntax.eval_text(this.vars.sample)];
+            this._sample = this._runner._pool[this.syntax.eval_text(this.vars.sample)];
             this._sampler = new osweb.sampler_backend(this.experiment, this._sample);
             this._sampler.volume = this.vars.volume;
             this._sampler.duration = this.vars.duration;
@@ -52,21 +51,19 @@ module.exports = function(osweb){
             this._sampler.pan = this.vars.pan;
             this._sampler.pitch = this.vars.pitch;
         } else {
-            /* raise osexception(
-            u'No sample has been specified in sampler "%s"' % self.name) */
+            // Show error message.
+            this._debugger.addError('No sample has been specified in sampler: ' + this.vars.sample);
         }
 
         // Inherited.	
-        this.generic_response_prepare();
-    };
+        super.prepare();
+    }
 
-    p.run = function() {
+    /** Implements the run phase of an item. */
+    run() {
         this.set_item_onset();
         this.set_sri();
         this._sampler.play();
         this.process_response();
-    };
-
-    // Bind the sampler class to the osweb namespace.
-    return osweb.promoteClass(sampler, "generic_response");
+    }
 }

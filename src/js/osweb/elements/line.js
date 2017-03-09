@@ -1,44 +1,40 @@
-/*
- * Definition of the class line.
+/**
+ * Class representing an arrow element.
+ * @extends BaseElement
  */
+osweb.line = class Line extends osweb.base_element {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     */
+    constructor(sketchpad, script) {
+        // Create a default property container.
+		var defaults = {};
+		defaults.color = sketchpad.vars.get('foreground');
+		defaults.penwidth = 1;
+		defaults.x1 = null;
+		defaults.y1 = null;
+		defaults.x2 = null;
+		defaults.y2 = null;
 
-module.exports = function(osweb){
-	"use strict";
-	function line(pSketchpad, pScript) {
-		// Set the default properties.
-		this.defaults = {};
-		this.defaults.color = pSketchpad.vars.get('foreground');
-		this.defaults.penwidth = 1;
-		this.defaults.x1 = null;
-		this.defaults.y1 = null;
-		this.defaults.x2 = null;
-		this.defaults.y2 = null;
-
-		// Inherited.
-		this.base_element_constructor(pSketchpad, pScript, this.defaults);
+        // Inherited.
+        super(sketchpad, script, defaults);
 	}
 
-	// Extend the class from its base class.
-	var p = osweb.extendClass(line, osweb.base_element);
-
-	/*
-	 * Definition of public methods - run cycle.   
-	 */
-
-	p.draw = function() {
-		// Inherited.	
-		this.base_element_draw();
+ 	/** Implements the draw phase of an element. */
+   	draw() {
+	    // Inherited.	
+        super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.Styles();
+		var styles = new osweb.styles();
 		styles.color = this._properties.color;
 		styles.penwidth = this._properties.penwidth;
 
 		// Draw the line element to the canvas of the sketchpad.
 		this.sketchpad.canvas.line(this._properties.x1, this._properties.y1, 
 			this._properties.x2, this._properties.y2, styles);
-	};
-
-	// Bind the line class to the osweb namespace.
-	return osweb.promoteClass(line, "base_element");
+	}
 }
+ 

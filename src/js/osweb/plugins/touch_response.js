@@ -1,28 +1,26 @@
-
-/*
- * Definition of the class touch_response.
+/**
+ * Class representing a reset feedback item.
+ * @extends Item
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function touch_response(pExperiment, pName, pScript) {
-        // Inherited.
-        this.mouse_response_constructor(pExperiment, pName, pScript);
-    };
-
-    // Extend the class from its base class.
-    var p = osweb.extendClass(touch_response, osweb.mouse_response);
-
-    // Define and set the public properties. 
-    p.description = 'A grid-based response item, convenient for touch screens';
-
-    /*
-     * Definition of public methods - build cycle.
+osweb.touch_response = class TouchResponse extends osweb.mouse_response {
+    /**
+     * Create a reset feedback  item which resets the feedback values.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
      */
+    constructor(experiment, name, script) {
+		// Inherited.
+		super(experiment, name, script);
 
-    p.reset = function() {
+        // Define and set the public properties. 
+        this.description = 'A grid-based response item, convenient for touch screens';
+    }
+
+    /** Resets all item variables to their default value. */
+    reset() {
         // Inherited.
-        this.mouse_response_reset();
+        super.reset();
         this.vars.set('allowed_responses', null);
 
         // Resets all item variables to their default value.
@@ -30,36 +28,37 @@ module.exports = function(osweb){
         this.vars._nrow = 1;
     };
 
-    /*
-     * Definition of public methods - run cycle.
-     */
-
-    p.prepare = function() {
+    /** Implements the prepare phase of an item. */
+    prepare() {
         // Temp hack
         this.experiment.vars.correct = -1;
 
         // Inherited.
-        this.mouse_response_prepare();
+        super.prepare();
     };
 
-    p.process_response_mouseclick = function(pRetval) {
+    /**
+     * Process a mouse click response.
+     * @param {Object} pRetval - The mouse response to process.
+     */
+    process_response_mouseclick(retval) {
         // Processes a mouseclick response.
         this.experiment._start_response_interval = this.sri;
-        this.experiment._end_response_interval = pRetval.rtTime;
-        this.experiment.vars.response = pRetval.resp;
+        this.experiment._end_response_interval = retval.rtTime;
+        this.experiment.vars.response = retval.resp;
         this.synonyms = this._mouse.synonyms(this.experiment.vars.response);
-        this.experiment.vars.cursor_x = pRetval.event.clientX;
-        this.experiment.vars.cursor_y = pRetval.event.clientY;
+        this.experiment.vars.cursor_x = retval.event.clientX;
+        this.experiment.vars.cursor_y = retval.event.clientY;
 
-        var rect = osweb.runner._canvas.getBoundingClientRect();
+        var rect = this._runner._renderer.view.getBoundingClientRect();
         if (this.experiment.vars.uniform_coordinates == 'yes') {
-            this._x = pRetval.event.clientX - rect.left;
-            this._y = pRetval.event.clientY - rect.top;
+            this._x = retval.event.clientX - rect.left;
+            this._y = retval.event.clientY - rect.top;
             //this._x = pRetval.event.clientX - rect.left + (this.experiment.vars.width / 2);
             //this._y = pRetval.event.clientY - rect.top + (this.experiment.vars.height / 2);
         } else {
-            this._x = pRetval.event.clientX - rect.left;
-            this._y = pRetval.event.clientY - rect.top;
+            this._x = retval.event.clientX - rect.left;
+            this._y = retval.event.clientY - rect.top;
         }
 
         // Calulate the row, column and cell. 
@@ -71,8 +70,5 @@ module.exports = function(osweb){
 
         // Do the bookkeeping 
         this.response_bookkeeping();
-    };
-
-    // Bind the touch_response class to the osweb namespace.
-    return osweb.promoteClass(touch_response, "mouse_response");
-};
+    }
+}

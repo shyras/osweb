@@ -1,89 +1,112 @@
-"use strict";
-/*
-* Definition of the class var_store.
-*/
+/** Class representing a variable store. */
+osweb.var_store = class VarStore {
+    /**
+     * Create a variable store object for all variables.
+     * @param {Object} item - The item to which the var_store belongs.
+     * @param {Object} parent - The parent global var_store.
+     */
+    constructor(item, parent) {
+        // Create and set private properties. 
+        this._item = item;
+        this._parent = parent;
+    };
 
-function var_store(item, parent) {
-    // Set the class properties. 
-    this._item = item;
-    this._parent = parent;
-};
+    /**
+     * Get the value of a variable from the store (or thje parent store).
+     * @param {String} variable - The name of the variable.
+     * @param {Boolean|Number|String} defaultValue - The default value for the variable.
+     * @param {Object} evaluate - The parent global var_store.
+     * @param {Object} valid - The parent global var_store.
+     * @return {Boolean|Number|String} - The value of the given variable.
+     */
+    get(variable, defaultValue, evaluate, valid) {
+        // Set the optional arguments
+        defaultValue = (typeof defaultValue === 'undefined') ? null : defaultValue;
+        evaluate = (typeof evaluate === 'undefined') ? true : evaluate;
+        valid = (typeof valid === 'undefined') ? null : valid;
 
-// Extend the class from its base class.
-var p = var_store.prototype;
+        var value = null;
 
-// Set the class default properties. 
-p._item = null;
-p._parent = null;
+        // Gets an experimental variable.
+        if (variable in this) {
+            if (typeof this[variable] == 'string') {
+                value = this._item.syntax.eval_text(this[variable]);
+            } else {
+                value = this[variable];
+            }
+        }
+        // If value is not found locally, look in experiment object.
+        if (value == null && this._parent && variable in this._parent){
+            if (typeof this._parent[variable] == 'string') {
+                value = this._item.syntax.eval_text(this._parent[variable]);
+            } else {
+                value = this._parent[variable];
+            } 
+        }
 
-// Definition of public class methods.   
+        // Return function result.
+        return value;
+    }
 
-p.get = function(pVar, pDefault, pEval, pValid) {
-    // Set the optional arguments
-    pDefault = (typeof pDefault === 'undefined') ? null : pDefault;
-    pEval = (typeof pEval === 'undefined') ? true : pEval;
-    pValid = (typeof pValid === 'undefined') ? null : pValid;
+    /**
+     * Check if the variable is part of the variable store.         
+     * @param {String} variable - The name of the variable.
+     * @return {Boolean} - True if the variable is part of the store.
+     */
+    has(variable) {
+        // Check if the variable (property) is part of the class.         
+        return this.hasOwnProperty(variable);
+    }
 
-    var value = null;
 
-    // Gets an experimental variable.
-    if (pVar in this) {
-        if (typeof this[pVar] == 'string') {
-            value = osweb.syntax.eval_text(this[pVar]);
-        } else {
-            value = this[pVar];
+    /** Create a list of all avariables available.
+     * @return {Array} - Array containing names of all variables.
+     */
+    inspect() {
+        // Get all variable values.
+        var keys = [];
+        for (var key in this) {
+            keys.push(key);
+        }
+
+        // Slide default properties (HACK for removing the defauly properties/methods from the log_list). 
+        keys = keys.slice(2, -7);
+    
+        // Return function result.
+        return keys;
+    }
+
+    /** Create a list of value/name pairs.
+     * @return {Array} - Array containing name and values of all variables.
+     */
+    items() {
+    }
+
+    /**
+     * Set the value of a variable in the store.
+     * @param {String} variable - The name of the variable.
+     * @value {Boolean|Number|String} - Value of the variable to set.
+     */
+    set(variable, value) {
+        // Sets and experimental variable.
+        this[variable] = value;
+    }
+
+    /**
+     * Unset (remove) a variable from the store.
+     * @param {String} variable - The name of the variable.
+     */
+    unset(variable){
+        // Check if the variable exists.
+        if (this.has(variable) === true) {
+            // Remove the variable as property from the object.
+            delete this[variable];
         }
     }
-    // If value is not found locally, look in experiment object.
-    if(value == null && this._parent && pVar in this._parent){
-        if (typeof this._parent[pVar] == 'string') {
-            value = osweb.syntax.eval_text(this._parent[pVar]);
-        } else {
-            value = this._parent[pVar];
-        } 
+
+    /** Create a list of variable values.
+     * @return {Array} - Array containing values of all variables.
+     */
+    vars() {
     }
-
-    // Return function result.
-    return value;
-};
-
-p.has = function(variable) {
-    // Check if the variable (property) is part of the class.         
-    return this.hasOwnProperty(variable);
-};
-
-p.inspect = function() {
-    // Get all variable values.
-    var keys = [];
-    for (var key in this) {
-        keys.push(key);
-    }
-
-    // Slide default properties (HACK for removing the defauly properties/methods from the log_list). 
-    keys = keys.slice(2, -7);
-    
-    // Return function result.
-    return keys;
-};
-
-p.items = function() {
-};
-
-p.set = function(variable, value) {
-    // Sets and experimental variable.
-    this[variable] = value;
-};
-
-p.unset = function(variable){
-    // Check if the variable exists.
-    if (this.has(variable) === true) {
-        // Remove the variable as property from the object.
-        delete this[variable];
-    }
-};
-
-p.vars = function() {
-};
-
-// Bind the vars class to the osweb namespace.
-module.exports = var_store;
+}

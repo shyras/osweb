@@ -1,25 +1,25 @@
-module.exports = function(osweb){
-    "use strict";
-    
-    // Definition of the class python_string.
-    function python_string() {
-        throw 'The class python_string cannot be instantiated!';
+/** Class implementing a python string library. */
+osweb.python_string = class PythonString {
+    /**
+     * Create a python AST runner.
+     * @param {Object} runner - The runner to which the library belongs.
+     */
+    constructor(runner) {
+        // Set class parameter properties.
+        this._runner = runner; // Parent runner attached to the library.
     }
 
-    python_string._initialize = function() {
-    };
+    /** Initialization phase of the python_library class. */
+    _initialize() {
+    }
     
-    // Definition of public methods - parse cycle.   
+    capitalize() {
+    }
 
-    python_string.capitalize = function() {
-    };
+    center(width, fillchar) {
+    }
 
-    python_string.center = function(width, fillchar) {
-    };
-
-    python_string.upper = function() {
-    };
-
-    // Bind the python_string class to the osweb namespace.
-    return python_string;
-};
+    upper() {
+    }
+}
+ 

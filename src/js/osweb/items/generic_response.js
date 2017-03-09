@@ -1,13 +1,19 @@
-/*
-* Definition of the class generic_response.
-*/
-module.exports = function(osweb){
-    "use strict";
-    function generic_response(pExperiment, pName, pScript) {
-        // Inherited create.
-        this.item_constructor(pExperiment, pName, pScript);
+/**
+ * Class representing a GeneralResponse item. 
+ * @extends Item
+ */
+osweb.generic_response = class GenericResponse extends osweb.item {
+    /** The sequence class controls the running of a serie of items. */
+    constructor(experiment, name, script) {
+        // Inherited.
+        super(experiment, name, script)     
 
-        // Definition of private properties.
+        // Create and set public properties. 
+        this.auto_response = "a";
+        this.process_feedback = false;
+        this.synonyms = null;
+
+        // Create and set private properties. 
         this._allowed_responses = null;
         this._duration = 0;
         this._duration_func = null;
@@ -15,140 +21,190 @@ module.exports = function(osweb){
         this._mouse = null;
         this._responsetype = osweb.constants.RESPONSE_NONE;
         this._timeout = -1;
-    };
+    }   
 
-    // Extend the class from its base class.
-    var p = osweb.extendClass(generic_response, osweb.item);
+    /** Implements the complete phase of the general response item. */
+    _complete() {
+        // Check if a timeout has occured which must be treaded as a response.
+        if ((typeof this.vars.timeout !== 'undefined') && ((this.experiment._runner._events._timeStamp - this.experiment.vars.get('time_' + this.name)) > this.vars.timeout)) { 
+            // Process the timeout none response. 
+            this.process_response_timeout();
+        }
 
-    // Definition of public properties.
-    p.auto_response = "a";
-    p.process_feedback = false;
-    p.synonyms = null;
+        // Inherited.	
+        super._complete();
+    }
 
-    /*
-     * Definition of public methods - build cycle. 
+    /** 
+     * Implements the update response phase of the general response item.
+     * @param {Object} response - The response object which is evaluated.
      */
+    _update(response) {
+        if (response !== null) {
+            // Implements the update response phase of the item.
+            if ((this._responsetype === osweb.constants.RESPONSE_KEYBOARD) && (response.type === osweb.constants.RESPONSE_KEYBOARD)) {
+                this.process_response_keypress(response);
+            } else if ((this._responsetype == osweb.constants.RESPONSE_MOUSE) && (response.type == osweb.constants.RESPONSE_MOUSE)) {
+                this.process_response_mouseclick(response);
+            }
+        }
+    }
 
-    p.auto_responser = function() {};
+    /** The auto responder method for simulated keyboard interaction. */
+    auto_responser() {
+    }
 
-    p.auto_responser_mouse = function() {};
+    /** The auto responder method for simulated mouse interaction. */
+    auto_responser_mouse() {
+    }
 
-    p.prepare_allowed_responses = function() {
-        // Prepare the allowed responses..
-        if (this.vars.get('allowed_responses') == null) {
+    /** Prepare the list with allowed responses */
+    prepare_allowed_responses() {
+        // Prepare the allowed responses.
+        if (this.vars.get('allowed_responses') === null) {
             this._allowed_responses = null;
         } else {
             // Create a list of allowed responses that are separated by semicolons. Also trim any whitespace.
             var allowed_responses = String(this.vars.allowed_responses).split(';');
-
-            if (this.vars.duration == 'keypress') {
+            if (this.vars.duration === 'keypress') {
                 //this._allowed_responses = allowed_responses;
                 this._allowed_responses = this._keyboard._get_default_from_synoniem(allowed_responses);
-            } else if (this.vars.duration == 'mouseclick') {
+            } else if (this.vars.duration === 'mouseclick') {
                 // For mouse responses, we don't check if the allowed responses make sense.
                 this._allowed_responses = this._mouse._get_default_from_synoniem(allowed_responses);
             }
-
+   
             // If allowed responses are provided, the list should not be empty.
-            if (this._allowed_responses.length == 0) {
-                osweb.debug.addError(this.vars.get('allowed_responses') + ' are not valid allowed responses in keyboard_response ' + this.name);
+            if (this._allowed_responses.length === 0) {
+                this.experiment._runner._debugger.addError('Defined responses are not valid in keyboard_response: ' + this.name + ' (' + this.vars.get('allowed_responses') + ')');
             }
         }
-    };
+    }
 
-    p.prepare_duration = function() {
+    // Prepare the duration of the stimulus interaction. */
+    prepare_duration() {
         // Prepare the duration.
-        if (this.vars.get('duration') != null) {
-            if (typeof this.vars.duration == 'number') {
+        if (this.vars.get('duration') !== null) {
+            if (typeof this.vars.duration === 'number') {
                 // Prepare a duration in milliseconds
                 this._duration = this.vars.duration;
-                if (this._duration == 0) {
+                if (this._duration === 0) {
                     this._responsetype = osweb.constants.RESPONSE_NONE;
                 } else {
                     this._responsetype = osweb.constants.RESPONSE_DURATION;
                 }
             } else {
                 this._duration = -1;
-                if (this.vars.duration == 'keypress') {
+                if (this.vars.duration === 'keypress') {
                     this.prepare_duration_keypress();
                     this._responsetype = osweb.constants.RESPONSE_KEYBOARD;
-                } else if (this.vars.duration == 'mouseclick') {
+                } else if (this.vars.duration === 'mouseclick') {
                     this.prepare_duration_mouseclick();
                     this._responsetype = osweb.constants.RESPONSE_MOUSE;
-                } else if (this.vars.duration == 'sound') {
+                } else if (this.vars.duration === 'sound') {
                     this._responsetype = osweb.constants.RESPONSE_SOUND;
-                } else if (this.vars.duration == 'video') {
+                } else if (this.vars.duration === 'video') {
                     this._responsetype = osweb.constants.RESPONSE_VIDEO;
                 }
             }
         }
-    };
+    }
 
-    p.prepare_duration_keypress = function() {
+    /** Prepare the system for a keyboard duration interval. */
+    prepare_duration_keypress() {
         // Prepare a keyboard duration.
         this._keyboard = new osweb.keyboard(this.experiment);
-        if (this.experiment.auto_response == true) {
+        if (this.experiment.auto_response === true) {
             this._duration_func = this.auto_responder;
         } else {
-            var final_duration = (this._timeout != -1) ? this._timeout : this._duration;
+            var final_duration = (this._timeout !== -1) ? this._timeout : this._duration;
             this._keyboard.set_config(final_duration, this._allowed_responses);
         }
-    };
+    }
 
-    p.prepare_duration_mouseclick = function(self) {
+    /** Prepare the system for a mouseclick duration interval. */
+    prepare_duration_mouseclick(self) {
         // Prepare a mouseclick duration.
         this._mouse = new osweb.mouse(this.experiment);
-        if (this.experiment.auto_response == true) {
+        if (this.experiment.auto_response === true) {
             this._duration_func = this.auto_responder_mouse;
         } else {
-            var final_duration = (this._timeout != -1) ? this._timeout : this._duration;
+            var final_duration = (this._timeout !== -1) ? this._timeout : this._duration;
             this._mouse.set_config(final_duration, this._allowed_responses, false);
         }
-    };
+    }
 
-    p.prepare_timeout = function() {
+    /** Prepare the system for a timeout. */
+    prepare_timeout() {
         // Prepare the timeout.
-        if (this.vars.get('timeout') != null) {
-            if (typeof this.vars.timeout == 'number') {
+        if (this.vars.get('timeout') !== null) {
+            if (typeof this.vars.timeout === 'number') {
                 // Prepare a duration in milliseconds
                 this._timeout = this.vars.timeout;
             } else {
                 this._timeout = -1;
             }
         }
-    };
+    }
 
-    /*
-     * Definition of public methods - run cycle. 
-     */
+    /** Select the type of stimulus response processing. */
+    process_response() {
+        // Start stimulus response cycle.
+        switch (this._responsetype) {
+            case osweb.constants.RESPONSE_NONE:
+                // Duration is 0, so complete the stimulus/response cycle.
+                this._status = osweb.constants.STATUS_FINALIZE;
+                this._complete();
+            break;
+            case osweb.constants.RESPONSE_DURATION:
+                this.sleep_for_duration();
+            break;
+            case osweb.constants.RESPONSE_KEYBOARD:
+                this._keyboard.get_key();
+            break;
+            case osweb.constants.RESPONSE_MOUSE:
+                this._mouse.get_click();
+            break;
+            case osweb.constants.RESPONSE_SOUND:
+                this._sampler.wait();
+            break;
+            case osweb.constants.RESPONSE_VIDEO:
+                this._video.wait();
+            break;
+        }
+    }
 
-    p.process_response_keypress = function(pRetval) {
+    /** Process a keyboard response. */
+    process_response_keypress(retval) {
         this.experiment._start_response_interval = this.sri;
-        this.experiment._end_response_interval = pRetval.rtTime;
-        this.experiment.vars.response = this.syntax.sanitize(pRetval.resp);
+        this.experiment._end_response_interval = retval.rtTime;
+        this.experiment.vars.response = this.syntax.sanitize(retval.resp);
         this.synonyms = this._keyboard.synonyms(this.experiment.vars.response);
         this.response_bookkeeping();
-    };
+    }
 
-    p.process_response_mouseclick = function(pRetval) {
+    /** Process a mouse click response. */
+    process_response_mouseclick(retval) {
         this.experiment._start_response_interval = this.sri;
-        this.experiment._end_response_interval = pRetval.rtTime;
-        this.experiment.vars.response = pRetval.resp;
+        this.experiment._end_response_interval = retval.rtTime;
+        this.experiment.vars.response = retval.resp;
         this.synonyms = this._mouse.synonyms(this.experiment.vars.response);
-        this.experiment.vars.cursor_x = pRetval.event.clientX;
-        this.experiment.vars.cursor_y = pRetval.event.clientY;
+        this.experiment.vars.cursor_x = retval.event.clientX;
+        this.experiment.vars.cursor_y = retval.event.clientY;
         this.response_bookkeeping();
-    };
+    }
 
-    p.process_response_timeout = function() {
+    /** Process a time out response. */
+    process_response_timeout() {
         this.experiment._start_response_interval = this.sri;
-        this.experiment._end_response_interval = osweb.events._timestamp;
+        this.experiment._end_response_interval = this.experiment._runner._events._timeStamp;
         this.experiment.vars.response = 'None';
         this.synonyms = ['None','none'];
         this.response_bookkeeping();
-    };
+    }
 
-    p.response_bookkeeping = function() {
+    /** General response logging after a stimulus/response. */
+    response_bookkeeping() {
         // The respone and response_time variables are always set, for every response item
         this.experiment.vars.set('response_time', this.experiment._end_response_interval - this.experiment._start_response_interval);
         this.experiment.vars.set('response_' + this.name, this.experiment.vars.get('response'));
@@ -157,11 +213,11 @@ module.exports = function(osweb){
 
         // But correctness information is only set for dedicated response items, 
         // such as keyboard_response items, because otherwise we might confound the feedback
-        if (this.process_feedback == true) {
-            if (this.vars.get('correct_response') != null) {
+        if (this.process_feedback === true) {
+            if (this.vars.get('correct_response') !== null) {
                 // If a correct_response has been defined, we use it to determine accuracy etc.
-                if (this.synonyms != null) {
-                    if (this.synonyms.indexOf(String(this.vars.get('correct_response'))) != -1){
+                if (this.synonyms !== null) {
+                    if (this.synonyms.indexOf(String(this.vars.get('correct_response'))) !== -1){
                         this.experiment.vars.correct = 1;
                         this.experiment.vars.total_correct = this.experiment.vars.total_correct + 1;
                     } else {
@@ -189,92 +245,40 @@ module.exports = function(osweb){
             this.experiment.vars.avg_rt = this.experiment.vars.average_response_time;
             this.experiment.vars.set('correct_' + this.name, this.vars.correct);
         }
-    };
+    }
 
-    p.process_response = function() {
-        // Start stimulus response cycle.
-        switch (this._responsetype) {
-            case osweb.constants.RESPONSE_NONE:
-                // Duration is 0, so complete the stimulus/response cycle.
-                this._status = osweb.constants.STATUS_FINALIZE;
-                this.complete();
-
-                break;
-            case osweb.constants.RESPONSE_DURATION:
-                this.sleep_for_duration();
-
-                break;
-            case osweb.constants.RESPONSE_KEYBOARD:
-                this._keyboard.get_key();
-
-                break;
-            case osweb.constants.RESPONSE_MOUSE:
-                this._mouse.get_click();
-
-                break;
-            case osweb.constants.RESPONSE_SOUND:
-                this._sampler.wait();
-
-                break;
-            case osweb.constants.RESPONSE_VIDEO:
-                this._video.wait();
-
-                break;
-        }
-    };
-
-    p.set_sri = function(pReset) {
+    /**
+     * Sets or resets the start of the stimulus response interval.
+     * @param {Boolean} reset - If true reset the sri value.
+     */
+    set_sri(reset) {
         // Sets the start of the response interval.
-        if (pReset == true) {
+        if (reset === true) {
             this.sri = self.vars.get('time_' + this.name);
             this.experiment._start_response_interval = this.vars.get('time_' + this.name);
         }
-
-        if (this.experiment._start_response_interval == null) {
+        if (this.experiment._start_response_interval === null) {
             this.sri = this.experiment.vars.get('time_' + this.name);
         } else {
             this.sri = this.experiment._start_response_interval;
         }
-    };
+    }
 
-    p.sleep_for_duration = function() {
+    /** Sleep for a specified time. */
+    sleep_for_duration() {
         // Sleep for a specified time.
         this.sleep(this._duration);
-    };
+    }
 
-    /*
-     * Definition of public methods - running item. 
-     */
-
-    p.complete = function() {
-        // Check if a timeout has occured which must be treaded as a response.
-        if ((typeof this.vars.timeout !== 'undefined') && ((osweb.events._timestamp - this.experiment.vars.get('time_' + this.name)) > this.vars.timeout)) { 
-            // Process the timeout none response. 
-            this.process_response_timeout();
-        }
-
-        // Inherited.	
-        this.item_complete();
-    };
-    
-    p.prepare = function() {
+    /** Implements the prepare phase of the general response item. */
+    prepare() {
         // Implements the prepare phase of the item.
         this.prepare_timeout();
         this.prepare_allowed_responses();
         this.prepare_duration();
 
         // Inherited.	
-        this.item_prepare();
-    };
-
-    p.update_response = function(pResponse) {
-        // Implements the update response phase of the item.
-        if ((this._responsetype == osweb.constants.RESPONSE_KEYBOARD) && (pResponse.type == osweb.constants.RESPONSE_KEYBOARD)) {
-            this.process_response_keypress(pResponse);
-        } else if ((this._responsetype == osweb.constants.RESPONSE_MOUSE) && (pResponse.type == osweb.constants.RESPONSE_MOUSE)) {
-            this.process_response_mouseclick(pResponse);
-        }
-    };
-  
-    return osweb.promoteClass(generic_response, "item");
-};
+        super.prepare();
+    }
+}
+ 

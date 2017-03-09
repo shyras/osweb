@@ -1,44 +1,41 @@
-/*
- * Definition of the class notepad.
+/**
+ * Class representing a notepad item.
+ * @extends Item
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function notepad(pExperiment, pName, pScript) {
-        // Inherited.
-        this.item_constructor(pExperiment, pName, pScript);
-    };
-
-    // Extend the class from its base class.
-    var p = osweb.extendClass(notepad, osweb.item);
-
-    // Define and set the public properties. 
-    p.description = 'A simple notepad to document your experiment. This plug-in does nothing.';
-    p.note = '';
-
-    /*
-     * Definition of public class methods - run cycle.
+osweb.notepad = class Notepad extends osweb.item {
+    /**
+     * Create a notepad plugin item which only shows some text in the console.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
      */
+    constructor(experiment, name, script) {
+		// Inherited.
+		super(experiment, name, script);
+    
+        // Define and set the public properties. 
+        this.description = 'A simple notepad to document your experiment. This plug-in does nothing.';
+        
+        // Read the item definition string.	
+        this.from_string(script);
+    }   
 
-    p.run = function() {
-        // Inherited.	
-        this.item_run();
-
-        // Show the information of the notepad on the console.
-        //osweb.debug.addMessage(this.note);
-
-        // Complete the current cycle.
-        this.complete();
-    };
-
-    p.complete = function() {
+    /** Implements the complete phase of an item. */
+    _complete() {
         // sequence is finalized.
         this._status = osweb.constants.STATUS_FINALIZE;
 
         // Inherited.	
-        this.item_complete();
-    };
+        super._complete();
+    }
+    
+    /** Implements the run phase of an item. */
+    run() {
+        // Inherited.	
+        super.run();
 
-    // Bind the notepad class to the osweb namespace.
-    return osweb.promoteClass(notepad, "item");
-};
+        // Complete the current cycle.
+        this._complete();
+    }
+}
+ 

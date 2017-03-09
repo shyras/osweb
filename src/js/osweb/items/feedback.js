@@ -1,55 +1,51 @@
-/*
- * Definition of the class feedback.
+/**
+ * Class representing a feedback item.
+ * @extends Sketchpad
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function feedback(pExperiment, pName, pScript) {
+osweb.feedback = class Feedback extends osweb.sketchpad {
+    /**
+     * Create a feedback which show feedback info to the subhect.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+    constructor(experiment, name, script) {
         // Inherited create.
-        this.sketchpad_constructor(pExperiment, pName, pScript);
-    };
+        super(experiment, name, script);
+    
+        // Definition of public properties. 
+        this.description = 'Provides feedback to the participant';
+    }
 
-    // Extend the class from its base class.
-    var p = osweb.extendClass(feedback, osweb.sketchpad);
 
-    // Definition of public properties. 
-    p.description = 'Provides feedback to the participant';
-
-    /*
-     * Definition of public methods - build cycle.
-     */
-
-    p.reset = function() {
-        // Resets all item variables to their default value.
-        this.sketchpad_reset();
-        this.vars.reset_variables = 'yes';
-    };
-
-    /*
-     * Definition of public methods - run cycle.
-     */
-
-    p.prepare = function() {
-        // Prepares the item.
-        this._parent.prepare_complete();
-    };
-
-    p.run = function() {
+    /** Implements the complete phase of an item. */
+    _complete() {
         // Inherited.	
-        this.sketchpad_prepare();
-        this.sketchpad_run();
-    };
-
-    p.complete = function() {
-        // Inherited.	
-        this.sketchpad_complete();
+        super._complete();
 
         // Reset feedback variables.
-        if (this.vars.reset_variables == 'yes') {
+        if (this.vars.reset_variables === 'yes') {
             this.experiment.reset_feedback();
         }
-    };
+    }
 
-    // Bind the feedback class to the osweb namespace.
-    return osweb.promoteClass(feedback, "sketchpad");
+    /** Resets all item variables to their default value. */
+    reset() {
+        // Inherited.
+        super.reset();
+        
+        this.vars.reset_variables = 'yes';
+    }
+
+    /** Implements the prepare phase of an item. */
+    prepare() {
+        this._parent._prepare_complete();
+    }
+
+    /** Implements the run phase of an item. */
+    run() {
+        // Inherited.	
+        super.prepare();
+        super.run();
+    }
 }

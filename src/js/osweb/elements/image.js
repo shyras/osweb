@@ -1,40 +1,37 @@
-/*
- * Definition of the class image.
+/**
+ * Class representing an image element.
+ * @extends BaseElement
  */
+osweb.image = class Image extends osweb.base_element {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     */
+    constructor(sketchpad, script) {
+        // Create a default property container.
+   		var defaults = {};
+		defaults.center = 1;
+		defaults.file = null;
+		defaults.scale = 1;
+		defaults.x = null;
+		defaults.y = null;
 
-module.exports = function(osweb){
-	"use strict";
-	function image(pSketchpad, pScript) {
-		// Set the class public properties.
-		this.defaults = {};
-		this.defaults.center = 1;
-		this.defaults.file = null;
-		this.defaults.scale = 1;
-		this.defaults.x = null;
-		this.defaults.y = null;
+		// Inherited.
+		super(sketchpad, script, defaults);
 
 		// Set the class private properties. 
 		this._file = null;
-
-		// Inherited.
-		this.base_element_constructor(pSketchpad, pScript, this.defaults);
 	}
 
-	// Extend the class from its base class.
-	var p = osweb.extendClass(image, osweb.base_element);
-
-	p.draw = function() {
+    /** Implements the draw phase of an element. */
+	draw() {
 		// Inherited.	
-		this.base_element_draw();
-
-		// Retrieve the content from the file pool.
-		this._file = osweb.pool[this._properties['file']];
+		super.draw();
 
 		// Draw the image element to the canvas of the sketchpad.
-		this.sketchpad.canvas.image(this._file, this._properties.center, 
+		this.sketchpad.canvas.image(this._properties.file, this._properties.center, 
 			this._properties.x, this._properties.y, this._properties.scale);
-	};
-
-	// Bind the image class to the osweb namespace.
-	return osweb.promoteClass(image, "base_element");
+	}
 }
+ 

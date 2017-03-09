@@ -1,41 +1,36 @@
-/*
- * Definition of the class fixdot.
+/**
+ * Class representing an arrow element.
+ * @extends BaseElement
  */
+osweb.fixdot = class Fixdot extends osweb.base_element {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     */
+    constructor(sketchpad, script) {
+        // Create a default property container.
+		var defaults = {};
+		defaults.color = sketchpad.vars.get('foreground');
+		defaults.style = 'default';
+		defaults.x = null;
+		defaults.y = null;
 
-module.exports = function(osweb){
-	"use strict";
-	function fixdot(pSketchpad, pScript) {
-		// Set the default properties.
-		this.defaults = {};
-		this.defaults.color = pSketchpad.vars.get('foreground');
-		this.defaults.style = 'default';
-		this.defaults.x = null;
-		this.defaults.y = null;
-
-		// Inherited.
-		this.base_element_constructor(pSketchpad, pScript, this.defaults);
+        // Inherited.
+        super(sketchpad, script, defaults);
 	}
 
-	// Extend the class from its base class.
-	var p = osweb.extendClass(fixdot, osweb.base_element);
-
-	/*
-	 * Definition of public methods - running cycle.         
-	 */
-
-	p.draw = function() {
+ 	/** Implements the draw phase of an element. */
+   	draw() {
 		// Inherited.	
-		this.base_element_draw();
+        super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.Styles();
+		var styles = new osweb.styles();
 		styles.color = this._properties.color;
 
 		// Draw the fixdot element to the canvas of the sketchpad.
 		this.sketchpad.canvas.fixdot(this._properties.x, this._properties.y, 
 			this._properties.style, styles);
-	};
-
-	// Bind the fixdot class to the osweb namespace.
-	return osweb.promoteClass(fixdot, "base_element");
+	}
 }

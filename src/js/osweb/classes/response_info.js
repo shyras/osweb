@@ -1,15 +1,32 @@
-"use strict";
-// Definition of the class response_info.
-function response_info(response_store, response, correct, response_time, item, feedback) {};
+/** Class representing a ResponseInfo object */
+osweb.response_info = class ResponseInfo {
+    /**
+     * Create an object which stores information about one single response.
+     * @param {Object} responseStore - The store for the response object.
+     * @param {String} response - The response chracter itself.
+     * @param {Boolean|Number} correct - Correct of incorrect response.
+     * @param {Number} responseTime - Correct of incorrect response.
+     * @param {Object} item - The item to which the response belongs.
+     * @param {Boolean} feedback - If true the reponse is evaluated for feedback.
+     */
+    constructor(responseStore, response, correct, responseTime, item, feedback) {
+        // Create and set private properties. 
+        this._responseStore = responseStore;
+       
+        // Create and set public properties. 
+        this.correct = correct;
+        this.feedback = feedback;
+        this.item = item;
+        this.respons = response;
+        this.responseTime = responseTime;
+    }    
 
-// Extend the class from its base class.
-var p = response_info.prototype;
+    /** Select item if match the selected property. */
+    match(kwdict) {
+    }
 
-// Definition of public methods - properties.   
-
-p.match = function(kwdict) {};
-
-p.matchnot = function(kwdict) {};
-
-// Bind the response_info class to the osweb namespace.
-module.exports = response_info;
+    /** Select item if no match the selected property. */
+    matchnot(kwdict) {
+    }
+}
+ 

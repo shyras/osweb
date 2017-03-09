@@ -1,42 +1,41 @@
-/*
- * Definition of the class arrow.
+/**
+ * Class representing an arrow element.
+ * @extends BaseElement
  */
+osweb.arrow = class Arrow extends osweb.base_element {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     */
+    constructor(sketchpad, script) {
+        // Create a default property container.
+		var defaults = {};
+		defaults.arrow_body_length = 0.8;
+		defaults.arrow_body_width = 0.5;
+		defaults.arrow_head_width = 30;
+		defaults.fill = 1;
+		defaults.color = sketchpad.vars.get('foreground');
+		defaults.penwidth = 1;
+		defaults.x1 = null;
+		defaults.y1 = null;
+		defaults.x2 = null;
+		defaults.y2 = null;
 
-module.exports = function(osweb){
-	"use strict";
-	function arrow(pSketchpad, pScript) {
-		// Set the default properties.
-		this.defaults = {};
-		this.defaults.arrow_body_length = 0.8;
-		this.defaults.arrow_body_width = 0.5;
-		this.defaults.arrow_head_width = 30;
-		this.defaults.fill = 1;
-		this.defaults.color = pSketchpad.vars.get('foreground');
-		this.defaults.penwidth = 1;
-		this.defaults.x1 = null;
-		this.defaults.y1 = null;
-		this.defaults.x2 = null;
-		this.defaults.y2 = null;
-
-		// Inherited.
-		this.base_element_constructor(pSketchpad, pScript, this.defaults);
+        // Inherited.
+        super(sketchpad, script, defaults);
 	}
-
-	// Extend the class from its base class.
-	var p = osweb.extendClass(arrow, osweb.base_element);
-
-	/*
-	 * Definition of public methods - run cycle.   
-	 */
-
-	p.draw = function() {
-		// Inherited.	
-		this.base_element_draw();
+ 
+ 	/** Implements the draw phase of an element. */
+   	draw() {
+	    // Inherited.	
+        super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.Styles();
-		styles.fill = this._properties.fill;
+		var styles = new osweb.styles();
+		styles.background_color = this._properties.color;
 		styles.color = this._properties.color;
+		styles.fill = this._properties.fill;
 		styles.penwidth = this._properties.penwidth;
 
 		// Draw the arrow element to the canvas of the sketchpad.
@@ -44,8 +43,5 @@ module.exports = function(osweb){
 			this._properties.x2, this._properties.y2, this._properties.arrow_body_width, 
 			this._properties.arrow_body_length, this._properties.arrow_head_width, 
 			styles);
-	};
-
-	// Bind the Arrow class to the osweb namespace.
-	return osweb.promoteClass(arrow, "base_element");
+	}
 }

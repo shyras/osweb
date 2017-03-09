@@ -1,12 +1,20 @@
-module.exports = function(osweb){
-    "use strict";
+/** Class implementing a python math library. */
+osweb.python_math = class PythonMath {
+    /**
+     * Create a python AST runner.
+     * @param {Object} runner - The runner to which the library belongs.
+     */
+    constructor(runner) {
+        // Set class parameter properties.
+        this._runner = runner; // Parent runner attached to the library.
 
-    // Class python_math - Python math functions.      
-    function python_math() {
-        throw 'The class python_math cannot be instantiated!';
+        // Set class properties.
+        this.e = Math.E;
+        this.pi = Math.PI;
     }
 
-    python_math._initialize = function() {
+    /** Initialization phase of the python_math class. */
+    _initialize() {
         // Insert math library methods into the python interpreter.
         filbert.pythonRuntime.imports['math'] = {};
         filbert.pythonRuntime.imports['math']['ceil'] = this.ceil; 
@@ -31,69 +39,61 @@ module.exports = function(osweb){
      
     // Definition of public methods - Number-theoretic and representation functions.
 
-    python_math.e = Math.E;
-    python_math.pi = Math.PI;
     
-    // Definition of public methods - Number-theoretic and representation functions.
+    ceil(x) {
+    }
 
-    python_math.ceil = function(x) {
-    };
+    copysign(x, y) {
+    }
 
-    python_math.copysign = function(x, y) {
-    };
+    fabs(x) {
+    }
 
-    python_math.fabs = function(x) {
-    };
+    factorial(x) {
+    }
 
-    python_math.factorial = function(x) {
-    };
-
-    python_math.floor = function(x) {
+    floor(x) {
         return Math.floor(x);
-    };
+    }
 
-    python_math.fmod = function(x, y) {
-    };
+    fmod(x, y) {
+    }
 
-    python_math.frexp = function(x) {
-    };
+    frexp(x) {
+    }
 
-    python_math.fsum = function(iterable) {
-    };
+    fsum(iterable) {
+    }
 
-    // Definition of public methods - Trigonometric functions
-
-    python_math.acos = function(x) {
+    acos(x) {
         return Math.acos(x);
-    };
+    }
 
-    python_math.asin = function(x) {
+    asin(x) {
         return Math.asin(x);
-    };
+    }
 
-    python_math.atan = function(x) {
+    atan(x) {
         return Math.atan(x);
-    };
+    }
 
-    python_math.atan2 = function(y, x) {
+    atan2(y, x) {
         return Math.atan2(y, x);
-    };
+    }
 
-    python_math.cos = function(x) {
+    cos(x) {
         return Math.cos(x);
-    };
+    }
 
-    python_math.hypot = function(x, y) {
-    };
+    hypot(x, y) {
+    }
 
-    python_math.sin = function(x) {
+    sin(x) {
         return Math.sin(x);
-    };
+    }
 
-    python_math.tan = function(x) {
+    tan(x) {
         return Math.tan(x);
-    };
+    }
+}
  
-    // Bind the python_math class to the osweb namespace.
-    return python_math;
-};

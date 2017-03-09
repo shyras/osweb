@@ -1,190 +1,154 @@
-// Definition of the class runner - core module to run an Osexp experiment.
-module.exports = function(osweb){
-    "use strict";
-    function runner() {
-        throw 'The class runner cannot be instantiated!';
-    };
+/** Class representing the Runner. */
+osweb.runner = class Runner {
+    /** Create a runner which runs an experiment. */
+    constructor(content) {
+        // Create and set private properties.
+        this._container = null; // HTML: The container (div) element. 
+        this._data = null // Experiment result data.
+        this._formContainer; // ZEBRAKIT: Container for form display. 
+        this._experiment = null; // The JSON experiment container     
+        this._name = ''; // String name of the experiment which is run.
+        this._onfinished = null; // Event triggered on finishing the experiment.
+        this._renderer = null; // PIXI: The visual stimuli renderer.
+        this._script = null; // Container for the script definition of the experiment.
+        this._source = null; // Link to the source experiment file. 
+        this._target = null; // Link to the target location for thr data. 
 
-    // Definition of private properties.
-    runner._canvas = null; // Canvas on which the experiment is shown.
-    runner._container = null; // Div element containing all the osweb HTML elements.
-    runner._container_forms = null; // HTML form container.
-    runner._container_video = null; // HTML video container. 
-    runner._onconsole = null; // Event triggered on console output.
-    runner._onfinished = null; // Event triggered on finishing the experiment.
-    runner._renderer = null; // PIXI renderer container.
-    runner._script = null; // Container for the script definition of the experiment.
-    runner._source = null; // Link to the source experiment file. 
-    runner._subject = null; // Subject number (if given no dialog is shown)
-    runner._target = null; // Link to the target location for thr data. 
-    
-    // Definition of public properties.
-    runner.data = null; // Container for the result data.
-    runner.debug = false; // Debug toggle.
-    runner.experiment = null; // The root experiment object to run.           
-    runner.status = osweb.constants.RUNNER_NONE; // Status of the runner.
+        // Create and set private class properties.
+        this._debugger = new osweb.debugger(this); // Internal error system.
+        this._events = new osweb.events(this); // The event processor. 
+        this._itemStack = new osweb.item_stack(this); // The global item stack.
+        this._itemStore = new osweb.item_store(this); // The global item store.
+        this._parameters = new osweb.parameters(this); // Parameter processor.
+        this._pythonParser = new osweb.python_parser(this); // Python parser
+        this._pythonWorkspace = new osweb.python_workspace(this); // Python workspace.
+        this._pool = new osweb.file_pool_store(this); // The virtual file pool store.    
+        this._screen = new osweb.screen(this); // Introduction screen renderer.
+        this._session = new osweb.session(this); // Session information container.
+        this._syntax = new osweb.syntax(this); // The script syntax checker.
+        this._transfer = new osweb.transfer(this); // File transfer system.
+
+        // Create the content container. 
+        this._setupContent(content);
+    }
 
     /**
      * Setup the content container which shows all the visual output.
-     * @param {String|Object} content - The content (div) on which the experiment output is projected.
+     * @param {String|Object} content - The content (div element) in which the experiment  is projected.
      */
-    runner._setupContent = function(content) {
+    _setupContent(content) {
         // Check if the experiment container is defined.                     
-        if (typeof content !== "undefined") {
+        if (typeof content !== 'undefined') {
             // Get the div element from the DOM element tree 
             this._container = (typeof content === 'string') ? document.getElementById(content) : content;
 
             // Create and set the experiment canvas. 
-            this._renderer = PIXI.autoDetectRenderer(800, 600, {antialias: false, transparent: false, resolution: 1});
-            this._renderer.backgroundColor = 0;
+            this._renderer = PIXI.autoDetectRenderer(800, 600, { antialias: false, transparent: false, resolution: 1});
+            this._renderer.backgroundColor = 0x000000;
      
-            // Create the form and video containers. 
-            this._container_forms = document.createElement('div');
-            this._container_forms.id = 'osweb_form';
-            this._container_forms.style.backgroundColor = '#000000';
-            this._container_forms.style.display = 'none';
-            this._container_forms.width = '100%';
-            this._container_forms.height = '100%';
-
-            // Create the form and video containers. 
-            this._container_video = document.createElement('video'); 
-            this._container_video.id = 'osweb_video';
-            this._container_video.style.display = 'none';
-            this._container_video.width = 800;
-            this._container_video.height = 600;
-
             // Append the canvas to the container.
             this._container.appendChild(this._renderer.view);
-            this._container.appendChild(this._container_forms);
-            this._container.appendChild(this._container_video);
+        
         } else {
-            osweb.debug.addError(osweb.constants.ERROR_002);
+            // Show error message.
+            this._debugger.addError('No content parameter specified.');
         }
-    };
+    }
 
     /**
      * Setup the context from which the experiment is created.
      * @param {Object} context - An JSON object containing information about the experiment.
      */
-    runner._setupContext = function(context) {
+    _setupContext(context) {
         // Check if the script parameter is defined.                        
-        if (typeof context !== "undefined") {
+        if ((typeof context !== 'undefined') || (context === null)) {
             // Initialize the context parameters.
-            this.debug = (typeof context.debug !== 'undefined') ? context.debug : false;
+            this._debugger.enabled = (typeof context.debug !== 'undefined') ? context.debug : false;
             this._onconsole = (typeof context.onconsole !== 'undefined') ? context.onconsole : null;
             this._onfinished = (typeof context.onfinished !== 'undefined') ? context.onfinished : null;
+            this._name = (typeof context.name !== 'undefined') ? context.name : 'noname.exp';
             this._source = (typeof context.source !== 'undefined') ? context.source : null;
             this._subject = (typeof context.subject !== 'undefined') ? context.subject : null;
             this._target = (typeof context.target !== 'undefined') ? context.target : null;
             
             // Build the introduction screen.
-            osweb.screen._active = (typeof context.introscreen !== 'undefined') ? context.introscreen : true;
-            osweb.screen._click = (typeof context.introclick !== 'undefined') ? context.introclick : true;
-            osweb.screen._setupIntroScreen();
+            this._screen._active = (typeof context.introscreen !== 'undefined') ? context.introscreen : true;
+            this._screen._click = (typeof context.introclick !== 'undefined') ? context.introclick : true;
+            this._screen._setupIntroScreen();
 
             // Load the script file, using the source parameter.
-            osweb.transfer._readOsexpFile(this._source);
-        } else {
-            osweb.debug.addError(osweb.constants.ERROR_003);
+            this._transfer._readOsexpFile(this._source);
+        } 
+        else {
+            // Show error message.
+            this.debugger.addError('No context parameter specified.');
         }
-    };
+    }
 
-    /** Build the OpenSesame experiment. */
-    runner._build = function() {
-        // Set status of the runner.
-        this.status = osweb.constants.RUNNER_READY;
-        
-        // Build the base experiment object.
-        this.experiment = new osweb.experiment(null, 'test', this._script);
+    /** Build the experiment system. */
+    _build() {
+        // Create the experiment item. 
+        this._experiment = new osweb.experiment(this, this._name, this._script);
+		this._experiment.from_string(this._script);
 
-        // Build the global static object classes.
-        window['exp'] = this.experiment;
-        window['items'] = osweb.item_store;
-        window['pool'] = osweb.file_pole_store;
-        window['var'] = this.experiment.vars;
+        // Initialize the parameters class and request user input.
+        this._parameters._initialize();
+    } 
 
-        // Pepare the experiment to run.
-        this._prepare();
-    };
-
-    /** Prepare the experiment environment. */
-    runner._prepare = function() {
-        // Update inroscreen.
-        osweb.screen._updateIntroScreen(osweb.constants.MESSAGE_005);
-
-        // Initialize the helper classes.
-        osweb.python._initialize();
-        osweb.session._initialize();
-        osweb.parameters._initialize();
-    };
-
-    /** Initialize the experiment environment. */
-    runner._initialize = function() {
-        // Initialize the debugger. 
-        osweb.debug._initialize();
-
-        // Initialize the event system.
-        osweb.events._initialize();
-
-        // Set status of the runner.
-        this.status = osweb.constants.RUNNER_RUNNING;
-        
-        // Prepare and execute the experiment item.
-        this.experiment.prepare();
-        this.experiment.run();
-    };
-
-    /** Finalize the experiment environment. */
-    runner._finalize = function() {
+    /** initialize the runner. */
+    _initialize() {
+        // Initialize the helper classes. 
+        this._debugger._initialize();
+        this._events._initialize();
+        this._pythonParser._initialize();
+        this._session._initialize();
+     
+        // Prepare and run the experiment item.
+        this._experiment.prepare();
+        this._experiment.run();
+    }
+    
+    /** finalize the runner. */
+    _finalize() {
         // Finalize the event system.
-        osweb.events._finalize();
-
+        this._events._finalize();
+        
         // Finalize the debugger.
-        osweb.debug._finalize();
+        this._debugger._finalize();
 
-        // Exit the runner.          
+        // Clear the item store and file pool.
+        this._itemStore.clean_up();
+        this._pool.clean_up();
+
+        // Exit the runner.
         this._exit();
-    };
+    }
 
-    /** Exit the experiment environment and execute the callback (optional). */
-    runner._exit = function() {
-        // Remove the canvas from the container.
-        this._container.removeChild(this._renderer.view);
-        this._container.removeChild(this._container_forms);
-        this._container.removeChild(this._container_video);
+    /** Exit the experiment environment and execute the optional callback. */
+    _exit() {
+        // Reset te size of the container and the canvas.
+        this._experiment._canvas._exitDisplay();
 
-        // Write result data to target location (if defined).
-        osweb.transfer._writeDataFile(this._target, this.data);
+        // Clear the experiment item.
+        this._experiment = null;
 
         // Check if a callback function is defined. 
         if (this._onfinished) {
             // Execute callback function.
-            this._onfinished(this.data, osweb.session._session);
+            this._onfinished(this._data, this._session._session);
         }
-    };
-    
-    /** Exit a running OpenSesame experiment. */
-    runner.exit = function() {
-        // Set status of the runner.
-        this.status = osweb.constants.RUNNER_BREAK;
-        
-        // Set break flag in the events class.
-        osweb.events._break = true;
-    };
- 
-   /**
-     * Run an OpenSesame experiment.
-     * @param {String|Object} content - The content (div) on which the experiment output is projected.
-     * @param {Object} context - An JSON object containing information about the experiment.
-     */
-    runner.run = function(content, context) {
-        // Initialize the content container.
-        this._setupContent(content);
+    }
 
-        // Initialize the context parameter
+    /** Exit a running experiment. */
+    exit() {
+        // Set status of the event system to break.
+        this._events._status = osweb.constants.TIMER_BREAK;
+    }
+
+    /** Run an experiment */
+    run(context) {
+        // Build the experiment.
         this._setupContext(context);
-    };
-
-    // Bind the runner class to the osweb namespace.
-    return runner;
+    }    
 }
+ 

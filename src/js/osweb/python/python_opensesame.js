@@ -1,20 +1,22 @@
-module.exports = function(osweb){
-    "use strict";
-    
-    // Class python_opensesame - Python OpenSesame functions.      
-    function python_opensesame() {
-        throw 'The class python_opensesame cannot be instantiated!';
-    };
+/** Class implementing a python opensesame library. */
+osweb.python_opensesame = class PythonOpenSesame {
+    /**
+     * Create a python AST runner.
+     * @param {Object} runner - The runner to which the library belongs.
+     */
+    constructor(runner) {
+        // Set class parameter properties.
+        this._runner = runner; // Parent runner attached to the library.
+    }
 
-    // Definition of private methods.   
-
-    python_opensesame._initialize = function() {
+    /** Initialization phase of the python_library class. */
+    _initialize() {
         this._objects = {};
         
         // Insert clock class into the python interpreter.
         filbert.pythonRuntime.imports['clock'] = {};
-        filbert.pythonRuntime.imports['clock']['sleep'] = window['clock'].sleep; 
-        filbert.pythonRuntime.imports['clock']['time'] = window['clock'].time; 
+        filbert.pythonRuntime.imports['clock']['sleep'] = this._runner._experiment.clock.sleep; 
+        filbert.pythonRuntime.imports['clock']['time'] = this._runner._experiment.clock.time; 
 
         /* // Insert var class into the python interpreter.
         filbert.pythonRuntime.imports['var'] = window['vars'];
@@ -40,63 +42,61 @@ module.exports = function(osweb){
         filbert.pythonRuntime.functions['xy_grid'] = this.xy_grid; 
         filbert.pythonRuntime.functions['xy_random'] = this.xy_random; 
         filbert.pythonRuntime.functions['xy_to_polar'] = this.xy_to_polar; 
-    };
+    }
 
     // Definition of public methods - global functions.   
 
-    python_opensesame.canvas = function(auto_prepare, style_args) {
+    canvas(auto_prepare, style_args) {
         return new osweb.canvas(auto_prepare, style_args);
-    };
+    }
 
-    python_opensesame.copy_sketchpad = function(name) {
-    };
+    copy_sketchpad(name) {
+    }
 
-    python_opensesame.keyboard = function(resp_args) {
-    };
+    keyboard(resp_args) {
+    }
 
-    python_opensesame.mouse = function(resp_args) {
-    };
+    mouse(resp_args) {
+    }
 
-    python_opensesame.pause = function(test) {
+    pause(test) {
         console.log('pause' + test);
-    };
+    }
 
-    python_opensesame.reset_feedback = function() {
-    };
+    reset_feedback() {
+    }
 
-    python_opensesame.sampler = function(src, playback_args) {
-    };
+    sampler(src, playback_args) {
+    }
 
-    python_opensesame.set_response = function(response, response_time, correct) {
-    };
+    set_response(response, response_time, correct) {
+    }
 
-    python_opensesame.set_subject_nr = function(nr) {
-    };
+    set_subject_nr(nr) {
+    }
 
-    python_opensesame.sometimes = function(p) {
-    };
+    sometimes(p) {
+    }
 
-    python_opensesame.synth = function(osc, freq, length, attack, decay) {
-    };
+    synth(osc, freq, length, attack, decay) {
+    }
 
-    python_opensesame.xy_circle = function(n, rho, phi0, pole) {
-    };
+    xy_circle(n, rho, phi0, pole) {
+    }
 
-    python_opensesame.xy_distance = function(x1, y1, x2, y2) {
-    };
+    xy_distance(x1, y1, x2, y2) {
+    }
 
-    python_opensesame.xy_from_polar = function(rho, phi, pole) {
-    };
+    xy_from_polar(rho, phi, pole) {
+    }
 
-    python_opensesame.xy_grid = function(n, spacing, pole) {
-    };
+    xy_grid(n, spacing, pole) {
+    }
 
-    python_opensesame.xy_random = function(n, width, height, min_dist, pole) {
-    };
+    xy_random(n, width, height, min_dist, pole) {
+    }
 
-    python_opensesame.xy_to_polar = function(x, y, pole) {
-    };
-
-    // Bind the python_math class to the osweb namespace.
-    return python_opensesame;
-};
+    xy_to_polar(x, y, pole) {
+    }
+}
+ 

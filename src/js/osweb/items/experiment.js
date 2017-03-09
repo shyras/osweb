@@ -1,37 +1,30 @@
-/*
-* Definition of the class experiment.
-*/
-module.exports = function(osweb){
-	"use strict";
-	function experiment(pExperiment, pName, pScript, pPool_folder, pExperiment_path, 
-		pFullscreen, pAuto_response, pLogfile, pSubject_nr, pWorkspace, pResources, 
-		pHeartbeat_interval) {
-		// Set the items property for this experiment.
-		osweb.item_store._experiment = this;
+/**
+ * Class representing an Experiment item. 
+ * @extends Item
+ */
+osweb.experiment = class Experiment extends osweb.item {
+    /** The experiment class defines the starting point for an expriment. */
+    constructor(experiment, name, script, poolFolder, experimentPath, 
+			    fullScreen, autoResponse, logFile, subjectNr, workspace, 
+				resources, heartbeatInterval) {
+		// Inherited.
+        super(experiment, name, script)   
 
 		// Set the optional arguments
-		pLogfile = (typeof pLogfile === 'undefined') ? null : pLogfile;
+		logFile = (typeof logFile === 'undefined') ? null : logFile;
 
-		// Set the private properties. 
-		this._end_response_interval = null;
-		this._start_response_interval = null;
-		this._syntax = osweb.syntax;
-		this._python_workspace = (pWorkspace) ? pWorkspace : osweb.python_workspace;
+        // Create and set public properties. 
+		this.debug = this._runner._debugger.enabled;
+		this.items = this._runner._itemStore;
+		this.logfile = logFile;
+		this.pool = this._runner._pool;
 
-		// Set the public properties. 
-		this.auto_response = (pAuto_response) ? pAuto_response : false;
-		this.cleanup_functions = [];
-		this.heartbeat_interval = (pHeartbeat_interval) ? pHeartbeat_interval : 1;
-		this.items = osweb.item_store;
-		this.output_channel = null;
-		this.paused = false;
-		this.plugin_folder = 'plugins';
-		this.pool = osweb.file_pool_store;
-		this.resources = (pResources) ? pResources : {};
-		this.restart = false;
-		this.running = false;
-		this.vars = new osweb.var_store(this, null);
-
+        // Create and set private properties. 
+        this._canvas = new osweb.canvas(this);
+	  	this._log = new osweb.log(this, this.logfile);
+		this._pythonWorkspace = this._runner._pythonWorkspace;
+    	this._syntax = this._runner._syntax;
+	
 		// Set default variables
 		this.vars.start = 'experiment';
 		this.vars.title = 'My Experiment';
@@ -52,9 +45,8 @@ module.exports = function(osweb){
 		// Display parameters.
 		this.vars.width = 1024;
 		this.vars.height = 768;
-		this.vars.background = 'black';
-		this.vars.foreground = 'white';
-		this.vars.fullscreen = (pFullscreen) ? 'yes' : 'no';
+		this.vars.background = 0x000000;
+		this.vars.foreground = 0xFFFFFF;
 
 		// Font parameters.
 		this.vars.font_size = 18;
@@ -62,51 +54,10 @@ module.exports = function(osweb){
 		this.vars.font_italic = 'no';
 		this.vars.font_bold = 'no';
 		this.vars.font_underline = 'no';
+    }
 
-		// Logfile parameters
-		this.logfile = pLogfile;
-		this.debug = osweb.debug.enabled;
-
-		// Create the backend objects.
-		this._canvas = new osweb.canvas(this);
-		this._clock = new osweb.clock(this);
-		this._log = new osweb.log(this, this.logfile);
-
-		// Set the global anchors.
-		window['clock'] = this._clock;
-		window['log'] = this._log;
-
-		// Inherited.
-		this.item_constructor(pExperiment, pName, pScript);
-	}
-
-	// Extend the class from its base class.
-	var p = osweb.extendClass(experiment, osweb.item);
-
-	// Definition of public properties. 
-	p.auto_response = false;
-	p.cleanup_functions = [];
-	p.heartbeat_interval = 1;
-	p.items = null;
-	p.output_channel = null;
-	p.paused = false;
-	p.plugin_folder = '';
-	p.pool = null;
-	p.resources = null;
-	p.restart = false;
-	p.running = false;
-
-	/*
-	 * Definition of public methods - general function.
-	 */
-
-	p.item_prefix = function() {
-		// A prefix for the plug-in classes, so that [prefix][plugin] class is used instead of the [plugin] class.
-		return '';
-	};
-
-	p.reset_feedback = function() {
-		// Resets the feedback variables (acc, avg_rt, etc.)."""
+	/** Resets the feedback variables (acc, avg_rt, etc.). */
+	reset_feedback() {
 		this.vars.total_responses = 0;
 		this.vars.total_correct = 0;
 		this.vars.total_response_time = 0;
@@ -114,46 +65,46 @@ module.exports = function(osweb){
 		this.vars.average_response_time = 'undefined';
 		this.vars.accuracy = 'undefined';
 		this.vars.acc = 'undefined';
-	};
+	}
 
-	p.set_subject = function(pNr) {
-	        // Sets the subject number and parity (even/ odd). This function is called automatically when an experiment is started, so you do not generally need to call it yourself.
+	/**
+	 * Sets the subject number and parity (even/ odd).
+	 * @param  {Number} pNr - The subject number to be used.
+	 */
+	set_subject(pNr) {
+	    // Sets the subject number and parity (even/ odd). 
 		this.vars.subject_nr = pNr;
 		if ((pNr % 2) == 0) {
 			this.vars.subject_parity = 'even';
 		} else {
 			this.vars.subject_parity = 'odd';
 		}
-	};
-
-	/*
-	 * Definition of public methods - building item.         
-	 */
-
-	p.read_definition = function(pString) {
-		// Extracts a the definition of a single item from the string.
-		var line = pString.shift();
-		var def_str = '';
-		while ((line != null) && (line.length > 0) && (line.charAt(0) == '\t')) {
-			def_str = def_str + line.substring(1) + '\n';
-			line = pString.shift();
-		}
-		return def_str;
-	};
+	}
 
 	/**
-	 * Construct the experiment object from OpenSesame script and store the data
-	 * in the object instance.
-	 * @param  {string} pString The opensesame script contents
-	 * @return {void}
+	 * Extracts a the definition of a single item from the string.
+     * @param {String} script - The script to read the definition form.
+     * @return {String} - The definition found from the script.
 	 */
-	p.from_string = function(pString) {
-		// Set debug message.
-		osweb.debug.addMessage('building experiment');
-            
+	read_definition(script) {
+		// Extracts a the definition of a single item from the string.
+		var line = script.shift();
+		var def_str = '';
+		while ((line !== null) && (line.length > 0) && (line.charAt(0) === '\t')) {
+			def_str = def_str + line.substring(1) + '\n';
+			line = script.shift();
+		}
+		return def_str;
+	}
+
+	/**
+	 * Construct the experiment object from OpenSesame script.
+	 * @param {String} script - The opensesame script contents
+	 */
+	from_string(script) {
 		// Split the string into an array of lines.
-		if (pString != null) {
-			this._source = pString.split('\n');
+		if (script !== null) {
+			this._source = script.split('\n');
 			var l = this._source.shift();
 			while (l != null) {
 				// Set the processing of the next line.
@@ -161,164 +112,104 @@ module.exports = function(osweb){
 				try {
 					var cmd, args, kwargs;
 					// Split the single line into a set of tokens.
-					[cmd, args, kwargs] = osweb.syntax.parse_cmd(l);
+					[cmd, args, kwargs] = this._runner._syntax.parse_cmd(l);
 				} catch (e) {
-					alertify.errorAlert("Failed to parse script. Maybe it " +
-						"contains illegal characters or unclosed quotes? " + e.message);
+					this._runner._debugger.addError('Failed to parse script. Maybe it contains illegal characters or unclosed quotes: ' + e.message);
 				}
 
-				if ((cmd != null) && (args.length > 0)) {
+				if ((cmd !== null) && (args.length > 0)) {
 					// Try to parse the line as variable (or comment)
-					if (this.parse_variable(l) == false) {
-						if (cmd == 'define') {
-							if (args.length == 2) {
+					if (this.parse_variable(l) === false) {
+						if (cmd === 'define') {
+							if (args.length === 2) {
 								// Get the type, name and definition string of an item.
 								var item_type = args[0];
-								var item_name = osweb.syntax.sanitize(args[1]);
+								var item_name = this._runner._syntax.sanitize(args[1]);
 								var def_str = this.read_definition(this._source);
-        							osweb.item_store.new(item_type, item_name, def_str);
+        							this._runner._itemStore.newItem(item_type, item_name, def_str);
 							} else {
-								// raise osexception(u'Failed to parse definition',line=line);
+								this._runner._debugger.addError('Failed to parse definition: ' + l);
 							}
 						}
 					}
 				}
 
 				// Get the next line.
-				if (get_next == true) {
+				if (get_next === true) {
 					l = this._source.shift();
 				}
 			}
-		};
-	};
+		}
+	}
 
-	/*
-	 * Definition of public methods - backends.
-	 */
-
-	p.init_clock = function() {
+	/** Initializes the clock backend. */
+	init_clock() {
 		// Initializes the clock backend.
-		this._clock.initialize;
-	};
+		this.clock._initialize();
+	}
 
-	p.init_display = function() {
+    /** Initializes the canvas backend. */
+	init_display() {
 		// Initializes the canvas backend.
 		this._canvas.init_display(this);
+	}
 
-		// Initialize the python workspace.
-		this._python_workspace['win'] = window;
-	};
-
-	p.init_heartbeat = function() {
-		// Initializes heartbeat.
-		if ((this.heartbeat_interval <= 0) || (this.vars.fullscreen == 'yes') || (this.output_channel == null)) {
-			this.heartbeat = null;
-		} else {
-			this.heartbeat = new osweb.heartbeat(this, 1);
-			this.heartbeat.start();
-		}
-	};
-
-	p.init_log = function() {
-		// Open a connection to the log file.
+	/** Open a connection to the log file. */
+	init_log() {
 		this._log.open(this.logfile);
-	};
+	}
 
-	p.init_random = function() {
-		// Initializes the random number generators. For some reason
-		/* import random
-	random.seed()
-	try:
-	        # Don't assume that numpy is available
-	        import numpy
-	        numpy.random.seed()
-	        except:
-	        pass */
-	};
-
-	p.init_sound = function() {
-		// Intializes the sound backend.
-		/* from openexp import sampler
-		sampler.init_sound(self) */
-	};
-
-	/*
-	 * Definition of public methods - running item.         
-	 */
-
-	p.run = function() {
+    /** Implements the run phase of an item. */
+	run() {
 		// Inherited.	
-		this.item_run();
+		super.run();
 
 		// Runs the experiment.
 		switch (this._status) {
 			case osweb.constants.STATUS_INITIALIZE:
-
-				// Set the status to finalize.
-				this._status = osweb.constants.STATUS_FINALIZE;
+	    	   // Adjust the status of the item.
+		       this._status = osweb.constants.STATUS_FINALIZE;
 
 				// Save the date and time, and the version of OpenSesame
 				this.vars.datetime = new Date().toString();
 				this.vars.opensesame_version = osweb.VERSION_NUMBER;
 				this.vars.opensesame_codename = osweb.VERSION_NAME;
 				this.running = true;
-				this.init_random();
-				this.init_display();
 				this.init_clock();
-				this.init_sound();
+				this.init_display();
 				this.init_log();
-				this.python_workspace.init_globals();
 				this.reset_feedback();
-				this.init_heartbeat();
 
 				// Add closing message to debug system.
-				osweb.debug.addMessage('experiment.run(): experiment started at ' + new Date().toUTCString());
+				this._runner._debugger.addMessage('experiment.run(): experiment started at ' + new Date().toUTCString());
 
-				if (osweb.item_store._items[this.vars.start] != null) {
-					osweb.item_stack.clear();
-					osweb.item_store.prepare(this.vars.start, this);
-					//osweb.item_store.execute(this.vars.start, this);
+				if (this._runner._itemStore._items[this.vars.start] !== null) {
+					this._runner._itemStack.clear();
+					this._runner._itemStore.prepare(this.vars.start, this);
 				} else {
-					osweb.debug.addError('Could not find item ' + self.vars.start + ' , which is the entry point of the experiment');
+					this._runner._debugger.addError('Could not find the item that is the entry point of the experiment: ' + this.vars.start);
 				}
-
-				break;
+			break;
 			case osweb.constants.STATUS_FINALIZE:
-
 				// Add closing message to debug system.
-				osweb.debug.addMessage('experiment.run(): experiment finished at ' + new Date().toUTCString());
+				this._runner._debugger.addMessage('experiment.run(): experiment finished at ' + new Date().toUTCString());
 
 				// Complete the run process.
 				this.end();
+			break;
+		}
+	}
 
-				break;
-		};
-	};
-
-	p.end = function() {
+    /** Ends an experiment. */
+	end() {
 		// Disable the run toggle.
 		this.running = false;
 
 		// Close the log file.
 		this._log.close();
 
-		// Disable the processing unit.
-		osweb.events._current_item = null;
-
-		// Clear the exprimental stage and enabled the mouse.
-		osweb.runner._renderer.view.style.cursor = 'default';
-		osweb.runner._renderer.clear(0x000000);
-
-        // Clear the form elements.
-        var node = document.getElementById('osweb_form');
-        while (node.hasChildNodes()) {
-        	node.removeChild(node.lastChild);
-        }    
-                
 		// Finalize the parent (runner).	
-		osweb.runner._finalize();
-	};
-
-	// Bind the experiment class to the osweb namespace.
-	return osweb.promoteClass(experiment, "item");
-};
+		this._runner._finalize(); 
+	}
+}
+ 

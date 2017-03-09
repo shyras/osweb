@@ -1,30 +1,28 @@
-/*
- * Definition of the class sketchpad.
+/**
+ * Class representing a Sketchpad item. 
+ * @extends GeneralResponse
  */
+osweb.sketchpad = class Sketchpad extends osweb.generic_response {
+    /** The sequence class controls the running of a serie of items. */
+    constructor(experiment, name, script) {
+        // Inherited.
+        super(experiment, name, script)     
 
-module.exports = function(osweb){
-    "use strict";
-    function sketchpad(pExperiment, pName, pScript) {
-        // Set publice properties.
-        this.canvas = new osweb.canvas(pExperiment, false);
+        // Create and set private properties. 
+        this.canvas = new osweb.canvas(experiment, false);
         this.elements = [];
+    
+        // Process the script.
+        this.from_string(script);
+   }    
 
-        // Inherited create.
-        this.generic_response_constructor(pExperiment, pName, pScript);
-    };
-
-    // Extend the class from its base class.
-    var p = osweb.extendClass(sketchpad, osweb.generic_response);
-
-    // Definition of public properties. 
-    p.canvas = null;
-    p.elements = [];
-
-    /*
-     * Definition of private methods - build cycle.         
+    /**
+     * Sort function used for determining the draw index (z-index) of alle elemente.
+     * @param {Object} a - The first object to compare.
+     * @param {Object} b - The second object to compare.
+     * @return {Number} - The result of the comparison.
      */
-
-    p._compare = function(a, b) {
+    _compare(a, b) {
         // Sort function used for determining the draw index (z-index) of alle elemente.
         if (a.z_index() < b.z_index())
             return 1;
@@ -32,36 +30,46 @@ module.exports = function(osweb){
             return -1;
         else
             return 0;
-    };
+    }
 
-    /*
-     * Definition of public methods - build cycle..         
-     */
+    /** Implements the complete phase of the Sketchpad item. */
+    _complete() {
+        // Clear the canvas.
+        this.canvas.clear();
 
-    p.reset = function() {
+        // Inherited.	
+        super._complete();
+    }
+
+    /** Resets all item variables to their default value. */
+    reset() {
         // Resets all item variables to their default value.
         this.elements = [];
         this.vars.duration = 'keypress';
-    };
+    }
 
-    p.from_string = function(pString) {
+    /**
+     * Parse a definition string and retrieve all properties of the item.
+     * @param {String} script - The script containing the properties of the item.
+     */
+     from_string(script) {
         // Define and reset variables to their defaults.
         this.variables = {};
         this.comments = [];
         this.reset();
 
         // Split the string into an array of lines.  
-        if (pString != null) {
-            var lines = pString.split('\n');
+        if (script !== null) {
+            var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
-                if ((lines[i] != '') && (this.parse_variable(lines[i]) == false)) {
-                    var tokens = osweb.syntax.split(lines[i]);
-                    if ((tokens.length > 0) && (tokens[0] == 'draw')) {
-                        if (osweb.isClass(tokens[1]) == true) {
-                            var element = osweb.newElementClass(tokens[1], this, lines[i]);
+                if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
+                    var tokens = this.syntax.split(lines[i]);
+                    if ((tokens.length > 0) && (tokens[0] === 'draw')) {
+                        if (this.experiment.items._isClass(tokens[1]) === true) {
+                            var element = this.experiment.items._newElementClass(tokens[1], this, lines[i]);
                             this.elements.push(element);
                         } else {
-                            // error.
+                             this.experiment._runner._debugger.addError('Failed to parse definition: ' + tokens[1]);
                         }
                     }
                 }
@@ -70,56 +78,36 @@ module.exports = function(osweb){
             // Sort the elements usin the z-index.
             this.elements.sort(this._compare);
         }
-    };
+    }
 
-    /*
-     * Definition of public methods - runn cycle.         
-     */
-
-    p.prepare = function() {
-        // Clear the canvas.
-        this.canvas.clear();
+    /** Implements the prepare phase of an item. */
+    prepare() {
         // Draw the elements. 
         for (var i = 0; i < this.elements.length; i++) {
-            if (this.elements[i].is_shown() == true) {
+            if (this.elements[i].is_shown() === true) {
                 this.elements[i].draw();
             }
         }
 
         // Inherited.	
-        this.generic_response_prepare();
-    };
+        super.prepare();
+    }
 
-    p.run = function() {
+    /** Implements the run phase of the Sketschpad. */
+    run() {
         // Inherited.	
-        this.generic_response_run();
+        super.run();
 
         // Check if background color needs to be changed
-        /* var background_color = this.vars.get("background")
-        if(background_color){
-            // In case bgcolor is specified as a single int, convert it to a
-            // rgb string
-            if(this.canvas.styles.isInt(background_color)){
-                var val = background_color;
-                background_color = 'rgb('+val+','+val+','+val+')';
-            }
-            osweb.runner._canvas.style.backgroundColor = background_color;
-        } */
-        
+        var background_color = this.vars.get('background');
+        if (background_color) {
+            this.canvas._styles.backgroundColor = background_color;
+        } 
+
         // Set the onset and start the stimulus response process.  
         this.set_item_onset(this.canvas.show());
         this.set_sri(false);
         this.process_response();
-    };
-
-    p.complete = function() {
-        // Clear the canvas.
-        //this.canvas.clear();
-
-        // Inherited.	
-        this.generic_response_complete();
-    };
-
-    // Bind the sketchpad class to the osweb namespace.
-    return osweb.promoteClass(sketchpad, "generic_response");
+    }
 }
+  

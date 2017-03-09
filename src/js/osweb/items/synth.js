@@ -1,24 +1,20 @@
-/*
- * Definition of the class synth.
+
+/**
+ * Class representing a synth item.
+ * @extends Sampler
  */
-
-module.exports = function(osweb){
-    "use strict";
-    function synth(pExperiment, pName, pScript) {
-        // Inherited.
-        this.sampler_constructor(pExperiment, pName, pScript);
-    };
-
-    // Extend the class from its base class.
-    var p = osweb.extendClass(synth, osweb.sampler);
-
-    // Define and set the public properties. 
-    p.description = 'A basic sound synthesizer';
-
-    /*
-     * Definition of public class methods.
+osweb.synth= class Synth extends osweb.sampler {
+    /**
+     * Create a synth item which create a synthessised sound wave.
+     * @param {Object} experiment - The experiment item to which the item belongs.
+     * @param {String} name - The unique name of the item.
+     * @param {String} Ssript - The script containing the properties of the item.
      */
-
-    // Bind the synth class to the osweb namespace.
-    return osweb.promoteClass(synth, "sampler");
+    constructor(experiment, name, script) {
+        // Inherited create.
+        super(experiment, name, script);
+        
+        // Define and set the public properties. 
+        this.description = 'A basic sound synthesizer';
+    }
 }

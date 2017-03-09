@@ -1,103 +1,94 @@
-/*
- * Definition of the class base_element.
- */
-"use strict";
+/** Class representing a general visual element. */
+osweb.base_element = class BaseElement {
+    /**
+     * Create a log object which stores all the response data.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     * @param {Object} defaults - The default property values of the visual element.
+     */
+    constructor(sketchpad, script, defaults) {
+        // Set class parameter properties.
+        this.canvas = sketchpad.canvas;
+        this.defaults = defaults;
+        this.defaults.show_if = 'always';
+        this.defaults.z_index = 0;
+        this.experiment = sketchpad.experiment;
+        this.fix_coordinates = (sketchpad.vars.uniform_coordinates === 'yes');
+        this.name = sketchpad.name;
+        this.only_keywords = false;
+        this.pool = sketchpad.experiment.pool;
+        this.properties = {};
+        this.sketchpad = sketchpad;
+        this.syntax = sketchpad.syntax;
+        this.vars = sketchpad.vars;
 
-function base_element(pSketchpad, pScript, pDefaults) {
-    // Set the public properties.		
-    this.canvas = pSketchpad.canvas;
-    this.defaults = pDefaults;
-    this.defaults.show_if = 'always';
-    this.defaults.z_index = 0;
-    this.experiment = pSketchpad.experiment;
-    this.fix_coordinates = (pSketchpad.vars.uniform_coordinates == 'yes');
-    this.name = pSketchpad.name;
-    this.only_keywords = false;
-    this.pool = pSketchpad.experiment.pool;
-    this.sketchpad = pSketchpad;
-    this.syntax = pSketchpad.syntax;
-    this.vars = pSketchpad.vars;
+        // Set the private properties.		
+        this._properties = null;
 
-    // Set the private properties.		
-    this._properties = null;
-
-    // Read the definition string.
-    this.from_string(pScript);
-};
-
-// Extend the class from its base class.
-var p = base_element.prototype;
-
-// Set the class public properties. 
-p.defaults = {};
-p.fix_coordinates = true;
-p.only_keywords = false;
-p.properties = {};
-p.sketchpad = null;
-p.vars = null;
-
-/*
- * Definition of public methods - building cycle.         
- */
-
-/**
- * Parses the OpenSesame script string representing this item. Data are stored
- * in the properties variable of this object.
- * @param  {string} pString The OpenSesame string
- * @return {void}
- */
-p.from_string = function(pString) {
-    var cmd, args;
-    [cmd, args, this.properties] = osweb.syntax.parse_cmd(pString);
-};
-
-/*
- * Definition of public methods - running cycle.         
- */
-
-p.z_index = function() {
-    //  Determines the drawing order of the elements. 
-    return this.properties.z_index;
-};
-
-p.eval_properties = function() {
-    // Evaluates all properties and return them.
-    this._properties = {};
-
-    var xc = this.experiment.vars.width / 2;
-    var yc = this.experiment.vars.height / 2;
-
-    for (var property in this.properties) {
-        var value = this.sketchpad.syntax.eval_text(this.properties[property]);
-        /* if var == u'text':
-		round_float = True
-            else:
-		round_float = False
-	val = self.sketchpad.syntax.auto_type(
-		self.sketchpad.syntax.eval_text(val, round_float=round_float))
-	if self.fix_coordinates and type(val) in (int, float): */
-        if ((property == 'x') || (property == 'x1') || (property == 'x2')) {
-            value = Number(value) + xc;
-        };
-        if ((property == 'y') || (property == 'y1') || (property == 'y2')) {
-            value = Number(value) + yc;
-        };
-
-        this._properties[property] = value;
+        // Read the definition string.
+        this.from_string(script);
     }
-};
 
-p.is_shown = function() {
-    // Set the self of the current workspace.
-    this.experiment.python_workspace['self'] = this.sketchpad;
-    // Determines whether the element should be shown, based on the show-if statement.
-    return this.experiment.python_workspace._eval(this.experiment.syntax.compile_cond(this.properties['show_if']));
-};
+    /**
+     * Parses the element from a definition string.
+.    * @param {String} script - The definition script line to be parsed.
+     */
+    from_string(script) {
+        var cmd, args;
+        [cmd, args, this.properties] = this.sketchpad.syntax.parse_cmd(script);
+    }
 
-p.draw = function() {
-    // Calculate the dynamic properties.
-    this.eval_properties();
-};
+    /**
+     * Determines the drawing order of the elements.  
+     * @param {Number} - The drawing order (value) of the element.
+     */
+    z_index() {
+        //  Determines the drawing order of the elements. 
+        return this.properties.z_index;
+    }
 
-// Bind the base_element class to the osweb namespace.
-module.exports = base_element;
+    /** Calculate the dynamic elements within properties. */
+    eval_properties() {
+        // Evaluates all properties and return them.
+        this._properties = {};
+
+        var xc = this.experiment.vars.width / 2;
+        var yc = this.experiment.vars.height / 2;
+
+        for (var property in this.properties) {
+            var value = this.sketchpad.syntax.eval_text(this.properties[property]);
+            /* if var == u'text':
+	        	round_float = True
+            else:
+		        round_float = False
+	        val = self.sketchpad.syntax.auto_type(
+		    self.sketchpad.syntax.eval_text(val, round_float=round_float))
+	        if self.fix_coordinates and type(val) in (int, float): */
+            if ((property == 'x') || (property == 'x1') || (property == 'x2')) {
+                value = Number(value) + xc;
+            };
+            if ((property == 'y') || (property == 'y1') || (property == 'y2')) {
+                value = Number(value) + yc;
+            };
+
+            this._properties[property] = value;
+        }
+    }
+
+    /**
+     * Determines whether the element should be shown, based on the show-if statement.
+.    * @return {Boolean} - Returns true if the element must be shown.
+     */
+    is_shown() {
+        // Set the self of the current workspace.
+        this.experiment.python_workspace['self'] = this.sketchpad;
+        // Determines whether the element should be shown, based on the show-if statement.
+        return this.experiment.python_workspace._eval(this.experiment.syntax.compile_cond(this.properties['show_if']));
+    }
+
+    /** Implements the draw phase of an element. */
+    draw() {
+        // Calculate the dynamic properties.
+        this.eval_properties();
+    }
+}

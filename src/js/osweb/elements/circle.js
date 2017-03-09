@@ -1,45 +1,41 @@
-/*
- * Definition of the class circle.
+/**
+ * Class representing an arrow element.
+ * @extends BaseElement
  */
+osweb.circle = class Circle extends osweb.base_element {
+    /**
+     * Create an experiment item which controls the OpenSesame experiment.
+     * @param {Object} sketchpad - The sketchpad item that owns the visual element.
+     * @param {String} script - The script containing properties of the visual element.
+     */
+    constructor(sketchpad, script) {
+        // Create a default property container.
+		var defaults = {};
+		defaults.color = sketchpad.vars.get('foreground');
+		defaults.fill = 0;
+		defaults.penwidth = 1;
+		defaults.x = null;
+		defaults.y = null;
+		defaults.r = null;
 
-module.exports = function(osweb){
-	"use strict";
-	function circle(pSketchpad, pScript) {
-		// Set the default properties.
-		this.defaults = {};
-		this.defaults.color = pSketchpad.vars.get('foreground');
-		this.defaults.fill = 0;
-		this.defaults.penwidth = 1;
-		this.defaults.x = null;
-		this.defaults.y = null;
-		this.defaults.r = null;
-
-		// Inherited.
-		this.base_element_constructor(pSketchpad, pScript, this.defaults);
+        // Inherited.
+        super(sketchpad, script, defaults);
 	}
 
-	// Extend the class from its base class.
-	var p = osweb.extendClass(circle, osweb.base_element);
-
-	/*
-	 * Definition of public methods - run cycle.   
-	 */
-
-	p.draw = function() {
-		// Inherited.	
-		this.base_element_draw();
+ 	/** Implements the draw phase of an element. */
+   	draw() {
+	    // Inherited.	
+        super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.Styles();
-		styles.fill = this._properties.fill;
+		var styles = new osweb.styles();
+		styles.background_color = this._properties.color;
 		styles.color = this._properties.color;
+		styles.fill = this._properties.fill;
 		styles.penwidth = this._properties.penwidth;
 
 		// Draw the circle element to the canvas of the sketchpad.
 		this.sketchpad.canvas.circle(this._properties.x, this._properties.y, 
 			this._properties.r, styles);
-	};
-
-	// Bind the Circle class to the osweb namespace.
-	return osweb.promoteClass(circle, "base_element");
+	}
 }
