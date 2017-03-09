@@ -77,6 +77,8 @@ module.exports = function(osweb){
      */
 
     p.prepare = function() {
+        // Clear the canvas.
+        this.canvas.clear();
         // Draw the elements. 
         for (var i = 0; i < this.elements.length; i++) {
             if (this.elements[i].is_shown() == true) {
@@ -93,7 +95,7 @@ module.exports = function(osweb){
         this.generic_response_run();
 
         // Check if background color needs to be changed
-        var background_color = this.vars.get("background")
+        /* var background_color = this.vars.get("background")
         if(background_color){
             // In case bgcolor is specified as a single int, convert it to a
             // rgb string
@@ -102,7 +104,7 @@ module.exports = function(osweb){
                 background_color = 'rgb('+val+','+val+','+val+')';
             }
             osweb.runner._canvas.style.backgroundColor = background_color;
-        }
+        } */
         
         // Set the onset and start the stimulus response process.  
         this.set_item_onset(this.canvas.show());
@@ -112,7 +114,7 @@ module.exports = function(osweb){
 
     p.complete = function() {
         // Clear the canvas.
-        this.canvas.clear();
+        //this.canvas.clear();
 
         // Inherited.	
         this.generic_response_complete();

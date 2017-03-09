@@ -10,6 +10,7 @@ module.exports = function(osweb){
     events._break = false; // If true the experiment is forced to stop.
     events._caller = null; // The caller object (clock, keyboard, mouse).
     events._current_item = null; // Contain the current active item. 			
+    events._event_loop = null; // PIXI - real time loper.
     events._keyboard_mode = osweb.constants.PRESSES_ONLY; // Keyboard collecting mode (down/up/both).
     events._keyboard_event = null; // Contains the last known keyboard event.
     events._mouse_mode = osweb.constants.PRESSES_ONLY; // Mouse collecting mode (down/up/both).
@@ -62,30 +63,31 @@ module.exports = function(osweb){
         window.addEventListener("keyup", this._keyUp.bind(this), false);
 
         // Initialize the mouse event listeners.
-        osweb.runner._canvas.addEventListener("mousedown", this._mouseDown.bind(this), false);
-        osweb.runner._canvas.addEventListener("mousemove", this._mouseMove.bind(this), false);
-        osweb.runner._canvas.addEventListener("mouseup", this._mouseUp.bind(this), false);
+        osweb.runner._renderer.view.addEventListener("mousedown", this._mouseDown.bind(this), false);
+        osweb.runner._renderer.view.addEventListener("mousemove", this._mouseMove.bind(this), false);
+        osweb.runner._renderer.view.addEventListener("mouseup", this._mouseUp.bind(this), false);
 
         // Initialize the mouse context event listeners.
-        osweb.runner._canvas.addEventListener("contextmenu", this._mouseContext.bind(this), false);
+        osweb.runner._renderer.view.addEventListener("contextmenu", this._mouseContext.bind(this), false);
 
         // Initialize the tick event listener.
-        createjs.Ticker.setInterval(15);
-        createjs.Ticker.addEventListener("tick", this._tick.bind(this));
+        this._event_loop = new PIXI.ticker.Ticker();
+        this._event_loop.add(this._tick.bind(this));
+        this._event_loop.start();
     };
 
     /** Finalize the event class. */
     events._finalize = function() {
         // Finalize the tick event listener.             
-        createjs.Ticker.removeEventListener("tick");
+        this._event_loop.stop();
 
         // Finalize the mouse context event listeners.
-        osweb.runner._canvas.removeEventListener("contextmenu", this._mouseContext, false);
+        osweb.runner._renderer.view.removeEventListener("contextmenu", this._mouseContext, false);
 
         // Finalize the mouse event listeners.
-        osweb.runner._canvas.removeEventListener("mousedown", this._mouseDown, false);
-        osweb.runner._canvas.removeEventListener("mousemove", this._mouseMove, false);
-        osweb.runner._canvas.removeEventListener("mouseup", this._mouseUp, false);
+        osweb.runner._renderer.view.removeEventListener("mousedown", this._mouseDown, false);
+        osweb.runner._renderer.view.removeEventListener("mousemove", this._mouseMove, false);
+        osweb.runner._renderer.view.removeEventListener("mouseup", this._mouseUp, false);
 
         // Finalize the keyboard event listeners.
         window.removeEventListener("keydown", this._keyDown, false);

@@ -12,11 +12,11 @@ module.exports = function(osweb){
     runner._container_video = null; // HTML video container. 
     runner._onconsole = null; // Event triggered on console output.
     runner._onfinished = null; // Event triggered on finishing the experiment.
+    runner._renderer = null; // PIXI renderer container.
     runner._script = null; // Container for the script definition of the experiment.
     runner._source = null; // Link to the source experiment file. 
-    runner._stage = null; // Link to the stage object (EASELJS).
-    runner._target = null; // Link to the target location for thr data. 
     runner._subject = null; // Subject number (if given no dialog is shown)
+    runner._target = null; // Link to the target location for thr data. 
     
     // Definition of public properties.
     runner.data = null; // Container for the result data.
@@ -35,12 +35,9 @@ module.exports = function(osweb){
             this._container = (typeof content === 'string') ? document.getElementById(content) : content;
 
             // Create and set the experiment canvas. 
-            this._canvas = document.createElement('canvas');
-            this._canvas.id = 'osweb_canvas';
-            this._canvas.width = 800;
-            this._canvas.height = 600;
-            this._canvas.style.backgroundColor = '#000000';
-
+            this._renderer = PIXI.autoDetectRenderer(800, 600, {antialias: false, transparent: false, resolution: 1});
+            this._renderer.backgroundColor = 0;
+     
             // Create the form and video containers. 
             this._container_forms = document.createElement('div');
             this._container_forms.id = 'osweb_form';
@@ -57,16 +54,9 @@ module.exports = function(osweb){
             this._container_video.height = 600;
 
             // Append the canvas to the container.
-            this._container.appendChild(this._canvas);
+            this._container.appendChild(this._renderer.view);
             this._container.appendChild(this._container_forms);
             this._container.appendChild(this._container_video);
-
-            // Set the stage object (easelJS). 
-            this._stage = new createjs.Stage(this._canvas);
-            this._stage.snapToPixelEnabled = true;
-            this._stage.regX = -.5;
-            this._stage.regY = -.5;
-
         } else {
             osweb.debug.addError(osweb.constants.ERROR_002);
         }
@@ -138,10 +128,6 @@ module.exports = function(osweb){
 
         // Set status of the runner.
         this.status = osweb.constants.RUNNER_RUNNING;
-
-        // Set the stage object.
-        this._stage.clear();
-        this._stage.update();
         
         // Prepare and execute the experiment item.
         this.experiment.prepare();
@@ -162,14 +148,8 @@ module.exports = function(osweb){
 
     /** Exit the experiment environment and execute the callback (optional). */
     runner._exit = function() {
-        // Clear the canvas.
-        this._stage.clear();
-
-        // Set the cursor visibility to default (visible).
-        this._stage.canvas.style.cursor = "default";
-
         // Remove the canvas from the container.
-        this._container.removeChild(this._canvas);
+        this._container.removeChild(this._renderer.view);
         this._container.removeChild(this._container_forms);
         this._container.removeChild(this._container_video);
 

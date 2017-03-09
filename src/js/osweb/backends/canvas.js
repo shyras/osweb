@@ -25,10 +25,10 @@ function canvas(experiment, auto_prepare) {
     this.html = true; // If true html is used (not supported yet).
 
     // Set the private properties.  
-    this._container = new createjs.Container(); // EASELJS: Container which holds the shapes
+    this._container = new PIXI.Container(); // PIXI: Container which holds the shapes
     this._font_string = 'bold 18px Courier New'; // EASELJS: Default font definition string.
-    this._height = osweb.runner._canvas.height; // Height of the HTML canvas used for drawing.
-    this._width = osweb.runner._canvas.width; // Width of the HTML canvas used for drawing.
+    this._height = osweb.runner._renderer.height; // Height of the HTML canvas used for drawing.
+    this._width = osweb.runner._renderer.width; // Width of the HTML canvas used for drawing.
 };
 
 // Extend the class from its base class.
@@ -115,7 +115,7 @@ p._arrow_shape = function(sx, sy, ex, ey, body_width, body_length, head_width) {
 // Is the function below even required in a browser? I think it already has all 
 // these values internally representend. -Daniel
 
-p._color = function(colour) {
+p._color = function(colour, hex) {
     // Method to convert color names and hex values to rgb object (used in gabor and noise).
     var colours = {
         "aliceblue": "#f0f8ff",
@@ -264,7 +264,11 @@ p._color = function(colour) {
         var colour = colours[colour.toLowerCase()];
     }
 
-    return this._hexToRgb(colour);
+    if (hex === true) {
+        return this._hexToRgb(colour);
+    } else {
+        return colour;        
+    }
 };
 
 p._hexToRgb = function(hex) {
@@ -346,18 +350,22 @@ p._create_div_for_text = function(text, center){
     if(center == 1){
         container.style.textAlign = "center";
     }
+    
     // Set the correct font
-    if(this.styles.font_family){
+    container.style.fontFamily = 'Arial';
+    
+/*    if (this.styles.font_family) {
         // Check for spaces in font names
         if(this.styles.font_family.indexOf(" ") != -1){
             // Encapsulate in quotes if font name contains spaces (e.g.
             // "Times New Roman")
-            var font_str = "'" + this.styles.font_family + "'";
+            var font_str = '"' + this.styles.font_family + '"';
         }else{
             var font_str = this.styles.font_family;
         }
         container.style.fontFamily = this.styles.font_family + ', Verdana, sans-serif';
-    }
+    } */
+
     if(font_bold){ 
         container.style.fontWeight = font_bold;
     }
@@ -381,28 +389,36 @@ p.arrow = p._configurable(function(sx, sy, ex, ey, body_width, body_length, head
     var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width);
 
     // Draw the arrow as a polygon.
-    this.polygon(points);
+    this.polygon(points); 
 });
 
 p.circle = p._configurable(function(x, y, r) {
-    var shape = new createjs.Shape();
-    shape.graphics.setStrokeStyle(this.styles.penwidth);
-    shape.graphics.beginStroke(this.styles.color);
-    if (this.styles.fill == 1) {
-        shape.graphics.beginFill(this.styles.color);
-    }
-    shape.graphics.drawCircle(x, y, r);
-
-    // Add the line item to container.
-    this._container.addChild(shape);
+    // Create a rectangle element.
+    var circle = new PIXI.Graphics();
+    circle.lineStyle(this.styles.penwidth, this.styles.color, 1);
+    if (this.styles.fill === true) {
+        circle.beginFill(this.styles.color);
+        circle.drawCircle(0, 0, r);
+        circle.endFill();
+    } else {
+        circle.drawCircle(0, 0, r);
+    }    
+    circle.x = x;
+    circle.y = y;
+    
+    // Add the line element to container.
+    this._container.addChild(circle);
 });
 
 p.clear = function(backround_color) {
-    // Remove the container from the stage object.
-    osweb.runner._stage.removeChild(this._container);
+    // Clear the renderer.
+    var color = this._color(this.experiment.vars.background, true);
+    osweb.runner._renderer.clear((color.r << 16) + (color.g << 8) + (color.b));
 
-    // Remove the children from the container.
-    this._container.removeAllChildren();
+    // Clear the stage by removing al the child elements.
+    for (var i = this._container.children.length - 1; i >= 0; i--) {	
+        this._container.removeChild(this._container.children[i]);
+    };  
 };
 
 p.close_display = function(experiment) {
@@ -420,16 +436,18 @@ p.copy = function(canvas) {
 };
 
 p.ellipse = p._configurable(function(x, y, w, h) {
-    var shape = new createjs.Shape();
-    shape.graphics.setStrokeStyle(this.styles.penwidth);
-    shape.graphics.beginStroke(this.styles.color);
-    if (this.styles.fill == 1) {
-        shape.graphics.beginFill(this.styles.color);
-    }
-    shape.graphics.drawEllipse(x, y, w, h);
-
-    // Add the text item to the parten frame.
-    this._container.addChild(shape);
+    var ellipse = new PIXI.Graphics();
+    ellipse.lineStyle(this.styles.penwidth, this.styles.color, 1);
+    if (this.styles.fill === true) {
+        ellipse.beginFill(this.styles.color);
+        ellipse.drawEllipse(0, 0, (w / 2), (h / 2));
+        ellipse.endFill();
+    } else {
+        ellipse.drawEllipse(0, 0, (w / 2), (h / 2));
+    }    
+    ellipse.x = x + (w / 2);
+    ellipse.y = y + (h / 2);
+    this._container.addChild(ellipse);
 });
 
 p.fixdot = p._configurable(function(x, y, style) {
@@ -490,15 +508,6 @@ p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, 
     // Returns a surface containing a Gabor patch. 
     env = this._match_env(env);
 
-    /* # Generating a Gabor patch takes quite some time, so keep
-	# a cache of previously generated Gabor patches to speed up
-	# the process.
-	global canvas_cache
-	key = u"gabor_%s_%s_%s_%s_%s_%s_%s_%s_%s" % (orient, freq, env, size,
-		stdev, phase, col1, col2, bgmode)
-	if key in canvas_cache
-		return canvas_cache[key] */
-
     // Create a temporary canvas to make an image data array.        
     var canvas = document.createElement("canvas");
     canvas.width = size;
@@ -508,8 +517,8 @@ p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, 
 
     // Conver the orientation to radians.
     orient = (orient * Math.PI / 180);
-    color1 = this._color(color1);
-    color2 = this._color(color2);
+    color1 = this._color(color1, true);
+    color2 = this._color(color2, true);
 
     // rx and ry reflect the real coordinates in the target image
     for (var rx = 0; rx < size; rx++) {
@@ -566,20 +575,16 @@ p.gabor = function(x, y, orient, freq, env, size, stdev, phase, color1, color2, 
 
     // Put the calculated data back on the canvas and create an image of it.
     ctx.putImageData(px, 0, 0);
-    var img = document.createElement("img");
-    img.src = canvas.toDataURL("image/png");
 
-    // Create an easeljs bitmap of the image.
-    var image = new createjs.Bitmap();
-    image.image = img;
-    image.scaleX = 1;
-    image.scaleY = 1;
-    image.snapToPixel = true;
-    image.x = x - (size / 2);
-    image.y = y - (size / 2);
+    // Retrieve the image from the recourses  
+    var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
 
-    // Add the image item to the parten frame.
-    this._container.addChild(image);
+    // Position the image.
+    sprite.x = x - (size / 2);
+    sprite.y = y - (size / 2);
+
+    // Add the image to the stage.
+    this._container.addChild(sprite);
 };
 
 p.height = function() {
@@ -587,61 +592,67 @@ p.height = function() {
 };
 
 p.image = function(fname, center, x, y, scale) {
-    // Set the class private properties. 
-    var image = new createjs.Bitmap();
-    image.image = fname.data;
-    image.scaleX = scale;
-    image.scaleY = scale;
-    image.snapToPixel = true;
+    // bug in scale (waarde is 0)
+    scale = 1;
 
-    if([1,"1",true, "yes"].indexOf(center) !== -1){
-        image.x = x - ((image.image.width * scale) / 2);
-        image.y = y - ((image.image.height * scale) / 2);
-    }else{
-        image.x = x;
-        image.y = y;
-    }
+    // Create a drawing canvas.
+    var mycanvas = document.createElement("canvas");
+    mycanvas.width = fname.data.width;
+    mycanvas.height = fname.data.height;
+    var ctx = mycanvas.getContext("2d");
+    ctx.drawImage(fname.data, 0, 0);
+    
+    // Retrieve the image from the recourses  
+    var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(mycanvas)); 
+    sprite.width = sprite.width * scale; 
+    sprite.height = sprite.height * scale; 
 
-    // Add the text item to the parten frame.
-    this._container.addChild(image);
+    // Position the image.
+    if ([1,"1",true, "yes"].indexOf(center) !== -1) {
+        sprite.x = x - ((sprite.width * scale) / 2);
+        sprite.y = y - ((sprite.height * scale) / 2);
+    } else {
+        sprite.x = (this._width / 2) + x;
+        sprite.y = (this._height / 2) + y;
+    }  
+
+    // Add the image to the container.
+    this._container.addChild(sprite);
 };
 
 p.init_display = function(experiment) {
-    console.log('a');
     // Set the dimension properties.
     this._height = experiment.vars.height;
     this._width = experiment.vars.width;
 
-    // Resize the container div to the same size as the canvas
-    // This will make sure items other than the canvas (forms, videos)
-    // will also be displayed with the same dimensions.
+    // Resize the container div to the same size as the canvas.
     osweb.parameters._resizeOswebDiv(this._width, this._height);
 
     // Initialize the display dimensions.
-    osweb.runner._canvas.height = experiment.vars.height;
-    osweb.runner._canvas.width = experiment.vars.width;
+    osweb.runner._renderer.resize(this._width, this._height);
 
     // Initialize the display color.
-    osweb.runner._canvas.style.background = experiment.vars.background;
+    var color = this._color(experiment.vars.background, true);
+    osweb.runner._renderer.clear((color.r << 16) + (color.g << 8) + (color.b));
 
     // Set the cursor visibility to none (default).
-    osweb.runner._canvas.style.cursor = 'none';
+    osweb.runner._renderer.view.style.cursor = 'none';
 
     // Set focus to the experiment canvas.
-    osweb.runner._canvas.focus();
-
-    console.log('b');
+    osweb.runner._renderer.view.focus();
 };
 
 p.line = p._configurable(function(sx, sy, ex, ey) {
-    var shape = new createjs.Shape();
-    shape.graphics.setStrokeStyle(this.styles.penwidth);
-    shape.graphics.beginStroke(this.styles.color);
-    shape.graphics.moveTo(sx, sy);
-    shape.graphics.lineTo(ex, ey);
-
-    // Add the line item to container.
-    this._container.addChild(shape);
+    // Create a line element.
+    var line = new PIXI.Graphics();
+    line.lineStyle(this.styles.penwidth, this.styles.color, 1);
+    line.moveTo(0, 0);
+    line.lineTo(ex - sx, ey - sy);
+    line.x = sx;
+    line.y = sy;
+    
+    // Add the line element to container.
+    this._container.addChild(line); 
 });
 
 p.nl2br = function(str, is_xhtml) {
@@ -653,14 +664,6 @@ p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
     // Returns a surface containing a noise patch. 
     env = this._match_env(env);
 
-    /* # Generating a noise patch takes quite some time, so keep
-	# a cache of previously generated noise patches to speed up
-	# the process.
-	global canvas_cache
-	key = u"noise_%s_%s_%s_%s_%s_%s" % (env, size, stdev, col1, col2, bgmode)
-	if key in canvas_cache:
-		return canvas_cache[key] */
-
     // Create a temporary canvas to make an image data array.        
     var canvas = document.createElement("canvas");
     canvas.width = size;
@@ -669,8 +672,8 @@ p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
     var px = ctx.getImageData(0, 0, size, size);
 
     // Create a surface
-    color1 = this._color(color1);
-    color2 = this._color(color2);
+    color1 = this._color(color1, true);
+    color2 = this._color(color2, true);
 
     // rx and ry reflect the real coordinates in the target image
     for (var rx = 0; rx < size; rx++) {
@@ -719,56 +722,61 @@ p.noise = function(x, y, env, size, stdev, color1, color2, bgmode) {
 
     // Put the calculated data back on the canvas and create an image of it.
     ctx.putImageData(px, 0, 0);
-    var img = document.createElement("img");
-    img.src = canvas.toDataURL("image/png");
 
-    // Create an easeljs bitmap of the image.
-    var image = new createjs.Bitmap();
-    image.image = img;
-    image.scaleX = 1;
-    image.scaleY = 1;
-    image.snapToPixel = true;
-    image.x = x - (size / 2);
-    image.y = y - (size / 2);
+    // Retrieve the image from the recourses  
+    var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
 
-    // Add the image item to the parten frame.
-    this._container.addChild(image);
+    // Position the image.
+    sprite.x = x - (size / 2);
+    sprite.y = y - (size / 2);
+
+    // Add the image to the stage.
+    this._container.addChild(sprite);
 };
 
 p.polygon = p._configurable(function(verticles) {
-    var shape = new createjs.Shape();
-    shape.graphics.setStrokeStyle(this.styles.penwidth);
-    shape.graphics.beginStroke(this.styles.color);
-    if (this.styles.fill == 1) {
-        shape.graphics.beginFill(this.styles.color);
+    // Adjust the points.
+    var path = [];
+    for (var i = 0; i < verticles.length; i++) {
+        path.push(verticles[i][0]);
+        path.push(verticles[i][1]);
     }
+    path.push(verticles[0][0]);
+    path.push(verticles[0][1]);
 
-    var x = verticles[0][0];
-    var y = verticles[0][1];
-    shape.graphics.moveTo(verticles[0][0], verticles[0][1]);
-    verticles.slice(1);
-    verticles.slice(1).forEach(function(point) {
-        shape.graphics.lineTo(point[0], point[1]);
-    });
-    shape.graphics.lineTo(x, y);
-
+    // Create a polygon element.
+    var polygon = new PIXI.Graphics();
+    polygon.lineStyle(this.styles.penwidth, this.styles.color, 1);
+    if (this.styles.fill === true) {
+        polygon.beginFill(this.styles.color);
+        polygon.drawPolygon(path);
+        polygon.endFill();
+    } else {
+        polygon.drawPolygon(path);
+    }
     // Add the plygon item to container.
-    this._container.addChild(shape);
+    this._container.addChild(polygon); 
 });
 
-p.prepare = function() {};
+p.prepare = function() {
+};
 
 p.rect = p._configurable(function(x, y, w, h) {
-    var shape = new createjs.Shape();
-    shape.graphics.setStrokeStyle(this.styles.penwidth);
-    shape.graphics.beginStroke(this.styles.color);
-    if (this.styles.fill == 1) {
-        shape.graphics.beginFill(this.styles.color);
+    // Create a rectangle element.
+    var rectangle = new PIXI.Graphics();
+    rectangle.lineStyle(1, this.styles.color, 1);
+    if (this.styles.fill === true) {
+        rectangle.beginFill(this.styles.color);
+        rectangle.drawRect(0, 0, w, h);
+        rectangle.endFill();
+    } else {
+        rectangle.drawRect(0, 0, w, h);
     }
-    shape.graphics.rect(x, y, w, h);
-
-    // Add the line item to container..
-    this._container.addChild(shape);
+    rectangle.x = x;
+    rectangle.y = y;
+ 
+    // Add the line element to container.
+    this._container.addChild(rectangle);
 });
 
 /**
@@ -795,10 +803,9 @@ p.set_font = function(family, size, italic, bold, underline) {
 };
 
 p.show = function() {
-    // Add the container to the stage object and update the stage.
-    osweb.runner._stage.addChild(this._container);
-    osweb.runner._stage.update();
-
+    // PIXI: Render the container in the renderer.
+    osweb.runner._renderer.render(this._container);    
+  
     // Return the current time.
     if (this.experiment != null) {
         return this.experiment.clock.time();
@@ -833,15 +840,17 @@ p.text = p._configurable(function(text, center, x, y, html) {
         } else {
             // Account for IE quirk (even though the rest won't work at all in IE)
             var html = (new XMLSerializer).serializeToString(container);
-        }
+        } 
 
         // Create a SVG string to embed the HTML into.
         var data = '<svg xmlns="http://www.w3.org/2000/svg" width="' +  container_width + '" height="' + container_height + '">' +
            '<foreignObject width="100%" height="100%">' +
-           '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:10px">' + html + '</div>' +
+            html +
            '</foreignObject>' +
            '</svg>';     
 
+        console.log(data);
+        
         // Create a temporary canvas 
         var mycanvas = document.createElement("canvas");
         mycanvas.width = container_width;
@@ -854,56 +863,43 @@ p.text = p._configurable(function(text, center, x, y, html) {
 
         // Virtual load the image and process it.
         img.onload = function() {
+            // Draw the image onto the canvas
             ctx.drawImage(img, 0, 0) ;
-            var dataURL = mycanvas.toDataURL();
-            
-            var img2 = new Image();
-            img2.src = dataURL;
-            
-            // Create an easeljs bitmap of the image.
-            var image = new createjs.Bitmap();
-            image.image = img2;
-            image.scaleX = 1;
-            image.scaleY = 1;
-            image.snapToPixel = true;
+
+            // Retrieve the image from the recourses  
+            var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(mycanvas));
 
             if (center === 1) {
-                image.x = x - container_width/2;
-                image.y = y - container_height/2;
+                sprite.x = x - (container_width / 2);
+                sprite.y = y - (container_height / 2);
             } else {
-                image.x = x; 
-                image.y = y;
-            }
+                // Position the image.
+                sprite.x = x;
+                sprite.y = y;
+            }    
 
-            // Add the image item to the parten frame.
-            this._container.addChild(image);
+            // Add the image to the stage.
+            this._container.addChild(sprite);
         }.bind(this);
+
         // Load the image.
         img.src = url;
     } else {
-        var font_string = this._create_font_string();
-
-        var text_element = new createjs.Text(text, font_string, 
-            this.styles.color);
-
-        text_element.lineWidth = this.width(); // max width before wrapping.
-        text_element.lineHeight = 32;
-        text_element.textAlign = "center";
-
-        var width = text_element.getMeasuredWidth();
-        var height = text_element.getMeasuredHeight();
-    
+        // PIXI - Create the text element  
+        var msg = new PIXI.Text(text, {fontFamily: this.styles.font_family, fontSize: this.styles.font_size, fill: this.styles.color});
+        
+        // Position the text.
         if (center === 1) {
-            text_element.x = x;
-            text_element.y = y - height/2;
+            msg.x = x - (msg.width / 2);
+            msg.y = y - (msg.height / 2);
         } else {
             // x coordinate designates the left side of the element
-            text_element.x = x + width/2;
-            text_element.y = y;
+            msg.x = x;
+            msg.y = y;
         }
 
-        // Add the text item to the parten frame.
-        this._container.addChild(text_element);
+        // PIXI - Add text element to the stage.
+        this._container.addChild(msg);
     }
 });
 

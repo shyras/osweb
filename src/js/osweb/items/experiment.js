@@ -306,14 +306,14 @@ module.exports = function(osweb){
 		osweb.events._current_item = null;
 
 		// Clear the exprimental stage and enabled the mouse.
-		osweb.runner._canvas.style.cursor = 'default';
-		osweb.runner._stage.update();
+		osweb.runner._renderer.view.style.cursor = 'default';
+		osweb.runner._renderer.clear(0x000000);
 
-                // Clear the form elements.
-                var node = document.getElementById('osweb_form');
-                while (node.hasChildNodes()) {
-                    node.removeChild(node.lastChild);
-                }    
+        // Clear the form elements.
+        var node = document.getElementById('osweb_form');
+        while (node.hasChildNodes()) {
+        	node.removeChild(node.lastChild);
+        }    
                 
 		// Finalize the parent (runner).	
 		osweb.runner._finalize();

@@ -13,21 +13,25 @@ screen._click     = true;     // If true the experiment is started with a mouse 
 screen._setupIntroScreen = function() {
     // Set the introscreen elements.
     if (this._active === true) {
-        this._introScreen = new createjs.Shape();
-        this._introScreen.graphics.beginFill('#000000').drawRect(0, 0, osweb.runner._stage.width, osweb.runner._stage.height);
-        this._introLine = new createjs.Shape();
-        this._introLine.graphics.beginFill('#AAAAAA').drawRect(200, 155, 400, 1);
-        this._introText1 = new createjs.Text('OS', "24px bold Times", "#FF0000");
-        this._introText1.x = 200;
-        this._introText1.y = 135;
-        this._introText2 = new createjs.Text(osweb.constants.MESSAGE_002 + osweb.VERSION_NUMBER, "14px Arial", "#FFFFFF");
-        this._introText2.x = 231;
-        this._introText2.y = 142;
-        this._introText3 = new createjs.Text('', "12px Arial", "#FFFFFF");
-        this._introText3.x = 200;
-        this._introText3.y = 168;
-        osweb.runner._stage.addChild(this._introScreen, this._introLine, this._introText1, this._introText2, this._introText3);
-        osweb.runner._stage.update();
+        this._introScreen = new PIXI.Container();
+        this._introLine = new PIXI.Graphics();
+        this._introLine.lineStyle(1,0xAAAAAA,1);
+        this._introLine.moveTo(0, 0);
+        this._introLine.lineTo(400, 0);
+        this._introLine.x = 200;
+        this._introLine.y = 159;
+        this._introScreen.addChild(this._introLine);  
+        this._introText1 = new PIXI.Text('OS', {fontFamily: 'Times', fontSize: 24, fill: '#FF0000'});
+        this._introText1.position.set(200, 135);
+        this._introScreen.addChild(this._introText1)
+        this._introText2 = new PIXI.Text(osweb.constants.MESSAGE_002 + osweb.VERSION_NUMBER, {fontFamily: "Arial", fontSize: 14, fill: "#FFFFFF"});
+        this._introText2.position.set(231, 142);
+        this._introScreen.addChild(this._introText2)
+        this._introText3 = new PIXI.Text('', {fontFamily: "Arial", fontSize: 12, fill: "#FFFFFF"});
+        this._introText3.position.set(200, 163);
+        this._introScreen.addChild(this._introText3)
+        // Show the introduction screen.
+        osweb.runner._renderer.render(this._introScreen);    
     }
 };
 
@@ -41,7 +45,7 @@ screen._setupClickScreen = function() {
         // Setup the mouse click response handler.
         var clickHandler = function(event) {
             // Remove the handler.
-            osweb.runner._canvas.removeEventListener("click", clickHandler);
+            osweb.runner._renderer.view.removeEventListener("click", clickHandler);
 
             // Finalize the introscreen elements.
             this._clearIntroScreen();
@@ -51,7 +55,7 @@ screen._setupClickScreen = function() {
         }.bind(this);
 
         // Set the temporary mouse click.
-        osweb.runner._canvas.addEventListener("click", clickHandler, false);
+        osweb.runner._renderer.view.addEventListener('click', clickHandler, false);
     } else {
         // Finalize the introscreen elements.
         this._clearIntroScreen();
@@ -65,8 +69,11 @@ screen._setupClickScreen = function() {
 screen._clearIntroScreen = function() {
     // Update the introscreen elements.
     if (this._active === true) {
-        osweb.runner._stage.removeAllChildren();
-        osweb.runner._stage.update();
+        // Clear the stage by temoving al the child elements.
+        for (var i = this._introScreen.children.length - 1; i >= 0; i--) {	
+            this._introScreen.removeChild(this._introScreen.children[i]);
+        };
+        osweb.runner._renderer.render(this._introScreen);    
     }
 };
 
@@ -81,19 +88,30 @@ screen._updateProgressBar = function(percentage)
         switch (percentage)
         {
             case -1: 
-                this._progressBarOuter = new createjs.Shape();
-                this._progressBarOuter.graphics.setStrokeStyle(1).beginStroke("#ffffff").drawRect(200, 200, 400, 20);
-                this._progressBarInner = new createjs.Shape();
-                osweb.runner._stage.addChild(this._progressBarOuter,this._progressBarInner);
-                osweb.runner._stage.update();
+                this._progressBarOuter = new PIXI.Graphics();
+                this._progressBarOuter.lineStyle(1,0xFFFFFF, 1);
+                this._progressBarOuter.drawRect(200, 200, 400, 20);
+                this._progressBarOuter.x = 0;
+                this._progressBarOuter.y = 0;
+                this._progressBarInner = new PIXI.Graphics();
+                this._progressBarInner.lineStyle(1,0xFFFFFF, 1);
+                this._progressBarInner.drawRect(202, 202, 1, 16);
+                this._progressBarInner.x = 0;
+                this._progressBarInner.y = 0;
+                this._introScreen.addChild(this._progressBarInner)
+                this._introScreen.addChild(this._progressBarOuter)
+                osweb.runner._renderer.render(this._introScreen);    
             break;
             case 100:
-                osweb.runner._stage.removeChild(this._progressBarOuter,this._progressBarInner);
-                osweb.runner._stage.update();
+                this._introScreen.removeChild(this._progressBarInner)
+                this._introScreen.removeChild(this._progressBarOuter)
+                osweb.runner._renderer.render(this._introScreen);    
             break;
             default:
-                this._progressBarInner.graphics.beginFill('#ffffff').drawRect(202, 202, Math.round(percentage * 396), 16);
-                osweb.runner._stage.update();
+                this._progressBarOuter.beginFill(0xFFFFFF);
+                this._progressBarOuter.drawRect(202, 202,  Math.round(percentage * 396), 16);
+                this._progressBarOuter.endFill();
+                osweb.runner._renderer.render(this._introScreen);    
         }        
     }    
 };
@@ -106,7 +124,7 @@ screen._updateIntroScreen = function(text) {
     // Update the introscreen elements.
     if (this._active === true) {
         this._introText3.text = text;
-        osweb.runner._stage.update();
+        osweb.runner._renderer.render(this._introScreen);    
     }
 };
 
