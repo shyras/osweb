@@ -169,7 +169,7 @@ osweb.generic_response = class GenericResponse extends osweb.item {
                 this._sampler.wait();
             break;
             case osweb.constants.RESPONSE_VIDEO:
-                this._video.wait();
+                this._video_player.wait();
             break;
         }
     }

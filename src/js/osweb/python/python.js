@@ -28,9 +28,6 @@ osweb.python_parser = class PythonParser {
 
     /** Initialization phase of the python class. */
     _initialize() {
-        
-        
-        
         // Set the python variable connections with opensesame.  
         this._variables['clock'] = this._runner._experiment.clock;
         this._variables['exp'] = this._runner._experiment;

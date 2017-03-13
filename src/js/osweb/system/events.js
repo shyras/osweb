@@ -18,12 +18,12 @@ osweb.events = class Events {
         this._responseGiven = false; // Valid response toggle
         this._responseList = null; // Items to respond on.
         this._responseType = osweb.constants.RESPONSE_NONE; // Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
-        this._sound_ended = false; // Sound play is finished.
+        this._soundHasEnded = false; // Sound play is finished.
         this._state = osweb.constants.TIMER_NONE; // Current status of the runner.  
         this._timeHandler = null; // Timing event handler.
         this._timeOut = -1; // Duration before timeout occures. 
         this._timeStamp = -1; // Moment of update checking.
-        this._video_ended = false; // Video play is finished.
+        this._videoHasEnded = false; // Video play is finished.
 
         // Definition of the conversion table to convert keycodes to OpenSesame codes.
         this._KEY_CODES = [
@@ -283,13 +283,17 @@ osweb.events = class Events {
         // If duration isequal to sound exit the sound item.
         var sampler = this;
         if (sampler.duration === "sound") {
-            this._sound_ended = true;
+            this._soundHasEnded = true;
         }
     }
 
     /** Definition of methods for video event processing. */
-    _videoEnded() {
-        this._video_ended = true;
+    _videoEnded(event) {
+        // If duration is set to video end respons to this. 
+        var video = this;
+        if (video.duration === 'video') {
+            video._experiment._runner._events._videoHasEnded = true;
+        }
     }
 
     /** 
@@ -314,7 +318,7 @@ osweb.events = class Events {
                 this._timeStamp = this._currentItem.clock.time();
 
                 // Check if a time out occures or a valid response is given.
-                if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._soundEnded === true) || (this._videoEnded === true))) ||
+                if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._soundHasEnded === true) || (this._videoHasEnded === true))) ||
                     ((this._timeOut > 0) && ((this._responseType === osweb.constants.RESPONSE_KEYBOARD) || (this._responseType === osweb.constants.RESPONSE_MOUSE)) && (this._responseGiven === true)) ||
                     ((this._timeOut > 0) && ((this._timeStamp - this._currentItem.experiment.vars.get('time_' + this._currentItem.name)) > this._timeOut))) {
                     // Adjus the status. 
@@ -355,9 +359,9 @@ osweb.events = class Events {
 
         // Activate the event running.  
         this._responseGiven = false;
-        this._sound_ended = false;
+        this._soundHasEnded = false;
         this._state = osweb.constants.TIMER_WAIT; 
-        this._video_ended = false;
+        this._videoHasEnded = false;
     }
 }
  
