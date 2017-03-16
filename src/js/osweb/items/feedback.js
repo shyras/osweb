@@ -2,7 +2,9 @@
  * Class representing a feedback item.
  * @extends Sketchpad
  */
-osweb.feedback = class Feedback extends osweb.sketchpad {
+import Sketchpad from './sketchpad.js';
+
+export default class Feedback extends Sketchpad {
     /**
      * Create a feedback which show feedback info to the subhect.
      * @param {Object} experiment - The experiment item to which the item belongs.

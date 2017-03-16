@@ -1,5 +1,5 @@
 /** Class representing a drawing canvas. */
-osweb.canvas = class Canvas {
+export default class Canvas {
     /**
      * Create a canvas object which is used to show all visual stimuli.
      * @param {Object} experiment - The experiment to which the canvas belongs.

@@ -1,5 +1,5 @@
 /** Class representing an item stack. */
-osweb.item_stack = class ItemStack {
+export default class ItemStack {
     /**
      * Create an stack array for running items.
      * @param {Object} runner - The runner to which the item stack belongs.

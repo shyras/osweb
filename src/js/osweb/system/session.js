@@ -1,5 +1,5 @@
 /** Class representing a client session information collector. */
-osweb.session = class Session {
+export default class Session {
     /**
      * Create an session object which stores information about the client system.
      * @param {Object} runner - The runner class to which the session belongs.

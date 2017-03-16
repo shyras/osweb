@@ -2,7 +2,9 @@
  * Class representing an inline item.
  * @extends Item
  */
-osweb.inline_script = class InlineScript extends osweb.item {
+import Item from './item.js';
+
+export default class InlineScript extends Item {
     /**
      * Create an inline item which executes inline python code.
      * @param {Object} experiment - The experiment item to which the item belongs.

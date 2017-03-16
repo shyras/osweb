@@ -1,5 +1,5 @@
 /** Class representing a video. */
-osweb.video = class Video {
+export default class Video {
     /**
      * Create a video object which controls the video device.
      * @param {Object} experiment - The experiment to which the video belongs.

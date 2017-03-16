@@ -2,7 +2,9 @@
  * Class representing a keyboard response item.
  * @extends GenericResponse
  */
-osweb.keyboard_response = class KeyboardResponse extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+
+export default class KeyboardResponse extends GenericResponse {
     /**
      * Create a keyboard response item which waits for a keyboard response.
      * @param {Object} experiment - The experiment item to which the item belongs.

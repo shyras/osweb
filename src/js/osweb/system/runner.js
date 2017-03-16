@@ -1,5 +1,7 @@
+import 'pixi.js';
+
 /** Class representing the Runner. */
-osweb.runner = class Runner {
+export default class Runner {
     /** Create a runner which runs an experiment. */
     constructor(content) {
         // Create and set private properties.

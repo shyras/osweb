@@ -2,7 +2,9 @@
  * Class representing a mouse response item.
  * @extends GenericResponse
  */
-osweb.mouse_response = class MouseResponse extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+
+export default class MouseResponse extends GenericResponse {
     /**
      * Create an mouse response item which waits for a mouse response.
      * @param {Object} experiment - The experiment item to which the item belongs.

@@ -2,7 +2,9 @@
  * Class representing a logger item.
  * @extends Item
  */
-osweb.logger = class Logger extends osweb.item {
+import Item from './item.js';
+
+export default class Logger extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} pExperiment - The experiment item to which the item belongs.

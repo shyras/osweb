@@ -1,5 +1,6 @@
 /** Class representing an OpenSesame item. */
-osweb.item = class Item {
+
+export default class Item {
     constructor(experiment, name, script) {
         // Create and set private properties. 
         this._parent = null;

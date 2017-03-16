@@ -2,7 +2,9 @@
  * Class representing an Experiment item. 
  * @extends Item
  */
-osweb.experiment = class Experiment extends osweb.item {
+import Item from './item.js';
+
+export default class Experiment extends Item {
     /** The experiment class defines the starting point for an expriment. */
     constructor(experiment, name, script, poolFolder, experimentPath, 
 			    fullScreen, autoResponse, logFile, subjectNr, workspace, 

@@ -2,7 +2,9 @@
  * Class representing a Sequence item. 
  * @extends Item
  */
-osweb.sequence = class Sequence extends osweb.item {
+import Item from './item.js';
+
+export default class Sequence extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.

@@ -2,7 +2,9 @@
  * Class representing a video player item.
  * @extends Item
  */
-osweb.media_player_mpy = class MediaPlayerMpy extends osweb.generic_response {
+import Item from '../items/item.js';
+
+export default class MediaPlayerMpy extends Item {
     /**
      * Create a video player plugin item which plays videos.
      * @param {Object} experiment - The experiment item to which the item belongs.

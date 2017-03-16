@@ -1,5 +1,4 @@
-/** Object representing global constants. */
-osweb.constants = {
+export const constants = {
     // Type of used collection mode.           
     PRESSES_ONLY: 1,
     RELEASES_ONLY: 2,

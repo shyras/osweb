@@ -1,5 +1,5 @@
 /** Class representing a ResponseInfo object */
-osweb.response_info = class ResponseInfo {
+export default class ResponseInfo {
     /**
      * Create an object which stores information about one single response.
      * @param {Object} responseStore - The store for the response object.

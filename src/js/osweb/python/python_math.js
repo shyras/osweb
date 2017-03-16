@@ -1,5 +1,5 @@
 /** Class implementing a python math library. */
-osweb.python_math = class PythonMath {
+export default class PythonMath {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the library belongs.

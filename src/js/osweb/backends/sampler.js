@@ -1,5 +1,5 @@
 /** Class representing a sampler. */
-osweb.sampler_backend = class SamplerBackend {
+export default class Sampler {
     /**
      * Create a sampler object which controls the sampler device.
      * @param {Object} experiment - The experiment to which the sampler belongs.

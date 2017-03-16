@@ -1,5 +1,5 @@
 /** Class representing a Screen. */
-osweb.screen = class Screen {
+export default class Screen {
     /**
      * Create an introduction screen which handles the start of the experiment.
      * @param {Object} runner - The runner class to which the screen belongs.

@@ -1,5 +1,5 @@
 /** Class representing the event system. */
-osweb.events = class Events {
+export default class Events {
     /** The events class controls the running of an experiment. */
     constructor(runner) {
         // Create and set private properties. 

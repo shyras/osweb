@@ -1,5 +1,5 @@
 /** Class representing a style container. */
-osweb.styles = class Styles { 
+export default class Styles { 
     /** Styles is a simple class that holds information about the style. */
     constructor() 
     {

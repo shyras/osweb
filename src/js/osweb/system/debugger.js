@@ -1,5 +1,5 @@
 /** Class representing a debugger. */
-osweb.debugger = class Debugger {
+export default class Debugger {
     /**
      * Create a debugger which handles errors and messahes during an session.
      * @param {Object} runner - The runner class to which the debugger belongs.

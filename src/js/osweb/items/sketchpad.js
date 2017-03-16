@@ -2,7 +2,9 @@
  * Class representing a Sketchpad item. 
  * @extends GeneralResponse
  */
-osweb.sketchpad = class Sketchpad extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+
+export default class Sketchpad extends GenericResponse {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.

@@ -2,7 +2,9 @@
  * Class representing a reset feedback item.
  * @extends Item
  */
-osweb.touch_response = class TouchResponse extends osweb.mouse_response {
+import MouseResponse from '../items/mouse_response.js';
+
+export default class TouchResponse extends MouseResponse {
     /**
      * Create a reset feedback  item which resets the feedback values.
      * @param {Object} experiment - The experiment item to which the item belongs.

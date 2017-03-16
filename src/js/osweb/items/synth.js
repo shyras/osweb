@@ -3,7 +3,9 @@
  * Class representing a synth item.
  * @extends Sampler
  */
-osweb.synth= class Synth extends osweb.sampler {
+import Sampler from './sampler.js';
+
+export default class Synth extends Sampler {
     /**
      * Create a synth item which create a synthessised sound wave.
      * @param {Object} experiment - The experiment item to which the item belongs.

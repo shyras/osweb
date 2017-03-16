@@ -1,5 +1,5 @@
 /** Class representing a parameter processor. */
-osweb.parameters = class Parameters {
+export default class Parameters {
     /**
      * Create an session class which stores information about the client system.
      * @param {Object} runner - The runner class to which the debugger belongs.

@@ -2,7 +2,9 @@
  * Class representing a repeat cycle item.
  * @extends Item
  */
-osweb.repeat_cycle = class RepeatCycle extends osweb.item {
+import Item from '../items/item.js';
+
+export default class RepeatCycle extends Item {
     /**
      * Create a repeat cycle item which repeat a cycle within a loop.
      * @param {Object} experiment - The experiment item to which the item belongs.

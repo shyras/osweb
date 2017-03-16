@@ -1,5 +1,5 @@
 /** Class representing a information stream processor. */
-osweb.transfer = class Transfer {
+export default class Transfer {
     /**
      * Create a transfer object used for streaming information.
      * @param {Object} runner - The runner class to which the transfer belongs.

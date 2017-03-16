@@ -3,7 +3,9 @@
  * Class representing a sampler item.
  * @extends GenericResponse
  */
-osweb.sampler = class Sampler extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+
+export default class Sampler extends GenericResponse {
     /**
      * Create a sampler  item which plays a sound.
      * @param {Object} experiment - The experiment item to which the item belongs.

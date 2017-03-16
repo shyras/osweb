@@ -1,5 +1,5 @@
 /** Class representing a general visual element. */
-osweb.base_element = class BaseElement {
+export default class BaseElement {
     /**
      * Create a log object which stores all the response data.
      * @param {Object} sketchpad - The sketchpad item that owns the visual element.

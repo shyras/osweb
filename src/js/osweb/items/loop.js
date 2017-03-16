@@ -2,7 +2,9 @@
  * Class representing a sequence item.
  * @extends Item
  */
-osweb.loop = class Loop extends osweb.item {
+import Item from './item.js';
+
+export default class Loop extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} experiment - The experiment item to which the item belongs.

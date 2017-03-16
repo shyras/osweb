@@ -1,5 +1,5 @@
 /** Class representing a mouse device. */
-osweb.mouse = class Mouse {
+export default class Mouse {
     /**
      * Create an object which represents a mouse device.
      * @param {Object} experiment - The experiment to which the logger belongs.

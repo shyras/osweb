@@ -2,7 +2,9 @@
  * Class representing a advanced delay item.
  * @extends Item
  */
-osweb.advanced_delay = class AdvancedDelay extends osweb.item {
+import Item from '../items/item.js';
+
+export default class AdvancedDelay extends Item {
     /**
      * Create an advanced delay plugin item which delays for e specific duration the experiment.
      * @param {Object} experiment - The experiment item to which the item belongs.

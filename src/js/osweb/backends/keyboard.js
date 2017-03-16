@@ -1,5 +1,5 @@
 /** Class representing a keyboard device. */
-osweb.keyboard = class Keyboard {
+export default class Keyboard {
     /**
      * Create an object which represents a keyboard device.
      * @param {Object} experiment - The experiment to which the logger belongs.

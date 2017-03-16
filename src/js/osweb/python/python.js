@@ -1,5 +1,5 @@
 /** Class implementing a python AST interpreter. */
-osweb.python_parser = class PythonParser {
+export default class PythonParser {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the AST object belongs.

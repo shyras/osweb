@@ -1,5 +1,5 @@
 /** Class representing an item store. */
-osweb.item_store = class ItemStore {
+export default class ItemStore {
     /**
      * Create an item store for all OpenSesame items.
      * @param {Object} runner - The runner to which the item store belongs.

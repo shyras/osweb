@@ -1,5 +1,5 @@
 /** Class representing a variable store. */
-osweb.var_store = class VarStore {
+export default class VarStore {
     /**
      * Create a variable store object for all variables.
      * @param {Object} item - The item to which the var_store belongs.

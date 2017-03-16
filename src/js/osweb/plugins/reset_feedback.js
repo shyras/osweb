@@ -2,7 +2,9 @@
  * Class representing a reset feedback item.
  * @extends Item
  */
-osweb.reset_feedback = class ResetFeedback extends osweb.item {
+import Item from '../items/item.js';
+
+export default class ResetFeedback extends Item {
     /**
      * Create a reset feedback  item which resets the feedback values.
      * @param {Object} experiment - The experiment item to which the item belongs.

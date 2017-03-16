@@ -2,7 +2,9 @@
  * Class representing a GeneralResponse item. 
  * @extends Item
  */
-osweb.generic_response = class GenericResponse extends osweb.item {
+import Item from './item.js';
+
+export default class GenericResponse extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.

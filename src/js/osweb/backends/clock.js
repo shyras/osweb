@@ -1,5 +1,5 @@
 /** Class representing the clock system. */
-osweb.clock = class Clock {
+export default class Clock {
     /**
      * Create a clock object which controls a pseudo real-time clock.
      * @param {Object} experiment - The experiment  to which the clock belongs.

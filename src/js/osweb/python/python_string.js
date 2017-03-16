@@ -1,5 +1,5 @@
 /** Class implementing a python string library. */
-osweb.python_string = class PythonString {
+export default class PythonString {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the library belongs.

@@ -2,7 +2,9 @@
  * Class representing a notepad item.
  * @extends Item
  */
-osweb.notepad = class Notepad extends osweb.item {
+import Item from '../items/item.js';
+
+export default class Notepad extends Item {
     /**
      * Create a notepad plugin item which only shows some text in the console.
      * @param {Object} experiment - The experiment item to which the item belongs.
