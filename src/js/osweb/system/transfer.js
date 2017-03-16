@@ -8,7 +8,7 @@ export default class Transfer {
         // Create and set private properties. 
         this._counter = 0;   // Counter used for processing the pool items.
         this._runner = runner; // Parent runner attached to the transfer object.    
-        this._filePool = null; // Array containg the items.           
+        this._filePool = null; // Array containg the items.    
     }   
 
     /** 

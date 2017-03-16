@@ -1,3 +1,5 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing the clock system. */
 export default class Clock {
     /**
@@ -38,7 +40,7 @@ export default class Clock {
         // Sleeps (pauses) for a duration (in milliseconds).
         if (this._experiment !== null) {
             // Set the event processor.
-            this._experiment._runner._events._run(duration, osweb.constants.RESPONSE_DURATION, null);
+            this._experiment._runner._events._run(duration, constants.RESPONSE_DURATION, null);
         }
     }
 

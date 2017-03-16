@@ -1,6 +1,6 @@
 node_modules/
-public_html/js/*
-public_html/css/*
+public_html/*
 test-osexp/*.csv
 nbproject
 .vscode
+npm-debug.log

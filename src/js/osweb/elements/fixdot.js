@@ -3,6 +3,7 @@
  * @extends BaseElement
  */
 import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
 
 export default class Fixdot extends BaseElement {
     /**
@@ -28,7 +29,7 @@ export default class Fixdot extends BaseElement {
         super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.styles();
+		var styles = new Styles();
 		styles.color = this._properties.color;
 
 		// Draw the fixdot element to the canvas of the sketchpad.

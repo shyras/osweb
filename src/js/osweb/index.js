@@ -12,15 +12,26 @@
  *
  */
 
+
+
+// A bit stupid, but to enable hot module reloading for the HTML file, we need
+// to import it here.
+if (process.env.NODE_ENV === 'devserver') {
+  require('file-loader!../../html/index.html');
+  // Accept hot module reloading
+  if (module.hot) {
+    module.hot.accept()
+  }
+}
+
+import 'bootstrap/dist/css/bootstrap.css';
+import '../../scss/osweb.scss';
+import '../../scss/alertify.min.css';
+import '../../scss/alertify.theme.bootstrap.css';
+
 import { constants } from './system/constants.js'
 
 // System
-import Debugger from './system/debugger.js';
-import Events from './system/events.js';
-import Parameters from './system/parameters.js';
-import Screen from './system/screen.js';
-import Session from './system/session.js';
-import Transfer from './system/transfer.js';
 import Runner from './system/runner.js';
 
 //Backends
@@ -29,17 +40,12 @@ import Clock from './backends/clock.js';
 import Keyboard from './backends/keyboard.js';
 import Log from './backends/log.js';
 import Mouse from './backends/mouse.js';
-import Sampler from './backends/sampler.js';
+import SamplerBackend from './backends/sampler.js';
 import Video from './backends/video.js';
 
 // Classes 
-import FilePoolStore from './classes/file_pool_store.js';
-import ItemStack from './classes/item_stack.js';
-import ItemStore from './classes/item_store.js';
-import PythonWorkspace from './classes/python_workspace.js';
 import ResponseInfo from './classes/response_info.js';
 import ResponseStore from './classes/response_store.js';
-import Syntax from './classes/syntax.js';
 import VarStore from './classes/var_store.js';
 
 // Elements
@@ -56,7 +62,6 @@ import Textline from './elements/textline.js';
 
 // Items
 import Item from './items/item.js';
-import Experiment from './items/experiment.js';
 import GenericResponse from './items/generic_response.js';
 import KeyboardReponse from './items/keyboard_response.js';
 import MouseResponse from './items/mouse_response.js';
@@ -78,7 +83,6 @@ import ResetFeedback from './plugins/reset_feedback.js';
 import TouchResponse from './plugins/touch_response.js'
 
 // Python 
-import PythonParser from './python/python.js';
 import PythonMath from './python/python_math.js';
 import PythonOpensesame from './python/python_opensesame.js';
 import PythonRandom from './python/python_random.js';
@@ -94,13 +98,6 @@ export default class Osweb{
 
     // System
     this.constants = constants;
-    this.debugger = Debugger;
-    this.events = Events;
-    this.parameters = Parameters;
-    this.screen = Screen;
-    this.session = Session;
-    this.transfer = Transfer
-    this.runner = Runner;
 
 		// Backends
     this.canvas = Canvas;
@@ -112,13 +109,8 @@ export default class Osweb{
     this.video = Video;
 
     // Classes
-    this.file_pool_store = FilePoolStore;
-    this.item_stack = ItemStack;
-    this.item_store = ItemStore;
-    this.python_workspace = PythonWorkspace;
     this.response_info = ResponseInfo;
     this.response_store = ResponseStore;
-    this.syntax = Syntax;
     this.var_store = VarStore;
 
     // Elements
@@ -135,7 +127,6 @@ export default class Osweb{
 
     // Items
   	this.item = Item;
-    this.experiment = Experiment;
     this.generic_response = GenericResponse;
     this.keyboard_response = KeyboardReponse;
     this.mouse_response = MouseResponse;
@@ -157,7 +148,6 @@ export default class Osweb{
     this.touch_response = TouchResponse;
 
     // Python
-    this.python_parser = PythonParser;
     this.python_math = PythonMath;
     this.python_opensesame = PythonOpensesame;
     this.python_random = PythonRandom;
@@ -182,9 +172,13 @@ export default class Osweb{
     } 
 	}
 
-  print_version_info(){
+  printVersionInfo(){
     // Show library name and library version number in the console.
     console.log(this.VERSION_NAME + ' - ' + this.VERSION_NUMBER); 
+  }
+
+  getRunner(target){
+    return new Runner(target);
   }
 }
 
@@ -192,5 +186,5 @@ if (typeof window !== 'undefined') {
   window.alertify = require('alertifyjs');
   window.screenfull = require('screenfull');
   window.osweb = new Osweb();
-  window.osweb.print_version_info();
+  window.osweb.printVersionInfo();
 }

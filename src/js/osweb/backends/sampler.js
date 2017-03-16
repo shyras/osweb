@@ -1,3 +1,5 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing a sampler. */
 export default class Sampler {
     /**
@@ -67,6 +69,6 @@ export default class Sampler {
     /** Set the blocking of the sound (wait period). */
     wait() {
         // Set the blocking of the sound.
-        this.experiment._runner._events._run(this, -1, osweb.constants.RESPONSE_SOUND, []);
+        this.experiment._runner._events._run(this, -1, constants.RESPONSE_SOUND, []);
     }
 }

@@ -3,6 +3,7 @@
  * @extends BaseElement
  */
 import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
 
 export default class Ellipse extends BaseElement {
     /**
@@ -31,7 +32,7 @@ export default class Ellipse extends BaseElement {
         super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.styles();
+		var styles = new Styles();
 		styles.background_color = this._properties.color;
 		styles.color = this._properties.color;
 		styles.fill = this._properties.fill;

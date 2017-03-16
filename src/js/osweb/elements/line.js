@@ -3,6 +3,7 @@
  * @extends BaseElement
  */
 import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
 
 export default class Line extends BaseElement {
     /**
@@ -30,7 +31,7 @@ export default class Line extends BaseElement {
         super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.styles();
+		var styles = new Styles();
 		styles.color = this._properties.color;
 		styles.penwidth = this._properties.penwidth;
 
