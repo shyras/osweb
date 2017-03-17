@@ -6,7 +6,7 @@ correct setting for the webpack-devserver
 if (process.env.NODE_ENV === 'devserver') {
 	// A bit stupid, but to enable hot module reloading for the HTML file, we need
 	// to import it here.
-	require('file-loader!./html/index.html');
+	require('raw-loader!./html/index.ejs');
 	// Accept hot module reloading
 	if (module.hot) {
 		module.hot.accept()

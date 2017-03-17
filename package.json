@@ -38,13 +38,11 @@
   "dependencies": {
     "alertifyjs": "^1.8.0",
     "bootstrap": "^3.3.7",
-    "camelcase": "^4.0.0",
     "filbert": "^0.1.20",
     "pixi-sound": "^1.4.0",
     "pixi.js": "^4.4.1",
     "random-seed": "^0.3.0",
-    "screenfull": "^3.0.0",
-    "uppercamelcase": "^1.1.0"
+    "screenfull": "^3.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",
@@ -55,7 +53,6 @@
     "del": "^2.0.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.10.1",
-    "hjs-webpack": "^8.4.3",
     "html-webpack-plugin": "^2.28.0",
     "jshint": "^2.9.4",
     "mocha": "^3.0.2",
@@ -65,7 +62,6 @@
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.1",
     "sass-loader": "^6.0.3",
-    "serve": "^5.0.3",
     "should": "^11.1.0",
     "style-loader": "^0.14.0",
     "surge": "^0.18.0",

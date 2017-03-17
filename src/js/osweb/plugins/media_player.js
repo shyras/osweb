@@ -5,7 +5,7 @@
 import Item from '../items/item.js';
 import Video from '../backends/video.js';
 
-export default class MediaPlayerMpy extends Item {
+export default class MediaPlayer extends Item {
     /**
      * Create a video player plugin item which plays videos.
      * @param {Object} experiment - The experiment item to which the item belongs.

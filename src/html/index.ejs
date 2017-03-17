@@ -10,12 +10,6 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<!-- JavaScript -->
-		<!-- 
-	   	<script src="js/filbert.js"></script>
-	   	<script src="js/gzip.js"></script>
-		<script src="js/pixi-sound.min.js"></script> -->
-		<!-- CSS -->
 	</head>
     <body>				
 		<!-- Body - Command bar definitions -->
@@ -29,7 +23,9 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" style="padding: 7px" href="/">
-						<img style="height: 100%" alt="Brand" src='http://osdoc.cogsci.nl/3.1/theme/img/osdoc.png'>
+						<img style="height: 100%" alt="Brand" 
+						src="<%= require('../img/osdoc.png') %>"
+					>
 					</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
@@ -55,6 +51,7 @@
 				</div>
 			</div>
 		</nav>
+		
 		<!-- Body - Alert container -->
         <div class="container" style="margin-top:64px;">
 			<div class="row">

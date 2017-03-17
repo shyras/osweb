@@ -7,17 +7,10 @@
 <html>
 	<head>
 		<!-- Head - general definitions -->
-		<title>OsWeb 2.0</title>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<!-- JavaScript -->
-		<!-- 
-	   	<script src="js/filbert.js"></script>
-	   	<script src="js/gzip.js"></script>
-		<script src="js/pixi-sound.min.js"></script> -->
-		<!-- CSS -->
-	<script type="text/javascript" src="js/osweb.js"></script></head>
+	<link rel="shortcut icon" href="osdoc.png"><script type="text/javascript" src="js/osweb.js"></script></head>
     <body>				
 		<!-- Body - Command bar definitions -->
 		<nav class="navbar navbar-default navbar-fixed-top cogsci-navbar">
@@ -30,7 +23,9 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" style="padding: 7px" href="/">
-						<img style="height: 100%" alt="Brand" src='http://osdoc.cogsci.nl/3.1/theme/img/osdoc.png'>
+						<img style="height: 100%" alt="Brand" 
+						src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAKgSURBVEiJtZVLSJRRFMd/93uMOowmaKKjlEHkoxYWDRm2KGlpDwikENpVIPSANi567MJlq8BdFC2SogdRFBRZCwMjKCIfFaJlo4WhM77G73FbOE193/3GKayzO+fe8/+fe87/3isAqrsStcIVnUiagUJWZkkBjyWyY7i9aFBUdyVqhSN6geIVAvttCmSjJlzR+R/AAYol4oKRbktWqy/VOFBjEqvQqYgIJDA+I+mLO9wYsOifdLPmCtgt1l1KyqBFQ4NzTXm0bTIRgO3CkxEbgOa1BoYGErj+zuL88xRWFh4jKGhqcLmlgO2VOgCWC21353kZdwCIVehc21uAocHBepOqIo0j9+dJOSqWFkRwMhbKgAPcHrIy4AB9cYc77+2Mv6NK5/jWUOAJFIJoRHBss3fz01G1tJ5R2+MfbQhRVajWq0T2bTDRhTf2ekIlePPV23RDg5b1ascVgl1rdI/vSIjPqDr4nHRxfeGdvtxAgqjvmHOWJEhmroQF27tS+SctKi3w9idIGRly7xhYHRbKHoVgzldVKFBnS5bn68ispZ5VSR/z3buwqVb10/IN75o/N5DgxZi3J4YG5RGVpCwsMH3ZvWNqPxWCm4OWMtS6ElUdNSXeVJnOzUkwMOnyaNg7vaZKlWBb1Bt78NFm6Lv6IAWO8ExPionZX+dorTM8t7QsLDhUb2b88VnJ2WepICiyvqbVqzSu7MnPAH+bk1x9a2G70LbRpLJwaS6fEi6H7y0wMh38nGYlAIiEBKdiIVprDSIh76CTi5LufpuLfYuB8vydIEGOfzhPhy3lOtG0mr7MSF6NO8tewrRNG0sfNPuX25VygiWY0yQPNYnsAKb+PjunTeqOflobbi8aBNkoJLeAxD8ATiDp1m294cOJ8OcfLI/qrsFgr74AAAAASUVORK5CYII="
+					>
 					</a>
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
@@ -56,6 +51,7 @@
 				</div>
 			</div>
 		</nav>
+		
 		<!-- Body - Alert container -->
         <div class="container" style="margin-top:64px;">
 			<div class="row">
@@ -81,7 +77,7 @@
 	</body>				
     <script>
 		// Create the runner object within the given container.
-        var runner = new osweb.runner('osweb_div');
+        var runner = osweb.getRunner('osweb_div');
 		
 		// Create the context container for the experiment definitions.
 		var context = {};
