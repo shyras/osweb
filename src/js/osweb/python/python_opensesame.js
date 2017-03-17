@@ -1,3 +1,6 @@
+import filbert from 'filbert';
+import Canvas from '../backends/canvas.js';
+
 /** Class implementing a python opensesame library. */
 export default class PythonOpenSesame {
     /**
@@ -47,7 +50,7 @@ export default class PythonOpenSesame {
     // Definition of public methods - global functions.   
 
     canvas(auto_prepare, style_args) {
-        return new osweb.canvas(auto_prepare, style_args);
+        return new Canvas(auto_prepare, style_args);
     }
 
     copy_sketchpad(name) {

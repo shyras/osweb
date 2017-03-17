@@ -1,3 +1,5 @@
+import filbert from 'filbert';
+
 /** Class implementing a python math library. */
 export default class PythonMath {
     /**

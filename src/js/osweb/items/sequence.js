@@ -3,6 +3,9 @@
  * @extends Item
  */
 import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+
+import { constants } from '../system/constants.js';
 
 export default class Sequence extends Item {
     /** The sequence class controls the running of a serie of items. */
@@ -28,7 +31,7 @@ export default class Sequence extends Item {
     /** Implements the complete phase of an item. */
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
@@ -117,7 +120,7 @@ export default class Sequence extends Item {
 
         // Create a keyboard to flush responses at the start of the run phase
         if (this.vars.flush_keyboard === 'yes') {
-            this._keyboard = new osweb.keyboard(this.experiment);
+            this._keyboard = new Keyboard(this.experiment);
         } else {
             this._keyboard = null;
         }

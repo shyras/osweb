@@ -3,6 +3,7 @@
  * @extends Item
  */
 import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
 
 export default class Notepad extends Item {
     /**
@@ -25,7 +26,7 @@ export default class Notepad extends Item {
     /** Implements the complete phase of an item. */
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();

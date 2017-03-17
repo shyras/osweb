@@ -1,5 +1,6 @@
-import Styles from './styles.js';
+import * as PIXI from 'pixi.js';
 
+import Styles from './styles.js';
 
 /** Class representing a drawing canvas. */
 export default class Canvas {

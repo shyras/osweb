@@ -1,3 +1,59 @@
+// Control elements
+import Loop from '../items/loop.js';
+import Sequence from '../items/sequence.js';
+// Slides
+import Sketchpad from '../items/sketchpad.js';
+import Feedback from '../items/feedback.js';
+// Scripts
+import InlineScript from '../items/inline_script.js';
+// Responses
+import KeyboardResponse from '../items/keyboard_response.js';
+import MouseResponse from '../items/mouse_response';
+import Logger from '../items/logger.js';
+// Audio
+import Sampler from '../items/sampler.js';
+import Synth from '../items/synth.js';
+
+import Arrow from '../elements/arrow.js';
+import Circle from '../elements/circle.js';
+import Ellipse from '../elements/ellipse.js';
+import Fixdot from '../elements/fixdot.js';
+import Gabor from '../elements/gabor.js';
+import ImageElement from '../elements/image.js'; // Image is a reserved JS class 
+import Line from '../elements/line.js';
+import Noise from '../elements/noise.js';
+import Rect from '../elements/rect.js';
+import TextLine from '../elements/textline.js';
+
+/**
+ * this variable maps the string representation of each element to the corresponding
+ * class names.
+ * @type {Object}
+ */
+export const itemClasses = {
+    'loop': Loop,
+    'sequence': Sequence,
+    'sketchpad': Sketchpad,
+    'feedback': Feedback,
+    'inline_script': InlineScript,
+    'keyboard_response': KeyboardResponse,
+    'mouse_response': MouseResponse,
+    'logger': Logger,
+    'sampler': Sampler,
+    'synth': Synth,
+
+    'arrow': Arrow,
+    'circle': Circle,
+    'ellipse': Ellipse,
+    'fixdot': Fixdot,
+    'gabor': Gabor,
+    'image': ImageElement,
+    'line': Line,
+    'noise': Noise,
+    'rect': Rect,
+    'textline': TextLine
+}
+
 export const constants = {
     // Type of used collection mode.           
     PRESSES_ONLY: 1,
@@ -30,4 +86,3 @@ export const constants = {
     TIMER_BREAK: 6,
     TIMER_ERROR: 7
 }
- 

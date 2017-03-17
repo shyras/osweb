@@ -1,10 +1,10 @@
+import BaseElement from './base_element.js';
+
 /**
  * Class representing an image element.
  * @extends BaseElement
  */
-import BaseElement from './base_element.js';
-
-export default class Image extends BaseElement{
+export default class ImageElement extends BaseElement{
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} sketchpad - The sketchpad item that owns the visual element.

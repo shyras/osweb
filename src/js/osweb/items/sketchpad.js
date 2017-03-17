@@ -3,6 +3,7 @@
  * @extends GeneralResponse
  */
 import GenericResponse from './generic_response.js';
+import Canvas from '../backends/canvas.js';
 
 export default class Sketchpad extends GenericResponse {
     /** The sequence class controls the running of a serie of items. */
@@ -11,7 +12,7 @@ export default class Sketchpad extends GenericResponse {
         super(experiment, name, script)     
 
         // Create and set private properties. 
-        this.canvas = new osweb.canvas(experiment, false);
+        this.canvas = new Canvas(experiment, false);
         this.elements = [];
     
         // Process the script.

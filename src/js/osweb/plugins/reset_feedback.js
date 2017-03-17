@@ -3,6 +3,7 @@
  * @extends Item
  */
 import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
 
 export default class ResetFeedback extends Item {
     /**
@@ -25,7 +26,7 @@ export default class ResetFeedback extends Item {
     /** Implements the complete phase of an item. */
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
@@ -37,7 +38,7 @@ export default class ResetFeedback extends Item {
         super.run();
 
         // Run item only one time.   
-        if (this._status !== osweb.constants.STATUS_FINALIZE) {
+        if (this._status !== constants.STATUS_FINALIZE) {
             // Run the item.
             this.experiment.reset_feedback();
 

@@ -7,7 +7,9 @@ var path = require('path')
 
 module.exports = {
   devtool: 'source-map',
-  entry: [ './src/js/osweb/index.js' ],
+  entry: [ 
+    path.join(__dirname, 'src', 'entry.js')
+  ],
   output: {
   	path: path.join(__dirname, 'public_html'),
     filename: 'js/osweb.js'       
@@ -50,7 +52,8 @@ module.exports = {
         	presets: ['env']
       	}
       }
-    ]
+    ],
+    noParse: [ /.*(gzip\.js).*/ ]  // TarGZ doesn't play well with webpack, so skip parsing
   },
   plugins: [
     new webpack.DefinePlugin({

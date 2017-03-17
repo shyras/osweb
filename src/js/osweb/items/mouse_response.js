@@ -3,6 +3,7 @@
  * @extends GenericResponse
  */
 import GenericResponse from './generic_response.js';
+import Mouse from '../backends/mouse.js';
 
 export default class MouseResponse extends GenericResponse {
     /**
@@ -21,7 +22,7 @@ export default class MouseResponse extends GenericResponse {
 
         // Definition of private properties. 
         this._flush = 'yes';
-        this._mouse = new osweb.mouse(this.experiment);
+        this._mouse = new Mouse(this.experiment);
     
         // Process the script.
         this.from_string(script);

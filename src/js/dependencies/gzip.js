@@ -1212,5 +1212,3 @@ this.start_inflate = start_inflate;
 this.continue_inflate = continue_inflate;
 this.final_inflate = final_inflate;
 });
-
-export TarGZ;

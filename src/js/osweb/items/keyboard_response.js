@@ -3,6 +3,7 @@
  * @extends GenericResponse
  */
 import GenericResponse from './generic_response.js';
+import Keyboard from '../backends/keyboard.js';
 
 export default class KeyboardResponse extends GenericResponse {
     /**
@@ -20,7 +21,7 @@ export default class KeyboardResponse extends GenericResponse {
 
         // Definition of private properties. 
         this._flush = 'yes';
-        this._keyboard = new osweb.keyboard(this.experiment);
+        this._keyboard = new Keyboard(this.experiment);
 
         // Process the script.
         this.from_string(script);

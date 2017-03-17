@@ -4,6 +4,8 @@
  */
 import Item from './item.js';
 
+import { constants } from '../system/constants.js';
+
 export default class Logger extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
@@ -69,9 +71,9 @@ export default class Logger extends Item {
         super.run();
 
         // Run item only one time.   
-        if (this._status !== osweb.constants.STATUS_FINALIZE) {
+        if (this._status !== constants.STATUS_FINALIZE) {
             // item is finalized.
-            this._status = osweb.constants.STATUS_FINALIZE;
+            this._status = constants.STATUS_FINALIZE;
 
             this.set_item_onset();
             if (this._logvars == null) {

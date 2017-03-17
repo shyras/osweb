@@ -1,3 +1,5 @@
+import filbert from 'filbert'; 
+
 /** Class implementing a python random library. */
 export default class PythonRandom {
     /**

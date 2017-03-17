@@ -29,7 +29,7 @@ var path = require('path')
 module.exports = {
   devtool: 'cheap-module-source-map',
   entry: [
-    './src/js/osweb/index.js'
+    path.join(__dirname, 'src', 'entry.js')
   ],
   output: {
   	path: path.join(__dirname, 'public_html'),
@@ -37,6 +37,10 @@ module.exports = {
   },
   module: {
     loaders: [
+      {
+        test: /\.html$/,
+        loader: "raw-loader"
+      },
       {
         test: /\.scss$/,
         loaders: 'style-loader!css-loader!sass-loader'
@@ -64,12 +68,9 @@ module.exports = {
       {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
         loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]'
-      },
-      // {
-      //   test: /\.html$/,
-      //   loader: "raw-loader"
-      // }
-    ]
+      }
+    ],
+    noParse: [ /.*(gzip\.js).*/ ]  // TarGZ doesn't play well with webpack, so skip parsing
   },
   plugins: [
     new webpack.DefinePlugin({

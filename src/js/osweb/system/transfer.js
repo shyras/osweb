@@ -1,3 +1,5 @@
+import '../../dependencies/gzip.js';
+
 /** Class representing a information stream processor. */
 export default class Transfer {
     /**

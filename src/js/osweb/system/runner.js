@@ -1,4 +1,4 @@
-import 'pixi.js';
+import * as PIXI from 'pixi.js';
 
 import { constants } from './constants.js'
 

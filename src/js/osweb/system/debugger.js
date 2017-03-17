@@ -1,3 +1,5 @@
+import { constants } from './constants.js';
+
 /** Class representing a debugger. */
 export default class Debugger {
     /**
@@ -40,7 +42,7 @@ export default class Debugger {
         this.error = true;
 
         // Set status of the event system to break.
-        this._runner._events.state = osweb.constants.TIMER_ERROR;
+        this._runner._events.state = constants.TIMER_ERROR;
 
         // Throw the exception.
         console.log('OSWeb has stopped running due to a fatal error.');

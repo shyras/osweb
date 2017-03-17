@@ -1,3 +1,4 @@
+import filbert from 'filbert';
 /** Class implementing a python string library. */
 export default class PythonString {
     /**

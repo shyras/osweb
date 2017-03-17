@@ -3,6 +3,7 @@
  * @extends Item
  */
 import Item from '../items/item.js';
+import Video from '../backends/video.js';
 
 export default class MediaPlayerMpy extends Item {
     /**
@@ -58,7 +59,7 @@ export default class MediaPlayerMpy extends Item {
     prepare() {
         // Opens the video file for playback.
         this._video = this.experiment.pool[this.vars.get('video_src')];
-        this._video_player = new osweb.video(this.experiment, this._video);
+        this._video_player = new Video(this.experiment, this._video);
 
         // Set the inline code options.
         if (this.vars.event_handler !== '') {

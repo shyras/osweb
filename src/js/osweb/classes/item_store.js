@@ -1,3 +1,8 @@
+// This itemClasses variable is a temporary solution. We should think of a simpler
+// method of converting string names (e.g. keyboard_response) to the associated
+// class names (e.g. KeyboardResponse), without relying on eval.
+import { itemClasses } from '../system/constants.js';
+
 /** Class representing an item store. */
 export default class ItemStore {
     /**
@@ -17,7 +22,8 @@ export default class ItemStore {
      */
     _isClass(className) {
         // Return true if the classname is defined within the osweb namespace.
-        return (osweb[className] !== undefined);
+        className = itemClasses[className];
+        return typeof className === 'function' && /^\s*class\s+/.test(className.toString());
     }
 
     /**
@@ -29,7 +35,7 @@ export default class ItemStore {
      */
     _newElementClass(type, sketchpad, string) {
         // Create the element.
-        var element = new osweb[type](sketchpad, string);
+        var element = new itemClasses[type](sketchpad, string);
 
         // Return the element
         return element;
@@ -45,7 +51,7 @@ export default class ItemStore {
      */
     _newItemClass(type, experiment, name, script) {
         // Create the element.
-        var element = new osweb[type](experiment, name, script);
+        var element = new itemClasses[type](experiment, name, script);
 
         // Set the type of the item.
         element.type = type;
@@ -63,7 +69,7 @@ export default class ItemStore {
      */
     _newWidgetClass(type, form, variables) {
         // Create the widget.
-        var widget = new osweb[type+'_widget'](form, variables);
+        var widget = itemClasses[type + '_widget'](form, variables);
 
         // Return the element
         return widget;

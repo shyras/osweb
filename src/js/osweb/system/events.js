@@ -1,3 +1,5 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing the event system. */
 export default class Events {
     /** The events class controls the running of an experiment. */
@@ -6,20 +8,20 @@ export default class Events {
         this._currentItem = null; // The current active item.
         this._keyDownEvent = null; // Container for last key event.
         this._keyDownHandler = null; // Key down event handler.
-        this._keyPressMode = osweb.constants.PRESSES_ONLY; // Keyboard press mode. 
+        this._keyPressMode = constants.PRESSES_ONLY; // Keyboard press mode. 
         this._keyUpHandler = null; // Key up event handler. 
         this._mouseDownEvent = null; // Container for last mouse event.
         this._mouseDownHandler = null; // Mouse down event handler.
         this._mouseMoveEvent = null; // Container for last mouse move event.
         this._mouseMoveHandler = null; // Mouse move event handler. 
-        this._mousePressMode = osweb.constants.PRESSES_ONLY; // Mouse press mode.
+        this._mousePressMode = constants.PRESSES_ONLY; // Mouse press mode.
         this._mouseUpHandler = null; // Mouse up event handler. 
         this._runner = runner; // Parent runner class.
         this._responseGiven = false; // Valid response toggle
         this._responseList = null; // Items to respond on.
-        this._responseType = osweb.constants.RESPONSE_NONE; // Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
+        this._responseType = constants.RESPONSE_NONE; // Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
         this._soundHasEnded = false; // Sound play is finished.
-        this._state = osweb.constants.TIMER_NONE; // Current status of the runner.  
+        this._state = constants.TIMER_NONE; // Current status of the runner.  
         this._timeHandler = null; // Timing event handler.
         this._timeOut = -1; // Duration before timeout occures. 
         this._timeStamp = -1; // Moment of update checking.
@@ -78,7 +80,7 @@ export default class Events {
 
         // Set the current item to the experiment object.
         this._currentItem = this._runner._experiment;
-        this._state = osweb.constants.TIMER_NONE;
+        this._state = constants.TIMER_NONE;
 
         // Create the time handler and start the experiment.
         this._timeHandler = new PIXI.ticker.Ticker();
@@ -150,7 +152,7 @@ export default class Events {
         }; 
 
         // Only select this event when the collection mode is set for this.
-        if ((this._keyPressMode === osweb.constants.PRESSES_ONLY) || (this._keyPressMode === osweb.constants.PRESSES_AND_RELEASES)) {
+        if ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES)) {
             // Process the event.
             this._processKeyboardEvent(event, 1);
         } 
@@ -162,7 +164,7 @@ export default class Events {
      */
     _keyUp(event) {
         // Only select this event when the collection mode is set for this.
-        if ((this._keyPressMode === osweb.constants.RELEASES_ONLY) || (this._keyPressMode === osweb.constants.PRESSES_AND_RELEASES)) {
+        if ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES)) {
             // Process the event.
             this._processKeyboardEvent(event, 0);
         }  
@@ -179,14 +181,14 @@ export default class Events {
             'event': event,
             'rtTime': this._runner._experiment.clock.time(),
             'state': keyboardState,
-            'type': osweb.constants.RESPONSE_KEYBOARD
+            'type': constants.RESPONSE_KEYBOARD
         };
 
         // Convert response to proper keyboard token. 
         keyboardResponse.resp = this._convertKeyCode(event);
   
         // Process the response to the current object.
-        if ((this._responseType === osweb.constants.RESPONSE_KEYBOARD) && ((this._responseList === null) || (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
+        if ((this._responseType === constants.RESPONSE_KEYBOARD) && ((this._responseList === null) || (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
             // Process the current item.
             if (this._currentItem !== null) {
                 // Process the response.
@@ -228,7 +230,7 @@ export default class Events {
         }; 
 
         // Only select this event when the collection mode is set for this.
-        if ((this._mousePressMode === osweb.constants.PRESSES_ONLY) || (this._mousePressMode === osweb.constants.PRESSES_AND_RELEASES)) {
+        if ((this._mousePressMode === constants.PRESSES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES)) {
             // Process the event.
             this._processMouseEvent(event, 1);
         }
@@ -240,7 +242,7 @@ export default class Events {
      */
     _mouseUp(event) {
         // Only select this event when the collection mode is set for this.
-        if ((this._mousePressMode === osweb.constants.RELEASES_ONLY) || (this._mousePressMode === osweb.constants.PRESSES_AND_RELEASES)) {
+        if ((this._mousePressMode === constants.RELEASES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES)) {
             // Process the event.
             this._processMouseEvent(event, 0);
         }
@@ -257,14 +259,14 @@ export default class Events {
             'event': event,
             'rtTime': this._runner._experiment.clock.time(),
             'state': mouseState,
-            'type': osweb.constants.RESPONSE_MOUSE
+            'type': constants.RESPONSE_MOUSE
         };
 
         // Adjust mouse response.  
         mouseResponse.resp = String(event.button + 1);
 
         // Process the response to the current object.
-        if ((this._responseType === osweb.constants.RESPONSE_MOUSE) && ((this._responseList === null) || (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
+        if ((this._responseType === constants.RESPONSE_MOUSE) && ((this._responseList === null) || (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
             // Process the response to the current object.
             if (this._currentItem !== null) {
                 this._currentItem._update(mouseResponse);
@@ -310,19 +312,19 @@ export default class Events {
     _time(event) {
         // Select the proper state. 
         switch (this._state) {
-            case osweb.constants.TIMER_NONE:
+            case constants.TIMER_NONE:
                 // Do nothing in the loop
             break;
-            case osweb.constants.TIMER_WAIT:
+            case constants.TIMER_WAIT:
                 // Set current time stamp
                 this._timeStamp = this._currentItem.clock.time();
 
                 // Check if a time out occures or a valid response is given.
                 if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._soundHasEnded === true) || (this._videoHasEnded === true))) ||
-                    ((this._timeOut > 0) && ((this._responseType === osweb.constants.RESPONSE_KEYBOARD) || (this._responseType === osweb.constants.RESPONSE_MOUSE)) && (this._responseGiven === true)) ||
+                    ((this._timeOut > 0) && ((this._responseType === constants.RESPONSE_KEYBOARD) || (this._responseType === constants.RESPONSE_MOUSE)) && (this._responseGiven === true)) ||
                     ((this._timeOut > 0) && ((this._timeStamp - this._currentItem.experiment.vars.get('time_' + this._currentItem.name)) > this._timeOut))) {
                     // Adjus the status. 
-                    this._state = osweb.constants.TIMER_NONE;
+                    this._state = constants.TIMER_NONE;
                 
                     // Remove the items from the general stack.
                     this._runner._itemStack.pop();
@@ -335,9 +337,9 @@ export default class Events {
                     this._currentItem._update(null);
                 }
             break;    
-            case osweb.constants.TIMER_EXIT :
+            case constants.TIMER_EXIT :
                 // Adjus the status. 
-                this._state = osweb.constants.TIMER_NONE;
+                this._state = constants.TIMER_NONE;
 
                 // Exit the runner.
                 this._runner._finalize(); 
@@ -360,7 +362,7 @@ export default class Events {
         // Activate the event running.  
         this._responseGiven = false;
         this._soundHasEnded = false;
-        this._state = osweb.constants.TIMER_WAIT; 
+        this._state = constants.TIMER_WAIT; 
         this._videoHasEnded = false;
     }
 }

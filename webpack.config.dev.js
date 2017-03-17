@@ -1,27 +1,5 @@
 // webpack.config.js - DEVELOPMENT
 
-/* Uncomment code below again once hjs-webpack works with webpack 2 again */
-
-// var getConfig = require('hjs-webpack')
-
-// module.exports = getConfig({
-//   // entry point for the app
-//   in: './src/js/osweb/index.js',
-
-//   // Name or full path of output directory
-//   // commonly named `www` or `public`. This
-//   // is where your fully static site should
-//   // end up for simple deployment.
-//   out: './public_html/',
-
-//   // This will destroy and re-create your
-//   // `out` folder before building so you always
-//   // get a fresh folder. Usually you want this
-//   // but since it's destructive we make it
-//   // false by default
-//   clearBeforeBuild: true
-// })
-
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
 var path = require('path')
@@ -29,7 +7,7 @@ var path = require('path')
 module.exports = {
   devtool: 'cheap-module-source-map',
   entry: [
-    './src/js/osweb/index.js'
+    path.join(__dirname, 'src', 'entry.js')
   ],
   output: {
   	path: path.join(__dirname, 'public_html'),
@@ -65,7 +43,8 @@ module.exports = {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
         loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]'
       }
-    ]
+    ],
+    noParse: [ /.*(gzip\.js).*/ ]  // TarGZ doesn't play well with webpack, so skip parsing
   },
   plugins: [
     new webpack.DefinePlugin({
