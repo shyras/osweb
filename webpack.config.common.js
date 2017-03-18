@@ -14,14 +14,6 @@ module.exports = {
   },
   module: {
     loaders: [
-      {
-        test: /\.scss$/,
-        loaders: 'style-loader!css-loader!sass-loader'
-      },
-      {
-      	test: /\.css$/, 
-      	loader: 'style-loader!css-loader' 
-      },
       { 
       	test: /\.(png|jpg)$/, 
       	loader: 'url-loader?limit=8192&name=images/[hash].[ext]' // inline base64 URLs for <=8k images, direct URLs for the rest

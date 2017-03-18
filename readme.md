@@ -26,7 +26,7 @@ If you want to build OSweb with production settings you can run:
 
     npm run build:production
 
-The production version if uglified and minified, which results in smaller file sizes, and thus shorter loading times when serving Osweb from a web server. The building process does take considerably longer because of these steps.
+The production version is uglified and minified, which results in smaller file sizes, and thus shorter loading times when serving Osweb from a web server. The building process does take considerably longer because of these steps.
 
 ## How to run
 
@@ -36,7 +36,7 @@ Alternatively, you can start a development server with:
 
     npm run devserver
 
-If you open `http://localhost:8080` in your browser, you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser.
+Once the development server is started, you can visit `http://localhost:8080` in your browser and you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser.
 
 # Unit tests
 
