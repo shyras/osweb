@@ -34,7 +34,7 @@ Open `public_html/index.html` in a webbrowser!
 
 Alternatively, you can start a development server with:
 
-    npm run devserver
+    npm start
 
 Once the development server is started, you can visit `http://localhost:8080` in your browser and you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser.
 
@@ -42,7 +42,7 @@ Once the development server is started, you can visit `http://localhost:8080` in
 
 Unit tests can be run with
 
-    npm run test
+    npm test
 
 ## License
 

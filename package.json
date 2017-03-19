@@ -29,9 +29,9 @@
   ],
   "scripts": {
     "clean": "rimraf public_html/*",
-    "devserver": "webpack-dev-server --config webpack.config.devserver.js",
-    "build": "webpack --config webpack.config.dev.js",
-    "build:production": "webpack --config webpack.config.prod.js",
+    "start": "webpack-dev-server --config webpack.config.js --env.devserver",
+    "build": "webpack",
+    "build:production": "webpack --config webpack.config.js --env.production",
     "deploy": "npm run build:production && surge -p public_html -d osweb.cogsci.nl",
     "test": "mocha --recursive --reporter spec"
   },
