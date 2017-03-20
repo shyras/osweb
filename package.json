@@ -39,6 +39,7 @@
     "alertifyjs": "^1.8.0",
     "bootstrap": "^3.3.7",
     "filbert": "^0.1.20",
+    "fs": "0.0.1-security",
     "pixi-sound": "^1.4.0",
     "pixi.js": "^4.4.1",
     "random-seed": "^0.3.0",

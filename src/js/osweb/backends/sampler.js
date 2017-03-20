@@ -1,3 +1,6 @@
+import * as PIXI from 'pixi.js';
+import * as sound from 'pixi-sound';
+
 import { constants } from '../system/constants.js';
 
 /** Class representing a sampler. */
