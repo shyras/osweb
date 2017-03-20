@@ -2,7 +2,13 @@
  * Class representing a GeneralResponse item. 
  * @extends Item
  */
-osweb.generic_response = class GenericResponse extends osweb.item {
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+import Mouse from '../backends/mouse.js';
+
+import { constants } from '../system/constants.js';
+
+export default class GenericResponse extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.
@@ -19,7 +25,7 @@ osweb.generic_response = class GenericResponse extends osweb.item {
         this._duration_func = null;
         this._keyboard = null;
         this._mouse = null;
-        this._responsetype = osweb.constants.RESPONSE_NONE;
+        this._responsetype = constants.RESPONSE_NONE;
         this._timeout = -1;
     }   
 
@@ -42,9 +48,9 @@ osweb.generic_response = class GenericResponse extends osweb.item {
     _update(response) {
         if (response !== null) {
             // Implements the update response phase of the item.
-            if ((this._responsetype === osweb.constants.RESPONSE_KEYBOARD) && (response.type === osweb.constants.RESPONSE_KEYBOARD)) {
+            if ((this._responsetype === constants.RESPONSE_KEYBOARD) && (response.type === constants.RESPONSE_KEYBOARD)) {
                 this.process_response_keypress(response);
-            } else if ((this._responsetype == osweb.constants.RESPONSE_MOUSE) && (response.type == osweb.constants.RESPONSE_MOUSE)) {
+            } else if ((this._responsetype == constants.RESPONSE_MOUSE) && (response.type == constants.RESPONSE_MOUSE)) {
                 this.process_response_mouseclick(response);
             }
         }
@@ -89,22 +95,22 @@ osweb.generic_response = class GenericResponse extends osweb.item {
                 // Prepare a duration in milliseconds
                 this._duration = this.vars.duration;
                 if (this._duration === 0) {
-                    this._responsetype = osweb.constants.RESPONSE_NONE;
+                    this._responsetype = constants.RESPONSE_NONE;
                 } else {
-                    this._responsetype = osweb.constants.RESPONSE_DURATION;
+                    this._responsetype = constants.RESPONSE_DURATION;
                 }
             } else {
                 this._duration = -1;
                 if (this.vars.duration === 'keypress') {
                     this.prepare_duration_keypress();
-                    this._responsetype = osweb.constants.RESPONSE_KEYBOARD;
+                    this._responsetype = constants.RESPONSE_KEYBOARD;
                 } else if (this.vars.duration === 'mouseclick') {
                     this.prepare_duration_mouseclick();
-                    this._responsetype = osweb.constants.RESPONSE_MOUSE;
+                    this._responsetype = constants.RESPONSE_MOUSE;
                 } else if (this.vars.duration === 'sound') {
-                    this._responsetype = osweb.constants.RESPONSE_SOUND;
+                    this._responsetype = constants.RESPONSE_SOUND;
                 } else if (this.vars.duration === 'video') {
-                    this._responsetype = osweb.constants.RESPONSE_VIDEO;
+                    this._responsetype = constants.RESPONSE_VIDEO;
                 }
             }
         }
@@ -113,7 +119,7 @@ osweb.generic_response = class GenericResponse extends osweb.item {
     /** Prepare the system for a keyboard duration interval. */
     prepare_duration_keypress() {
         // Prepare a keyboard duration.
-        this._keyboard = new osweb.keyboard(this.experiment);
+        this._keyboard = new Keyboard(this.experiment);
         if (this.experiment.auto_response === true) {
             this._duration_func = this.auto_responder;
         } else {
@@ -125,7 +131,7 @@ osweb.generic_response = class GenericResponse extends osweb.item {
     /** Prepare the system for a mouseclick duration interval. */
     prepare_duration_mouseclick(self) {
         // Prepare a mouseclick duration.
-        this._mouse = new osweb.mouse(this.experiment);
+        this._mouse = new Mouse(this.experiment);
         if (this.experiment.auto_response === true) {
             this._duration_func = this.auto_responder_mouse;
         } else {
@@ -151,24 +157,24 @@ osweb.generic_response = class GenericResponse extends osweb.item {
     process_response() {
         // Start stimulus response cycle.
         switch (this._responsetype) {
-            case osweb.constants.RESPONSE_NONE:
+            case constants.RESPONSE_NONE:
                 // Duration is 0, so complete the stimulus/response cycle.
-                this._status = osweb.constants.STATUS_FINALIZE;
+                this._status = constants.STATUS_FINALIZE;
                 this._complete();
             break;
-            case osweb.constants.RESPONSE_DURATION:
+            case constants.RESPONSE_DURATION:
                 this.sleep_for_duration();
             break;
-            case osweb.constants.RESPONSE_KEYBOARD:
+            case constants.RESPONSE_KEYBOARD:
                 this._keyboard.get_key();
             break;
-            case osweb.constants.RESPONSE_MOUSE:
+            case constants.RESPONSE_MOUSE:
                 this._mouse.get_click();
             break;
-            case osweb.constants.RESPONSE_SOUND:
+            case constants.RESPONSE_SOUND:
                 this._sampler.wait();
             break;
-            case osweb.constants.RESPONSE_VIDEO:
+            case constants.RESPONSE_VIDEO:
                 this._video_player.wait();
             break;
         }

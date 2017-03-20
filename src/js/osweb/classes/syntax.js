@@ -1,5 +1,5 @@
 /** Class representing a syntax checker. */
-osweb.syntax = class Syntax {
+export default class Syntax {
     /**
      * Create a syntax checker within OpenSesame.
      * @param {Object} runner - The runner to which the syntax checker belongs.

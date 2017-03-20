@@ -2,7 +2,10 @@
  * Class representing a reset feedback item.
  * @extends Item
  */
-osweb.reset_feedback = class ResetFeedback extends osweb.item {
+import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
+
+export default class ResetFeedback extends Item {
     /**
      * Create a reset feedback  item which resets the feedback values.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -23,7 +26,7 @@ osweb.reset_feedback = class ResetFeedback extends osweb.item {
     /** Implements the complete phase of an item. */
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
@@ -35,7 +38,7 @@ osweb.reset_feedback = class ResetFeedback extends osweb.item {
         super.run();
 
         // Run item only one time.   
-        if (this._status !== osweb.constants.STATUS_FINALIZE) {
+        if (this._status !== constants.STATUS_FINALIZE) {
             // Run the item.
             this.experiment.reset_feedback();
 

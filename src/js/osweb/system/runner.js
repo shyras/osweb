@@ -1,5 +1,27 @@
+import * as PIXI from 'pixi.js';
+
+import { constants } from './constants.js'
+
+import Debugger from './debugger.js';
+import Events from './events.js';
+import Parameters from './parameters.js';
+import Screen from './screen.js';
+import Session from './session.js';
+import Transfer from './transfer.js';
+
+import ItemStack from '../classes/item_stack.js';
+import ItemStore from '../classes/item_store.js';
+import PythonWorkspace from '../classes/python_workspace.js';
+import FilePoolStore from '../classes/file_pool_store.js';
+import Syntax from '../classes/syntax.js';
+
+import PythonParser from '../python/python.js';
+
+import Experiment from '../items/experiment.js';
+
+
 /** Class representing the Runner. */
-osweb.runner = class Runner {
+export default class Runner {
     /** Create a runner which runs an experiment. */
     constructor(content) {
         // Create and set private properties.
@@ -15,18 +37,18 @@ osweb.runner = class Runner {
         this._target = null; // Link to the target location for thr data. 
 
         // Create and set private class properties.
-        this._debugger = new osweb.debugger(this); // Internal error system.
-        this._events = new osweb.events(this); // The event processor. 
-        this._itemStack = new osweb.item_stack(this); // The global item stack.
-        this._itemStore = new osweb.item_store(this); // The global item store.
-        this._parameters = new osweb.parameters(this); // Parameter processor.
-        this._pythonParser = new osweb.python_parser(this); // Python parser
-        this._pythonWorkspace = new osweb.python_workspace(this); // Python workspace.
-        this._pool = new osweb.file_pool_store(this); // The virtual file pool store.    
-        this._screen = new osweb.screen(this); // Introduction screen renderer.
-        this._session = new osweb.session(this); // Session information container.
-        this._syntax = new osweb.syntax(this); // The script syntax checker.
-        this._transfer = new osweb.transfer(this); // File transfer system.
+        this._debugger = new Debugger(this); // Internal error system.
+        this._events = new Events(this); // The event processor. 
+        this._itemStack = new ItemStack(this); // The global item stack.
+        this._itemStore = new ItemStore(this); // The global item store.
+        this._parameters = new Parameters(this); // Parameter processor.
+        this._pythonParser = new PythonParser(this); // Python parser
+        this._pythonWorkspace = new PythonWorkspace(this); // Python workspace.
+        this._pool = new FilePoolStore(this); // The virtual file pool store.    
+        this._screen = new Screen(this); // Introduction screen renderer.
+        this._session = new Session(this); // Session information container.
+        this._syntax = new Syntax(this); // The script syntax checker.
+        this._transfer = new Transfer(this); // File transfer system.
 
         // Create the content container. 
         this._setupContent(content);
@@ -88,7 +110,7 @@ osweb.runner = class Runner {
     /** Build the experiment system. */
     _build() {
         // Create the experiment item. 
-        this._experiment = new osweb.experiment(this, this._name, this._script);
+        this._experiment = new Experiment(this, this._name, this._script);
 		this._experiment.from_string(this._script);
 
         // Initialize the parameters class and request user input.
@@ -142,7 +164,7 @@ osweb.runner = class Runner {
     /** Exit a running experiment. */
     exit() {
         // Set status of the event system to break.
-        this._events._status = osweb.constants.TIMER_BREAK;
+        this._events._status = constants.TIMER_BREAK;
     }
 
     /** Run an experiment */

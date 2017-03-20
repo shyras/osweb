@@ -2,7 +2,10 @@
  * Class representing a mouse response item.
  * @extends GenericResponse
  */
-osweb.mouse_response = class MouseResponse extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+import Mouse from '../backends/mouse.js';
+
+export default class MouseResponse extends GenericResponse {
     /**
      * Create an mouse response item which waits for a mouse response.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -19,7 +22,7 @@ osweb.mouse_response = class MouseResponse extends osweb.generic_response {
 
         // Definition of private properties. 
         this._flush = 'yes';
-        this._mouse = new osweb.mouse(this.experiment);
+        this._mouse = new Mouse(this.experiment);
     
         // Process the script.
         this.from_string(script);

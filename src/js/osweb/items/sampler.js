@@ -3,7 +3,11 @@
  * Class representing a sampler item.
  * @extends GenericResponse
  */
-osweb.sampler = class Sampler extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+import SamplerBackend from '../backends/sampler.js';
+import Syntax from '../classes/syntax.js';
+
+export default class Sampler extends GenericResponse {
     /**
      * Create a sampler  item which plays a sound.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -44,7 +48,7 @@ osweb.sampler = class Sampler extends osweb.generic_response {
         if (this.vars.sample !== '') {
             // Retrieve the content from the file pool.
             this._sample = this._runner._pool[this.syntax.eval_text(this.vars.sample)];
-            this._sampler = new osweb.sampler_backend(this.experiment, this._sample);
+            this._sampler = new SamplerBackend(this.experiment, this._sample);
             this._sampler.volume = this.vars.volume;
             this._sampler.duration = this.vars.duration;
             this._sampler.fade = this.vars.fade;

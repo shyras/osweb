@@ -1,5 +1,10 @@
+// This itemClasses variable is a temporary solution. We should think of a simpler
+// method of converting string names (e.g. keyboard_response) to the associated
+// class names (e.g. KeyboardResponse), without relying on eval.
+import { itemClasses } from '../system/constants.js';
+
 /** Class representing an item store. */
-osweb.item_store = class ItemStore {
+export default class ItemStore {
     /**
      * Create an item store for all OpenSesame items.
      * @param {Object} runner - The runner to which the item store belongs.
@@ -17,7 +22,8 @@ osweb.item_store = class ItemStore {
      */
     _isClass(className) {
         // Return true if the classname is defined within the osweb namespace.
-        return (osweb[className] !== undefined);
+        className = itemClasses[className];
+        return typeof className === 'function' && /^\s*class\s+/.test(className.toString());
     }
 
     /**
@@ -29,7 +35,7 @@ osweb.item_store = class ItemStore {
      */
     _newElementClass(type, sketchpad, string) {
         // Create the element.
-        var element = new osweb[type](sketchpad, string);
+        var element = new itemClasses[type](sketchpad, string);
 
         // Return the element
         return element;
@@ -45,7 +51,7 @@ osweb.item_store = class ItemStore {
      */
     _newItemClass(type, experiment, name, script) {
         // Create the element.
-        var element = new osweb[type](experiment, name, script);
+        var element = new itemClasses[type](experiment, name, script);
 
         // Set the type of the item.
         element.type = type;
@@ -63,7 +69,7 @@ osweb.item_store = class ItemStore {
      */
     _newWidgetClass(type, form, variables) {
         // Create the widget.
-        var widget = new osweb[type+'_widget'](form, variables);
+        var widget = itemClasses[type + '_widget'](form, variables);
 
         // Return the element
         return widget;

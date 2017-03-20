@@ -1,5 +1,5 @@
 /** Class representing a ResponseStore object*/
-osweb.response_store = class ResponseStore {
+export default class ResponseStore {
     /**
      * Create an object which stores information about one single response.
      * @param {Object} experiment - The experiment to which the store belongd.

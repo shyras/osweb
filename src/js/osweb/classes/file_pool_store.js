@@ -1,5 +1,5 @@
 /** Class representing a file pool. */
-osweb.file_pool_store = class FilePoolStore {
+export default class FilePoolStore {
     /**
      * Create a file store object for all stimuli files.
      * @param {Object} runner - The runner to which the file store belongs.

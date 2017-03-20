@@ -1,5 +1,7 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing a mouse device. */
-osweb.mouse = class Mouse {
+export default class Mouse {
     /**
      * Create an object which represents a mouse device.
      * @param {Object} experiment - The experiment to which the logger belongs.
@@ -73,7 +75,7 @@ osweb.mouse = class Mouse {
             this.show_cursor(this.visible);
 
             // Set the event processor.
-            this.experiment._runner._events._run(this.timeout, osweb.constants.RESPONSE_MOUSE, this.buttonlist);
+            this.experiment._runner._events._run(this.timeout, constants.RESPONSE_MOUSE, this.buttonlist);
         };
     }
 

@@ -1,5 +1,7 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing the clock system. */
-osweb.clock = class Clock {
+export default class Clock {
     /**
      * Create a clock object which controls a pseudo real-time clock.
      * @param {Object} experiment - The experiment  to which the clock belongs.
@@ -38,7 +40,7 @@ osweb.clock = class Clock {
         // Sleeps (pauses) for a duration (in milliseconds).
         if (this._experiment !== null) {
             // Set the event processor.
-            this._experiment._runner._events._run(duration, osweb.constants.RESPONSE_DURATION, null);
+            this._experiment._runner._events._run(duration, constants.RESPONSE_DURATION, null);
         }
     }
 

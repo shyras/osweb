@@ -1,5 +1,7 @@
+import filbert from 'filbert'; 
+
 /** Class implementing a python random library. */
-osweb.python_random = class PythonRandom {
+export default class PythonRandom {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the library belongs.

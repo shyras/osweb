@@ -2,7 +2,10 @@
  * Class representing a textline element.
  * @extends BaseElement
  */
-osweb.textline = class TextLine extends osweb.base_element {
+import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
+
+export default class Textline extends BaseElement {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} sketchpad - The sketchpad item that owns the visual element.
@@ -35,7 +38,7 @@ osweb.textline = class TextLine extends osweb.base_element {
         var text = decodeURIComponent(escape(this._properties.text));
 
         // Create a styles object containing style information
-        var styles = new osweb.styles();
+        var styles = new Styles();
         styles.color = this._properties.color;
         styles.font_family = this._properties.font_family;
         styles.font_size = this._properties.font_size;

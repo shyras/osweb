@@ -1,5 +1,7 @@
+import { VERSION_NUMBER } from '../index.js';
+
 /** Class representing a Screen. */
-osweb.screen = class Screen {
+export default class Screen {
     /**
      * Create an introduction screen which handles the start of the experiment.
      * @param {Object} runner - The runner class to which the screen belongs.
@@ -30,7 +32,7 @@ osweb.screen = class Screen {
             this._introText1 = new PIXI.Text('Os', {fontFamily: 'Times', fontSize: 24, fill: '#FF0000'});
             this._introText1.position.set(200, 135);
             this._introScreen.addChild(this._introText1)
-            this._introText2 = new PIXI.Text('web - version ' + osweb.OS_VERSION_NUMBER, {fontFamily: 'Arial', fontSize: 14, fill: '#FFFFFF'});
+            this._introText2 = new PIXI.Text('web - version ' + VERSION_NUMBER, {fontFamily: 'Arial', fontSize: 14, fill: '#FFFFFF'});
             this._introText2.position.set(231, 142);
             this._introScreen.addChild(this._introText2)
             this._introText3 = new PIXI.Text('', {fontFamily: 'Arial', fontSize: 12, fill: '#FFFFFF'});

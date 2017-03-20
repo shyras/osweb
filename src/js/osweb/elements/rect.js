@@ -2,7 +2,10 @@
  * Class representing an arrow element.
  * @extends BaseElement
  */
-osweb.rect = class Rect extends osweb.base_element {
+import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
+
+export default class Rect extends BaseElement {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} sketchpad - The sketchpad item that owns the visual element.
@@ -29,7 +32,7 @@ osweb.rect = class Rect extends osweb.base_element {
         super.draw();
 
 		// Create a styles object containing style information
-		var styles = new osweb.styles();
+		var styles = new Styles();
 		styles.fill = this._properties.fill;
 		styles.color = this._properties.color;
 		styles.background_color = this._properties.color;

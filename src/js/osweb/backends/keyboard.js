@@ -1,5 +1,7 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing a keyboard device. */
-osweb.keyboard = class Keyboard {
+export default class Keyboard {
     /**
      * Create an object which represents a keyboard device.
      * @param {Object} experiment - The experiment to which the logger belongs.
@@ -194,7 +196,7 @@ osweb.keyboard = class Keyboard {
 
         if (this.experiment != null) {
             // Set the event processor.
-            this.experiment._runner._events._run(this.timeout, osweb.constants.RESPONSE_KEYBOARD, this.keylist);
+            this.experiment._runner._events._run(this.timeout, constants.RESPONSE_KEYBOARD, this.keylist);
         };
     }
 

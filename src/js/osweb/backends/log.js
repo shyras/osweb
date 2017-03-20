@@ -1,5 +1,5 @@
 /** Class representing a data logger. */
-osweb.log = class Log {
+export default class Log {
     /**
      * Create a log object which stores all the response data.
      * @param {Object} experiment - The experiment to which the logger belongs.

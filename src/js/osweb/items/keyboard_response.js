@@ -2,7 +2,10 @@
  * Class representing a keyboard response item.
  * @extends GenericResponse
  */
-osweb.keyboard_response = class KeyboardResponse extends osweb.generic_response {
+import GenericResponse from './generic_response.js';
+import Keyboard from '../backends/keyboard.js';
+
+export default class KeyboardResponse extends GenericResponse {
     /**
      * Create a keyboard response item which waits for a keyboard response.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -18,7 +21,7 @@ osweb.keyboard_response = class KeyboardResponse extends osweb.generic_response 
 
         // Definition of private properties. 
         this._flush = 'yes';
-        this._keyboard = new osweb.keyboard(this.experiment);
+        this._keyboard = new Keyboard(this.experiment);
 
         // Process the script.
         this.from_string(script);

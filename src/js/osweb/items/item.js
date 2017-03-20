@@ -1,10 +1,15 @@
 /** Class representing an OpenSesame item. */
-osweb.item = class Item {
+
+import { constants } from '../system/constants.js';
+import VarStore from '../classes/var_store.js';
+import Clock from '../backends/clock.js';
+
+export default class Item {
     constructor(experiment, name, script) {
         // Create and set private properties. 
         this._parent = null;
         this._runner = (experiment.constructor.name === 'Runner') ? experiment : experiment._runner;
-        this._status = osweb.constants.STATUS_NONE;
+        this._status = constants.STATUS_NONE;
 
         // Create and set public properties. 
         this.count = 0;
@@ -13,16 +18,16 @@ osweb.item = class Item {
         this.response_store = this._runner._responseStore;
 
         // Set the class object properties.
-        this.clock = (experiment.constructor.name === 'Runner') ? new osweb.clock(this) : experiment.clock;
+        this.clock = (experiment.constructor.name === 'Runner') ? new Clock(this) : experiment.clock;
         this.python_workspace = experiment._pythonWorkspace;
         this.syntax = experiment._syntax;
-        this.vars = new osweb.var_store(this, (experiment.constructor.name === 'Runner') ? null : this.experiment.vars);
+        this.vars = new VarStore(this, (experiment.constructor.name === 'Runner') ? null : this.experiment.vars);
     }    
 
     /** Implements the complete phase of an item. */
     _complete() {
        // Adjust the status of the item.
-       this._status = osweb.constants.STATUS_FINALIZE;
+       this._status = constants.STATUS_FINALIZE;
 
         // Implements the complete phase of the item.
         if (this._parent !== null) {
@@ -153,7 +158,7 @@ osweb.item = class Item {
         this.count++;
 
         // Set the status to initialize.
-        this._status = osweb.constants.STATUS_INITIALIZE;
+        this._status = constants.STATUS_INITIALIZE;
 
         // For debugging.
         this._runner._debugger.addMessage('prepare ' + this.name);

@@ -1,5 +1,79 @@
-/** Object representing global constants. */
-osweb.constants = {
+// Control elements
+import Loop from '../items/loop.js';
+import Sequence from '../items/sequence.js';
+// Slides
+import Sketchpad from '../items/sketchpad.js';
+import Feedback from '../items/feedback.js';
+// Scripts
+import InlineScript from '../items/inline_script.js';
+// Responses
+import KeyboardResponse from '../items/keyboard_response.js';
+import MouseResponse from '../items/mouse_response';
+import Logger from '../items/logger.js';
+// Audio
+import Sampler from '../items/sampler.js';
+import Synth from '../items/synth.js';
+
+// Elements
+import Arrow from '../elements/arrow.js';
+import Circle from '../elements/circle.js';
+import Ellipse from '../elements/ellipse.js';
+import Fixdot from '../elements/fixdot.js';
+import Gabor from '../elements/gabor.js';
+import ImageElement from '../elements/image.js'; // Image is a reserved JS class 
+import Line from '../elements/line.js';
+import Noise from '../elements/noise.js';
+import Rect from '../elements/rect.js';
+import TextLine from '../elements/textline.js';
+
+// Plugins
+import AdvancedDelay from '../plugins/advanced_delay.js';
+import MediaPlayer from '../plugins/media_player.js';
+import Notepad from '../plugins/notepad.js';
+import RepeatCycle from '../plugins/repeat_cycle.js';
+import ResetFeedback from '../plugins/reset_feedback.js';
+import TouchResponse from '../plugins/touch_response.js';
+
+
+
+/**
+ * this variable maps the string representation of each element to the corresponding
+ * class names.
+ * @type {Object}
+ */
+export const itemClasses = {
+    // Items
+    loop: Loop,
+    sequence: Sequence,
+    sketchpad: Sketchpad,
+    feedback: Feedback,
+    inline_script: InlineScript,
+    keyboard_response: KeyboardResponse,
+    mouse_response: MouseResponse,
+    logger: Logger,
+    sampler: Sampler,
+    synth: Synth,
+    // Elements
+    arrow: Arrow,
+    circle: Circle,
+    ellipse: Ellipse,
+    fixdot: Fixdot,
+    gabor: Gabor,
+    image: ImageElement,
+    line: Line,
+    noise: Noise,
+    rect: Rect,
+    textline: TextLine,
+    // Plugins
+    advanced_delay: AdvancedDelay,
+    media_player_mpy: MediaPlayer,
+    notepad: Notepad,
+    repeat_cycle: RepeatCycle,
+    reset_feedback: ResetFeedback,
+    touch_response: TouchResponse,    
+}
+
+export const constants = {
     // Type of used collection mode.           
     PRESSES_ONLY: 1,
     RELEASES_ONLY: 2,
@@ -31,4 +105,3 @@ osweb.constants = {
     TIMER_BREAK: 6,
     TIMER_ERROR: 7
 }
- 

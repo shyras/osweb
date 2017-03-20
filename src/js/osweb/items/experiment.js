@@ -2,7 +2,14 @@
  * Class representing an Experiment item. 
  * @extends Item
  */
-osweb.experiment = class Experiment extends osweb.item {
+import Item from './item.js';
+import Canvas from '../backends/canvas.js';
+import Log from '../backends/log';
+
+import { constants } from '../system/constants.js';
+import { VERSION_NAME, VERSION_NUMBER } from '../index.js';
+
+export default class Experiment extends Item {
     /** The experiment class defines the starting point for an expriment. */
     constructor(experiment, name, script, poolFolder, experimentPath, 
 			    fullScreen, autoResponse, logFile, subjectNr, workspace, 
@@ -20,8 +27,8 @@ osweb.experiment = class Experiment extends osweb.item {
 		this.pool = this._runner._pool;
 
         // Create and set private properties. 
-        this._canvas = new osweb.canvas(this);
-	  	this._log = new osweb.log(this, this.logfile);
+        this._canvas = new Canvas(this);
+	  	this._log = new Log(this, this.logfile);
 		this._pythonWorkspace = this._runner._pythonWorkspace;
     	this._syntax = this._runner._syntax;
 	
@@ -126,7 +133,7 @@ osweb.experiment = class Experiment extends osweb.item {
 								var item_type = args[0];
 								var item_name = this._runner._syntax.sanitize(args[1]);
 								var def_str = this.read_definition(this._source);
-        							this._runner._itemStore.newItem(item_type, item_name, def_str);
+        						this._runner._itemStore.newItem(item_type, item_name, def_str);
 							} else {
 								this._runner._debugger.addError('Failed to parse definition: ' + l);
 							}
@@ -166,14 +173,14 @@ osweb.experiment = class Experiment extends osweb.item {
 
 		// Runs the experiment.
 		switch (this._status) {
-			case osweb.constants.STATUS_INITIALIZE:
+			case constants.STATUS_INITIALIZE:
 	    	   // Adjust the status of the item.
-		       this._status = osweb.constants.STATUS_FINALIZE;
+		       this._status = constants.STATUS_FINALIZE;
 
 				// Save the date and time, and the version of OpenSesame
 				this.vars.datetime = new Date().toString();
-				this.vars.opensesame_version = osweb.VERSION_NUMBER;
-				this.vars.opensesame_codename = osweb.VERSION_NAME;
+				this.vars.opensesame_version = VERSION_NUMBER;
+				this.vars.opensesame_codename = VERSION_NAME;
 				this.running = true;
 				this.init_clock();
 				this.init_display();
@@ -190,7 +197,7 @@ osweb.experiment = class Experiment extends osweb.item {
 					this._runner._debugger.addError('Could not find the item that is the entry point of the experiment: ' + this.vars.start);
 				}
 			break;
-			case osweb.constants.STATUS_FINALIZE:
+			case constants.STATUS_FINALIZE:
 				// Add closing message to debug system.
 				this._runner._debugger.addMessage('experiment.run(): experiment finished at ' + new Date().toUTCString());
 

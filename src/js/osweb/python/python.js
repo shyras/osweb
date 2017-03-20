@@ -1,5 +1,12 @@
+import filbert from 'filbert';
+
+import PythonMath from './python_math.js';
+import PythonOpenSesame from './python_opensesame.js';
+import PythonRandom from './python_random.js';
+import PythonString from './python_string.js';
+
 /** Class implementing a python AST interpreter. */
-osweb.python_parser = class PythonParser {
+export default class PythonParser {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the AST object belongs.
@@ -9,10 +16,10 @@ osweb.python_parser = class PythonParser {
         this._runner = runner; // Parent runner attached to the AST object.
 
         // Set class properties.
-        this.python_math = new osweb.python_math(this._runner);
-        this.python_opensesame = new osweb.python_opensesame(this._runner);
-        this.python_random = new osweb.python_random(this._runner);
-        this.python_string = new osweb.python_string(this._runner);
+        this.python_math = new PythonMath(this._runner);
+        this.python_opensesame = new PythonOpenSesame(this._runner);
+        this.python_random = new PythonRandom(this._runner);
+        this.python_string = new PythonString(this._runner);
 
         // Definition of private properties.
         this._classes = {}; // Accessible classes within the script code.

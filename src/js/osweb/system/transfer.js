@@ -1,5 +1,7 @@
+import '../../dependencies/gzip.js';
+
 /** Class representing a information stream processor. */
-osweb.transfer = class Transfer {
+export default class Transfer {
     /**
      * Create a transfer object used for streaming information.
      * @param {Object} runner - The runner class to which the transfer belongs.
@@ -8,7 +10,7 @@ osweb.transfer = class Transfer {
         // Create and set private properties. 
         this._counter = 0;   // Counter used for processing the pool items.
         this._runner = runner; // Parent runner attached to the transfer object.    
-        this._filePool = null; // Array containg the items.           
+        this._filePool = null; // Array containg the items.    
     }   
 
     /** 

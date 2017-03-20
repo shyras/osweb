@@ -1,5 +1,8 @@
+import filbert from 'filbert';
+import Canvas from '../backends/canvas.js';
+
 /** Class implementing a python opensesame library. */
-osweb.python_opensesame = class PythonOpenSesame {
+export default class PythonOpenSesame {
     /**
      * Create a python AST runner.
      * @param {Object} runner - The runner to which the library belongs.
@@ -47,7 +50,7 @@ osweb.python_opensesame = class PythonOpenSesame {
     // Definition of public methods - global functions.   
 
     canvas(auto_prepare, style_args) {
-        return new osweb.canvas(auto_prepare, style_args);
+        return new Canvas(auto_prepare, style_args);
     }
 
     copy_sketchpad(name) {

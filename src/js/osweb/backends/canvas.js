@@ -1,5 +1,9 @@
+import * as PIXI from 'pixi.js';
+
+import Styles from './styles.js';
+
 /** Class representing a drawing canvas. */
-osweb.canvas = class Canvas {
+export default class Canvas {
     /**
      * Create a canvas object which is used to show all visual stimuli.
      * @param {Object} experiment - The experiment to which the canvas belongs.
@@ -15,7 +19,7 @@ osweb.canvas = class Canvas {
         this._container = new PIXI.Container(); // PIXI - Create the container which represents the canvas. 
         this._font_string = 'bold 18px Courier New'; // Default font definition string.
         this._height = this.experiment._runner._renderer.height; // Height of the HTML canvas used for drawing.
-        this._styles = new osweb.styles(); // The style container.
+        this._styles = new Styles(); // The style container.
         this._width = this.experiment._runner._renderer.width; // Width of the HTML canvas used for drawing. 
 
         // Initialize a new styles object to store the default styles in.
@@ -100,7 +104,7 @@ osweb.canvas = class Canvas {
         if (typeof(style_args) === 'undefined') {
             return this._styles;
         } else {
-            var styles = new osweb.styles();
+            var styles = new Styles();
             styles._background_color = (typeof(style_args._background_color) !== 'undefined')?  style_args._background_color: 0x000000;
             styles._bidi = (typeof(style_args._bidi) !== 'undefined')?  style_args._bidi: false;
             styles._color = (typeof(style_args._color) !== 'undefined')?  style_args._color: 0xffffff; 
@@ -448,7 +452,7 @@ osweb.canvas = class Canvas {
             this.experiment._runner._debugger.addError('Unknown style: ' + style);
         }
 
-        var styles = new osweb.styles()
+        var styles = new Styles()
         if ((style.indexOf('open') !== -1) || (style === 'default')) {
             styles._fill = true;
             styles._background_color = element_style.color;

@@ -1,5 +1,7 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing a video. */
-osweb.video = class Video {
+export default class Video {
     /**
      * Create a video object which controls the video device.
      * @param {Object} experiment - The experiment to which the video belongs.
@@ -80,7 +82,7 @@ osweb.video = class Video {
 
     /** Set the blocking of the sound. */
     wait() {
-        this._experiment._runner._events._run(-1, osweb.constants.RESPONSE_VIDEO, []);
+        this._experiment._runner._events._run(-1, constants.RESPONSE_VIDEO, []);
     }
 }   
   

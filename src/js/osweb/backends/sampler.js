@@ -1,5 +1,7 @@
+import { constants } from '../system/constants.js';
+
 /** Class representing a sampler. */
-osweb.sampler_backend = class SamplerBackend {
+export default class Sampler {
     /**
      * Create a sampler object which controls the sampler device.
      * @param {Object} experiment - The experiment to which the sampler belongs.
@@ -67,6 +69,6 @@ osweb.sampler_backend = class SamplerBackend {
     /** Set the blocking of the sound (wait period). */
     wait() {
         // Set the blocking of the sound.
-        this.experiment._runner._events._run(this, -1, osweb.constants.RESPONSE_SOUND, []);
+        this.experiment._runner._events._run(this, -1, constants.RESPONSE_SOUND, []);
     }
 }

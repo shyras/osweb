@@ -2,7 +2,12 @@
  * Class representing a sequence item.
  * @extends Item
  */
-osweb.loop = class Loop extends osweb.item {
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+
+import { constants } from '../system/constants.js';
+
+export default class Loop extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -40,7 +45,7 @@ osweb.loop = class Loop extends osweb.item {
             }
         } else {
             // All items are processed, set the status to finalized.
-            this._status = osweb.constants.STATUS_FINALIZE;
+            this._status = constants.STATUS_FINALIZE;
 
             // Inherited.	
             super._complete();
@@ -213,7 +218,7 @@ osweb.loop = class Loop extends osweb.item {
         }
 
         // Create a keyboard to flush responses between cycles.
-        this._keyboard = new osweb.keyboard(this.experiment);
+        this._keyboard = new Keyboard(this.experiment);
 
         // Make sure the item to run exists.
         if (this.experiment.items._items[this.vars.item] === 'undefined') {

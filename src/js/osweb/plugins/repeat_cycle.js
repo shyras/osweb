@@ -2,7 +2,10 @@
  * Class representing a repeat cycle item.
  * @extends Item
  */
-osweb.repeat_cycle = class RepeatCycle extends osweb.item {
+import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
+
+export default class RepeatCycle extends Item {
     /**
      * Create a repeat cycle item which repeat a cycle within a loop.
      * @param {Object} experiment - The experiment item to which the item belongs.
@@ -22,7 +25,7 @@ osweb.repeat_cycle = class RepeatCycle extends osweb.item {
 
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
@@ -43,7 +46,7 @@ osweb.repeat_cycle = class RepeatCycle extends osweb.item {
         super.run();
 
         // Run item only one time.   
-        if (this._status !== osweb.constants.STATUS_FINALIZE) {
+        if (this._status !== constants.STATUS_FINALIZE) {
             if (this.epxeriment._runner._pythonWorkspace._eval(this._condition) === true) {
                 this.experiment.vars.repeat_cycle = 1;
             }

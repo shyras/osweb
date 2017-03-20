@@ -1,5 +1,5 @@
 /** Class representing a python workspace. */
-osweb.python_workspace = class PythonWorkspace {
+export default class PythonWorkspace {
     /**
      * Create a python workspace object.
      * @param {Object} runner - The runner to which the python workspace belongs.

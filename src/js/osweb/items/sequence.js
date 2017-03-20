@@ -2,7 +2,12 @@
  * Class representing a Sequence item. 
  * @extends Item
  */
-osweb.sequence = class Sequence extends osweb.item {
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+
+import { constants } from '../system/constants.js';
+
+export default class Sequence extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.
@@ -26,7 +31,7 @@ osweb.sequence = class Sequence extends osweb.item {
     /** Implements the complete phase of an item. */
     _complete() {
         // sequence is finalized.
-        this._status = osweb.constants.STATUS_FINALIZE;
+        this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
@@ -115,7 +120,7 @@ osweb.sequence = class Sequence extends osweb.item {
 
         // Create a keyboard to flush responses at the start of the run phase
         if (this.vars.flush_keyboard === 'yes') {
-            this._keyboard = new osweb.keyboard(this.experiment);
+            this._keyboard = new Keyboard(this.experiment);
         } else {
             this._keyboard = null;
         }
