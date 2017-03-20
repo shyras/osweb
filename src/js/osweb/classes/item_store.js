@@ -21,9 +21,11 @@ export default class ItemStore {
      * @return {Boolean} - True if the class is valid within the opsweb context.
      */
     _isClass(className) {
-        // Return true if the classname is defined within the osweb namespace.
-        className = itemClasses[className];
-        return typeof className === 'function' && /^\s*class\s+/.test(className.toString());
+        // Return true if the classname is found in the item classes.
+        return (className in itemClasses);
+
+        // Not working correctly on Firefox, disable for now.
+        //return typeof className === 'function' && /^\s*class\s+/.test(className.toString());
     }
 
     /**
