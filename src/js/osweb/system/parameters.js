@@ -1,3 +1,8 @@
+/** Break out alertify ASAP! */
+import * as alertify from 'alertifyjs';
+import 'alertifyjs/build/css/alertify.min.css';
+import 'alertifyjs/build/css/themes/default.min.css';
+
 /** Class representing a parameter processor. */
 export default class Parameters {
     /**
@@ -62,6 +67,8 @@ export default class Parameters {
         // Check if a user request is required.
         if (parameter.promptEnabled == true) {
             // Create the alertify prompt.
+             
+            /* Break out of this library! */
             alertify.prompt( 
                 parameter.title, 
                 parameter.prompt, 
