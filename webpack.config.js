@@ -49,6 +49,9 @@ var settings = {
     ),
     new webpack.NamedModulesPlugin()
    ],
+   node: {
+      fs: 'empty'
+   }
 };
 
 
