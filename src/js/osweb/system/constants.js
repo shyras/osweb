@@ -34,8 +34,6 @@ import RepeatCycle from '../plugins/repeat_cycle.js';
 import ResetFeedback from '../plugins/reset_feedback.js';
 import TouchResponse from '../plugins/touch_response.js';
 
-
-
 /**
  * this variable maps the string representation of each element to the corresponding
  * class names.
