@@ -62,6 +62,14 @@ module.exports = function(env){
       settings.plugins.push(
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('development')
+        },
+        {
+            test: /\.js$/,
+            exclude: /(node_modules|bower_components)/,
+            loader: 'babel-loader?cacheDirectory=true',
+            query: {
+               presets: ['env']
+            }
         })
       );
    }if(!env || env.development || env.production){
@@ -128,7 +136,7 @@ module.exports = function(env){
                warnings: false,
              },
            }),
-           new webpack.optimize.OccurrenceOrderPlugin(),
+           new webpack.optimize.OccurrenceOrderPlugin()
            new webpack.IgnorePlugin( /.*(gzip\.js).*/ ) // In production, noParse is ignored.
          );
       }
