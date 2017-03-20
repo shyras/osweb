@@ -136,7 +136,7 @@ module.exports = function(env){
                warnings: false,
              },
            }),
-           new webpack.optimize.OccurrenceOrderPlugin()
+           new webpack.optimize.OccurrenceOrderPlugin(),
            new webpack.IgnorePlugin( /.*(gzip\.js).*/ ) // In production, noParse is ignored.
          );
       }
