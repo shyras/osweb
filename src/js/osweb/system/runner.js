@@ -92,17 +92,21 @@ export default class Runner {
         // Check if the script parameter is defined.                        
         if ((typeof context !== 'undefined') || (context === null)) {
             // Initialize the context parameters.
-            this._debugger.enabled = (typeof context.debug !== 'undefined') ? context.debug : false;
-            this._onconsole = (typeof context.onconsole !== 'undefined') ? context.onconsole : null;
-            this._onfinished = (typeof context.onfinished !== 'undefined') ? context.onfinished : null;
-            this._name = (typeof context.name !== 'undefined') ? context.name : 'noname.exp';
-            this._source = (typeof context.source !== 'undefined') ? context.source : null;
-            this._subject = (typeof context.subject !== 'undefined') ? context.subject : null;
-            this._target = (typeof context.target !== 'undefined') ? context.target : null;
-            
-            // Build the introduction screen.
-            this._screen._active = (typeof context.introscreen !== 'undefined') ? context.introscreen : true;
-            this._screen._click = (typeof context.introclick !== 'undefined') ? context.introclick : true;
+            // Use ES6 destructuring to determine values and set default ones if
+            // required.
+            ({
+                debug: this._debugger.enabled = false,
+                onconsole: this._onconsole = null,
+                onfinished: this._onfinished = null,
+                name: this._name = "noname.exp",
+                source: this._source = null,
+                subject: this._subject = null,
+                target: this._target = null,
+                prompt: this._prompt = null,
+                introscreen: this._screen._active = true,
+                introclick: this._screen_click = true
+            } = context);         
+
             this._screen._setupIntroScreen();
 
             // Load the script file, using the source parameter.

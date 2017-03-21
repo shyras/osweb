@@ -1,7 +1,9 @@
 /** Break out alertify ASAP! */
-import * as alertify from 'alertifyjs';
-import 'alertifyjs/build/css/alertify.min.css';
-import 'alertifyjs/build/css/themes/default.min.css';
+// import * as alertify from 'alertifyjs';
+// import 'alertifyjs/build/css/alertify.min.css';
+// import 'alertifyjs/build/css/themes/default.min.css';
+
+import { isFunction } from 'underscore';
 
 /** Class representing a parameter processor. */
 export default class Parameters {
@@ -13,7 +15,7 @@ export default class Parameters {
         // Create and set private properties. 
         this._itemCounter = 0; // Number of active parameter.
         this._parameters = new Array(); // All parameters to process.
-        this._runner = runner; // Parent runner attached to the session object.    
+        this._runner = runner; // Parent runner attached to the session object. 
     }     
 
     /** Initialize the parameters class. */
@@ -31,7 +33,7 @@ export default class Parameters {
 
             // Set properties if defined.
             var parameter = {
-                dataType: '0',
+                dataType: 'number',
                 defaultValue: '0',
                 name: 'subject_nr',
                 title: 'Starting the experiment',
@@ -60,6 +62,31 @@ export default class Parameters {
     }
 
     /**
+     * Callback function for a dialog when a value is entered and the OK button
+     * has been clicked
+     * @param  {variou} value The value entered in the prompts input box
+     * @return {void}
+     */
+    _onParamConfirm(parameter, value){
+         // Get the response information
+        parameter.response = value;
+
+        // Increase the counter.
+        this._itemCounter++;
+
+        // Continue processing.
+        this._processParameters();
+    }
+
+    /**
+     * Callback function for dialog when its cancel button has been clicked
+     * @return {void}
+     */
+    _onParamCancel(){
+        this._runner._exit();
+    }
+
+    /**
      * Process a single parameter
      * @param {Object} parameter - The parameter which must be processed.
      */
@@ -67,34 +94,52 @@ export default class Parameters {
         // Check if a user request is required.
         if (parameter.promptEnabled == true) {
             // Create the alertify prompt.
-             
-            /* Break out of this library! */
-            alertify.prompt( 
-                parameter.title, 
-                parameter.prompt, 
-                parameter.defaultValue, 
-                function(evt, value) {
-                    // Close the prompt.
-                    alertify.prompt().close(); 
+            
+            // Use passed function that displays a prompt. This leaves the display
+            // of the prompt to the library or system that implements osweb.
+            if(isFunction(this._runner._prompt)){
+                this._runner._prompt( parameter.title, parameter.prompt, 
+                    parameter.defaultValue, parameter.dataType, 
+                    this._onParamConfirm.bind(this, parameter), this._onParamCancel.bind(this) );
+            }else{
+                // Fall back to the window prompt method if no function has been
+                // passed
+                result = window.prompt( parameter.prompt,  parameter.defaultValue );
 
-                    // Get the response information
-                    parameter.response = value;
+                if( result == null ){
+                    this._onParamCancel();
+                } else {
+                    this._onParamConfirm(parameter, result);
+                }
+            }
+
+            // /* Break out of this library! */
+            // alertify.prompt( 
+            //     parameter.title, 
+            //     parameter.prompt, 
+            //     parameter.defaultValue, 
+            //     function(evt, value) {
+            //         // Close the prompt.
+            //         alertify.prompt().close(); 
+
+            //         // Get the response information
+            //         parameter.response = value;
             
-                    // Increase the counter.
-                    this._itemCounter++;
+            //         // Increase the counter.
+            //         this._itemCounter++;
             
-                    // Continue processing.
-                    this._processParameters();
+            //         // Continue processing.
+            //         this._processParameters();
         
-                }.bind(this), 
-                function() {
-                    // Close the prompt.
-                    alertify.prompt().close();     
+            //     }.bind(this), 
+            //     function() {
+            //         // Close the prompt.
+            //         alertify.prompt().close();     
 
-                    // Finalize the introscreen elements.
-                    this._runner._exit();
-                }.bind(this)
-            );
+            //         // Finalize the introscreen elements.
+            //         this._runner._exit();
+            //     }.bind(this)
+            // );
         } else {
             // Assign default value to the Startup item.
             parameter.response = parameter.defaultValue;
