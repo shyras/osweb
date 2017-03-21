@@ -147,6 +147,20 @@
 			    }
 		    });
 	    }
+
+	    function prompt(title, message, defaultValue, dataType, onConfirm, onCancel){
+            alertify.prompt( 
+                title, 
+                message, 
+                defaultValue, 
+                function(evt, value) {
+                    onConfirm(value);
+                }, 
+                function() {
+                    onCancel();
+                }.bind(this)
+            );
+	    }
 	 
    	    /** Initialize function called whe Zebrakit is loaded.
 		function create_osweb() {

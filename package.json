@@ -42,7 +42,8 @@
     "pixi-sound": "^1.4.0",
     "pixi.js": "^4.4.1",
     "random-seed": "^0.3.0",
-    "screenfull": "^3.0.0"
+    "screenfull": "^3.0.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",
