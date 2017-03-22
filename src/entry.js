@@ -18,11 +18,11 @@ import './scss/osweb.scss';
 import './scss/alertify.min.css';
 import './scss/alertify.theme.bootstrap.css';
 
-import Osweb from './js/osweb/index.js';
+import osweb from './js/osweb/index.js';
 
 if (typeof window !== 'undefined') {
 	window.alertify = require('alertifyjs');
 	window.screenfull = require('screenfull');
-	window.osweb = new Osweb();
+	window.osweb = osweb;
 	window.osweb.printVersionInfo();
 }

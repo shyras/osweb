@@ -87,9 +87,7 @@ export default class Parameters {
      */
     _processParameter(parameter) {
         // Check if a user request is required.
-        if (parameter.promptEnabled == true) {
-            // Create the alertify prompt.
-            
+        if (parameter.promptEnabled == true) {                     
             // Use passed function that displays a prompt. This leaves the display
             // of the prompt to the library or system that implements osweb.
             if(isFunction(this._runner._prompt)){

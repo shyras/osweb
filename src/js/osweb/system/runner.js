@@ -32,6 +32,7 @@ export default class Runner {
         this._formContainer; // ZEBRAKIT: Container for form display. 
         this._experiment = null; // The JSON experiment container     
         this._name = ''; // String name of the experiment which is run.
+        this._prompt = null;
         this._onLog = null; // Function to call when logger is encountered.
         this._onfinished = null; // Event triggered on finishing the experiment.
         this._renderer = null; // PIXI: The visual stimuli renderer.
