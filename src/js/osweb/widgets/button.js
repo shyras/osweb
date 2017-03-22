@@ -1,10 +1,10 @@
+import Widget from './widget.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing an OpenSesame label Widget. 
  * @extends LabelWidget
  */
-import Widget from './widget.js';
-import { constants } from '../system/constants.js';
-
 export default class ButtonWidget extends Widget {
     /**
      * Create a widget button object which represents a push button.
