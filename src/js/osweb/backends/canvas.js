@@ -628,6 +628,10 @@ export default class Canvas {
         // Resize the container div to the same size as the canvas
         this._resizeContainer(this._width, this._height);
 
+        // ZEBRAKIT: set the canvas of the form.
+        this.experiment._runner._formContainer.style.width = this._width + 'px';
+        this.experiment._runner._formContainer.style.height = this._height + 'px';
+        
         // PIXI: Set the renderer dimensions.
         experiment._runner._renderer.resize(this._width, this._height);
         

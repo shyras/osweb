@@ -26,8 +26,17 @@ import Noise from '../elements/noise.js';
 import Rect from '../elements/rect.js';
 import TextLine from '../elements/textline.js';
 
+// Widgets
+import ButtonWidget from '../widgets/button.js';
+import LabelWidget from '../widgets/label.js';
+import FormWidget from '../widgets/form.js';
+import TextInputWidget from '../widgets/text_input.js';
+
 // Plugins
 import AdvancedDelay from '../plugins/advanced_delay.js';
+import FormBase from '../plugins/form_base.js';
+import FormTextDisplay from '../plugins/form_text_display.js';
+import FormTextInput from '../plugins/form_text_input.js';
 import MediaPlayer from '../plugins/media_player.js';
 import Notepad from '../plugins/notepad.js';
 import RepeatCycle from '../plugins/repeat_cycle.js';
@@ -62,8 +71,16 @@ export const itemClasses = {
     noise: Noise,
     rect: Rect,
     textline: TextLine,
+    // Widgets
+    button_widget: ButtonWidget,
+    form_widget: FormWidget,
+    label_widget: LabelWidget,
+    text_input_widget: TextInputWidget,
     // Plugins
     advanced_delay: AdvancedDelay,
+    form_base: FormBase,
+    form_text_display: FormTextDisplay,
+    form_text_input: FormTextInput,
     media_player_mpy: MediaPlayer,
     notepad: Notepad,
     repeat_cycle: RepeatCycle,

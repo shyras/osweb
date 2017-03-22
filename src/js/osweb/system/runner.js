@@ -64,6 +64,13 @@ export default class Runner {
             // Get the div element from the DOM element tree 
             this._container = (typeof content === 'string') ? document.getElementById(content) : content;
 
+            // Create theform container.
+            this._formContainer = document.createElement("canvas");
+            this._formContainer.id = 'osweb_formcanvas';
+            this._container.appendChild(this._formContainer);
+            this._formContainer.style.display = ' none';
+            this._formCanvas = new zebra.ui.zCanvas('osweb_formcanvas', 800, 600);
+
             // Create and set the experiment canvas. 
             this._renderer = PIXI.autoDetectRenderer(800, 600, { antialias: false, transparent: false, resolution: 1});
             this._renderer.backgroundColor = 0x000000;

@@ -71,7 +71,7 @@ export default class ItemStore {
      */
     _newWidgetClass(type, form, variables) {
         // Create the widget.
-        var widget = itemClasses[type + '_widget'](form, variables);
+        var widget = new itemClasses[type + '_widget'](form, variables);
 
         // Return the element
         return widget;

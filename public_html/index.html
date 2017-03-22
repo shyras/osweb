@@ -10,8 +10,18 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<!-- JavaScript -->
+		<script type="text/javascript" src="js/zebra.min.js"></script>
+		<script> 
+			function test() { 
+   				zebra.ready(function() {
+					// Create the runner object within the given container.
+					window['runner'] = osweb.getRunner('osweb_div');
+				});
+			}		
+		</script> 
 	<link rel="shortcut icon" href="osdoc.png"><link href="css/styles.css" rel="stylesheet"><script type="text/javascript" src="js/osweb.js"></script></head>
-    <body>				
+    <body onload="test()">				
 		<!-- Body - Command bar definitions -->
 		<nav class="navbar navbar-default navbar-fixed-top cogsci-navbar">
 			<div class="container">
@@ -76,11 +86,6 @@
 		</div>
 	</body>				
     <script>
-		// Create the runner object within the given container.
-        var runner = osweb.getRunner('osweb_div');
-		console.log(osweb);
-		console.log(runner);
-
 		// Create the context container for the experiment definitions.
 		var context = {};
 
@@ -143,6 +148,14 @@
 		    });
 	    }
 	 
+   	    /** Initialize function called whe Zebrakit is loaded.
+		function create_osweb() {
+   			zebra.ready(function() {
+				// Create the runner object within the given container.
+		        runner = osweb.getRunner('osweb_div');
+			});	
+    	}
+
    	    /**
  	     * Disable some buttons once an experiment is loaded.
  	     * @return {void}
