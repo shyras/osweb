@@ -1,8 +1,3 @@
-/** Break out alertify ASAP! */
-// import * as alertify from 'alertifyjs';
-// import 'alertifyjs/build/css/alertify.min.css';
-// import 'alertifyjs/build/css/themes/default.min.css';
-
 import { isFunction } from 'underscore';
 
 /** Class representing a parameter processor. */
@@ -112,34 +107,6 @@ export default class Parameters {
                     this._onParamConfirm(parameter, result);
                 }
             }
-
-            // /* Break out of this library! */
-            // alertify.prompt( 
-            //     parameter.title, 
-            //     parameter.prompt, 
-            //     parameter.defaultValue, 
-            //     function(evt, value) {
-            //         // Close the prompt.
-            //         alertify.prompt().close(); 
-
-            //         // Get the response information
-            //         parameter.response = value;
-            
-            //         // Increase the counter.
-            //         this._itemCounter++;
-            
-            //         // Continue processing.
-            //         this._processParameters();
-        
-            //     }.bind(this), 
-            //     function() {
-            //         // Close the prompt.
-            //         alertify.prompt().close();     
-
-            //         // Finalize the introscreen elements.
-            //         this._runner._exit();
-            //     }.bind(this)
-            // );
         } else {
             // Assign default value to the Startup item.
             parameter.response = parameter.defaultValue;
@@ -160,7 +127,8 @@ export default class Parameters {
             if (this._parameters[i].name == 'subject_nr') {
                 this._runner._experiment.set_subject(this._parameters[i].response);
             } else {
-                this._runner._experiment.vars.set(this._parameters[i].name, this._parameters[i].response);
+                this._runner._experiment.vars.set(this._parameters[i].name, 
+                    this._parameters[i].response);
             }    
         }
     

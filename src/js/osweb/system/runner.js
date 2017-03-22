@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
 
-import { constants } from './constants.js'
+import {
+    constants
+} from './constants.js'
 
 import Debugger from './debugger.js';
 import Events from './events.js';
@@ -30,6 +32,7 @@ export default class Runner {
         this._formContainer; // ZEBRAKIT: Container for form display. 
         this._experiment = null; // The JSON experiment container     
         this._name = ''; // String name of the experiment which is run.
+        this._onLog = null; // Function to call when logger is encountered.
         this._onfinished = null; // Event triggered on finishing the experiment.
         this._renderer = null; // PIXI: The visual stimuli renderer.
         this._script = null; // Container for the script definition of the experiment.
@@ -72,12 +75,16 @@ export default class Runner {
             this._formCanvas = new zebra.ui.zCanvas('osweb_formcanvas', 800, 600);
 
             // Create and set the experiment canvas. 
-            this._renderer = PIXI.autoDetectRenderer(800, 600, { antialias: false, transparent: false, resolution: 1});
+            this._renderer = PIXI.autoDetectRenderer(800, 600, {
+                antialias: true,
+                transparent: false,
+                resolution: 1
+            });
             this._renderer.backgroundColor = 0x000000;
-     
+
             // Append the canvas to the container.
             this._container.appendChild(this._renderer.view);
-        
+
         } else {
             // Show error message.
             this._debugger.addError('No content parameter specified.');
@@ -98,6 +105,7 @@ export default class Runner {
                 debug: this._debugger.enabled = false,
                 onconsole: this._onconsole = null,
                 onfinished: this._onfinished = null,
+                onlog: this._onLog = null,
                 name: this._name = "noname.exp",
                 source: this._source = null,
                 subject: this._subject = null,
@@ -105,14 +113,13 @@ export default class Runner {
                 prompt: this._prompt = null,
                 introscreen: this._screen._active = true,
                 introclick: this._screen_click = true
-            } = context);         
+            } = context);
 
             this._screen._setupIntroScreen();
 
             // Load the script file, using the source parameter.
             this._transfer._readOsexpFile(this._source);
-        } 
-        else {
+        } else {
             // Show error message.
             this.debugger.addError('No context parameter specified.');
         }
@@ -122,11 +129,14 @@ export default class Runner {
     _build() {
         // Create the experiment item. 
         this._experiment = new Experiment(this, this._name, this._script);
-		this._experiment.from_string(this._script);
+        this._experiment.from_string(this._script);
+        if(this._onLog){
+            this._experiment.onLog = this._onLog;
+        }
 
         // Initialize the parameters class and request user input.
         this._parameters._initialize();
-    } 
+    }
 
     /** initialize the runner. */
     _initialize() {
@@ -135,17 +145,17 @@ export default class Runner {
         this._events._initialize();
         this._pythonParser._initialize();
         this._session._initialize();
-     
+
         // Prepare and run the experiment item.
         this._experiment.prepare();
         this._experiment.run();
     }
-    
+
     /** finalize the runner. */
     _finalize() {
         // Finalize the event system.
         this._events._finalize();
-        
+
         // Finalize the debugger.
         this._debugger._finalize();
 
@@ -178,10 +188,70 @@ export default class Runner {
         this._events._status = constants.TIMER_BREAK;
     }
 
+    /**
+     * Sets the pixel dimensions of the canvas. It does not change the actual
+     * size of the canvas itself
+     * @param {int} width  The target width
+     * @param {int} height The target height
+     * @return {void}
+     */
+    setPixelDimensions(width, height){
+        // First check if height and width are passed and are numeric.
+        // If not fall back to experiments width and height.
+        // If that doesn't work, fall back to 1024x768 resolution.
+        try{
+            exp_width = parseInt(this._experiment.vars.width);
+            exp_height = parseInt(this._experiment.vars.height);
+        }catch(e){
+            console.warn("Could not determine experiment dimensions: " + e.message);
+            exp_width = 800;
+            exp_height = 600;
+        }
+
+        width = parseInt(height) || exp_width;
+        height = parseInt(height) || exp_height;
+
+        try{
+            this._renderer.resize(width, height);
+        }catch(e) {
+            this.debugger.addError('Could not resize renderer: ' + e.message);
+        }
+    }
+
+    /**
+     * Resizes the canvas using its style elements
+     * DOES NOT WORK AS IT SHOULD YET!
+     * @param  {int} width  The target width
+     * @param  {int} height The target height
+     * @return {void}
+     */
+    resizeCanvas(width, height){
+        // First check if height and width are passed and are numeric.
+        // If not fall back to experiments width and height.
+        // If that doesn't work, fall back to 1024x768 resolution.
+        try{
+            exp_width = parseInt(this._experiment.vars.width);
+            exp_height = parseInt(this._experiment.vars.height);
+        }catch(e){
+            console.warn("Could not determine experiment dimensions: " + e.message);
+            exp_width = 800;
+            exp_height = 600;
+        } 
+        
+        width = parseInt(height) || exp_width;
+        height = parseInt(height) || exp_height;
+
+        try{
+            this._renderer.view.style.width = xres;
+            this._renderer.view.style.height = yres;
+        }catch(e) {
+            this.debugger.addError('Could not resize renderer: ' + e.message);
+        }
+    }
+
     /** Run an experiment */
     run(context) {
         // Build the experiment.
         this._setupContext(context);
-    }    
+    }
 }
- 
