@@ -6,32 +6,37 @@ import Item from './item.js';
 import Canvas from '../backends/canvas.js';
 import Log from '../backends/log';
 
-import { constants } from '../system/constants.js';
-import { VERSION_NAME, VERSION_NUMBER } from '../index.js';
+import {
+	constants
+} from '../system/constants.js';
+import {
+	VERSION_NAME,
+	VERSION_NUMBER
+} from '../index.js';
 
 export default class Experiment extends Item {
-    /** The experiment class defines the starting point for an expriment. */
-    constructor(experiment, name, script, poolFolder, experimentPath, 
-			    fullScreen, autoResponse, logFile, subjectNr, workspace, 
-				resources, heartbeatInterval) {
+	/** The experiment class defines the starting point for an expriment. */
+	constructor(experiment, name, script, poolFolder, experimentPath,
+		fullScreen, autoResponse, logFile, subjectNr, workspace,
+		resources, heartbeatInterval) {
 		// Inherited.
-        super(experiment, name, script)   
+		super(experiment, name, script)
 
 		// Set the optional arguments
 		logFile = (typeof logFile === 'undefined') ? null : logFile;
 
-        // Create and set public properties. 
+		// Create and set public properties. 
 		this.debug = this._runner._debugger.enabled;
 		this.items = this._runner._itemStore;
 		this.logfile = logFile;
 		this.pool = this._runner._pool;
 
-        // Create and set private properties. 
-        this._canvas = new Canvas(this);
-	  	this._log = new Log(this, this.logfile);
+		// Create and set private properties. 
+		this._canvas = new Canvas(this);
+		this._log = new Log(this, this.logfile);
 		this._pythonWorkspace = this._runner._pythonWorkspace;
-    	this._syntax = this._runner._syntax;
-	
+		this._syntax = this._runner._syntax;
+
 		// Set default variables
 		this.vars.start = 'experiment';
 		this.vars.title = 'My Experiment';
@@ -61,7 +66,7 @@ export default class Experiment extends Item {
 		this.vars.font_italic = 'no';
 		this.vars.font_bold = 'no';
 		this.vars.font_underline = 'no';
-    }
+	}
 
 	/** Resets the feedback variables (acc, avg_rt, etc.). */
 	reset_feedback() {
@@ -79,7 +84,7 @@ export default class Experiment extends Item {
 	 * @param  {Number} pNr - The subject number to be used.
 	 */
 	set_subject(pNr) {
-	    // Sets the subject number and parity (even/ odd). 
+		// Sets the subject number and parity (even/ odd). 
 		this.vars.subject_nr = pNr;
 		if ((pNr % 2) == 0) {
 			this.vars.subject_parity = 'even';
@@ -90,8 +95,8 @@ export default class Experiment extends Item {
 
 	/**
 	 * Extracts a the definition of a single item from the string.
-     * @param {String} script - The script to read the definition form.
-     * @return {String} - The definition found from the script.
+	 * @param {String} script - The script to read the definition form.
+	 * @return {String} - The definition found from the script.
 	 */
 	read_definition(script) {
 		// Extracts a the definition of a single item from the string.
@@ -133,7 +138,7 @@ export default class Experiment extends Item {
 								var item_type = args[0];
 								var item_name = this._runner._syntax.sanitize(args[1]);
 								var def_str = this.read_definition(this._source);
-        						this._runner._itemStore.newItem(item_type, item_name, def_str);
+								this._runner._itemStore.newItem(item_type, item_name, def_str);
 							} else {
 								this._runner._debugger.addError('Failed to parse definition: ' + l);
 							}
@@ -155,7 +160,7 @@ export default class Experiment extends Item {
 		this.clock._initialize();
 	}
 
-    /** Initializes the canvas backend. */
+	/** Initializes the canvas backend. */
 	init_display() {
 		// Initializes the canvas backend.
 		this._canvas.init_display(this);
@@ -166,7 +171,11 @@ export default class Experiment extends Item {
 		this._log.open(this.logfile);
 	}
 
-    /** Implements the run phase of an item. */
+	onLog(data){
+		// Function to be overwritten by external handler
+	}
+
+	/** Implements the run phase of an item. */
 	run() {
 		// Inherited.	
 		super.run();
@@ -174,8 +183,8 @@ export default class Experiment extends Item {
 		// Runs the experiment.
 		switch (this._status) {
 			case constants.STATUS_INITIALIZE:
-	    	   // Adjust the status of the item.
-		       this._status = constants.STATUS_FINALIZE;
+				// Adjust the status of the item.
+				this._status = constants.STATUS_FINALIZE;
 
 				// Save the date and time, and the version of OpenSesame
 				this.vars.datetime = new Date().toString();
@@ -196,18 +205,18 @@ export default class Experiment extends Item {
 				} else {
 					this._runner._debugger.addError('Could not find the item that is the entry point of the experiment: ' + this.vars.start);
 				}
-			break;
+				break;
 			case constants.STATUS_FINALIZE:
 				// Add closing message to debug system.
 				this._runner._debugger.addMessage('experiment.run(): experiment finished at ' + new Date().toUTCString());
 
 				// Complete the run process.
 				this.end();
-			break;
+				break;
 		}
 	}
 
-    /** Ends an experiment. */
+	/** Ends an experiment. */
 	end() {
 		// Disable the run toggle.
 		this.running = false;
@@ -216,7 +225,6 @@ export default class Experiment extends Item {
 		this._log.close();
 
 		// Finalize the parent (runner).	
-		this._runner._finalize(); 
+		this._runner._finalize();
 	}
 }
- 

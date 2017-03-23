@@ -10,7 +10,7 @@ export default class Canvas {
      * @param {Boolean} auto_prepare - If true the canvas is prepared after drawing.
      * @param {Object} style_args - Optional styling argument for the canvas.
      */
-    constructor (experiment, auto_prepare, style_args) {
+    constructor(experiment, auto_prepare, style_args) {
         // Create and set public properties. 
         this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare; // Set autoprepare toggle (not supported yet). 	
         this.experiment = experiment; // Anchor to the experiment object.
@@ -25,7 +25,7 @@ export default class Canvas {
         // Initialize a new styles object to store the default styles in.
         this._styles.background_color = 'black';
         this._styles.bidi = false;
-        this._styles.color ='white'; // Foreground color of canvas.
+        this._styles.color = 'white'; // Foreground color of canvas.
         this._styles.fill = false; // If true fill mode is used.
         this._styles.font_bold = true;
         this._styles.font_family = 'Arial';
@@ -63,8 +63,8 @@ export default class Canvas {
         var p5 = [p6[0] + _head_width * head_width * Math.cos(angle + Math.PI / 2), p6[1] + _head_width * head_width * Math.sin(angle + Math.PI / 2)];
 
         return [p1, p2, p3, p4, p5, p6, p7];
-    } 
- 
+    }
+
     /**
      * Checks if the supplied string contains HTML markup.
      * @param {String} str - The string to check.
@@ -73,11 +73,11 @@ export default class Canvas {
     _containsHTML(str) {
         var doc = new DOMParser().parseFromString(str, "text/html");
         return [].slice.call(doc.body.childNodes).some(
-            function(node) { 
+            function(node) {
                 return (node.nodeType === 1);
-            } 
+            }
         );
-    } 
+    }
 
     /** Exit the display and return to default settings. */
     _exitDisplay() {
@@ -85,14 +85,14 @@ export default class Canvas {
         this.experiment._runner._renderer.view.style.cursor = 'default';
 
         // Resize the container div to the same size as the canvas
-        this._resizeContainer(800, 600);
+        // this._resizeContainer(800, 600);
 
         // PIXI: Set the renderer dimensions.
         this.experiment._runner._renderer.resize(800, 600);
 
         // Clear the renderer.
         this.experiment._runner._renderer.clear(0x000000);
-    } 
+    }
 
     /**
      * Checks if addiotional style is defined otherwise use default.
@@ -105,21 +105,21 @@ export default class Canvas {
             return this._styles;
         } else {
             var styles = new Styles();
-            styles._background_color = (typeof(style_args._background_color) !== 'undefined')?  style_args._background_color: 0x000000;
-            styles._bidi = (typeof(style_args._bidi) !== 'undefined')?  style_args._bidi: false;
-            styles._color = (typeof(style_args._color) !== 'undefined')?  style_args._color: 0xffffff; 
-            styles._fill = (typeof(style_args._fill) !== 'undefined')?  style_args._fill: false; 
-            styles._font_bold =(typeof(style_args._font_bold) !== 'undefined')?  style_args._font_bold: true;
-            styles._font_family = (typeof(style_args._font_family) !== 'undefined')?  style_args._font_family: 'Arial';
-            styles._font_italic = (typeof(style_args._font_italic) !== 'undefined')?  style_args._font_italic: false;
-            styles._font_size = (typeof(style_args._font_size) !== 'undefined')?  style_args._font_size: 24;
-            styles._font_underline = (typeof(style_args._font_underline) !== 'undefined')?  style_args._font_underline: false;
-            styles._penwidth = (typeof(style_args._penwidth) !== 'undefined')?  style_args._penwidth: 1; 
+            styles._background_color = (typeof(style_args._background_color) !== 'undefined') ? style_args._background_color : 0x000000;
+            styles._bidi = (typeof(style_args._bidi) !== 'undefined') ? style_args._bidi : false;
+            styles._color = (typeof(style_args._color) !== 'undefined') ? style_args._color : 0xffffff;
+            styles._fill = (typeof(style_args._fill) !== 'undefined') ? style_args._fill : false;
+            styles._font_bold = (typeof(style_args._font_bold) !== 'undefined') ? style_args._font_bold : true;
+            styles._font_family = (typeof(style_args._font_family) !== 'undefined') ? style_args._font_family : 'Arial';
+            styles._font_italic = (typeof(style_args._font_italic) !== 'undefined') ? style_args._font_italic : false;
+            styles._font_size = (typeof(style_args._font_size) !== 'undefined') ? style_args._font_size : 24;
+            styles._font_underline = (typeof(style_args._font_underline) !== 'undefined') ? style_args._font_underline : false;
+            styles._penwidth = (typeof(style_args._penwidth) !== 'undefined') ? style_args._penwidth : 1;
             return styles
         }
     }
 
-   /**
+    /**
      * Calculates the height, ascent en descent in pixels for the given font.
      * @param {String} textLine - The line of text.
      * @param {String} fontFamily - The font family to use.
@@ -128,7 +128,7 @@ export default class Canvas {
      */
     _getTextBaseline(textLine, fontFamily, fontSize, font_bold) {
         // Create the text element.
-        var text = document.createElement('span'); 
+        var text = document.createElement('span');
         text.style.fontFamily = fontFamily;
         text.style.fontFamily = 'Arial';
         text.style.fontWeight = (font_bold === true) ? 'bold' : 'normal';
@@ -147,11 +147,11 @@ export default class Canvas {
         try {
             // Set the variables.
             var result = {};
-            var rect;    
+            var rect;
             var top1;
             var top2;
 
-           // Calculate the ascent    
+            // Calculate the ascent    
             block.style.verticalAlign = 'baseline';
             rect = block.getBoundingClientRect();
             top1 = rect.top + document.body.scrollTop;
@@ -171,10 +171,10 @@ export default class Canvas {
             // Remove the div from the body.
             document.body.removeChild(div);
         }
-        
+
         // Return the result.
         return result;
-    } 
+    }
 
     /**
      * Returns the correct envelop setting to use.
@@ -193,7 +193,7 @@ export default class Canvas {
         } else {
             return 'g';
         }
-    } 
+    }
 
     /**
      * Parse recursively a HTML based text area and returns a set of text elements.
@@ -204,18 +204,16 @@ export default class Canvas {
     _parseHtmlNode(html_node, text_block, current_style) {
         // Create a style for the current leven 
         var element_style = this._getStyle(current_style);
-        
+
         // Process the node content itself.
-        switch (html_node.nodeType)
-        {  
+        switch (html_node.nodeType) {
             case 1:
                 // Select the proper html tag
-                switch (html_node.nodeName) 
-                {
-                    case 'B': 
+                switch (html_node.nodeName) {
+                    case 'B':
                         // Process bold tag.
-                        element_style.font_bold = true; 
-                    break;
+                        element_style.font_bold = true;
+                        break;
                     case 'BR':
                         // Process break tag, get the total width of the line.
                         text_block.row.height = (text_block.row.height > 0) ? text_block.row.height : text_block.prev_height;
@@ -223,57 +221,57 @@ export default class Canvas {
                         text_block.width = (text_block.width > text_block.row.width) ? text_block.width : text_block.row.width;
                         text_block.y_pos = text_block.y_pos + text_block.row.height;
                         text_block.x_pos = 4;
-                        text_block.height = text_block.height + text_block.row.height; 
+                        text_block.height = text_block.height + text_block.row.height;
                         // new row with elements.
                         text_block.rows.push(text_block.row);
-                        text_block.row = { 
+                        text_block.row = {
                             ascent: 0,
-                            width: 0, 
-                            height: 0, 
+                            width: 0,
+                            height: 0,
                             text_elements: [],
                             text_dimensions: [],
                             text_underline: []
                         };
-                    break;
+                        break;
                     case 'I':
                         // Process italic tag.
-                        element_style.font_italic = true; 
-                    break;
+                        element_style.font_italic = true;
+                        break;
                     case 'SPAN':
                         // Get the style tokens.
                         if (html_node.attributes.length > 0) {
-                            var tokens = html_node.attributes[0].value.split(';')  
-                            // parse through the style tokens. 
+                            var tokens = html_node.attributes[0].value.split(';')
+                                // parse through the style tokens. 
                             for (var j = 0; j < tokens.length; j++) {
                                 var property = tokens[j].slice(0, tokens[j].indexOf(':'));
-                                var value = tokens[j].slice(tokens[j].indexOf(':') + 1,tokens[j].length);
+                                var value = tokens[j].slice(tokens[j].indexOf(':') + 1, tokens[j].length);
                                 // Set the supported properties.
                                 switch (property) {
-                                    case 'color': 
-                                        element_style.color = value; 
-                                    break;
-                                    case 'font-size':    
-                                        element_style.font_size = value; 
-                                    break;
-                                    case 'font-family':    
-                                        element_style.font_family = value; 
-                                    break;
+                                    case 'color':
+                                        element_style.color = value;
+                                        break;
+                                    case 'font-size':
+                                        element_style.font_size = value;
+                                        break;
+                                    case 'font-family':
+                                        element_style.font_family = value;
+                                        break;
                                 }
-                            }    
-                        }    
-                    break;
+                            }
+                        }
+                        break;
                     case 'U':
                         // Process underline tag.
                         element_style.font_underline = true;
-                    break;
+                        break;
                 }
-            break;
+                break;
             case 3:
                 // PIXI - Create the text style element.  
                 var text_style = {
-                    fontStyle: (element_style.font_italic === true) ? 'italic' : 'normal', 
-                    fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal', 
-                    fontSize: element_style.font_size, 
+                    fontStyle: (element_style.font_italic === true) ? 'italic' : 'normal',
+                    fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
+                    fontSize: element_style.font_size,
                     fill: element_style.color
                 };
 
@@ -281,30 +279,30 @@ export default class Canvas {
                 var bounds = {};
                 var text_element = new PIXI.Text(html_node.textContent, text_style);
                 text_element.getBounds(false, bounds);
-               
+
                 // Get the height and descent (for vertical positioning);
                 var dimension = this._getTextBaseline(html_node.textContent, element_style.font_family, element_style.font_size, element_style.font_bold);
 
-                 // Position the text element and update the width.
+                // Position the text element and update the width.
                 text_element.x = text_block.x_pos;
                 text_element.y = text_block.y_pos;
-                text_block.x_pos = text_block.x_pos + bounds.width;  
+                text_block.x_pos = text_block.x_pos + bounds.width;
                 text_block.row.width = (text_block.x_pos > text_block.row.width) ? text_block.x_pos : text_block.row.width;
                 text_block.width = (text_block.width > text_block.row.width) ? text_block.width : text_block.row.width;
-                text_block.row.height = ((bounds.height + 1) > text_block.row.height) ? bounds.height + 1: text_block.row.height;
-                text_block.row.ascent = (dimension.ascent > text_block.row.ascent) ? dimension.ascent: text_block.row.ascent;
-                text_block.prev_height = text_block.row.height; 
+                text_block.row.height = ((bounds.height + 1) > text_block.row.height) ? bounds.height + 1 : text_block.row.height;
+                text_block.row.ascent = (dimension.ascent > text_block.row.ascent) ? dimension.ascent : text_block.row.ascent;
+                text_block.prev_height = text_block.row.height;
                 text_block.row.text_elements.push(text_element);
                 text_block.row.text_dimensions.push(dimension);
                 text_block.row.text_underline.push(element_style.font_underline);
-            break;
+                break;
         }
 
         // Process the cild nodes recursive (if any).
         for (var i = 0; i < html_node.childNodes.length; i++) {
-            this._parseHtmlNode(html_node.childNodes[i], text_block, element_style, (i === (html_node.childNodes.length - 1)));    
+            this._parseHtmlNode(html_node.childNodes[i], text_block, element_style, (i === (html_node.childNodes.length - 1)));
         }
-    } 
+    }
 
     /**
      * Resizes the container div (osweb_div), which contains all elements on display
@@ -356,13 +354,13 @@ export default class Canvas {
             circle.endFill();
         } else {
             circle.drawCircle(0, 0, r);
-        }    
+        }
         circle.x = x;
         circle.y = y;
-    
+
         // Add the circle element to container.
-        this._container.addChild(circle);     
-    } 
+        this._container.addChild(circle);
+    }
 
     /**
      * Clear the current canvas.
@@ -371,17 +369,16 @@ export default class Canvas {
      */
     clear(background_color, style_args) {
         // Clear the stage by temoving al the child elements.
-        for (var i = this._container.children.length - 1; i >= 0; i--) {	
+        for (var i = this._container.children.length - 1; i >= 0; i--) {
             this._container.removeChild(this._container.children[i]);
         }
-    } 
+    }
 
     /**
      * Copies the contents of the passed canvas onto current one.
      * @param {Object} canvas - The source canvas to copy.
      */
-    copy(canvas) {        
-    }
+    copy(canvas) {}
 
     /**
      * Draws an ellipse element on the canvas.
@@ -404,12 +401,12 @@ export default class Canvas {
             ellipse.endFill();
         } else {
             ellipse.drawEllipse(0, 0, (w / 2), (h / 2));
-        }    
+        }
         ellipse.x = x + (w / 2);
         ellipse.y = y + (h / 2);
-        
+
         // Add the ellipse element to container.
-        this._container.addChild(ellipse);     
+        this._container.addChild(ellipse);
     }
 
     /**
@@ -473,9 +470,9 @@ export default class Canvas {
             this.line(x - s, y, x + s, y, styles);
         } else {
             this.experiment._runner._debugger.addError('Unknown style: ' + style);
-        } 
+        }
     }
- 
+
     /**
      * Draws a gabor element on the canvas.
      * @param {Number} x - The x coordinate of the element.
@@ -560,7 +557,7 @@ export default class Canvas {
         ctx.putImageData(px, 0, 0);
 
         // Retrieve the image from the recourses  
-        var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+        var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
 
         // Position the image.
         sprite.x = x - (size / 2);
@@ -569,14 +566,14 @@ export default class Canvas {
         // Add the image to the stage.
         this._container.addChild(sprite);
     }
- 
+
     /**
      * Returns the canvas heigt
      * @return {Number} - The height of the canvas in pixels.
      */
     height() {
         return this._heigth;
-    } 
+    }
 
     /**
      * Draws an image element on the canvas.
@@ -589,15 +586,15 @@ export default class Canvas {
     image(fname, center, x, y, scale) {
         // Get image from file pool.
         var img = this.experiment._runner._pool[fname].data;
-     
+
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(img,0,0);
+        ctx.drawImage(img, 0, 0);
 
-        var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+        var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
 
         // Scale the image. 
         sprite.scale.x = scale;
@@ -614,7 +611,7 @@ export default class Canvas {
 
         // Add the image to the stage.
         this._container.addChild(sprite);
-    }  
+    }
 
     /**
      * Initializes the  display container on which the canvas is displayed.
@@ -626,7 +623,7 @@ export default class Canvas {
         this._width = experiment.vars.width;
 
         // Resize the container div to the same size as the canvas
-        this._resizeContainer(this._width, this._height);
+        // this._resizeContainer(this._width, this._height);
 
         // ZEBRAKIT: set the canvas of the form.
         this.experiment._runner._formContainer.style.width = this._width + 'px';
@@ -634,7 +631,7 @@ export default class Canvas {
         
         // PIXI: Set the renderer dimensions.
         experiment._runner._renderer.resize(this._width, this._height);
-        
+
         // PIXI: Set the renderer background color.
         experiment._runner._renderer.clear(this._styles._convertColorValue(experiment.vars.background, 'number'));
 
@@ -643,7 +640,7 @@ export default class Canvas {
 
         // Set focus to the experiment canvas.
         experiment._runner._renderer.view.focus();
-    } 
+    }
 
     /**
      * Draws a line element on the canvas.
@@ -664,10 +661,10 @@ export default class Canvas {
         line.lineTo(ex - sx, ey - sy);
         line.x = sx;
         line.y = sy;
-    
+
         // Add the line element to container.
-        this._container.addChild(line); 
-    } 
+        this._container.addChild(line);
+    }
 
     /**
      * Draws a gabor element on the canvas.
@@ -744,7 +741,7 @@ export default class Canvas {
         ctx.putImageData(px, 0, 0);
 
         // Retrieve the image from the recourses  
-        var sprite =new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
+        var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas));
 
         // Position the image.
         sprite.x = x - (size / 2);
@@ -752,7 +749,7 @@ export default class Canvas {
 
         // Add the image to the stage.
         this._container.addChild(sprite);
-    } 
+    }
 
     /**
      * Draws a polygon element on the canvas.
@@ -782,14 +779,13 @@ export default class Canvas {
         } else {
             polygon.drawPolygon(path);
         }
-    
+
         // Add the polygon item to container.
-        this._container.addChild(polygon); 
-    }    
-    
-    /** Implements the prepare phase of a canvas. */
-    prepare() {
+        this._container.addChild(polygon);
     }
+
+    /** Implements the prepare phase of a canvas. */
+    prepare() {}
 
     /**
      * Draws a rectangle element on the canvas.
@@ -814,10 +810,10 @@ export default class Canvas {
         }
         rectangle.x = x;
         rectangle.y = y;
-        
+
         // Add the rectangle element to container.
         this._container.addChild(rectangle);
-    } 
+    }
 
     /**
      * Returns the size ion pixels of the canvas.
@@ -830,7 +826,7 @@ export default class Canvas {
             height: this._height
         };
         return size;
-    } 
+    }
 
     /**
      * Show a canvas on the ptimary canvas.
@@ -840,7 +836,7 @@ export default class Canvas {
     show(experiment) {
         // Check parameter.
         experiment = (typeof experiment !== 'undefined') ? experiment : this.experiment;
-        
+
         // Add the container to the stage object and update the stage.
         this.experiment._runner._renderer.render(this._container);
 
@@ -850,7 +846,7 @@ export default class Canvas {
         } else {
             return null;
         }
-    } 
+    }
 
     /**
      * Draws a text element on the canvas.
@@ -867,27 +863,27 @@ export default class Canvas {
 
         // Only jump through the HTML rendering hoops if the html == 'yes' and
         // text actually contains HTML markup.
-        if ((html === 'yes') && (this._containsHTML(text))) { 
+        if ((html === 'yes') && (this._containsHTML(text))) {
             //  Define the text block object.
             var text_elements = [];
             var text_block = {
-                element_style : element_style,
+                element_style: element_style,
                 height: 0,
                 row: {
                     ascent: 0,
-                    height: 0, 
+                    height: 0,
                     text_elements: [],
                     text_dimensions: [],
                     text_underline: [],
-                    width: 0 
+                    width: 0
                 },
                 rows: [],
                 styles: [],
                 width: 0,
                 x_pos: 4,
                 y_pos: 0
-            } 
-  
+            }
+
             // First create a div container for parsing the html text.
             var div = document.createElement('div');
             document.body.appendChild(div);
@@ -907,7 +903,7 @@ export default class Canvas {
 
             // Add the last row (if any).
             if (text_block.row.text_elements.length !== 0) {
-                text_block.height = text_block.height + text_block.row.height; 
+                text_block.height = text_block.height + text_block.row.height;
                 text_block.rows.push(text_block.row);
             }
 
@@ -918,36 +914,36 @@ export default class Canvas {
                 for (var j = 0; j < text_block.rows[i].text_elements.length; j++) {
                     // Check for vertical correction.
                     var adjust = text_block.rows[i].ascent - text_block.rows[i].text_dimensions[j].ascent;
-                    text_block.rows[i].text_elements[j].y = text_block.y_pos + adjust;  
+                    text_block.rows[i].text_elements[j].y = text_block.y_pos + adjust;
 
                     // Check for horizontal centering.
                     if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
-                        text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x - (text_block.rows[i].width / 2); 
-                        text_block.rows[i].text_elements[j].y = text_block.rows[i].text_elements[j].y + y - (text_block.height / 2);  
+                        text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x - (text_block.rows[i].width / 2);
+                        text_block.rows[i].text_elements[j].y = text_block.rows[i].text_elements[j].y + y - (text_block.height / 2);
                     } else {
-                        text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x;  
+                        text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x;
                         text_block.rows[i].text_elements[j].y = text_block.rows[i].text_elements[j].y + y + 6;
-                    }    
-                     
+                    }
+
                     // if underlined add additional styling.   
                     if (text_block.rows[i].text_underline[j] === true) {
-                        this.line(text_block.rows[i].text_elements[j].x, 
-                                  text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7,
-                                  text_block.rows[i].text_elements[j].x + text_block.rows[i].text_elements[j].width, 
-                                  text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7, 
-                                  element_style);
+                        this.line(text_block.rows[i].text_elements[j].x,
+                            text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7,
+                            text_block.rows[i].text_elements[j].x + text_block.rows[i].text_elements[j].width,
+                            text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7,
+                            element_style);
                     }
 
                     // PIXI - Add text element to the stage.
                     this._container.addChild(text_block.rows[i].text_elements[j]);
                 }
-                text_block.y_pos = text_block.y_pos + text_block.rows[i].height; 
+                text_block.y_pos = text_block.y_pos + text_block.rows[i].height;
             }
         } else {
             // PIXI - Create the text element  
             var text_style = {
-                fontFamily: element_style.font_family, 
-                fontSize: element_style.font_size, 
+                fontFamily: element_style.font_family,
+                fontSize: element_style.font_size,
                 fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
                 fill: element_style.color
             };
@@ -963,7 +959,6 @@ export default class Canvas {
 
             // PIXI - Add text element to the stage.
             this._container.addChild(text_element);
-        }     
-    }      
-}       
-  
+        }
+    }
+}
