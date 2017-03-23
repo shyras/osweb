@@ -46,7 +46,7 @@ var settings = {
       }),
       new webpack.NamedModulesPlugin(),
       new CopyWebpackPlugin([
-         { from: 'src/js/dependencies/zebra.json', to: '/' },
+         { from: 'src/js/dependencies/zebra.json', to: 'js/' },
          { from: 'src/js/dependencies/zebra.png', to: 'js/' }
       ],{debug: 'info'})
    ],
