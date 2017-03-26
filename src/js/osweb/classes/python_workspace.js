@@ -16,6 +16,7 @@ export default class PythonWorkspace {
      */
     _eval(bytecode) {
         // Check wich type of expression must be evaled.
+        console.log(bytecode);
         if (typeof bytecode === 'boolean') {
             return bytecode;
         } else if (typeof bytecode === 'string') {
@@ -24,6 +25,7 @@ export default class PythonWorkspace {
 
             // Evaluate the expression.
             var eval_string = this._runner._syntax.remove_quotes(bytecode);
+            console.log(eval_string);
             if (eval_string == "always") {
                 return true;
             } else if (eval_string == "never") {
