@@ -6,7 +6,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var settings = {
-   devtool: 'cheap-module-eval-source-map',
+   devtool: 'cheap-module-source-map',
    entry: [
       path.join(__dirname, 'src', 'entry.js')
    ],

@@ -1,0 +1,127 @@
+---
+API: 2
+OpenSesame: 3.1.6
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Simple test"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/Users/daniel/Sites/osweb/test-osexp"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background black
+
+define sequence Trial
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run fixation always
+	run target always
+	run keyboard_response always
+	run logger always
+
+define loop Trials
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 6
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 delay 500
+	setcycle 0 target circle
+	setcycle 0 correct_response z
+	setcycle 1 delay 750
+	setcycle 1 target circle
+	setcycle 1 correct_response z
+	setcycle 2 delay 1000
+	setcycle 2 target circle
+	setcycle 2 correct_response z
+	setcycle 3 delay 500
+	setcycle 3 target square
+	setcycle 3 correct_response m
+	setcycle 4 delay 750
+	setcycle 4 target square
+	setcycle 4 correct_response m
+	setcycle 5 delay 1000
+	setcycle 5 target square
+	setcycle 5 correct_response m
+	run Trial
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run getting_started always
+	run welcome always
+	run Trials always
+
+define sketchpad fixation
+	set duration 300
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+
+define notepad getting_started
+	__note__
+	Welcome to OpenSesame 3.1 "Jazzy James"!
+	If you are new to OpenSesame, it is a good idea to follow one of the tutorials,
+	which can be found on the documentation site:
+	- <http://osdoc.cogsci.nl/>
+	You can also check out the examples. These can be opened via:
+	- Menu -> Tools -> Example experiments.
+	And feel free to ask for help on the forum:
+	- <http://forum.cogsci.nl/>
+	Have fun with OpenSesame!
+	__end__
+	set description "A simple notepad to document your experiment. This plug-in does nothing."
+
+define keyboard_response keyboard_response
+	set timeout infinite
+	set flush yes
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses "z;m"
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define sketchpad target
+	set duration 0
+	set description "Displays stimuli"
+	draw rect color=white fill=0 h=128 penwidth=3 show_if="[target] = 'square'" w=128 x=-64 y=-64 z_index=0
+	draw circle color=white fill=0 penwidth=3 r=71.55417528 show_if="[target] = 'circle'" x=0 y=0 z_index=0
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.1 <i>Jazzy James</i>" x=0 y=0 z_index=0
+

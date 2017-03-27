@@ -90,7 +90,6 @@ export default class Logger extends Item {
                 }
             }
             this.experiment._log.write_vars(this._logvars);
-            this.experiment.onLog(this._logvars);
 
             // Complete the cycle.
             this._complete();

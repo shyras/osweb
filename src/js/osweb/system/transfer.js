@@ -11,10 +11,10 @@ export default class Transfer {
         this._counter = 0;   // Counter used for processing the pool items.
         this._runner = runner; // Parent runner attached to the transfer object.    
         this._filePool = null; // Array containg the items.    
-    }   
+    }
 
     /** 
-     * Read na osexp file.
+     * Read an osexp file.
      * @param {Object|String} source - A file object or a String containing the experiment.
      */
     _readOsexpFile(source) {    
@@ -28,16 +28,7 @@ export default class Transfer {
                 this._readOsexpFromFile(source);
             } else {
                 // Check if the source is a script string.
-                if (source.substr(0,3) === '---') {
-                    // Disable the progressbar.    
-                    this._runner._screen._updateProgressBar(100);
-
-                    // Set the script paramter.
-                    this._runner._script = source;
-                    
-                    // Start buiding the experiment.
-                    this._runner._build();
-                } else {
+                if(!this._processScript(source)){
                     // Server source, check if the url is valid
                     this._readOsexpFromServer(source);
                 }
@@ -72,20 +63,57 @@ export default class Transfer {
      * @param {String} url - An url location from which to load an osexp file.
      */
     _readOsexpFromServer(url) {
-        // Reading and extracting an osexp file from a server location.
-        TarGZ.load(url, 
-            function(event) {
-                this._runner._screen._updateProgressBar(100);
-                this._processOsexpFile(event);
-            }.bind(this),
-            function(event) {
-                this._runner._screen._updateProgressBar((event.loaded / event.total) );
-            }.bind(this),
-            function(event) {
-                this._runner._debugger.addError('Error reading server osexp file: ' + url);
-            }.bind(this)
-        );
+        // Osexp files can be basic text files, or be a zip file.
+        // Check if mimetype of supplied file is known, and load it accordingly.
+        if(this._runner._mimetype == 'text/plain'){
+            contents = this._readRemoteOsexpText(url);
+        }else{
+            // Reading and extracting an osexp file from a server location.
+            TarGZ.load(url, 
+                function(event) {
+                    this._runner._screen._updateProgressBar(100);
+                    this._processOsexpFile(event);
+                }.bind(this),
+                function(event) {
+                    this._runner._screen._updateProgressBar((event.loaded / event.total) );
+                }.bind(this),
+                function(event) {
+                    this._runner._debugger.addError('Error reading server osexp file: ' + url);
+                }.bind(this)
+            );
+        }
     }   
+
+    /**
+     * Reads an osexp file from a remote server, if its type is indicated to be
+     * 'text/plain' (opposed to being zipped)
+     * @param  {string} url The url at which the osexp can be found
+     * @return {void}
+     */
+    _readRemoteOsexpText(url){
+        const request = new XMLHttpRequest();
+
+        // Transfer in progress, update of percentage.
+        request.addEventListener("progress", (event) => { 
+            if(event.lengthComputable){
+                console.log(event.loaded / event.total);
+                this._runner._screen._updateProgressBar(event.loaded / event.total);
+            }
+        });
+
+        // Transfer finished.
+        request.addEventListener("load", (event) => {
+            this._processScript(request.response);
+        });
+
+        request.addEventListener("error", (e) => {
+            console.error(e);
+            throw new Error("Error transferring osexp: " + e); 
+        });
+
+        request.open('GET', url, true);
+        request.send();
+    } 
 
     /**
      * Process the contence of an osexp file.
@@ -106,7 +134,28 @@ export default class Transfer {
 
         // Process the individual pool files.
         this._processOsexpPoolItems();
-    } 
+    }
+
+    /**
+     * Process an osexp script
+     * @param  {string} contents The script contents
+     * @return {boolean}         True if script was successfully processed, false otherwise
+     */
+    _processScript(contents){
+        if (contents.substr(0,3) === '---') {
+            // Disable the progressbar.    
+            this._runner._screen._updateProgressBar(100);
+
+            // Set the script paramter.
+            this._runner._script = contents;
+            
+            // Start buiding the experiment.
+            this._runner._build();
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /** Process the individual pool file items. */
     _processOsexpPoolItems() {
