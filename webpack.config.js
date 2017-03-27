@@ -13,7 +13,6 @@ var settings = {
    output: {
       path: path.join(__dirname, 'public_html'),
       filename: 'js/osweb.js',
-      publicPath: '/',
    },
    module: {
       loaders: [{

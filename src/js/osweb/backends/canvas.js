@@ -948,7 +948,7 @@ export default class Canvas {
                 fill: element_style.color
             };
             var text_element = new PIXI.Text(text, text_style);
-
+            
             if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
                 text_element.x = x - (text_element.width / 2);
                 text_element.y = y - (text_element.height / 2);
