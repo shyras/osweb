@@ -109,6 +109,7 @@ export default class Runner {
                 onlog: this._onLog = null,
                 name: this._name = "noname.exp",
                 source: this._source = null,
+                mimetype: this._mimetype = null,
                 subject: this._subject = null,
                 target: this._target = null,
                 prompt: this._prompt = null,

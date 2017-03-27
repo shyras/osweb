@@ -110,11 +110,14 @@ export default class Log {
 
         // Add the data entries to the log file.        
         l = [];
+        entry = {};
         for (var i = 0; i < varList.length; i++) {
             value = this.experiment.vars.get(varList[i], 'NA', false);
             l.push('"' + value + '"');
+            entry[varList[i]] = value
         }
         this.write(l.join());
+        this.experiment.onLog(entry);
     }
 }
  
