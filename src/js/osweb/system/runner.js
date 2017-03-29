@@ -192,6 +192,24 @@ export default class Runner {
         }
     }
 
+    /**
+     * Requests fullscreen mode from runner
+     * @return {voui} 
+     */
+    enterFullscreen(){
+        this._fullscreen = true;
+        this._screen._fullScreenInit();
+    }
+
+    /**
+     * Requests fullscreen mode from runner
+     * @return {voui} 
+     */
+    exitFullscreen(){
+        this._fullscreen = true;
+        this._screen._fullScreenExit();
+    }
+
     /** Exit a running experiment. */
     exit() {
         // Set status of the event system to break.
