@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/Users/daniel/Github/OpenSesame/opensesame_resources/templates"
+set experiment_path "/Users/daniel/Sites/osweb/test-osexp"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -62,7 +62,7 @@ define feedback feedback
 	set duration 500
 	set description "Provides feedback to the participant"
 	draw fixdot color=green show_if="[correct] = 1" style=default x=0 y=0 z_index=0
-	draw fixdot color=red show_if="[correct] = 0" style=default x=0.0 y=0.0 z_index=0
+	draw fixdot color=red show_if="[correct] = 0" style=default x=0 y=0 z_index=0
 
 define sketchpad fixation
 	set duration 500
@@ -82,7 +82,7 @@ define sketchpad left_target
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
 	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
 	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
-	draw circle color=white fill=1 penwidth=1 r=10 show_if=always x=-224.0 y=0.0 z_index=0
+	draw circle color=white fill=1 penwidth=1 r=10 show_if=always x=-224 y=0 z_index=0
 
 define logger logger
 	set description "Logs experimental data"
@@ -116,10 +116,10 @@ define sequence trial
 	run fixation always
 	run boxes always
 	run left_flash "[cue_side] = left"
-	run right_flash "[cue_side] = right"
+	run right_flash "[cue_side] = 'right'"
 	run boxes_ISI always
-	run left_target "[target_side] = left"
-	run right_target "[target_side] = right"
+	run left_target "[target_side] = 'left'"
+	run right_target "[target_side] = 'right'"
 	run response always
 	run logger always
 	run feedback always
