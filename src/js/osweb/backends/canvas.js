@@ -638,6 +638,9 @@ export default class Canvas {
         // PIXU: Set the cursor visibility to none (default).
         experiment._runner._renderer.view.style.cursor = 'none';
 
+        // Start the fullscreen mode (if enabled).
+        experiment._runner._screen._fullScreenInit();
+
         // Set focus to the experiment canvas.
         experiment._runner._renderer.view.focus();
     }

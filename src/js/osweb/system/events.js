@@ -337,6 +337,21 @@ export default class Events {
                     this._currentItem._update(null);
                 }
             break;    
+            case constants.TIMER_PAUSE:
+                // Do nothing in the loop
+                console.log('setting osweb in pause mode.');
+            break;
+            case constants.TIMER_RESUME:
+                // Do nothing in the loop
+                console.log('resuming osweb from pause mode.');
+            break;
+            case constants.TIMER_BREAK:
+                // Adjus the status. 
+                this._state = constants.TIMER_NONE;
+
+                // Exit the runner.
+                this._runner._finalize(); 
+            break;
             case constants.TIMER_EXIT :
                 // Adjus the status. 
                 this._state = constants.TIMER_NONE;

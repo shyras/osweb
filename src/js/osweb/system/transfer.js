@@ -67,7 +67,7 @@ export default class Transfer {
         // Check if mimetype of supplied file is known, and load it accordingly.
         if(this._runner._mimetype == 'text/plain'){
             contents = this._readRemoteOsexpText(url);
-        }else{
+        } else {
             // Reading and extracting an osexp file from a server location.
             TarGZ.load(url, 
                 function(event) {
@@ -138,10 +138,10 @@ export default class Transfer {
 
     /**
      * Process an osexp script
-     * @param  {string} contents The script contents
-     * @return {boolean}         True if script was successfully processed, false otherwise
+     * @param  {string} contents - The script contents
+     * @return {boolean} - True if script was successfully processed, false otherwise
      */
-    _processScript(contents){
+    _processScript(contents) {
         if (contents.substr(0,3) === '---') {
             // Disable the progressbar.    
             this._runner._screen._updateProgressBar(100);

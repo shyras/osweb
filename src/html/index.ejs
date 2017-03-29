@@ -11,6 +11,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<!-- JavaScript -->
+		<script type="text/javascript" src="js/zebra.js"></script>
 		<script> 
 			function test() { 
    				zebra.ready(function() {
@@ -41,8 +42,8 @@
 					<form class="navbar-form navbar-right">
 						<div class="form-group">
 							<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
-							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false" disabled><i class="fa fa-arrows-alt" aria-hidden="true"></i> Fullscreen</button>
-							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsoleWindow(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i> Console</button>
+							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false"><i class="fa fa-arrows-alt" aria-hidden="true"></i>Fullscreen off</button>
+							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsoleWindow(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Console off</button>
 						</div>
 					</form>
 					<form class="navbar-form">
@@ -87,7 +88,7 @@
     <script>
 		// Create the context container for the experiment definitions.
 		var context = {};
-
+		
 	 	// Set position of notifications
 	    alertify.set('notifier', 'position', 'bottom-right');
 
@@ -122,29 +123,17 @@
 	    // Hack to set the value of the file upload button
 	    document.getElementById('file_button').text = 'Select file'; 
 
-	    // Event listener for fullscreen errors
-	    // Use alert() for now, but think of something prettier (sAlert?)
-		if (screenfull.enabled) {
-		    document.addEventListener(screenfull.raw.fullscreenerror, function() {
-			    alertify.errorAlert('Failed to activate fullscreen');
-		    });
-	    }
-
-	    // Resize canvas to fit screen, when resized to fullscreen
-	    if (screenfull.enabled) {
-		    document.addEventListener(screenfull.raw.fullscreenchange, function() {
-			    var c = runner._renderer.view;
-			    if(screenfull.isFullscreen) {
-				    c.old_width = c.style.width;
-				    c.old_height = c.style.height;
-				    var rect = c.getBoundingClientRect();
-				    c.style.width = rect.width;
-				    c.style.height = rect.height;
-			    } else {
-				    c.style.width = c.old_width;
-				    c.style.height = c.old_height;
-			    }
-		    });
+	    function confirm(title, message, onConfirm, onCancel){
+            alertify.confirm( 
+                title, 
+                message, 
+                function() {
+                    onConfirm();
+                }, 
+                function() {
+                    onCancel();
+                }.bind(this)
+            );
 	    }
 
 	    function prompt(title, message, defaultValue, dataType, onConfirm, onCancel){
@@ -167,7 +156,7 @@
 				// Create the runner object within the given container.
 		        runner = osweb.getRunner('osweb_div');
 			});	
-    	}
+    	} */
 
    	    /**
  	     * Disable some buttons once an experiment is loaded.
@@ -223,7 +212,9 @@
 
 		    // Set the experment context container.
 	        context = {
+				confirm: confirm,
 				debug: true,
+				fullscreen: (document.getElementById('fullscreen_button').textContent === 'Fullscreen on'),
 				introscreen: true,
 				introclick: true,
 				prompt: prompt,
@@ -240,21 +231,27 @@
  	     * @returns {void}
  	     */
 	    function toggleFullscreen() {
-    		if (screenfull.enabled) {
-	    		screenfull.request(runner._renderer.view);
-		    }
-	    }	
+    		var button = document.getElementById('fullscreen_button');
+			if (button.textContent == 'Fullscreen off') {
+				button.textContent = 'Fullscreen on'
+			} else {
+				button.textContent = 'Fullscreen off'
+			}
+		}	
 
 	    /**
  	     * Show/hide console window used by the console print method.
  	     * @returns {void}
  	     */
 	    function toggleConsoleWindow() {
+			var button = document.getElementById('console_button');
 		    var c = document.getElementById('osweb_console');
 		    if (c.style.display === 'none') {
 			    c.style.display = '';
+				button.textContent = 'Console on';
 		    } else {
 			    c.style.display = 'none';
+				button.textContent = 'Console off';
 		    }	
 	    }
 	
@@ -295,11 +292,6 @@
  	     * @returns {void}
  	     */
 	    function onExperimentFinished(data, sessionData) {
-			// Exit fullscreen mode, if applicable.
-			if (screenfull.enabled && screenfull.isFullscreen) {
-				screenfull.exit();
-			}
-
 			// Reset the input buttons
 			buttonsSetToFileSelection();
 
@@ -338,4 +330,4 @@
 		}
 
     </script>
-</html>
+</html> 

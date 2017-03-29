@@ -27,9 +27,11 @@ export default class Runner {
     /** Create a runner which runs an experiment. */
     constructor(content) {
         // Create and set private properties.
+        this._confirm = null;
         this._container = null; // HTML: The container (div) element. 
         this._data = null // Experiment result data.
         this._formContainer; // ZEBRAKIT: Container for form display. 
+        this._fullscreen = false;
         this._experiment = null; // The JSON experiment container     
         this._name = ''; // String name of the experiment which is run.
         this._prompt = null;
@@ -103,10 +105,12 @@ export default class Runner {
             // Use ES6 destructuring to determine values and set default ones if
             // required.
             ({
+                confirm: this._confirm = null,
                 debug: this._debugger.enabled = false,
                 onconsole: this._onconsole = null,
                 onfinished: this._onfinished = null,
                 onlog: this._onLog = null,
+                fullscreen: this._fullscreen = false,
                 name: this._name = "noname.exp",
                 source: this._source = null,
                 mimetype: this._mimetype = null,
@@ -117,6 +121,7 @@ export default class Runner {
                 introclick: this._screen_click = true
             } = context);
 
+            // Set up the introscreen.
             this._screen._setupIntroScreen();
 
             // Load the script file, using the source parameter.
@@ -171,6 +176,9 @@ export default class Runner {
 
     /** Exit the experiment environment and execute the optional callback. */
     _exit() {
+        // Leave the full screen mode 
+        this._screen._fullScreenExit();
+
         // Reset te size of the container and the canvas.
         this._experiment._canvas._exitDisplay();
 

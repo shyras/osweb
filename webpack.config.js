@@ -34,7 +34,7 @@ var settings = {
          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
          loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]'
       }],
-      noParse: [/.*(gzip\.js|zebra\.js).*/] // TarGZ doesn't play well with webpack, so skip parsing
+      noParse: [/.*(gzip\.js).*/] // TarGZ doesn't play well with webpack, so skip parsing
    },
    plugins: [
       new HtmlWebpackPlugin({
@@ -43,11 +43,7 @@ var settings = {
          title: 'OSweb 2.0',
          favicon: './src/img/osdoc.png'
       }),
-      new webpack.NamedModulesPlugin(),
-      new CopyWebpackPlugin([
-         { from: 'src/js/dependencies/zebra.json', to: 'js/' },
-         { from: 'src/js/dependencies/zebra.png', to: 'js/' }
-      ],{debug: 'info'})
+      new webpack.NamedModulesPlugin()
    ],
    node: {
       fs: 'empty'

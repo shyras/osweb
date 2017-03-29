@@ -1,4 +1,6 @@
 import { VERSION_NUMBER } from '../index.js';
+import { isFunction } from 'underscore';
+import { constants } from '../system/constants.js';
 
 /** Class representing a Screen. */
 export default class Screen {
@@ -12,9 +14,107 @@ export default class Screen {
 
         // Set class properties.
         this._active = true; // If true the introduction screen is shown.
+        this._exit = false; // Exit toggle to prevent dialog when closing experiment.
         this._click = true; // If true all is started with a mouse click.
         this._container = null; // PIXI: Container which holds the screen info. 
     }   
+
+    /** Initialize the fullscreen mode if enabled. */
+    _fullScreenInit() {
+        // Check if fullscreen must be enabled.
+        if (this._runner._fullscreen === true) {
+            // Get the container element.
+            var element = this._runner._container;
+
+            // Go full-screen
+            if (element.requestFullscreen) {
+	            document.addEventListener("fullscreenchange", function(e) { this._fullScreenChanged(e)}.bind(this));
+                document.addEventListener("fullscreenerror", function(e) { this._fullScreenError(e)}.bind(this));
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                document.addEventListener("webkitfullscreenchange", function(e) { this._fullScreenChanged(e)}.bind(this));
+                document.addEventListener("webkitfullscreenerror", function(e) { this._fullScreenError(e)}.bind(this));
+	            element.webkitRequestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                document.addEventListener("mozfullscreenchange", function(e) { this._fullScreenChanged(e)}.bind(this));
+                document.addEventListener("mozfullscreenerror",function(e) { this._fullScreenError(e)}.bind(this));
+            	element.mozRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+        	    document.addEventListener("MSFullscreenChange", function(e) { this._fullScreenChanged(e)}.bind(this));
+                document.addEventListener("MSFullscreenError", function(e) { this._fullScreenError(e)}.bind(this));
+                element.msRequestFullscreen();
+            }
+        }
+    }    
+
+    /** Finalize the fullscreen mode if if was enabled. */
+    _fullScreenExit() {
+        // Check if fullscreen must be enabled.
+        if (this._runner._fullscreen === true) {
+            // Set the exit toggle.
+            this._exit = true;
+      
+            // Exit the full screen mode.
+            if (document.exitFullscreen) {
+	            document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+    	        document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+    	        document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+    	        document.msExitFullscreen();
+            }
+        }
+    }    
+
+    /** Event handler which responds to full-screen change. */
+    _fullScreenChanged() {
+        // Check if we are dropping out of full-screen.
+        if (document.fullscreenElement ||
+	        document.webkitFullscreenElement ||
+	        document.mozFullScreenElement ||
+	        document.msFullscreenElement) {
+            // At this moment do nothing, mayber reister          
+        } else {
+            // Check for exiting experiment.
+            if (this._exit === false) {
+                // Open Sesame is running, request subject to continue of to stop.
+                if (isFunction(this._runner._confirm)) {
+                    this._runner._confirm('Leaving full-screen mode, pausing experiment.', 
+                        'Please press ok the resume the experiment otherwise cancel to stop.', 
+                        this._onFullScreenConfirm.bind(this), this._onFullScreenCancel.bind(this) );
+                }
+            }
+        }     
+    }    
+
+    /** Event handler which responds to full-screen change errors. */
+    _fullScreenError() {
+        // Show error message.
+        this._runner.debugger.addError('Could not start full-screen mode, experiment stopped.');
+    }    
+
+    /** Event handler to respond to dialog ok conmfirmation. */
+     _onFullScreenConfirm() {
+        // Get the container element.
+        var element = this._runner._container;
+        // Go full-screen
+        if (element.requestFullscreen) {
+	        element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+          	element.mozRequestFullScreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+
+    /** Event handler to respond to dialog cancel confirmation. */
+    _onFullScreenCancel() {
+        // Exit the experiment.
+        this._runner._finalize();
+    }
 
     /** Set the introscreen elements. */
     _setupIntroScreen() {
@@ -68,7 +168,7 @@ export default class Screen {
         } else {
             // Finalize the introscreen elements.
             this._clearIntroScreen();
-
+ 
             // Start the runner.
             this._runner._initialize();
         }
