@@ -75,6 +75,15 @@ export default class Screen {
 	        document.mozFullScreenElement ||
 	        document.msFullscreenElement) {
             // At this moment do nothing, mayber reister          
+            console.log(this._runner._container);
+            console.log(this._runner._renderer.view);
+
+            // resize the canvas
+            this._runner._renderer.resize(this._runner._container.clientWidth, this._runner._container.clientHeight)
+            this._runner._experiment._currentCanvas._container.scale.x = 2;
+            this._runner._experiment._currentCanvas._container.scale.y = 2;
+            this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
+
         } else {
             // Check for exiting experiment.
             if (this._exit === false) {

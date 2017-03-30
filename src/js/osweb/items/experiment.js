@@ -33,6 +33,7 @@ export default class Experiment extends Item {
 
 		// Create and set private properties. 
 		this._canvas = new Canvas(this);
+		this._currentCanvas = this.canvas;
 		this._log = new Log(this, this.logfile);
 		this._pythonWorkspace = this._runner._pythonWorkspace;
 		this._syntax = this._runner._syntax;

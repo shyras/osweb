@@ -156,6 +156,8 @@ export default class Syntax {
             return '';
         } else if ((line[0] === '"') && (line[line.length - 1] === '"')) {
             return line.slice(1, line.length - 1);
+        } else if ((line[0] === "'") && (line[line.length - 1] === "'")) {
+            return line.slice(1, line.length - 1);
         } else {
             return line;
         }

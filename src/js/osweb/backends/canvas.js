@@ -585,7 +585,8 @@ export default class Canvas {
      */
     image(fname, center, x, y, scale) {
         // Get image from file pool.
-        var img = this.experiment._runner._pool[fname].data;
+        var name = this.experiment._runner._syntax.remove_quotes(fname);
+        var img = this.experiment._runner._pool[name].data;
 
         // Create a temporary canvas to make an image data array.        
         var canvas = document.createElement('canvas');
@@ -841,6 +842,7 @@ export default class Canvas {
         experiment = (typeof experiment !== 'undefined') ? experiment : this.experiment;
 
         // Add the container to the stage object and update the stage.
+        this.experiment._currentCanvas = this;
         this.experiment._runner._renderer.render(this._container);
 
         // Return the current time.
