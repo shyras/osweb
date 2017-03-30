@@ -1,3 +1,5 @@
+import _ from 'underscore';
+
 /** Class representing a data logger. */
 export default class Log {
     /**
@@ -110,14 +112,14 @@ export default class Log {
 
         // Add the data entries to the log file.        
         l = [];
-        entry = {};
+        const entry = {};
         for (var i = 0; i < varList.length; i++) {
             value = this.experiment.vars.get(varList[i], 'NA', false);
             l.push('"' + value + '"');
             entry[varList[i]] = value
         }
         this.write(l.join());
-        this.experiment.onLog(entry);
+        if(_.isFunction(this.experiment.onLog)) this.experiment.onLog(entry);
     }
 }
  

@@ -43,7 +43,12 @@ var settings = {
          title: 'OSweb 2.0',
          favicon: './src/img/osdoc.png'
       }),
-      new webpack.NamedModulesPlugin()
+      new webpack.NamedModulesPlugin(),
+      new CopyWebpackPlugin([
+         { from: 'src/js/dependencies/zebra.min.js', to: 'js/' },
+         { from: 'src/js/dependencies/zebra.json', to: 'js/' },
+         { from: 'src/js/dependencies/zebra.png', to: 'js/' }
+      ],{debug: 'info'})
    ],
    node: {
       fs: 'empty'
@@ -126,7 +131,7 @@ module.exports = function(env) {
                },
             }),
             new webpack.optimize.OccurrenceOrderPlugin(),
-            new webpack.IgnorePlugin(/.*(gzip\.js|zebra\.js).*/) // In production, noParse is ignored.
+            new webpack.IgnorePlugin(/.*(gzip\.js).*/) // In production, noParse is ignored.
          );
       }
    }
