@@ -843,6 +843,10 @@ export default class Canvas {
 
         // Add the container to the stage object and update the stage.
         this.experiment._currentCanvas = this;
+        
+        // Set the scaling.
+        this._container.scale.x = this.experiment._scale_x;
+        this._container.scale.y = this.experiment._scale_y;
         this.experiment._runner._renderer.render(this._container);
 
         // Return the current time.

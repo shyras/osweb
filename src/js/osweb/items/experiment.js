@@ -33,6 +33,8 @@ export default class Experiment extends Item {
 
 		// Create and set private properties. 
 		this._canvas = new Canvas(this);
+		this._scale_x = 1; // Scaling of the canvas for fullscreen mode.
+		this._scale_y = 1; // Scaling of the canvas for fullscreen mode.
 		this._currentCanvas = this.canvas;
 		this._log = new Log(this, this.logfile);
 		this._pythonWorkspace = this._runner._pythonWorkspace;

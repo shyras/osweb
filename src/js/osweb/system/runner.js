@@ -111,6 +111,7 @@ export default class Runner {
                 onfinished: this._onfinished = null,
                 onlog: this._onLog = null,
                 fullscreen: this._fullscreen = false,
+                scalemode: this._scalemode = 'noscale',
                 name: this._name = "noname.exp",
                 source: this._source = null,
                 mimetype: this._mimetype = null,

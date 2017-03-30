@@ -42,7 +42,7 @@
 					<form class="navbar-form navbar-right">
 						<div class="form-group">
 							<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
-							<button class="btn btn-default" id="fullscreen_button" type="button" onclick="toggleFullscreen(); return false"><i class="fa fa-arrows-alt" aria-hidden="true"></i>Fullscreen off</button>
+							<button class="btn btn-default" id="fullscreen_button" status="off" type="button" onclick="toggleFullscreen(); return false"><i class="fa fa-arrows-alt" aria-hidden="true"></i>Fullscreen off</button>
 							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsoleWindow(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Console off</button>
 						</div>
 					</form>
@@ -214,13 +214,16 @@
 	        context = {
 				confirm: confirm,
 				debug: true,
-				fullscreen: (document.getElementById('fullscreen_button').textContent === 'Fullscreen on'),
+				fullscreen: false,
 				introscreen: true,
 				introclick: true,
 				prompt: prompt,
 				onconsole: onConsole,
 				onfinished: onExperimentFinished,
 				name: 'test',
+			//	scalemode: 'noscale',
+				scalemode: 'showall',
+			//	scalemode: 'exactfit',
 				source: file, 
 				target: null
 			}
@@ -232,9 +235,11 @@
  	     */
 	    function toggleFullscreen() {
     		var button = document.getElementById('fullscreen_button');
-			if (button.textContent == 'Fullscreen off') {
+			if (button.getAttribute('status') === 'off') {
+				button.setAttribute('status','on');
 				button.textContent = 'Fullscreen on'
 			} else {
+				button.setAttribute('status','off');
 				button.textContent = 'Fullscreen off'
 			}
 		}	
@@ -269,6 +274,9 @@
 				document.getElementById('run_button').classList.remove('btn-success');
 				document.getElementById('run_button').classList.add('btn-danger');
 
+				// Set the fullscreen toggle.
+				context.fullscreen = (document.getElementById('fullscreen_button').getAttribute('status') === 'on');
+				
 	    		// Run the experiment within the Runner with the given context.
 		    	runner.run(context);
 			} else {

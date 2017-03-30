@@ -74,19 +74,70 @@ export default class Screen {
 	        document.webkitFullscreenElement ||
 	        document.mozFullScreenElement ||
 	        document.msFullscreenElement) {
-            // At this moment do nothing, mayber reister          
-            console.log(this._runner._container);
-            console.log(this._runner._renderer.view);
-
-            // resize the canvas
-            this._runner._renderer.resize(this._runner._container.clientWidth, this._runner._container.clientHeight)
-            this._runner._experiment._currentCanvas._container.scale.x = 2;
-            this._runner._experiment._currentCanvas._container.scale.y = 2;
-            this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
-
+            // Scale the canvas
+            switch (this._runner._scalemode) {
+                case 'noscale': 
+                    // Default mode, no scaling, canbas is centered on the screen. 
+                    this._runner._renderer.view.style.top = '0px'; 
+                    this._runner._renderer.view.style.bottom = '0px'; 
+                    this._runner._renderer.view.style.left = '0px'; 
+                    this._runner._renderer.view.style.right = '0px'; 
+                    this._runner._renderer.view.style.right = '0px'; 
+                    this._runner._renderer.view.style.margin = 'auto';    
+                    this._runner._renderer.view.style.display = 'block';    
+                    this._runner._renderer.view.style.position = 'absolute'; 
+                break;
+                case 'showall':
+                    // Default mode, no scaling, canbas is centered on the screen. 
+                    this._runner._renderer.view.style.top = '0px'; 
+                    this._runner._renderer.view.style.bottom = '0px'; 
+                    this._runner._renderer.view.style.left = '0px'; 
+                    this._runner._renderer.view.style.right = '0px'; 
+                    this._runner._renderer.view.style.right = '0px'; 
+                    this._runner._renderer.view.style.margin = 'auto';    
+                    this._runner._renderer.view.style.display = 'block';    
+                    this._runner._renderer.view.style.position = 'absolute'; 
+                    if ((this._runner._container.clientWidth - this._runner._experiment.vars.width) >  
+                       (this._runner._container.clientHeight - this._runner._experiment.vars.height)) {
+                         var ar = (this._runner._container.clientHeight / this._runner._experiment.vars.height);
+                         this._runner._renderer.resize(Math.round(this._runner._experiment.vars.width * ar), this._runner._container.clientHeight)
+                         this._runner._experiment._scale_x = Math.round(this._runner._experiment.vars.width * ar) / this._runner._experiment.vars.width; 
+                         this._runner._experiment._scale_y = (this._runner._container.clientHeight / this._runner._experiment.vars.height);                                
+                       } else {
+                         var ar = (this._runner._container.clientWidth / this._runner._experiment.vars.width);
+                         this._runner._renderer.resize(this._runner._container.clientWidth, Math.round(this._runner._experiment.vars.height * ar));
+                         this._runner._experiment._scale_x = (this._runner._container.clientWidth / this._runner._experiment.vars.width);                                
+                         this._runner._experiment._scale_y = Math.round(this._runner._experiment.vars.height * ar) / this._runner._experiment.vars.height; 
+                       }
+                    this._runner._experiment._currentCanvas._container.scale.x = this._runner._experiment._scale_x;
+                    this._runner._experiment._currentCanvas._container.scale.y = this._runner._experiment._scale_y;                                
+                    this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
+                break;        
+                case 'exactfit':
+                    // Fit to the exact window size (cropping).       
+                    this._runner._experiment._scale_x = (this._runner._container.clientWidth / this._runner._experiment.vars.width);
+                    this._runner._experiment._scale_y = (this._runner._container.clientHeight / this._runner._experiment.vars.height);
+       
+                    // Reize the current canvas.
+                    this._runner._renderer.resize(this._runner._container.clientWidth, this._runner._container.clientHeight);
+                    this._runner._experiment._currentCanvas._container.scale.x = this._runner._experiment._scale_x;
+                    this._runner._experiment._currentCanvas._container.scale.y = this._runner._experiment._scale_y;
+                    this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
+                break;        
+            }
         } else {
             // Check for exiting experiment.
             if (this._exit === false) {
+                // Resclae to 1Fit to the exact window size (cropping).       
+                this._runner._experiment._scale_x = 1;
+                this._runner._experiment._scale_y = 1;
+
+                // Fit to the exact window size (cropping).       
+                this._runner._renderer.resize(this._runner._experiment.vars.width, this._runner._experiment.vars.height);
+                this._runner._experiment._currentCanvas._container.scale.x = 1;
+                this._runner._experiment._currentCanvas._container.scale.y = 1;
+                this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
+
                 // Open Sesame is running, request subject to continue of to stop.
                 if (isFunction(this._runner._confirm)) {
                     this._runner._confirm('Leaving full-screen mode, pausing experiment.', 
