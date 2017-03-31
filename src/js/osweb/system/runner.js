@@ -245,37 +245,6 @@ export default class Runner {
         }
     }
 
-    /**
-     * Resizes the canvas using its style elements
-     * DOES NOT WORK AS IT SHOULD YET!
-     * @param  {int} width  The target width
-     * @param  {int} height The target height
-     * @return {void}
-     */
-    resizeCanvas(width, height){
-        // First check if height and width are passed and are numeric.
-        // If not fall back to experiments width and height.
-        // If that doesn't work, fall back to 1024x768 resolution.
-        try{
-            exp_width = parseInt(this._experiment.vars.width);
-            exp_height = parseInt(this._experiment.vars.height);
-        }catch(e){
-            console.warn("Could not determine experiment dimensions: " + e.message);
-            exp_width = 800;
-            exp_height = 600;
-        } 
-        
-        width = parseInt(height) || exp_width;
-        height = parseInt(height) || exp_height;
-
-        try{
-            this._renderer.view.style.width = xres;
-            this._renderer.view.style.height = yres;
-        }catch(e) {
-            this.debugger.addError('Could not resize renderer: ' + e.message);
-        }
-    }
-
     /** Run an experiment */
     run(context) {
         // Build the experiment.
