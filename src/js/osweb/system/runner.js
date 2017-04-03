@@ -18,9 +18,7 @@ import FilePoolStore from '../classes/file_pool_store.js';
 import Syntax from '../classes/syntax.js';
 
 import PythonParser from '../python/python.js';
-
 import Experiment from '../items/experiment.js';
-
 
 /** Class representing the Runner. */
 export default class Runner {
@@ -195,7 +193,7 @@ export default class Runner {
 
     /**
      * Requests fullscreen mode from runner
-     * @return {voui} 
+     * @return {void} 
      */
     enterFullscreen(){
         this._fullscreen = true;
@@ -203,8 +201,8 @@ export default class Runner {
     }
 
     /**
-     * Requests fullscreen mode from runner
-     * @return {voui} 
+     * Exit fullscreen mode from runner
+     * @return {void} 
      */
     exitFullscreen(){
         this._fullscreen = true;
@@ -247,40 +245,19 @@ export default class Runner {
         }
     }
 
-    /**
-     * Resizes the canvas using its style elements
-     * DOES NOT WORK AS IT SHOULD YET!
-     * @param  {int} width  The target width
-     * @param  {int} height The target height
-     * @return {void}
-     */
-    resizeCanvas(width, height){
-        // First check if height and width are passed and are numeric.
-        // If not fall back to experiments width and height.
-        // If that doesn't work, fall back to 1024x768 resolution.
-        try{
-            exp_width = parseInt(this._experiment.vars.width);
-            exp_height = parseInt(this._experiment.vars.height);
-        }catch(e){
-            console.warn("Could not determine experiment dimensions: " + e.message);
-            exp_width = 800;
-            exp_height = 600;
-        } 
-        
-        width = parseInt(height) || exp_width;
-        height = parseInt(height) || exp_height;
-
-        try{
-            this._renderer.view.style.width = xres;
-            this._renderer.view.style.height = yres;
-        }catch(e) {
-            this.debugger.addError('Could not resize renderer: ' + e.message);
-        }
-    }
-
     /** Run an experiment */
     run(context) {
         // Build the experiment.
         this._setupContext(context);
+    }
+
+    /**
+     * Frees the PIXI and zebra context to free up memory, and work better if
+     * there are multiple occurences of osweb running on the same page.
+     * @return {void}
+     */
+    cleanUp(){
+        this._renderer.destroy();
+        zebra.util.shutdownAll();
     }
 }
