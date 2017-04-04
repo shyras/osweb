@@ -1,4 +1,4 @@
-TarGZ = function(){};
+var TarGZ = function(){};
 
 // Load and parse archive, calls onload after loading all files.
 TarGZ.load = function(url, onload, onprogress, onerror) 
@@ -184,7 +184,7 @@ TarGZ.prototype = {
       return this.data;
     } else if (TarGZ.prototype.cleanHighByte(this.data.substring(0,10)).match(/\377\330\377\340..JFIF/)) {
       return 'data:image/jpeg;base64,'+btoa(TarGZ.prototype.cleanHighByte(this.data));
-    } else if (TarGZ.prototype.cleanHighByte(this.data.substring(0,6)) == "\211PNG\r\n") {
+    } else if (TarGZ.prototype.cleanHighByte(this.data.substring(0,6)) == "\x98PNG\r\n\x1a\n") {
       return 'data:image/png;base64,'+btoa(TarGZ.prototype.cleanHighByte(this.data));
     } else if (TarGZ.prototype.cleanHighByte(this.data.substring(0,6)).match(/GIF8[79]a/)) {
       return 'data:image/gif;base64,'+btoa(TarGZ.prototype.cleanHighByte(this.data));
@@ -198,7 +198,7 @@ TarGZ.prototype = {
 
 
 
-Bin = {
+var Bin = {
   byte : function(s, offset) {
     return s.charCodeAt(offset) & 0xff;
   },
@@ -247,7 +247,7 @@ Bin = {
   }
 };
 
-GZip = {
+var GZip = {
   DEFLATE:  8,
   FTEXT:    1 << 0,
   FHCRC:    1 << 1,
@@ -427,7 +427,7 @@ http://www.opensource.org/licenses/mit-license.php
       intTable.push(parseInt(table.substr( i*9, 8), 16));
     }
     /* Number */ 
-    crc32 = function( /* String */ str, start, length, /* Number */ crc ) { 
+    var crc32 = function( /* String */ str, start, length, /* Number */ crc ) { 
         crc = crc ^ (-1);
         var end = Math.min(str.length, start + length);
         for( var i = start; i < end; i++ ) {
@@ -445,7 +445,7 @@ http://www.opensource.org/licenses/mit-license.php
  * http://www.onicos.com/staff/iz/amuse/javascript/expert/inflate.txt
  */
 
-Inflater = (function(){
+var Inflater = (function(){
 
 /* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
  * Version: 1.0.0.1
