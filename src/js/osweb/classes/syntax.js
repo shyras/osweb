@@ -83,23 +83,25 @@ export default class Syntax {
 
         /** The replacer function detects variable entries in the passed text
         and replaces them with variable values as found in OpenSesame's var store */
-        let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, variable, offset, string) => {
-            // Check if sequence is escaped, and simply return the match if so.
+        let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+            // Check if the current match is escaped, and simply return it untouched if so.
             if(string[offset-1] == "\\") return match;
 
-            if(variable[0] == '='){
+            // Check if contents of [] start with an =. In this case they should be
+            // evaluated as a Python statement
+            if(content[0] == '='){
                 // Replace with Python workspace eval function
-                // return this._runner._pythonParser._parse(variable.substring(1,variable.length));
-                return eval(variable.substring(1,variable.length));
+                // return this._runner._pythonParser._parse(content.substring(1,content.length));
+                return eval(content.substring(1,content.length));
             }else{
                 try {
-                    if ((typeof vars === 'undefined') || (typeof vars[variable] === 'undefined')) {
-                        var value = this._runner._experiment.vars[variable];
+                    if ((typeof vars === 'undefined') || (typeof vars[content] === 'undefined')) {
+                        var value = this._runner._experiment.vars[content];
                     } else {
-                        var value = vars[variable];
+                        var value = vars[content];
                     }
                 } catch (err) {
-                    this._runner._debugger.addError(`Could not find variable '${variable}': ${err.message}`);
+                    this._runner._debugger.addError(`Could not find variable '${content}': ${err.message}`);
                 }
 
                 // Temporyary hack for string types.

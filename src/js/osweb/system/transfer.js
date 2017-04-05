@@ -53,7 +53,7 @@ export default class Transfer {
                 this._runner._screen._updateProgressBar((event.loaded / event.total) );
             }.bind(this),
             function(event) {
-                this._runner._debugger.addError('Error reading local osexp.');
+                this._runner._debugger.addError(`Error reading local osexp: ${event.message}`);
             }.bind(this)
         );
     }   
