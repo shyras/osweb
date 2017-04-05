@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import { isNumber, isObject, isString }  from 'underscore';
 
 /** Class representing a syntax checker. */
 export default class Syntax {
@@ -27,7 +27,7 @@ export default class Syntax {
             return false;
         } else {
             if (cnd.substring(0, 1) == '=') {
-                return this._runner._python._parse(cnd.substr(1));
+                return this._runner._pythonParser._parse(cnd.substr(1));
             } else {
                 cnd = cnd.replace(/[^(!=)][=]/g, '==');
             }
@@ -73,48 +73,41 @@ export default class Syntax {
      */
     eval_text(text, vars, roundFloat, variable) {
         // if pTxt is an object then it is a parsed python expression.
-        if (_.isObject(text)) {
+        if (isObject(text)) {
             return this._runner._pythonParser._run_statement(text);
         };
         // if pTxt is already a number simply return it
-        if (_.isNumber(text)) {
+        if (isNumber(text)) {
             return text;
         }
-        var result = text;
-        var processing = result.search(/[^[\]]+(?=])/g);
 
-        while (processing !== -1) {
-            // Replace the found value with the variable.
-            var variable = result.slice(processing, result.indexOf(']'));
-            try{
-                if ((typeof vars === 'undefined') || (typeof vars[variable] === 'undefined')) {
-                    var value = this._runner._experiment.vars[variable];
-                } else {
-                    var value = vars[variable];
+        /** The replacer function detects variable entries in the passed text
+        and replaces them with variable values as found in OpenSesame's var store */
+        let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, variable, offset, string) => {
+            // Check if sequence is escaped, and simply return the match if so.
+            if(string[offset-1] == "\\") return match;
+
+            if(variable[0] == '='){
+                // Replace with Python workspace eval function
+                // return this._runner._pythonParser._parse(variable.substring(1,variable.length));
+                return eval(variable.substring(1,variable.length));
+            }else{
+                try {
+                    if ((typeof vars === 'undefined') || (typeof vars[variable] === 'undefined')) {
+                        var value = this._runner._experiment.vars[variable];
+                    } else {
+                        var value = vars[variable];
+                    }
+                } catch (err) {
+                    this._runner._debugger.addError(`Could not find variable '${variable}': ${err.message}`);
                 }
-            } catch (err) {
-                this._runner._debugger.addError(`Could not find variable '${variable}': ${err.message}`);
-            }
 
-            // Temporyary hack for string types.
-            if (typeof value === 'string') {
-                result = result.replace('[' + variable + ']', "'" + value + "'");
-                // result = result.replace('[' + variable + ']', value);
-            } else {
-                result = result.replace('[' + variable + ']', value);
+                // Temporyary hack for string types.
+                return isString(value)?`"${value}"`:value;
             }
-            processing = result.search(/[^[\]]+(?=])/g);
-        }
-        return result;
-    }
-
-    /**
-     * Check if a value is a number.
-     * @param {Number|String} n - The value to be checked.
-     * @return {Boolean} - True if value is number.
-     */
-    isNumber(n) {
-        return (Number(n) == n); // aangepast van == naar === en weer terug naar '==' anders werkt duration niet.
+        });
+        
+        return this.strip_slashes(result);
     }
 
     /**
@@ -128,7 +121,7 @@ export default class Syntax {
      */
     safe_wrap(s) {
         // If s is a number, return untouched.
-        if (Number.isNaN(Number(s))) {
+        if (!isNumber(s)) {
             //see if there are any non-alphanumeric characters.
             //Wrap the value in quotes if so.
             if (/[^a-z0-9_]/i.test(s)) {
@@ -154,6 +147,15 @@ export default class Syntax {
         replace(/\r/g, '\\r').
         replace(/'/g, '\\\'').
         replace(/"/g, '\\"');
+    }
+
+    /** 
+     * Strip escape slashes from the given string. 
+     * @param {String} line - The string to strip from escape backslashes
+     * @return {String} - The stripped string.
+     */
+    strip_slashes(line) {
+        return line.replace(/\\(.)/mg, "$1");
     }
 
     /**
@@ -245,14 +247,5 @@ export default class Syntax {
     split(line) {
         var result = line.match(/(?:[^\s"]+|"[^"]*")+/g);
         return (result !== null) ? result : [];
-    }
-
-    /** 
-     * Strip escape slashes from the given string. 
-     * @param {String} line - The string to strip from escape backslashes
-     * @return {String} - The stripped string.
-     */
-    strip_slashes(line) {
-        return line.replace(/\\(.)/mg, "$1");
     }
 }

@@ -59,7 +59,7 @@ if (node_mode) {
 	divTarget.id = "renderTarget";
 	
 	var VarStore = require('../src/js/osweb/classes/var_store.js').default;
-	var vars = new VarStore(runner, null)
+	var Canvas = require('../src/js/osweb/backends/canvas.js').default;
 } else {
 	var expect = chai.expect;
 }
@@ -125,7 +125,16 @@ var Experiment = {
 
 var runner = osweb.getRunner(divTarget);
 
-describe('syntax', function() {
+describe('Syntax', function() {
+	// Suppress error output
+	var stub;
+	beforeEach(function(){
+		stub = sinon.stub(console, "error");
+	});
+	afterEach(function(){
+		stub.restore();
+	});
+
 	describe('parse_cmd()', function() {
 		var checkCmd = function(s, cmd, arglist, kwdict) {
 			// parse command into arguments
@@ -183,15 +192,12 @@ describe('syntax', function() {
 		});
 
 		it("should throw an exception when string can't be parsed", function() {
-			// Suppress error output
-			var stub = sinon.stub(console, "log");
 			expect(function() {
 				checkCmd('widget 0 0 1 1 label text="Tést 123',
 					'widget', [0, 0, 1, 1, 'label'], {
 						'text': 'Tést 123'
 					});
 			}).to.throw();
-			stub.restore();
 		});
 	});
 
@@ -200,26 +206,26 @@ describe('syntax', function() {
 		tmp_var_store.width = 1024;
 		tmp_var_store.height = 768;
 
-		it("Should only parse real variables", function() {
+		it("Should only parse real variables: \\\\[width] = \\[width] = [width]", function() {
 			expect(runner._syntax.eval_text(
-				'\\\\[width] = \\[width] = [width]', tmp_var_store)).to.equal('\[width] = [width] = 1024');
+				'\\\\[width] = \\[width] = [width]', tmp_var_store)).to.equal('\\[width] = [width] = 1024');
 		});
 
-		it("Should not try to parse a variable if [] contents contain spaces", function() {
+		it("Should not try to parse a variable if [] contents contain spaces: [no var]", function() {
 			expect(runner._syntax.eval_text(
 				'[no var]', tmp_var_store)).to.equal('[no var]');
 		});
 
-		it("Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters", function() {
+		it("Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters: [nóvar]", function() {
 			expect(runner._syntax.eval_text(
 				'[nóvar]', tmp_var_store)).to.equal('[nóvar]');
 		});
 
-		it("Should not try to parse a variable if it is preceded by a slash", function() {
+		it("Should not try to parse a variable if it is preceded by a backslash: \\[width]", function() {
 			expect(runner._syntax.eval_text(
-				'\[width]', tmp_var_store)).to.equal('[width]');
+				'\\[width]', tmp_var_store)).to.equal('[width]');
 		});
-		it("Should ignore characters between variable definitions", function() {
+		it("Should ignore characters between variable definitions: [width] x [height]", function() {
 			expect(runner._syntax.eval_text(
 				'[width] x [height]', tmp_var_store)).to.equal('1024 x 768');
 		});
@@ -227,80 +233,92 @@ describe('syntax', function() {
 			expect(runner._syntax.eval_text(
 				'[=10*10]', tmp_var_store)).to.equal('100');
 		});
-		it("Should not process python code if if is preceded by a slash: /[=10*10]", function() {
+		it("Should not process python code if it is preceded by a backslash: \\[=10*10]", function() {
 			expect(runner._syntax.eval_text(
-				'/[=10*10]', tmp_var_store)).to.equal('[=10*10]');
+				'\\[=10*10]', tmp_var_store)).to.equal('[=10*10]');
 		});
 		it('Should process string code: [="tést"]', function() {
 			expect(runner._syntax.eval_text(
 				'[="tést"]', tmp_var_store)).to.equal('tést');
 		});
-		it('Should process string code: [="\[test\]"]', function() {
+		it('Should process string code: [="\\[test\\]"]', function() {
 			expect(runner._syntax.eval_text(
 				'[="\[test\]"]', tmp_var_store)).to.equal('[test]');
 		});
 	});
 
-	// describe('compile_cond()', function() {
-	// 	it("Should convert a variable within [] to a variable name within the var context", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'[width] > 100', false)).to.equal('var.width > 100');
-	// 	});
-	// 	it("Should convert always to True", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'always', false)).to.equal('True');
-	// 	});
-	// 	it("Should convert ALWAYS to True", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'ALWAYS', false)).to.equal('True');
-	// 	});
-	// 	it("Should convert never to False", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'never', false)).to.equal('False');
-	// 	});
-	// 	it("Should convert NEVER to False", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'NEVER', false)).to.equal('False');
-	// 	});
-	// 	it("Should convert numbers to numbers", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'[width] = 1024', false)).to.equal('var.width == 1024');
-	// 	});
-	// 	it("Should not quote reserved words such as and and should also process double ==", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'[width] == 1024 and [height] == 768', false)).to.equal('var.width == 1024 and var.height == 768');
-	// 	});
-	// 	it("Should process a line starting with the = character as python script", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'=var.width > 100', false)).to.equal('var.width > 100');
-	// 	});
-	// 	it("Should igonere existing quotes and add new quotes", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'"yes" = yes', false)).to.equal('"yes" == "yes"');
-	// 	});
-	// 	it("Should process backslashes in a proper way", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'yes = \'yes\'', false)).to.equal('"yes" == \'yes\'');
-	// 	});
-	// 	it("Should process more complex structures with brackets", function() {
-	// 		expect(osweb.syntax.compile_cond_new(
-	// 			'("a b c" = abc) or (x != 10) and ([width] == 100)', false)).to.equal('("a b c" == "abc") or ("x" != 10) and (var.width == 100)');
-	// 	});
-	// });
+	describe('compile_cond()', function() {
+		it("Should convert a variable within [] to a variable name within the var context", function() {
+			expect(runner._syntax.compile_cond_new(
+				'[width] > 100', false)).to.equal('var.width > 100');
+		});
+		it("Should convert always to True", function() {
+			expect(runner._syntax.compile_cond_new(
+				'always', false)).to.equal('True');
+		});
+		it("Should convert ALWAYS to True", function() {
+			expect(runner._syntax.compile_cond_new(
+				'ALWAYS', false)).to.equal('True');
+		});
+		it("Should convert never to False", function() {
+			expect(runner._syntax.compile_cond_new(
+				'never', false)).to.equal('False');
+		});
+		it("Should convert NEVER to False", function() {
+			expect(runner._syntax.compile_cond_new(
+				'NEVER', false)).to.equal('False');
+		});
+		it("Should convert numbers to numbers", function() {
+			expect(runner._syntax.compile_cond_new(
+				'[width] = 1024', false)).to.equal('var.width == 1024');
+		});
+		it("Should not quote reserved words such as and and should also process double ==", function() {
+			expect(runner._syntax.compile_cond_new(
+				'[width] == 1024 and [height] == 768', false)).to.equal('var.width == 1024 and var.height == 768');
+		});
+		it("Should process a line starting with the = character as python script", function() {
+			expect(runner._syntax.compile_cond_new(
+				'=var.width > 100', false)).to.equal('var.width > 100');
+		});
+		it("Should igonere existing quotes and add new quotes", function() {
+			expect(runner._syntax.compile_cond_new(
+				'"yes" = yes', false)).to.equal('"yes" == "yes"');
+		});
+		it("Should process backslashes in a proper way", function() {
+			expect(runner._syntax.compile_cond_new(
+				'yes = \'yes\'', false)).to.equal('"yes" == \'yes\'');
+		});
+		it("Should process more complex structures with brackets", function() {
+			expect(runner._syntax.compile_cond_new(
+				'("a b c" = abc) or (x != 10) and ([width] == 100)', false)).to.equal('("a b c" == "abc") or ("x" != 10) and (var.width == 100)');
+		});
+	});
 });
 
-describe('canvas', function() {
-	if (!node_mode) {
-		it("should recognize valid HTML in a string", function() {
-			expect(osweb.canvas.prototype._containsHTML("<p>Hey</p>")).to.be.true;
-		});
-		it("should recognize a string without html markup", function() {
-			expect(osweb.canvas.prototype._containsHTML("Hey")).to.be.false;
-		});
-		it("should not mistake everything between < and > for html", function() {
-			expect(osweb.canvas.prototype._containsHTML("a < b && b > c")).to.be.false;
-		});
-	}
+describe('Canvas', function() {
+		// Suppress error output
+	var stub;
+	beforeEach(function(){
+		stub = sinon.stub(console, "error");
+	});
+	afterEach(function(){
+		stub.restore();
+	});
+
+	var canvas = new Canvas({
+		_runner: runner
+	});
+
+	it("should recognize valid HTML in a string", function() {
+		expect(canvas._containsHTML("<p>Hey</p>")).to.be.true;
+	});
+	it("should recognize a string without html markup", function() {
+		expect(canvas._containsHTML("Hey")).to.be.false;
+	});
+	it("should not mistake everything between < and > for html", function() {
+		expect(canvas._containsHTML("a < b && b > c")).to.be.false;
+	});
+	
 
 	// for colorspec in [
 	// 	u'white',

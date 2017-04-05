@@ -76,7 +76,8 @@
     "typescript": "^2.2.1",
     "url-loader": "^0.5.8",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.4.2"
+    "webpack-dev-server": "^2.4.2",
+    "xmldom": "^0.1.27"
   },
   "babel": {
     "presets": [

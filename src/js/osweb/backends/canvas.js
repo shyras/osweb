@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-
+import { isObject } from 'underscore';
 import Styles from './styles.js';
 
 /** Class representing a drawing canvas. */
@@ -71,12 +71,15 @@ export default class Canvas {
      * @return {Boolean} - True if HTML markup was found, false if not.
      */
     _containsHTML(str) {
-        var doc = new DOMParser().parseFromString(str, "text/html");
-        return [].slice.call(doc.body.childNodes).some(
-            function(node) {
-                return (node.nodeType === 1);
-            }
-        );
+        let doc;
+        try{
+            doc = new DOMParser().parseFromString(str, "text/html");
+        }catch(e){
+            // Account for the absence of DOMParser in node.js
+            const DOMParser = require('xmldom').DOMParser;
+            doc = new DOMParser().parseFromString(str, "text/html");
+        }
+        return Array.from(doc.childNodes).some(node => node.nodeType === 1);
     }
 
     /** Exit the display and return to default settings. */
@@ -629,7 +632,7 @@ export default class Canvas {
         // ZEBRAKIT: set the canvas of the form.
         this.experiment._runner._formContainer.style.width = this._width + 'px';
         this.experiment._runner._formContainer.style.height = this._height + 'px';
-        
+
         // PIXI: Set the renderer dimensions.
         experiment._runner._renderer.resize(this._width, this._height);
 
@@ -843,7 +846,7 @@ export default class Canvas {
 
         // Add the container to the stage object and update the stage.
         this.experiment._currentCanvas = this;
-        
+
         // Set the scaling.
         this._container.scale.x = this.experiment._scale_x;
         this._container.scale.y = this.experiment._scale_y;
@@ -957,7 +960,7 @@ export default class Canvas {
                 fill: element_style.color
             };
             var text_element = new PIXI.Text(text, text_style);
-            
+
             if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
                 text_element.x = x - (text_element.width / 2);
                 text_element.y = y - (text_element.height / 2);
