@@ -1,4 +1,4 @@
-var TarGZ = function() {};
+TarGZ = function() {};
 
 // Load and parse archive, calls onload after loading all files.
 TarGZ.load = function(url, onload, onprogress, onerror) {
@@ -200,9 +200,7 @@ TarGZ.prototype = {
   }
 };
 
-
-
-var Bin = {
+Bin = {
   byte: function(s, offset) {
     return s.charCodeAt(offset) & 0xff;
   },
@@ -251,7 +249,7 @@ var Bin = {
   }
 };
 
-var GZip = {
+GZip = {
   DEFLATE: 8,
   FTEXT: 1 << 0,
   FHCRC: 1 << 1,
@@ -424,7 +422,7 @@ http://www.opensource.org/licenses/mit-license.php
     intTable.push(parseInt(table.substr(i * 9, 8), 16));
   }
   /* Number */
-  var crc32 = function( /* String */ str, start, length, /* Number */ crc) {
+  crc32 = function( /* String */ str, start, length, /* Number */ crc) {
     crc = crc ^ (-1);
     var end = Math.min(str.length, start + length);
     for (var i = start; i < end; i++) {
@@ -433,10 +431,6 @@ http://www.opensource.org/licenses/mit-license.php
     }
     return crc ^ (-1);
   };
-
-  if (typeof window !== 'undefined') {
-    window.crc32 = crc32;
-  }
 })();
 
 /*
@@ -446,7 +440,7 @@ http://www.opensource.org/licenses/mit-license.php
  * http://www.onicos.com/staff/iz/amuse/javascript/expert/inflate.txt
  */
 
-var Inflater = (function() {
+Inflater = (function() {
 
   /* Copyright (C) 1999 Masanao Izumo <iz@onicos.co.jp>
    * Version: 1.0.0.1
@@ -1214,11 +1208,3 @@ var Inflater = (function() {
   this.continue_inflate = continue_inflate;
   this.final_inflate = final_inflate;
 });
-
-// Attach these vars to the global Window object if present
-if (typeof window !== 'undefined') {
-  window.TarGZ = TarGZ;
-  window.Bin = Bin;
-  window.GZip = GZip;
-  window.Inflater = Inflater;
-}
