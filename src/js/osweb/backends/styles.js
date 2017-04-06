@@ -1,8 +1,7 @@
 /** Class representing a style container. */
-export default class Styles { 
+export default class Styles {
     /** Styles is a simple class that holds information about the style. */
-    constructor() 
-    {
+    constructor() {
         // Set class private properties.
         this._background_color = 0x000000;
         this._bidi = false
@@ -15,18 +14,18 @@ export default class Styles {
         this._font_underline = false;
         this._html = true;
         this._penwidth = 1;
-    
+
         // Set constant default colors.
         this._DEFAULT_COLOURS = {
-            'aliceblue': '0xf0f8ff', 
-            'antiquewhite': '0xfaebd7', 
-            'aqua': '0x00ffff', 
+            'aliceblue': '0xf0f8ff',
+            'antiquewhite': '0xfaebd7',
+            'aqua': '0x00ffff',
             'aquamarine': '0x7fffd4',
-            'azure': '0xf0ffff', 
-            'beige': '0xf5f5dc', 
-            'bisque': '0xffe4c4', 
-            'black': '0x000000', 
-            'blanchedalmond': '0xffebcd', 
+            'azure': '0xf0ffff',
+            'beige': '0xf5f5dc',
+            'bisque': '0xffe4c4',
+            'black': '0x000000',
+            'blanchedalmond': '0xffebcd',
             'blue': '0x0000ff',
             'blueviolet': '0x8a2be2',
             'brown': '0xa52a2a',
@@ -166,16 +165,16 @@ export default class Styles {
             'yellow': '0xffff00',
             'yellowgreen': '0x9acd32'
         };
-    
+
         // Set constant default fonts.
         this._DEFAULT_FONTS = {
-            'sans' : 'Droid Sans',
-            'serif' : 'Droid Serif',
-            'mono' : 'Droid Sans Mono',
-            'chinese-japanese-korean' : 'WenQuanYi Micro Hei',
-            'arabic' : 'Droid Arabic Naskh',
-            'hebrew' : 'Droid Sans Hebrew',
-            'hindi' : 'Lohit Hindi'
+            'sans': 'Droid Sans',
+            'serif': 'Droid Serif',
+            'mono': 'Droid Sans Mono',
+            'chinese-japanese-korean': 'WenQuanYi Micro Hei',
+            'arabic': 'Droid Arabic Naskh',
+            'hebrew': 'Droid Sans Hebrew',
+            'hindi': 'Lohit Hindi'
         };
     }
 
@@ -186,11 +185,11 @@ export default class Styles {
      */
 
     _convertColorValue(color) {
-        var converted_color = 0; 
+        var converted_color = 0;
         // Check if the color definition is a number or a string value.
         if (typeof(color) === 'string') {
             // Check if the string is a hex string.
-            if (/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color) === true) {  
+            if (/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(color) === true) {
                 // Check if hex string is 3 of 6 character based. 
                 if (color.length === 4) {
                     // Expand the color to 6 characters.
@@ -201,33 +200,33 @@ export default class Styles {
             } else if (typeof this._DEFAULT_COLOURS[color.toLowerCase()] !== 'undefined') {
                 // Value is a constant color name, convert it.
                 converted_color = parseInt(this._DEFAULT_COLOURS[color.toLowerCase()], 16);
-            } else if (color.slice(0,3).toLowerCase() === 'rgb') {
+            } else if (color.slice(0, 3).toLowerCase() === 'rgb') {
                 // Value is a rgb string number, convert it.
                 var a = color.split('(')[1].split(')')[0];
                 a = a.split(',');
-                var b = a.map(function(x) {                      
+                var b = a.map(function(x) {
                     //For each array element
                     if (/^\d+(\.\d+)?%$/.test(x)) {
                         // pass
                         x = x.slice(0, -1);
                         x = Math.round((parseInt(x) / 100) * 255);
-                        x = x.toString(16); 
+                        x = x.toString(16);
                     } else {
                         // fail
                         x = parseInt(x).toString(16); // Convert to a base16 string
                     }
-                    return (x.length==1) ? '0' + x : x; // Add zero if we get only one character
+                    return (x.length == 1) ? '0' + x : x; // Add zero if we get only one character
                 });
                 converted_color = parseInt('0x' + b.join(''));
             }
         } else if (this._isInt(color) === true) {
-            if (color < 256) { 
+            if (color < 256) {
                 // Luminant value, so convert it to gray scale.
-                converted_color = (256 * 256 * color) + (256 * color) + color; 
+                converted_color = (256 * 256 * color) + (256 * color) + color;
             } else {
                 // Luminant values above 255 are not supported, return white.
                 converted_color = 16843008;
-            } 
+            }
         }
         // Return the converted color as nubmer value.
         return converted_color;
@@ -237,7 +236,11 @@ export default class Styles {
         // Convert the color to numeric values. 
         var converted_color = this._convertColorValue(color);
         // Convert colors to rgb format.
-        return {r: converted_color >> 16,g: converted_color >> 8 & 0xFF,b: converted_color & 0xFF}
+        return {
+            r: converted_color >> 16,
+            g: converted_color >> 8 & 0xFF,
+            b: converted_color & 0xFF
+        }
     }
 
     /**
@@ -265,15 +268,15 @@ export default class Styles {
      * Get the background_color value.
      * @return {String} The background_color value.
      */
-    get background_color(){  
-        return this._background_color; 
+    get background_color() {
+        return this._background_color;
     }
 
     /**
      * Set the background_color value.
      * @param {Number|String} val - The background_color value to set.
      */
-    set background_color(val){
+    set background_color(val) {
         this._background_color = this._convertColorValue(val, 'number');
     }
 
@@ -281,24 +284,24 @@ export default class Styles {
      * Get the bidi value.
      * @return {Boolean} The bidi value.
      */
-    get bidi() { 
-        return this._bidi; 
+    get bidi() {
+        return this._bidi;
     }
 
     /**
      * Set the bidi value.
      * @param {Boolean} val - The bidi value to set.
      */
-    set bidi(val) { 
-        this._bidi = this._checkVal(val) 
+    set bidi(val) {
+        this._bidi = this._checkVal(val)
     }
 
     /**
      * Get the color value.
      * @return {String} The color value.
      */
-    get color() { 
-        return this._color; 
+    get color() {
+        return this._color;
     }
 
     /**
@@ -316,28 +319,28 @@ export default class Styles {
     get fill() {
         return this._fill;
     }
-  
+
     /**
      * Set the fill value.
      * @param {Boolean} val - The fill value to set.
      */
-    set fill(val) { 
-        this._fill = ([1, '1', true, 'yes'].indexOf(val) !== -1) ? true : false; 
+    set fill(val) {
+        this._fill = ([1, '1', true, 'yes'].indexOf(val) !== -1) ? true : false;
     }
 
     /**
      * Get the font_bold value.
      * @return {Boolean} The font_bold value.
      */
-    get font_bold() { 
-        return this._font_bold; 
+    get font_bold() {
+        return this._font_bold;
     }
 
     /**
      * Set the font_bold value.
      * @param {Boolean} val - The font_bold value to set.
      */
-    set font_bold(val) { 
+    set font_bold(val) {
         this._font_bold = this._checkVal(val);
     }
 
@@ -345,17 +348,16 @@ export default class Styles {
      * Get the font_family value.
      * @return {String} The font_family value.
      */
-    get font_family() { 
+    get font_family() {
         return this._font_family;
     }
-    
+
     /**
      * Set the font_family value.
      * @param {String} val - The font_family value to set.
      */
-    set font_family(val)
-    {
-        if(val in this._DEFAULT_FONTS) {
+    set font_family(val) {
+        if (val in this._DEFAULT_FONTS) {
             this._font_family = this._DEFAULT_FONTS[val];
         } else {
             this._font_family = val;
@@ -366,15 +368,15 @@ export default class Styles {
      * Get the font_italic value.
      * @return {Boolean} The font_italic value.
      */
-    get font_italic() { 
+    get font_italic() {
         return this._font_italic;
     }
-    
+
     /**
      * Set the font_italic value.
      * @param {Boolean} val - The font_bold value to set.
      */
-    set font_italic(val) { 
+    set font_italic(val) {
         this._font_italic = this._checkVal(val);
     }
 
@@ -382,10 +384,10 @@ export default class Styles {
      * Get the font_size value.
      * @return {Number} The font_size value.
      */
-    get font_size() { 
-        return this._font_size; 
+    get font_size() {
+        return this._font_size;
     }
-    
+
     /**
      * Set the font_size value.
      * @param {Number} val - The font_size value to set.
@@ -393,25 +395,25 @@ export default class Styles {
     set font_size(val) {
         if (!this._isInt(val)) {
             // remove px part
-            this._font_size = Number(val.slice(0,-2));
+            this._font_size = Number(val.slice(0, -2));
         } else {
             this._font_size = val;
-        }    
+        }
     }
 
     /**
      * Get the font_underline value.
      * @return {Boolean} The font_underline value.
      */
-    get font_underline(){ 
+    get font_underline() {
         return this._font_underline;
     }
-    
+
     /**
      * Set the font_underline value.
      * @param {Boolean} val - The font_underline value to set.
      */
-    set font_underline(val) { 
+    set font_underline(val) {
         this._font_underline = this._checkVal(val);
     }
 
@@ -419,15 +421,15 @@ export default class Styles {
      * Get the html value.
      * @return {Boolean} The html value.
      */
-    get html() { 
-        return this._html; 
+    get html() {
+        return this._html;
     }
-    
+
     /**
      * Set the html value.
      * @param {Boolean} val - The html value to set.
      */
-    set html(val) { 
+    set html(val) {
         this._html = this._checkVal(val);
     }
 
@@ -435,10 +437,10 @@ export default class Styles {
      * Get the penwidth value.
      * @return {Boolean} The penwidth value.
      */
-    get penwidth() { 
+    get penwidth() {
         return this._penwidth;
     }
-    
+
     /**
      * Set the penwidth value.
      * @param {Boolean} val - The penwidth value to set.
@@ -449,4 +451,4 @@ export default class Styles {
         }
         this._penwidth = val;
     }
-} 
+}

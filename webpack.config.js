@@ -34,7 +34,6 @@ var settings = {
          test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
          loader: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]'
       }],
-      noParse: [/.*(gzip\.js).*/] // TarGZ doesn't play well with webpack, so skip parsing
    },
    plugins: [
       new HtmlWebpackPlugin({
@@ -47,7 +46,8 @@ var settings = {
       new CopyWebpackPlugin([
          { from: 'src/js/dependencies/zebra.min.js', to: 'js/' },
          { from: 'src/js/dependencies/zebra.json', to: 'js/' },
-         { from: 'src/js/dependencies/zebra.png', to: 'js/' }
+         { from: 'src/js/dependencies/zebra.png', to: 'js/' },
+         { from: 'src/js/dependencies/gzip.js', to: 'js/' }
       ],{debug: 'info'})
    ],
    node: {
@@ -130,8 +130,7 @@ module.exports = function(env) {
                   warnings: false,
                },
             }),
-            new webpack.optimize.OccurrenceOrderPlugin(),
-            new webpack.IgnorePlugin(/.*(gzip\.js).*/) // In production, noParse is ignored.
+            new webpack.optimize.OccurrenceOrderPlugin()
          );
       }
    }

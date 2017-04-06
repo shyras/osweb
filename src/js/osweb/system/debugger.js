@@ -45,7 +45,7 @@ export default class Debugger {
         this._runner._events.state = constants.TIMER_ERROR;
 
         // Throw the exception.
-        console.log('OSWeb has stopped running due to a fatal error.');
+        console.error('OSWeb has stopped running due to a fatal error.');
         throw new Error(error_text);
     }
 
