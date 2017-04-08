@@ -208,7 +208,7 @@ describe('Syntax', function() {
 
 		it("Should only parse real variables: \\\\[width] = \\[width] = [width]", function() {
 			expect(runner._syntax.eval_text(
-				'\\\\[width] = \\[width] = [width]', tmp_var_store)).to.equal('\\[width] = [width] = 1024');
+				'\\\\[width] = \\[width] = [width]', tmp_var_store)).to.equal('\\1024 = [width] = 1024');
 		});
 
 		it("Should not try to parse a variable if [] contents contain spaces: [no var]", function() {
@@ -249,47 +249,62 @@ describe('Syntax', function() {
 
 	describe('compile_cond()', function() {
 		it("Should convert a variable within [] to a variable name within the var context", function() {
-			expect(runner._syntax.compile_cond_new(
+			expect(runner._syntax.compile_cond(
 				'[width] > 100', false)).to.equal('var.width > 100');
 		});
+
+		it("Should handle >= correctly", function() {
+			expect(runner._syntax.compile_cond(
+				'[width] >= 100', false)).to.equal('var.width >= 100');
+		});
+
+		it("Should handle <= correctly", function() {
+			expect(runner._syntax.compile_cond(
+				'[width] <= 100', false)).to.equal('var.width <= 100');
+		});
+
 		it("Should convert always to True", function() {
-			expect(runner._syntax.compile_cond_new(
-				'always', false)).to.equal('True');
+			expect(runner._syntax.compile_cond(
+				'always', false)).to.equal(true);
 		});
 		it("Should convert ALWAYS to True", function() {
-			expect(runner._syntax.compile_cond_new(
-				'ALWAYS', false)).to.equal('True');
+			expect(runner._syntax.compile_cond(
+				'ALWAYS', false)).to.equal(true);
 		});
 		it("Should convert never to False", function() {
-			expect(runner._syntax.compile_cond_new(
-				'never', false)).to.equal('False');
+			expect(runner._syntax.compile_cond(
+				'never', false)).to.equal(false);
 		});
 		it("Should convert NEVER to False", function() {
-			expect(runner._syntax.compile_cond_new(
-				'NEVER', false)).to.equal('False');
+			expect(runner._syntax.compile_cond(
+				'NEVER', false)).to.equal(false);
 		});
-		it("Should convert numbers to numbers", function() {
-			expect(runner._syntax.compile_cond_new(
+		it("Should convert a single = to double ==", function() {
+			expect(runner._syntax.compile_cond(
 				'[width] = 1024', false)).to.equal('var.width == 1024');
 		});
-		it("Should not quote reserved words such as and and should also process double ==", function() {
-			expect(runner._syntax.compile_cond_new(
-				'[width] == 1024 and [height] == 768', false)).to.equal('var.width == 1024 and var.height == 768');
+		it("Should handle lack of spaces surrounding = correctly", function() {
+			expect(runner._syntax.compile_cond(
+				'[width]=1024', false)).to.equal('var.width==1024');
+		});
+		it("Should not quote reserved words such as 'and' should also process double ==", function() {
+			expect(runner._syntax.compile_cond(
+				'[width] = 1024 and [height] == 768', false)).to.equal('var.width == 1024 and var.height == 768');
 		});
 		it("Should process a line starting with the = character as python script", function() {
-			expect(runner._syntax.compile_cond_new(
+			expect(runner._syntax.compile_cond(
 				'=var.width > 100', false)).to.equal('var.width > 100');
 		});
-		it("Should igonere existing quotes and add new quotes", function() {
-			expect(runner._syntax.compile_cond_new(
+		it("Should ignore existing quotes and add new quotes", function() {
+			expect(runner._syntax.compile_cond(
 				'"yes" = yes', false)).to.equal('"yes" == "yes"');
 		});
 		it("Should process backslashes in a proper way", function() {
-			expect(runner._syntax.compile_cond_new(
+			expect(runner._syntax.compile_cond(
 				'yes = \'yes\'', false)).to.equal('"yes" == \'yes\'');
 		});
 		it("Should process more complex structures with brackets", function() {
-			expect(runner._syntax.compile_cond_new(
+			expect(runner._syntax.compile_cond(
 				'("a b c" = abc) or (x != 10) and ([width] == 100)', false)).to.equal('("a b c" == "abc") or ("x" != 10) and (var.width == 100)');
 		});
 	});

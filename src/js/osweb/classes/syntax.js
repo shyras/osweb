@@ -21,15 +21,25 @@ export default class Syntax {
         // Check for conditional paramters.
         bytecode = (typeof bytecode === 'undefined') ? true : bytecode;
 
-        if (cnd === 'always') {
+        if (cnd.toLowerCase() === 'always') {
             return true;
-        } else if (cnd == 'never') {
+        } else if (cnd.toLowerCase() === 'never') {
             return false;
         } else {
-            if (cnd.substring(0, 1) == '=') {
-                return this._runner._pythonParser._parse(cnd.substr(1));
+            if (cnd[0] == '=') {
+                //return this._runner._pythonParser._parse(cnd.substr(1));
+                cnd = cnd.substr(1);
             } else {
-                cnd = cnd.replace(/[^(!=)][=]/g, '==');
+                // Replace all valid variables inside []
+                let result = cnd.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+                    // Check if the current match is escaped, and simply return it untouched if so.
+                    if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
+                    return `var.${content}`;
+                });
+                // Handle single quotes.
+                result = result.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
+                //result = result.replace(/(\s*)([a-zA-Z]+)(\s)/g, '$1\"$s2\"$3');
+                cnd = result;
             }
         }
         return cnd;
@@ -85,14 +95,14 @@ export default class Syntax {
         and replaces them with variable values as found in OpenSesame's var store */
         let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
             // Check if the current match is escaped, and simply return it untouched if so.
-            if(string[offset-1] == "\\") return match;
+            if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
 
             // Check if contents of [] start with an =. In this case they should be
             // evaluated as a Python statement
             if(content[0] == '='){
-                // Replace with Python workspace eval function
-                // return this._runner._pythonParser._parse(content.substring(1,content.length));
-                return eval(content.substring(1,content.length));
+                // Convert python statement to ast tree and run it.
+                const ast = this._runner._pythonParser._parse(content.substring(1,content.length));
+                return this._runner._pythonParser._run_statement(ast);
             }else{
                 try {
                     if ((typeof vars === 'undefined') || (typeof vars[content] === 'undefined')) {
