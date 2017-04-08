@@ -8,7 +8,8 @@ export default class Syntax {
      */
     constructor(runner) {
         // Create and set private properties. 
-        this._runner = runner; // Parent runner attached to the syntax class.    
+        this._runner = runner; // Parent runner attached to the syntax class.
+        this.isNumber = isNumber; // attach underscore function to class;    
     }
 
     /**
@@ -44,6 +45,8 @@ export default class Syntax {
         }
         return cnd;
     }
+
+
 
     /**
      * Converts a string to a float or integer if possible.
