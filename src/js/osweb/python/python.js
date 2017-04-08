@@ -69,7 +69,7 @@ export default class PythonParser {
                 return ast;
             } 
             catch (e) {
-                this._runner._debugger.addError('Script parsing error: ' + e.toString);
+                this._runner._debugger.addError('Script parsing error: ' + e.message);
                 return null;
             }
         } 
