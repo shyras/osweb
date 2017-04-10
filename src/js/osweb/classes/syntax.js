@@ -28,25 +28,39 @@ export default class Syntax {
             return false;
         } else {
             if (cnd[0] == '=') {
-                //return this._runner._pythonParser._parse(cnd.substr(1));
                 cnd = cnd.substr(1);
             } else {
+                // Scan for literals (strings, numbers, etc).
+                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[\w*?\]|\b\w+\b)/g , (match, offset, string) => {
+                    // Check if match is not a variable, already inside quotes or a number.
+                    if(string[offset] == '[' && string[offset+match.length-1] == ']' ||     
+                        [`"`,`'`].includes(string[offset]) && string[offset] == string[offset+match.length-1]
+                    ){
+                        return match;
+                    }else if(!Number.isNaN(Number(match))){
+                        return Number(match);
+                    }else{
+                        return `"${match}"`;
+                    }
+                });
+
                 // Replace all valid variables inside []
-                let result = cnd.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+                cnd = cnd.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
                     // Check if the current match is escaped, and simply return it untouched if so.
                     if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
                     return `var.${content}`;
                 });
-                // Handle single quotes.
-                result = result.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
-                //result = result.replace(/(\s*)([a-zA-Z]+)(\s)/g, '$1\"$s2\"$3');
-                cnd = result;
+                // Handle operators.
+                cnd = cnd.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
             }
         }
-        return cnd;
+        if(bytecode === true){
+            let ast = this._runner._pythonParser._parse(cnd);
+            return this._runner._pythonParser._run_statement(ast);
+        }else{
+            return cnd;
+        }
     }
-
-
 
     /**
      * Converts a string to a float or integer if possible.
