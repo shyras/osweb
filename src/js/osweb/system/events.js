@@ -310,7 +310,7 @@ export default class Events {
      * @param {Object} event - system timer event.
      */
     _time(event) {
-        // Select the proper state. 
+        // Select the proper state.  
         switch (this._state) {
             case constants.TIMER_NONE:
                 // Do nothing in the loop
@@ -352,13 +352,17 @@ export default class Events {
                 // Exit the runner.
                 this._runner._finalize(); 
             break;
-            case constants.TIMER_EXIT :
+            case constants.TIMER_EXIT:
                 // Adjus the status. 
                 this._state = constants.TIMER_NONE;
 
                 // Exit the runner.
                 this._runner._finalize(); 
             break;
+            case constants.TIMER_FORM:
+                // Update the current item without response.
+                this._currentItem._update(null);
+            break;    
         } 
     }
 

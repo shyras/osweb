@@ -28,9 +28,13 @@ import TextLine from '../elements/textline.js';
 
 // Widgets
 import ButtonWidget from '../widgets/button.js';
-import LabelWidget from '../widgets/label.js';
+import CheckBoxWidget from '../widgets/checkbox.js';
 import FormWidget from '../widgets/form.js';
+import ImageWidget from '../widgets/image_widget.js';
+import ImageButtonWidget from '../widgets/image_button.js';
+import LabelWidget from '../widgets/label.js';
 import TextInputWidget from '../widgets/text_input.js';
+import Themes from '../widgets/themes.js'; 
 
 // Plugins
 import AdvancedDelay from '../plugins/advanced_delay.js';
@@ -73,9 +77,13 @@ export const itemClasses = {
     textline: TextLine,
     // Widgets
     button_widget: ButtonWidget,
+    checkbox_widget: CheckBoxWidget,
     form_widget: FormWidget,
+    image_button_widget: ImageButtonWidget,
+    image_widget: ImageWidget,
     label_widget: LabelWidget,
     text_input_widget: TextInputWidget,
+    themes: Themes,
     // Plugins
     advanced_delay: AdvancedDelay,
     form_base: FormBase,
@@ -118,5 +126,6 @@ export const constants = {
     TIMER_RESUME: 4,
     TIMER_DONE: 5,
     TIMER_BREAK: 6,
-    TIMER_ERROR: 7
+    TIMER_ERROR: 7,
+    TIMER_FORM: 8
 }

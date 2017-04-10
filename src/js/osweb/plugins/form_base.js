@@ -40,18 +40,29 @@ export default class FormBase extends Item {
 
     /** Implements the complete phase of an item. */
     _complete() {
+        // PIXI: Set the cursor visibility to none (default).
+        this.experiment._runner._renderer.view.style.cursor = 'none';
+
         // Remove the panel from the zebra form
-        this.experiment._runner._formCanvas.root.remove(this.form._panel);
+        //this.experiment._runner._formCanvas.root.remove(this.form._panel);
 
         // Hide the form canvas, and show the experiment canvas.
-        this.experiment._runner._formContainer.style.display = 'none';
-        this.experiment._runner._renderer.view.style.display = 'inline';
+        //this.experiment._runner._formContainer.style.display = 'none';
+        //this.experiment._runner._renderer.view.style.display = 'inline';
+
+        // Set the timer to normal mode.
+        this.experiment._runner._events._state = constants.TIMER_NONE;
 
         // form is finalized.
         this._status = constants.STATUS_FINALIZE;
 
         // Inherited.	
         super._complete();
+    }
+
+    _update(response) {
+        // Update the rendering of the active form.
+        this.form._canvas.show(this.form.experiment);        
     }
 
     /** Resets all item variables to their default value. */
@@ -165,6 +176,12 @@ export default class FormBase extends Item {
     run() {
         // Inherited.	
         super.run();
+
+        // Set the timer to form pause.
+        this.experiment._runner._events._state = constants.TIMER_FORM;
+
+        // PIXI: Set the cursor visibility to none (default).
+        this.experiment._runner._renderer.view.style.cursor = 'default';
 
         // Execute the form.
         if (this.vars.only_render === 'yes') {

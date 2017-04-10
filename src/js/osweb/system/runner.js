@@ -28,7 +28,6 @@ export default class Runner {
         this._confirm = null;
         this._container = null; // HTML: The container (div) element. 
         this._data = null // Experiment result data.
-        this._formContainer; // ZEBRAKIT: Container for form display. 
         this._fullscreen = false;
         this._experiment = null; // The JSON experiment container     
         this._name = ''; // String name of the experiment which is run.
@@ -67,13 +66,6 @@ export default class Runner {
         if (typeof content !== 'undefined') {
             // Get the div element from the DOM element tree 
             this._container = (typeof content === 'string') ? document.getElementById(content) : content;
-
-            // Create theform container.
-            this._formContainer = document.createElement("canvas");
-            this._formContainer.id = 'osweb_formcanvas';
-            this._container.appendChild(this._formContainer);
-            this._formContainer.style.display = ' none';
-            this._formCanvas = new zebra.ui.zCanvas('osweb_formcanvas', 800, 600);
 
             // Create and set the experiment canvas. 
             this._renderer = PIXI.autoDetectRenderer(800, 600, {
@@ -258,6 +250,5 @@ export default class Runner {
      */
     cleanUp(){
         this._renderer.destroy();
-        zebra.util.shutdownAll();
     }
 }

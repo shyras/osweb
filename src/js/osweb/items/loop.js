@@ -2,6 +2,7 @@
  * Class representing a sequence item.
  * @extends Item
  */
+import { isNumber }  from 'underscore';
 import Item from './item.js';
 import Keyboard from '../backends/keyboard.js';
 
@@ -88,7 +89,7 @@ export default class Loop extends Item {
                         var value = this.syntax.remove_quotes(tokens[3]);
 
                         // Check if the value is numeric
-                        value = this.syntax.isNumber(value) ? Number(value) : value;
+                        value = isNumber(value) ? Number(value) : value;
 
                         // Convert the python expression to javascript.
                         if (value[0] == '=') {

@@ -1,12 +1,13 @@
+import * as PIXI from 'pixi.js';
+import Widget from './widget.js';
+
 /**
  * Class representing an OpenSesame label Widget. 
  * @extends Widget
  */
-import Widget from './widget.js';
-
 export default class LabelWidget extends Widget {
     /**
-     * Create a widget button object which represents a text label.
+     * Create a widget object which represents a text label.
      * @param {Object} form - The form  which the widget belongs.
      * @param {Object} properties - The properties belonging to the widget.
      */
@@ -19,13 +20,61 @@ export default class LabelWidget extends Widget {
         this.frame = (typeof properties['frame'] !== 'undefined') ? properties['frame'] === 'yes' : this.frame;
         this.text = properties['text'];
         this.type = 'label';
-
-        // Set the class private properties.
-        this._label = new zebra.ui.Label(new zebra.data.Text(this.text));
-     
-        // Add the button to the parent panel.
-        this._panel.add(this._label);
     }
+
+    /**
+     * Convert a text string to a collection of lines.    
+     * @param {Number|String} text - The text to convert into lines.
+     * @param {Number} width - The height of the containing box.
+     * @param {Number} height - The width of the containing box.
+     * @param {Object} text_style - The styling of the text.
+     * @param {Array} - Array of text lines.
+     */
+    text_lines(text, width, height, text_style) {
+        // Create a temporary canvas context.
+        var canvas = document.createElement('canvas');
+        canvas.width  = 800;
+        canvas.height = 600;
+        var buffer_context = canvas.getContext('2d');
+        
+        // Set the context font style. 
+        buffer_context.font = text_style.fontSize + 'px ' + text_style.fontFamily;  
+        if (text_style.fontWeight === 'bold') {
+            buffer_context.font = 'bold ' + buffer_context.font;
+        }    
+        if (text_style.fontStyle === 'italic') {
+            buffer_context.font = 'italic ' + buffer_context.font;
+        }    
+        
+        // Create the lines of text 
+        var words = text.split(' ');
+        var lines = [];
+        var line = '';
+        var line_length = 0;
+        while (words.length > 0) { 
+            // Get the next word and the length of the word with one space.   
+            var word = words.shift();
+            var word_length = buffer_context.measureText(word + ' ').width; 
+            if ((line_length + word_length) > width) {
+                // line is done, add it to the lines.
+                lines.push(line);
+                // Set the new line.
+                line = word;
+                line_length = word_length;
+            } else {
+                // Add the word to the line
+                line = (line === '') ? word : line + ' ' + word;
+                // increate the length of the line.
+                line_length = line_length + word_length;     
+            }
+        }    
+        
+        // Check for remainder words.
+        lines.push(line);
+
+        // Return the lines.
+        return lines;
+    }    
 
     /**
      * Draw the label widget.    
@@ -33,36 +82,36 @@ export default class LabelWidget extends Widget {
      * @param {Number|String} html - Toggle if the text contains html (ignored).
      */
     draw_text(text, html) {
-        //
-        var textRender = new zebra.ui.TextRender(text);
-        console.log(textRender);
-        
-        // Set the text 
-        this._label.setValue(text);
+        // PIXI - Create the text element  
+        var text_style = {
+            fontFamily: this.form.experiment.vars.font_family,
+            fontSize: this.form.experiment.vars.font_size,
+            fontStyle: (this.form.experiment.vars.font_italic === 'yes') ? 'italic' : 'normal',
+            fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
+            fill: this.form.experiment.vars.foreground
+        };
+        // Get the lines and properties.
+        var text_elements = this.text_lines(text, this._container._width - 10, this._container._height - 10, text_style);
+        var line_properties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
 
-        console.log(this._label.height);
-        console.log(this._label.width);
-
-        // Adjust the label dimension.
-        this._label.width = this._panel.width - 2; 
-        this._label.height = this._panel.height - 2; 
-
-        // Set the special label properties.
-        var fontStyle =  new zebra.ui.Font(this.form.experiment.vars.font_family, '', Number(this.form.experiment.vars.font_size));
-        this._label.setFont(fontStyle);
-        this._label.setColor(this.form.experiment.vars.foreground);
-       
-        // Set the horizontal and vertical alignment.
-        /* if (this.center === true) {
-            this._label_cell.style.textAlign = 'center';
-            this._label_cell.style.verticalAlign = 'middle';
-        } else {
-            this._label_cell.style.textAlign = 'left';
-        }  */   
+        // Calculate the starting y position.
+        var y = (this.center === true) ? (this._container._height - ((text_elements.length) * line_properties.height)) / 2 : 5;      
+        // Create the lines.
+        for (var i = 0;i < text_elements.length; i++) {
+            var text_element = new PIXI.Text(text_elements[i], text_style);
+            text_element.x = (this.center === true) ? (this._container._width - text_element.width) / 2: 5;
+            text_element.y = y;
+            y = y  + line_properties.height;
+            // Add the text_element to the container.
+            this._container.addChild(text_element);
+        }        
     }
 
     /** General drawing method for the label widget. */
     render() {
+        // Clear the old content.
+        this._container.removeChildren();
+        
         // Draw the frame (if enabled).
         if (this.frame === true) {
             this.draw_frame();

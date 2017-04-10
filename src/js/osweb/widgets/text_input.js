@@ -17,25 +17,12 @@ export default class TextInputWidget extends Widget {
 
         // Set the class public properties.
         this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : false;
-        this.frame = (typeof properties['frame'] !== 'undefined') ? properties['frame'] === 'yes' : false;
+        this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : true;
         this.stub = (typeof properties['stub'] !== 'undefined') ? properties['stub'] : 'Type here...';
         this.text = (typeof properties['text'] !== 'undefined') ? properties['text'] : '';
         this.var = (typeof properties['var'] !== 'undefined') ? properties['var'] : null;
-        this.return_accepts = (typeof properties['return_accepts'] !== 'undefined') ? properties['return_accepts'] === 'yes' : false;
+        this.return_accepts = (typeof properties['return_accepts'] !== 'undefined') ? (properties['return_accepts'] === 'yes') : false;
         this.type = 'text_input';
-
-        // Set the class private properties.
-        this._text_input = new zebra.ui.TextField(this.text);
-        this._text_input.x = 0;
-        this._text_input.y = 0;
-        
-        // Add the button to the parent panel.
-        this._panel.add(this._text_input);
-        
-        // Handle an button pressed event.
-        this._text_input.keyPressed = function(event) {
-            this.response(event);
-        }.bind(this); 
     }
 
     /**
@@ -63,25 +50,40 @@ export default class TextInputWidget extends Widget {
      * @param {Number|String} pHtml - Toggle if the text contains html (ignored).
      */
     draw_text(text, html) {
-        this._text_input.width = this._panel.width - 2; 
-        this._text_input.height = this._panel.height - 2; 
- 
-        /* this._text_input.style.padding = Number(this.form.spacing) + 'px';
-        this._text_input.style.fontStyle = this.form.experiment.vars.font_italic == 'yes' ? 'italic' : 'normal';
-        this._text_input.style.fontWeight = this.form.experiment.vars.font_bold == 'yes' ? 'bold' : 'normal';
-        this._text_input.style.fontFamily = this.form.experiment.vars.font_family;
-        this._text_input.style.color = this.form.experiment.vars.foreground;
-        this._text_input.style.fontSize = this.form.experiment.vars.font_size + 'px';
-        this._text_input.style.textAlign = (this.center === true) ? 'center' : 'left';
-        this._text_input.style.border = 'none';
-        this._text_input.style.backgroundColor = this.form._themes.theme[this.form.theme].backgroundColor; */
+        // PIXI - Create the text element  
+        var text_style = {
+            fontFamily: this.form.experiment.vars.font_family,
+            fontSize: this.form.experiment.vars.font_size,
+            fontStyle: (this.form.experiment.vars.font_italic === 'yes') ? 'italic' : 'normal',
+            fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
+            fill: 0x000000
+        };
+        var inputField = new PixiTextInput(text, text_style);
+   
+         // Position the text element.
+        if (this.center === true) {
+            inputField.x = (this._container._width - inputField.width) / 2;  
+            inputField.y = (this._container._height - inputField.height) / 2;  
+        } else {
+            inputField.x = 5;
+            inputField.y = 5;
+        }
+
+        console.log(inputField);
+
+        // Add the text_element to the container.
+        this._container.interactive = true;
+        this._container.addChild(inputField);
     }
 
     /** General drawing method for the label widget. */
     render() {
+        // Clear the old content.
+        this._container.removeChildren();
+
         // Draw the frame (if enabled).
         if (this.frame === true) {
-            this.draw_frame();
+            //this.draw_frame();
         }
     
         // Draw the text.

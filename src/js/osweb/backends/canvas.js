@@ -76,8 +76,8 @@ export default class Canvas {
             doc = new DOMParser().parseFromString(str, "text/html");
         }catch(e){
             // Account for the absence of DOMParser in node.js
-            const DOMParser = require('xmldom').DOMParser;
-            doc = new DOMParser().parseFromString(str, "text/html");
+            //const DOMParser = require('xmldom').DOMParser;
+            //doc = new DOMParser().parseFromString(str, "text/html");
         }
         return Array.from(doc.childNodes).some(node => node.nodeType === 1);
     }
@@ -86,9 +86,6 @@ export default class Canvas {
     _exitDisplay() {
         // Set the cursor visibility to default (visible).
         this.experiment._runner._renderer.view.style.cursor = 'default';
-
-        // Resize the container div to the same size as the canvas
-        // this._resizeContainer(800, 600);
 
         // PIXI: Set the renderer dimensions.
         this.experiment._runner._renderer.resize(800, 600);
@@ -588,7 +585,10 @@ export default class Canvas {
      */
     image(fname, center, x, y, scale) {
         // Get image from file pool.
+        console.log(fname);
         var name = this.experiment._runner._syntax.remove_quotes(fname);
+        console.log(name);
+        console.log(this.experiment._runner._pool);
         var img = this.experiment._runner._pool[name].data;
 
         // Create a temporary canvas to make an image data array.        
@@ -625,13 +625,6 @@ export default class Canvas {
         // Set the dimension properties.
         this._height = experiment.vars.height;
         this._width = experiment.vars.width;
-
-        // Resize the container div to the same size as the canvas
-        // this._resizeContainer(this._width, this._height);
-
-        // ZEBRAKIT: set the canvas of the form.
-        this.experiment._runner._formContainer.style.width = this._width + 'px';
-        this.experiment._runner._formContainer.style.height = this._height + 'px';
 
         // PIXI: Set the renderer dimensions.
         experiment._runner._renderer.resize(this._width, this._height);

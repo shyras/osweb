@@ -1,3 +1,6 @@
+import Canvas from '../backends/canvas.js';
+import Themes from './themes.js';
+
 /** Class representing an Form widget for showing widgets. */
 export default class FormWidget {
     /**
@@ -38,14 +41,15 @@ export default class FormWidget {
             this.rowNr = this.rowNr + Number(rows[i]);
         }
 
-        // Set the class private properties.
-        this._panel = new zebra.ui.Panel({
-            background : this.experiment.vars.background,
-            height: this.experiment.vars.height, 
-            width: this.experiment.vars.width    
-        }); 
-
-        // this._themes = new osweb.themes();
+        // Create the form canvas. 
+        this._canvas = new Canvas(this.experiment, false);
+        
+        // Set the form dimensions.
+        this._canvas._container.height = experiment.vars.height; 
+        this._canvas._container.width = experiment.vars.width;
+        
+        // Create the themes object.
+        this._themes = new Themes();
     }
 
     /**
@@ -73,17 +77,25 @@ export default class FormWidget {
 
      /** General drawing method for the label widget. */
      render() {
+        // Clear the old content.
+        this._canvas._container.removeChildren();
+
+        // Set the experiment background.
+//        this.experiment._runner._renderer.clear(0xff0000);
+
+        //this.experiment._runner._renderer.clear(this._canvas._styles._convertColorValue(this.experiment.vars.background, 'number'));
+
         // render all widgets.
         for (var i =0; i < this.widgets.length; i++) {
+            // Add the widget to the container.
+            this._canvas._container.addChild(this.widgets[i]._container);
+
+            // Render the widget.
             this.widgets[i].render();
         }
     
-        // Add the panel to the zebra form
-        this.experiment._runner._formCanvas.root.add(this._panel);
-
-        // Hide the experiment canvas, and show the form canvas.
-        this.experiment._runner._formContainer.style.display = 'inline';
-        this.experiment._runner._renderer.view.style.display = 'none';
+        // Show the form.
+        this._canvas.show(this.experiment);
     }
 
     /**
@@ -122,11 +134,11 @@ export default class FormWidget {
         height = (height / this.rowNr) * form_height - 2 * Number(this.spacing);
 
         // Set the widget position and dimensions.
-        widget._panel.width = Math.round(width);
-        widget._panel.height = Math.round(height);
-        widget._panel.x = Math.round(x);
-        widget._panel.y = Math.round(y);
-    
+        widget._container.width = Math.round(width);
+        widget._container.height = Math.round(height);
+        widget._container.x = Math.round(x);
+        widget._container.y = Math.round(y);
+
         // Add the widget to the list.
         this.widgets.push(widget);
     }
