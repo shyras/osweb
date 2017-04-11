@@ -8,7 +8,8 @@ export default class Syntax {
      */
     constructor(runner) {
         // Create and set private properties. 
-        this._runner = runner; // Parent runner attached to the syntax class.    
+        this._runner = runner; // Parent runner attached to the syntax class.
+        this.isNumber = isNumber; // attach underscore function to class;    
     }
 
     /**
@@ -21,18 +22,44 @@ export default class Syntax {
         // Check for conditional paramters.
         bytecode = (typeof bytecode === 'undefined') ? true : bytecode;
 
-        if (cnd === 'always') {
+        if (cnd.toLowerCase() === 'always') {
             return true;
-        } else if (cnd == 'never') {
+        } else if (cnd.toLowerCase() === 'never') {
             return false;
         } else {
-            if (cnd.substring(0, 1) == '=') {
-                return this._runner._pythonParser._parse(cnd.substr(1));
+            if (cnd[0] == '=') {
+                cnd = cnd.substr(1);
             } else {
-                cnd = cnd.replace(/[^(!=)][=]/g, '==');
+                // Scan for literals (strings, numbers, etc).
+                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[\w*?\]|\b\w+\b)/g , (match, offset, string) => {
+                    // Check if match is not a variable, already inside quotes or a number.
+                    if(string[offset] == '[' && string[offset+match.length-1] == ']' ||     
+                        [`"`,`'`].includes(string[offset]) && string[offset] == string[offset+match.length-1]
+                    ){
+                        return match;
+                    }else if(!Number.isNaN(Number(match))){
+                        return Number(match);
+                    }else{
+                        return `"${match}"`;
+                    }
+                });
+
+                // Replace all valid variables inside []
+                cnd = cnd.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+                    // Check if the current match is escaped, and simply return it untouched if so.
+                    if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
+                    return `var.${content}`;
+                });
+                // Handle operators.
+                cnd = cnd.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
             }
         }
-        return cnd;
+        if(bytecode === true){
+            let ast = this._runner._pythonParser._parse(cnd);
+            return this._runner._pythonParser._run_statement(ast);
+        }else{
+            return cnd;
+        }
     }
 
     /**
@@ -85,14 +112,14 @@ export default class Syntax {
         and replaces them with variable values as found in OpenSesame's var store */
         let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
             // Check if the current match is escaped, and simply return it untouched if so.
-            if(string[offset-1] == "\\") return match;
+            if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
 
             // Check if contents of [] start with an =. In this case they should be
             // evaluated as a Python statement
             if(content[0] == '='){
-                // Replace with Python workspace eval function
-                // return this._runner._pythonParser._parse(content.substring(1,content.length));
-                return eval(content.substring(1,content.length));
+                // Convert python statement to ast tree and run it.
+                const ast = this._runner._pythonParser._parse(content.substring(1,content.length));
+                return this._runner._pythonParser._run_statement(ast);
             }else{
                 try {
                     if ((typeof vars === 'undefined') || (typeof vars[content] === 'undefined')) {
