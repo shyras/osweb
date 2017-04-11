@@ -74,12 +74,11 @@ export default class Canvas {
         let doc;
         try{
             doc = new DOMParser().parseFromString(str, "text/html");
+            return Array.from(doc.childNodes).some(node => node.nodeType === 1);
         }catch(e){
-            // Account for the absence of DOMParser in node.js
-            //const DOMParser = require('xmldom').DOMParser;
-            //doc = new DOMParser().parseFromString(str, "text/html");
+            console.error("Could not parse DOM: " + e.message);
         }
-        return Array.from(doc.childNodes).some(node => node.nodeType === 1);
+        
     }
 
     /** Exit the display and return to default settings. */

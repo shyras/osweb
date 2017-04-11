@@ -55,13 +55,20 @@ if (node_mode) {
 	}
 
 	var osweb = require('../src/js/osweb/index.js').default;
-	var divTarget = document.createElement("div");
-	divTarget.id = "renderTarget";
+	var renderTarget = document.createElement("div");
+	renderTarget.id = "renderTarget";
 	
 	var VarStore = require('../src/js/osweb/classes/var_store.js').default;
 	var Canvas = require('../src/js/osweb/backends/canvas.js').default;
+	var runner = osweb.getRunner(renderTarget);
 } else {
 	var expect = chai.expect;
+	var stub = sinon.stub;
+	var runner = osweb.getRunner('renderTarget');
+
+	var VarStore = function(data, second){
+		this._runner = data.runner;
+	}
 }
 
 // var Script = '---' + '\n' +
@@ -123,16 +130,14 @@ if (node_mode) {
 // 	'source': Script
 // };
 
-var runner = osweb.getRunner(divTarget);
-
 describe('Syntax', function() {
 	// Suppress error output
-	var stub;
+	var console_stub;
 	beforeEach(function(){
-		stub = sinon.stub(console, "error");
+		console_stub = sinon.stub(console, "error");
 	});
 	afterEach(function(){
-		stub.restore();
+		console_stub.restore();
 	});
 
 	describe('parse_cmd()', function() {
