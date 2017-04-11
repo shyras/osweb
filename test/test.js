@@ -285,9 +285,17 @@ describe('Syntax', function() {
 			expect(runner._syntax.compile_cond(
 				'NEVER', false)).to.equal(false);
 		});
+		it("Should quote literals at the end of the string", function(){
+			expect(runner._syntax.compile_cond(
+				'[cue_side] = left', false)).to.equal('var.cue_side == "left"');
+		});
 		it("Should convert a single = to double ==", function() {
 			expect(runner._syntax.compile_cond(
 				'[width] = 1024', false)).to.equal('var.width == 1024');
+		});
+		it("Should handle underscores in variable names", function() {
+			expect(runner._syntax.compile_cond(
+				'[my_var99] = 1024', false)).to.equal('var.my_var99 == 1024');
 		});
 		it("Should handle lack of spaces surrounding = correctly", function() {
 			expect(runner._syntax.compile_cond(

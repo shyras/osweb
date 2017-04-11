@@ -30,8 +30,9 @@ export default class Syntax {
             if (cnd[0] == '=') {
                 cnd = cnd.substr(1);
             } else {
+                cnd = this.remove_quotes(cnd);
                 // Scan for literals (strings, numbers, etc).
-                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[\w*?\]|\b\w+\b)/g , (match, offset, string) => {
+                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[\w+?\]|\b\w+\b)/g , (match, offset, string) => {
                     // Check if match is not a variable, already inside quotes or a number.
                     if(string[offset] == '[' && string[offset+match.length-1] == ']' ||     
                         [`"`,`'`].includes(string[offset]) && string[offset] == string[offset+match.length-1]
@@ -45,7 +46,7 @@ export default class Syntax {
                 });
 
                 // Replace all valid variables inside []
-                cnd = cnd.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+                cnd = cnd.replace(/\[(\w+?|=.+)\]/g, (match, content, offset, string) => {
                     // Check if the current match is escaped, and simply return it untouched if so.
                     if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
                     return `var.${content}`;
