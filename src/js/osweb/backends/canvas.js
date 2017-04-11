@@ -585,10 +585,7 @@ export default class Canvas {
      */
     image(fname, center, x, y, scale) {
         // Get image from file pool.
-        console.log(fname);
         var name = this.experiment._runner._syntax.remove_quotes(fname);
-        console.log(name);
-        console.log(this.experiment._runner._pool);
         var img = this.experiment._runner._pool[name].data;
 
         // Create a temporary canvas to make an image data array.        

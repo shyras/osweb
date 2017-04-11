@@ -98,7 +98,7 @@ export default class Syntax {
      * @param {Object} variable - The variables used for evaluation.
      * @return {Boolean|Number|Object|String} - The result of the evaluated text.
      */
-    eval_text(text, vars, roundFloat, variable) {
+    eval_text(text, vars, roundFloat) {
         // if pTxt is an object then it is a parsed python expression.
         if (isObject(text)) {
             return this._runner._pythonParser._run_statement(text);
@@ -110,7 +110,7 @@ export default class Syntax {
 
         /** The replacer function detects variable entries in the passed text
         and replaces them with variable values as found in OpenSesame's var store */
-        let result = text.replace(/\[([a-z0-9]+|=.+)\]/g, (match, content, offset, string) => {
+        let result = text.replace(/\[(\w+|=.+)\]/g, (match, content, offset, string) => {
             // Check if the current match is escaped, and simply return it untouched if so.
             if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
 

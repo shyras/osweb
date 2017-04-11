@@ -42,14 +42,12 @@
     "pixi-sound": "^1.4.0",
     "pixi.js": "^4.4.1",
     "random-seed": "^0.3.0",
-    "screenfull": "^3.0.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.0",
     "babel-preset-env": "^1.2.2",
-    "canvas": "^1.6.5",
     "chai": "^3.5.0",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.27.3",
@@ -76,8 +74,7 @@
     "typescript": "^2.2.1",
     "url-loader": "^0.5.8",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^2.4.2",
-    "xmldom": "^0.1.27"
+    "webpack-dev-server": "^2.4.2"
   },
   "babel": {
     "presets": [

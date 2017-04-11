@@ -64,64 +64,64 @@ if (node_mode) {
 	var expect = chai.expect;
 }
 
-var Script = '---' + '\n' +
-	'API: 2' + '\n' +
-	'OpenSesame: 3.0.2' + '\n' +
-	'Platform: nt' + '\n' +
-	'---' + '\n' +
-	'set width 1024' + '\n' +
-	'set uniform_coordinates "yes"' + '\n' +
-	'set title "New experiment"' + '\n' +
-	'set subject_parity "even"' + '\n' +
-	'set subject_nr 0' + '\n' +
-	'set start "block"' + '\n' +
-	'set height 768' + '\n' +
-	'set foreground "white"' + '\n' +
-	'set description "Default description"' + '\n' +
-	'set coordinates "uniform"' + '\n' +
-	'set compensation 0' + '\n' +
-	'set canvas_backend "xpyriment"' + '\n' +
-	'set background "black"' + '\n' +
-	'' + '\n' +
-	'define sequence block' + '\n' +
-	'	set flush_keyboard "yes"' + '\n' +
-	'	set description "Runs a number of items in sequence"' + '\n' +
-	'	run new_loop always' + '\n' +
-	'' + '\n' +
-	'define loop new_loop' + '\n' +
-	'	set skip 0' + '\n' +
-	'	set repeat 1' + '\n' +
-	'	set order "sequential"' + '\n' +
-	'	set offset "no"' + '\n' +
-	'	set item "trial"' + '\n' +
-	'	set description "Repeatedly runs another item"' + '\n' +
-	'	set cycles 2' + '\n' +
-	'	set column_order "stimulus;counter"' + '\n' +
-	'	set break_if "never"' + '\n' +
-	'	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
-	'	setcycle 0 counter "1"' + '\n' +
-	'	setcycle 1 stimulus "page 2"' + '\n' +
-	'	setcycle 1 counter "2"' + '\n' +
-	'	setcycle 2 stimulus "page 3"' + '\n' +
-	'	setcycle 2 counter "3"' + '\n' +
-	'	run trial' + '\n' +
-	'' + '\n' +
-	'define sequence trial' + '\n' +
-	'	set flush_keyboard "yes"' + '\n' +
-	'	set description "Runs a number of items in sequence"' + '\n' +
-	'	run welcome always' + '\n' +
-	'' + '\n' +
-	'define sketchpad welcome' + '\n' +
-	'	set start_response_interval "no"' + '\n' +
-	'	set reset_variables "no"' + '\n' +
-	'	set duration "keypress"' + '\n' +
-	'	set description "Displays stimuli"' + '\n' +
-	'	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
+// var Script = '---' + '\n' +
+// 	'API: 2' + '\n' +
+// 	'OpenSesame: 3.0.2' + '\n' +
+// 	'Platform: nt' + '\n' +
+// 	'---' + '\n' +
+// 	'set width 1024' + '\n' +
+// 	'set uniform_coordinates "yes"' + '\n' +
+// 	'set title "New experiment"' + '\n' +
+// 	'set subject_parity "even"' + '\n' +
+// 	'set subject_nr 0' + '\n' +
+// 	'set start "block"' + '\n' +
+// 	'set height 768' + '\n' +
+// 	'set foreground "white"' + '\n' +
+// 	'set description "Default description"' + '\n' +
+// 	'set coordinates "uniform"' + '\n' +
+// 	'set compensation 0' + '\n' +
+// 	'set canvas_backend "xpyriment"' + '\n' +
+// 	'set background "black"' + '\n' +
+// 	'' + '\n' +
+// 	'define sequence block' + '\n' +
+// 	'	set flush_keyboard "yes"' + '\n' +
+// 	'	set description "Runs a number of items in sequence"' + '\n' +
+// 	'	run new_loop always' + '\n' +
+// 	'' + '\n' +
+// 	'define loop new_loop' + '\n' +
+// 	'	set skip 0' + '\n' +
+// 	'	set repeat 1' + '\n' +
+// 	'	set order "sequential"' + '\n' +
+// 	'	set offset "no"' + '\n' +
+// 	'	set item "trial"' + '\n' +
+// 	'	set description "Repeatedly runs another item"' + '\n' +
+// 	'	set cycles 2' + '\n' +
+// 	'	set column_order "stimulus;counter"' + '\n' +
+// 	'	set break_if "never"' + '\n' +
+// 	'	setcycle 0 stimulus "page 1<br/><br/>Next line"' + '\n' +
+// 	'	setcycle 0 counter "1"' + '\n' +
+// 	'	setcycle 1 stimulus "page 2"' + '\n' +
+// 	'	setcycle 1 counter "2"' + '\n' +
+// 	'	setcycle 2 stimulus "page 3"' + '\n' +
+// 	'	setcycle 2 counter "3"' + '\n' +
+// 	'	run trial' + '\n' +
+// 	'' + '\n' +
+// 	'define sequence trial' + '\n' +
+// 	'	set flush_keyboard "yes"' + '\n' +
+// 	'	set description "Runs a number of items in sequence"' + '\n' +
+// 	'	run welcome always' + '\n' +
+// 	'' + '\n' +
+// 	'define sketchpad welcome' + '\n' +
+// 	'	set start_response_interval "no"' + '\n' +
+// 	'	set reset_variables "no"' + '\n' +
+// 	'	set duration "keypress"' + '\n' +
+// 	'	set description "Displays stimuli"' + '\n' +
+// 	'	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.0.0 [stimulus]" x=0 y=0 z_index=0' + '\n';
 
-// Definition of the experiment object and its properties.
-var Experiment = {
-	'source': Script
-};
+// // Definition of the experiment object and its properties.
+// var Experiment = {
+// 	'source': Script
+// };
 
 var runner = osweb.getRunner(divTarget);
 
@@ -205,6 +205,7 @@ describe('Syntax', function() {
 		var tmp_var_store = new VarStore({syntax: runner._syntax}, null);
 		tmp_var_store.width = 1024;
 		tmp_var_store.height = 768;
+		tmp_var_store.my_var99 = 99;
 
 		it("Should only parse real variables: \\\\[width] = \\[width] = [width]", function() {
 			expect(runner._syntax.eval_text(
@@ -219,6 +220,11 @@ describe('Syntax', function() {
 		it("Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters: [nóvar]", function() {
 			expect(runner._syntax.eval_text(
 				'[nóvar]', tmp_var_store)).to.equal('[nóvar]');
+		});
+
+		it("Should parse variables with underscores and numbers: [my_var99]", function() {
+			expect(runner._syntax.eval_text(
+				'[my_var99]', tmp_var_store)).to.equal('99');
 		});
 
 		it("Should not try to parse a variable if it is preceded by a backslash: \\[width]", function() {
@@ -310,29 +316,32 @@ describe('Syntax', function() {
 	});
 });
 
-describe('Canvas', function() {
-		// Suppress error output
-	var stub;
-	beforeEach(function(){
-		stub = sinon.stub(console, "error");
-	});
-	afterEach(function(){
-		stub.restore();
-	});
+if(!node_mode){
+	describe('Canvas', function() {
+			// Suppress error output
+		var stub;
+		beforeEach(function(){
+			stub = sinon.stub(console, "error");
+		});
+		afterEach(function(){
+			stub.restore();
+		});
 
-	var canvas = new Canvas({
-		_runner: runner
-	});
+		var canvas = new Canvas({
+			_runner: runner
+		});
 
-	it("should recognize valid HTML in a string", function() {
-		expect(canvas._containsHTML("<p>Hey</p>")).to.be.true;
-	});
-	it("should recognize a string without html markup", function() {
-		expect(canvas._containsHTML("Hey")).to.be.false;
-	});
-	it("should not mistake everything between < and > for html", function() {
-		expect(canvas._containsHTML("a < b && b > c")).to.be.false;
-	});
+		it("should recognize valid HTML in a string", function() {
+			expect(canvas._containsHTML("<p>Hey</p>")).to.be.true;
+		});
+		it("should recognize a string without html markup", function() {
+			expect(canvas._containsHTML("Hey")).to.be.false;
+		});
+		it("should not mistake everything between < and > for html", function() {
+			expect(canvas._containsHTML("a < b && b > c")).to.be.false;
+		});
+	
+
 	
 
 	// for colorspec in [
@@ -365,7 +374,8 @@ describe('Canvas', function() {
 	// 	print(u'Checking incorrect %s (%s)' \
 	// 		% (str(colorspec), type(colorspec)))
 	// 	self.assertRaises(osexception, color.to_hex, colorspec)
-});
+	});
+}
 
 describe('response', function() {
 	// def assertState(self, response, response_time, correct, total_responses,
