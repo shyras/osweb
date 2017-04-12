@@ -32,11 +32,26 @@ export default class Syntax {
             } else {
                 cnd = this.remove_quotes(cnd);
                 // Scan for literals (strings, numbers, etc).
-                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[\w+?\]|\b\w+\b)/g , (match, offset, string) => {
-                    // Check if match is not a variable, already inside quotes or a number.
-                    if(string[offset] == '[' && string[offset+match.length-1] == ']' ||     
-                        [`"`,`'`].includes(string[offset]) && string[offset] == string[offset+match.length-1]
-                    ){
+                cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[(?:\w+?|=.+)\]|\b\w+\b)/g , (match, offset, string) => {
+                    if(string[offset] == '[' && string[offset+match.length-1] == ']'){
+                        // Check if match is a variable.
+                        if(string[offset-1] == "\\" && string[offset-2] != "\\"){
+                            // Check if the current match is escaped, and simpl\w+?|=.+y return it untouched if so.
+                            return `"${match}"`;
+                        }
+                        // Check if the variable contains a Python expression
+                        if(match[1] == "="){
+                            const expression = match.substring(2, match.length-1);
+                            const ast = this._runner._pythonParser._parse(expression);
+                            return this._runner._pythonParser._run_statement(ast);
+                        }
+
+                        // Return the var. notation otherwise
+                        const content = match.substring(1,match.length-1);
+                        return `var.${content}`;
+                    }else if([`"`,`'`].includes(string[offset]) && 
+                        string[offset] == string[offset+match.length-1]){
+                        // Check if match is between quotes. Don't do anything then
                         return match;
                     }else if(!Number.isNaN(Number(match))){
                         return Number(match);
@@ -45,12 +60,6 @@ export default class Syntax {
                     }
                 });
 
-                // Replace all valid variables inside []
-                cnd = cnd.replace(/\[(\w+?|=.+)\]/g, (match, content, offset, string) => {
-                    // Check if the current match is escaped, and simply return it untouched if so.
-                    if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
-                    return `var.${content}`;
-                });
                 // Handle operators.
                 cnd = cnd.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
             }
