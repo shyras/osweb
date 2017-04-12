@@ -1,3 +1,5 @@
+import { isBoolean } from 'underscore';
+
 /** Class representing a python workspace. */
 export default class PythonWorkspace {
     /**
@@ -16,13 +18,13 @@ export default class PythonWorkspace {
      */
     _eval(bytecode) {
         // Check wich type of expression must be evaled.
-        if (typeof bytecode === 'boolean') {
+        if (isBoolean(bytecode)) {
             return bytecode;
         } else if (typeof bytecode === 'string') {
-            // Open sesame script, first check for parameter values. 
+            // Open sesame script, first check for parameter values.   
             bytecode = this._runner._syntax.eval_text(bytecode);
 
-            // Evaluate the expression.
+            //Evaluate the expression.
             var eval_string = this._runner._syntax.remove_quotes(bytecode);
             if (eval_string == "always") {
                 return true;
