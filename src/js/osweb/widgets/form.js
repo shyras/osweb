@@ -16,7 +16,7 @@ export default class FormWidget {
      * @param {String} clicks - The script containing the properties of the item.
      */
     constructor(experiment, cols, rows, spacing, margins, theme, item, timeout, clicks) {
-        // Set the class private properties.
+        // Set the class public properties.
         this.clicks = clicks;
         this.cols = cols;
         this.experiment = experiment;
@@ -41,6 +41,9 @@ export default class FormWidget {
             this.rowNr = this.rowNr + Number(rows[i]);
         }
 
+        // Set the class private properties.
+        this._groupId = 0;
+
         // Create the form canvas. 
         this._canvas = new Canvas(this.experiment, false);
         
@@ -51,6 +54,12 @@ export default class FormWidget {
         // Create the themes object.
         this._themes = new Themes();
     }
+
+    /** Create a unique group id for muliple rating scale groups. */  
+    _getGroupId() {
+        // Return a unique group id and increase it.
+        return this._groupId++;
+    } 
 
     /**
      * Execute and render the form.
@@ -79,11 +88,6 @@ export default class FormWidget {
      render() {
         // Clear the old content.
         this._canvas._container.removeChildren();
-
-        // Set the experiment background.
-//        this.experiment._runner._renderer.clear(0xff0000);
-
-        //this.experiment._runner._renderer.clear(this._canvas._styles._convertColorValue(this.experiment.vars.background, 'number'));
 
         // render all widgets.
         for (var i =0; i < this.widgets.length; i++) {

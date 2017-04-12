@@ -18,12 +18,12 @@ export default class ButtonWidget extends Widget {
     
         // Set the class public properties.
         this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : true;
-        this.frame = (typeof properties['frame'] !== 'undefined') ? properties['frame'] === 'yes' : false;
+        this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : false;
         this.text = properties['text'];
         this.type = 'button';
         this.var = (typeof properties['var'] !== 'undefined') ? properties['var'] : this.var;
 
-        // Set the current status of the checkbox.
+        // Set the current value of the variable to false (not pressed).
         this.set_var(false, this.var);  
     }
 

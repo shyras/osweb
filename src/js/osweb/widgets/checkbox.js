@@ -109,6 +109,9 @@ export default class CheckBoxWidget extends Widget {
 
         // Draw the text.
         this.draw_text(this.text);
+    
+        // Set the toggle
+        this.set_checked(this.checked);
     }
 
     /**
@@ -150,8 +153,17 @@ export default class CheckBoxWidget extends Widget {
             // Set single response.
             this.set_checked(!this.checked);
         } 
-    }
-    
+
+        // Complete the item element if accept_clicks is set to true.
+        if (this.click_accepts === true) {
+            if (this.form.timeout === null) {
+                this.form.item._complete();
+            } else {
+                this.form.experiment._runner._events._currentItem._status = osweb.constants.STATUS_FINALIZE; 
+            }    
+        }
+     }
+
     /**
      * Sets an experimental variable.
      * @param {Boolean|Number|String} pVal - The value for the variable.

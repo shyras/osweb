@@ -33,6 +33,7 @@ import FormWidget from '../widgets/form.js';
 import ImageWidget from '../widgets/image_widget.js';
 import ImageButtonWidget from '../widgets/image_button.js';
 import LabelWidget from '../widgets/label.js';
+import RatingScaleWidget from '../widgets/rating_scale.js';
 import TextInputWidget from '../widgets/text_input.js';
 import Themes from '../widgets/themes.js'; 
 
@@ -82,6 +83,7 @@ export const itemClasses = {
     image_button_widget: ImageButtonWidget,
     image_widget: ImageWidget,
     label_widget: LabelWidget,
+    rating_scale_widget: RatingScaleWidget,
     text_input_widget: TextInputWidget,
     themes: Themes,
     // Plugins

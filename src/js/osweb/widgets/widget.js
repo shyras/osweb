@@ -12,31 +12,11 @@ export default class Widget {
         this.form = form;
         this.rect = null;
         this.type = 'widget';
-        this.vars = null;
+        this.var = null;
 
         // Create the widget container. 
         this._container = new PIXI.Container(); // PIXI - Create the container which represents the canvas. 
     }    
-
-    /**
-     * Convert html value types (number, px of % to number);
-     * @param {Number|String} value - The value to convert
-     * @return {Number} - The converted value.
-     */
-    convert_value(value) {
-        // Convert html value types (number, px of % to number);
-        if (typeof value === 'number') {
-            return value;
-        } else {
-            if (value.indexOf('px') !== -1) {
-                return value.slice(0, value.indexOf('px'));
-            } else if (value.indexOf('%') !== -1) {
-                return value.slice(0, value.indexOf('%'));
-            } else {
-                return Number(value);
-            }    
-        }
-    }
 
     /**
      * Draw a frame around the widget.    
@@ -47,7 +27,7 @@ export default class Widget {
         // Create the background line elements.
         var line = new PIXI.Graphics();
         line.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].lineColorLeftTop), 1);
-        line.moveTo(this._container._width,0);
+        line.moveTo(this._container._width, 0);
         line.lineTo(0,0);
         line.lineTo(0,this._container._height);
         line.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].lineColorRightBottom), 1);
@@ -78,7 +58,7 @@ export default class Widget {
     set_var(value, variable) {
         // Sets an experimental variable.
         if (variable === null) {
-            variable = this.vars;
+            variable = this.var;
         }
 
         if (variable !== null) {

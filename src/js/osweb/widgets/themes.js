@@ -7,6 +7,7 @@ export default class Themes {
         this.theme = [];
         this.theme['gray'] = {
             backgroundColor : '#888a85', 
+            box_size: 16,
             lineColorLeftTop: '#babdb6', 
             lineColorRightBottom: '#555753'
         };

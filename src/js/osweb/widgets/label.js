@@ -16,8 +16,8 @@ export default class LabelWidget extends Widget {
         super(form);
 
         // Set the class public properties.
-        this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : this.center;
-        this.frame = (typeof properties['frame'] !== 'undefined') ? properties['frame'] === 'yes' : this.frame;
+        this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : true;
+        this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : false;
         this.text = properties['text'];
         this.type = 'label';
     }
@@ -92,16 +92,16 @@ export default class LabelWidget extends Widget {
         };
         // Get the lines and properties.
         var text_elements = this.text_lines(text, this._container._width - 10, this._container._height - 10, text_style);
-        var line_properties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
+        var lineProperties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
 
         // Calculate the starting y position.
-        var y = (this.center === true) ? (this._container._height - ((text_elements.length) * line_properties.height)) / 2 : 5;      
+        var y = (this.center === true) ? (this._container._height - ((text_elements.length) * lineProperties.height)) / 2 : 5;      
         // Create the lines.
         for (var i = 0;i < text_elements.length; i++) {
             var text_element = new PIXI.Text(text_elements[i], text_style);
             text_element.x = (this.center === true) ? (this._container._width - text_element.width) / 2: 5;
             text_element.y = y;
-            y = y  + line_properties.height;
+            y = y  + lineProperties.height;
             // Add the text_element to the container.
             this._container.addChild(text_element);
         }        

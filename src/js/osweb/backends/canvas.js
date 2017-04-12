@@ -92,6 +92,7 @@ export default class Canvas {
 
         // Clear the renderer.
         this.experiment._runner._renderer.clear(0x000000);
+        this.experiment._runner._renderer.backgroundColor = 0x000000;
     }
 
     /**
@@ -631,6 +632,7 @@ export default class Canvas {
 
         // PIXI: Set the renderer background color.
         experiment._runner._renderer.clear(this._styles._convertColorValue(experiment.vars.background, 'number'));
+        experiment._runner._renderer.backgroundColor = this._styles._convertColorValue(experiment.vars.background, 'number');
 
         // PIXU: Set the cursor visibility to none (default).
         experiment._runner._renderer.view.style.cursor = 'none';

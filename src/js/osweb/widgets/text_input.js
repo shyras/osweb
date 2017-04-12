@@ -56,11 +56,17 @@ export default class TextInputWidget extends Widget {
             fontSize: this.form.experiment.vars.font_size,
             fontStyle: (this.form.experiment.vars.font_italic === 'yes') ? 'italic' : 'normal',
             fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
-            fill: 0x000000
+            fill: this.form.experiment.vars.foreground
         };
         var inputField = new PixiTextInput(text, text_style);
-   
-         // Position the text element.
+        
+        if (this.frame === true) {
+            inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].backgroundColor); 
+        } else {
+            inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number');
+        }    
+
+        // Position the text element.
         if (this.center === true) {
             inputField.x = (this._container._width - inputField.width) / 2;  
             inputField.y = (this._container._height - inputField.height) / 2;  
@@ -68,8 +74,6 @@ export default class TextInputWidget extends Widget {
             inputField.x = 5;
             inputField.y = 5;
         }
-
-        console.log(inputField);
 
         // Add the text_element to the container.
         this._container.interactive = true;
@@ -83,7 +87,7 @@ export default class TextInputWidget extends Widget {
 
         // Draw the frame (if enabled).
         if (this.frame === true) {
-            //this.draw_frame();
+            this.draw_frame();
         }
     
         // Draw the text.
