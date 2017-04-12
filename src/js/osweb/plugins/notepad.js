@@ -1,10 +1,10 @@
+import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a notepad item.
  * @extends Item
  */
-import Item from '../items/item.js';
-import { constants } from '../system/constants.js';
-
 export default class Notepad extends Item {
     /**
      * Create a notepad plugin item which only shows some text in the console.

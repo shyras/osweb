@@ -1,10 +1,10 @@
+import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a reset feedback item.
  * @extends Item
  */
-import Item from '../items/item.js';
-import { constants } from '../system/constants.js';
-
 export default class ResetFeedback extends Item {
     /**
      * Create a reset feedback  item which resets the feedback values.

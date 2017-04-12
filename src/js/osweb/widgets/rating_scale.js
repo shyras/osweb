@@ -20,11 +20,11 @@ export default class RatingScaleWidget extends Widget {
         this.orientation = (typeof properties['orientation'] !== 'undefined') ? properties['orientation'] : 'horizontal';
         this.nodes = (typeof properties['nodes'] !== 'undefined') ? properties['nodes'] : '5';
         this.var = (typeof properties['var'] !== 'undefined') ? properties['var'] : null;
-        this.type = 'checkbox';
+        this.type = 'rating_scale';
     
         // Set the class private properties.
+        this._checkBoxes = [];
         this._groupId = this.form._getGroupId(); 
-        console.log(this._groupId);
 
         // Create a list of possible nodes.
         this._processNodes();
@@ -106,7 +106,7 @@ export default class RatingScaleWidget extends Widget {
         box_check.y = 7;
         box_check.visible = false;
 
-        // Add the elements to a container.
+        // Add the elements to a container. 
         var container = new PIXI.Container(); 
         container.addChild(box_lines);
         container.addChild(box_fill);
@@ -116,26 +116,24 @@ export default class RatingScaleWidget extends Widget {
 
         // Add the wisget to the container.
         this._container.addChild(container);
-
-            console.log('0');
+        this._checkBoxes.push(container);    
 
         // Set the interactive mode.
         container.interactive = true;
         container.buttonMode = true;
-        container.hitArea = new PIXI.Rectangle(0, 0, 15, 15);
+        container.hitArea = new PIXI.Rectangle(0, 5, 15, 15);
         container.on("mousedown", function(event) { 
-            console.log('1');
             this.response(event); 
         }.bind(this));
-            console.log('2');
     }
 
     /** Draw a label element 
      * @param {Number} x - x position of the checkbox.
      * @param {Number} y - y position of the checkbox.
      * @param {String} text - the text for the label.
+     * @param {Boolean} horizotal - if true horizontal otherwise vertical.
      */
-    _drawText(x, y, text) {
+    _drawText(x, y, text, horizontal) {
         // PIXI - Create the text element  
         var text_style = {
             fontFamily: this.form.experiment.vars.font_family,
@@ -148,8 +146,13 @@ export default class RatingScaleWidget extends Widget {
        // Get the lines and properties.
         var lineProperties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
         var text_element = new PIXI.Text(text, text_style);
-        text_element.x = x;
-        text_element.y = y - lineProperties.height;
+        if (horizontal === true) {
+            text_element.x = x - (text_element.width / 2) + 15;
+            text_element.y = y - lineProperties.height;
+        } else {
+            text_element.x = x - text_element.width - 15;
+            text_element.y = y + 2;
+        }
 
         // Add the text_element to the container.
         this._container.addChild(text_element);
@@ -157,7 +160,15 @@ export default class RatingScaleWidget extends Widget {
 
     /** General drawing method for the label widget. */
     render() {
+          // Set the interactive mode (if not set yet).
+        if (this._container.interactive === false) {
+            this._container.interactive = true;
+            this._container.buttonMode = true;
+            this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height);
+        }    
+
         // Clear the old content.
+        this._checkBoxes = [];
         this._container.removeChildren();
 
         // Set the default positions.
@@ -167,65 +178,59 @@ export default class RatingScaleWidget extends Widget {
 
         // Define horizontal or vertical positioning.
         if (this.orientation === 'horizontal') {
-            // Create the rounding rectangle.
+            // Calculate the distances between the checkboxes.
             var dx = (1 * this._container._width - 3 * _h) / (this._nodes.length - 1);
-            // Draw the border
+
+            // Create the rounding rectangle.
             this._drawBorder(0, cy - .5 *_h, this._container._width, 2 *_h);
+
             // create the label and checkbox widgets.
             var _x = _h; 
             for (var i = 0; i < this._nodes.length; i++) {
                 // Create the checkbox widget  
-                this._drawCheckBox(_x, cy);
+                this._drawCheckBox(_x, cy - 5);
+
+                // Update the text.
+                var text = this.form.experiment.syntax.eval_text(this._nodes[i]);
 
                 // Create the text label;
-                this._drawText(_x, cy, this._nodes[i]);
-               /* // Create the label widget  
-                console.log(this._nodes[i]);
-                var properties_lb = {text: this._nodes[i]};
-                var widget_lb = this.form.experiment.items._newWidgetClass('label', this.form, properties_lb);
-                var line_properties = this.form._canvas._getTextBaseline(this._nodes[i], text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
-                widget_lb._container.x = _x; 
-                widget_lb._container.y = cy - line_properties.height;     
-                this._container.addChild(widget_lb._container);
-                widget_lb.render();
-                console.log(widget_lb); */
+                this._drawText(_x, cy - 8, this._nodes[i], true);
                
-                // Render the widget.
+                // Increase the position.
                 _x = _x + dx;
             }
-
-            // Add the elements to container.
         } else {
+            // Calculate the distances between the checkboxes.
+            var dy = (1 * this._container._height - 3 * _h) / (this._nodes.length - 1); 
 
-        }
+            // Create the rounding rectangle.
+            this._drawBorder(cx - .5 *_h, 0, 2 * _h, this._container._height);
 
+            // create the label and checkbox widgets.
+            var _y = _h; 
+            for (var i = 0; i < this._nodes.length; i++) {
+                // Create the checkbox widget  
+                this._drawCheckBox(cx - 5, _y);
 
-        /* // Update the text.
-        var text = this.form.experiment.syntax.eval_text(this.text);
+                // Update the text.
+                var text = this.form.experiment.syntax.eval_text(this._nodes[i]);
 
-        // Draw the text.
-        this.draw_text(this.text);
-    
-        // Set the toggle
-        this.set_checked(this.checked); */
-    }
-
-    /**
-     * Set the status of the checkbox.
-     * @param {Boolean} checked - Toggle to check or uncheck the checkbox.
-     */
-    set_checked(checked) {
-        // Set the property.
-        this.checked = checked;
-    
-        // PIXY: set the checkbox element.
-        this._checkbox.visible = checked;
+                // Create the text label;
+                this._drawText(cx - 8, _y, this._nodes[i], false);
+               
+                // Increase the position.
+                _y = _y + dy;
+            }
+        }    
         
-        // Rerender the form.
-        this.form._canvas.show(this.form.experiment);
-
-        // Adjust the widget.
-        this.set_var(checked); 
+        // Enable the default checkbox. 
+        if (this.default !== null) {
+            // Enable the checkbox.
+            this._checkBoxes[Number(this.default)].children[2].visible = true;
+   
+            // Set the value
+            this.set_value(Number(this.default));
+        }
     }
 
     /**
@@ -233,9 +238,37 @@ export default class RatingScaleWidget extends Widget {
      * @param {Object} event - The response event.
      */
      response(event) {
-         console.log(event);
-         console.log(this);
-     }
+        // Parse trough the boxes.
+        for (var i = 0;i < this._checkBoxes.length; i++) {
+            if (this._checkBoxes[i] === event.currentTarget) {
+                // Enable the checkbox.
+                this._checkBoxes[i].children[2].visible = true;
+                
+                // Set the value for the rating scale.
+                this.set_value(i);
+            } else {
+                // Disable the checkbox.
+                this._checkBoxes[i].children[2].visible = false;
+            }
+        }
+    }
+
+    /**
+     * Sets the rating scale value.
+     * @param {Number} value - The value for the rating scale.
+     */
+    set_value(value) {
+        // Chekc for a valid value
+        if ((value === null) && ((value < 0) || (value > this._nodes.length))) {
+            this.form.experiment._runner._debugger.addError('Trying to select a non-existing node. Did you specify an incorrect default value?');
+        } else {
+            // Set the value property.
+            this.value = value;
+
+            // Set te variable.
+            this.set_var(value);
+        }
+    }
 
     /**
      * Sets an experimental variable.
@@ -264,3 +297,4 @@ export default class RatingScaleWidget extends Widget {
         }     
     } 
 }
+ 

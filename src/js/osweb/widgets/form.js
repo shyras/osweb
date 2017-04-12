@@ -65,14 +65,14 @@ export default class FormWidget {
      * Execute and render the form.
      * @param {Object} pFocus_widget - The widget which receives focus (optional).
      */
-    _exec(pFocus_widget) {
+    _exec(focus_widget) {
         // Render the form.
         this.render();
 
         // Enabled the focus widget.
-        if (pFocus_widget !== null) {
-            // Focus the HTML TextArea element.
-            //pFocus_widget._text_input.focus();
+        if (focus_widget !== null) {
+            // Focus the text_input widget.
+            focus_widget.focus();
         }
     
         // Set the onset time.

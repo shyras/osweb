@@ -1,10 +1,10 @@
+import Widget from './widget.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing an OpenSesame Image Widget. 
  * @extends Widget
  */
-import Widget from './widget.js';
-import { constants } from '../system/constants.js';
-
 export default class TextInputWidget extends Widget {
     /**
      * Create a widget button object which represents a text input.
@@ -23,6 +23,11 @@ export default class TextInputWidget extends Widget {
         this.var = (typeof properties['var'] !== 'undefined') ? properties['var'] : null;
         this.return_accepts = (typeof properties['return_accepts'] !== 'undefined') ? (properties['return_accepts'] === 'yes') : false;
         this.type = 'text_input';
+    }
+
+    /** Focus theText area widget. */
+    focus() {
+        console.log('focus');
     }
 
     /**

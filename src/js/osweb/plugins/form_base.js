@@ -1,11 +1,11 @@
-/**
- * Class representing a base form class.
- * @extends Item
- */
 import Item from '../items/item.js';
 import FormWidget from '../widgets/form.js';
 import { constants } from '../system/constants.js';
 
+/**
+ * Class representing a base form class.
+ * @extends Item
+ */
 export default class FormBase extends Item {
     /**
      * Create a base form item which is used as basic class for all form types.

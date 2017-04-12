@@ -40,6 +40,8 @@ import Themes from '../widgets/themes.js';
 // Plugins
 import AdvancedDelay from '../plugins/advanced_delay.js';
 import FormBase from '../plugins/form_base.js';
+import FormConsent from '../plugins/form_consent.js';
+import FormMultipleChoice from '../plugins/form_multiple_choice.js';
 import FormTextDisplay from '../plugins/form_text_display.js';
 import FormTextInput from '../plugins/form_text_input.js';
 import MediaPlayer from '../plugins/media_player.js';
@@ -89,6 +91,8 @@ export const itemClasses = {
     // Plugins
     advanced_delay: AdvancedDelay,
     form_base: FormBase,
+    form_consent: FormConsent,
+    form_multiple_choice: FormMultipleChoice,
     form_text_display: FormTextDisplay,
     form_text_input: FormTextInput,
     media_player_mpy: MediaPlayer,

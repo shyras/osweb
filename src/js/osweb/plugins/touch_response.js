@@ -1,9 +1,9 @@
+import MouseResponse from '../items/mouse_response.js';
+
 /**
  * Class representing a reset feedback item.
  * @extends Item
  */
-import MouseResponse from '../items/mouse_response.js';
-
 export default class TouchResponse extends MouseResponse {
     /**
      * Create a reset feedback  item which resets the feedback values.

@@ -1,10 +1,10 @@
+import Item from '../items/item.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a repeat cycle item.
  * @extends Item
  */
-import Item from '../items/item.js';
-import { constants } from '../system/constants.js';
-
 export default class RepeatCycle extends Item {
     /**
      * Create a repeat cycle item which repeat a cycle within a loop.

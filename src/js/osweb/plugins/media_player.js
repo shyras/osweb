@@ -1,10 +1,10 @@
+import Item from '../items/item.js';
+import Video from '../backends/video.js';
+
 /**
  * Class representing a video player item.
  * @extends Item
  */
-import Item from '../items/item.js';
-import Video from '../backends/video.js';
-
 export default class MediaPlayer extends Item {
     /**
      * Create a video player plugin item which plays videos.
