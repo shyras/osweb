@@ -223,7 +223,7 @@ export default class GenericResponse extends Item {
             if (this.vars.get('correct_response') !== null) {
                 // If a correct_response has been defined, we use it to determine accuracy etc.
                 if (this.synonyms !== null) {
-                    if (this.synonyms.indexOf(String(this.vars.get('correct_response'))) !== -1){
+                    if (this.synonyms.includes(this.syntax.remove_quotes(this.vars.get('correct_response')))) {
                         this.experiment.vars.correct = 1;
                         this.experiment.vars.total_correct = this.experiment.vars.total_correct + 1;
                     } else {
