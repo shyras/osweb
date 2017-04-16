@@ -30,8 +30,8 @@
   "scripts": {
     "clean": "rimraf public_html/*",
     "start": "webpack-dev-server --config webpack.config.js --env.devserver",
-    "build": "webpack",
-    "build:production": "webpack --config webpack.config.js --env.production",
+    "build": "webpack --progress",
+    "build:production": "webpack --config webpack.config.js --env.production --progress",
     "deploy": "npm run build:production && surge -p public_html -d osweb.cogsci.nl",
     "test": "mocha --recursive --reporter spec -r jsdom-global/register --compilers js:babel-core/register"
   },
