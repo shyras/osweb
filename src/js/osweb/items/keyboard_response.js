@@ -38,7 +38,7 @@ export default class KeyboardResponse extends GenericResponse {
         this.vars.timeout = 'infinite';
     }
 
-    /** Implements the prepare phase of the Sketschpad. */
+    /** Implements the prepare phase of the KeyboardResponse. */
     prepare() {
         // Set the internal flush property.
         this._flush = (this.vars.flush) ? this.vars.flush : 'yes';
@@ -47,7 +47,7 @@ export default class KeyboardResponse extends GenericResponse {
         super.prepare();
     }
 
-    /** Implements the run phase of the Sketschpad. */
+    /** Implements the run phase of the KeyboardResponse. */
     run() {
         // Inherited.	
         super.run();
