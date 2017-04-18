@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Widget from './widget.js';
+import Styles from '../backends/styles.js';
 
 /**
  * Class representing an OpenSesame label Widget. 
@@ -92,12 +93,12 @@ export default class LabelWidget extends Widget {
         };
         // Get the lines and properties.
         var text_elements = this.text_lines(text, this._container._width - 10, this._container._height - 10, text_style);
-        var lineProperties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
+        var lineProperties = this.form._canvas._getTextBaseline('MgyQ', text_style.fontFamily, text_style.fontSize, text_style.fontWeight);
 
         // Calculate the starting y position.
         var y = (this.center === true) ? (this._container._height - ((text_elements.length) * lineProperties.height)) / 2 : 5;      
         // Create the lines.
-        for (var i = 0;i < text_elements.length; i++) {
+        for (var i = 0; i < text_elements.length; i++) {
             var text_element = new PIXI.Text(text_elements[i], text_style);
             text_element.x = (this.center === true) ? (this._container._width - text_element.width) / 2: 5;
             text_element.y = y;
@@ -120,8 +121,11 @@ export default class LabelWidget extends Widget {
         // Update the text.
         var text = this.form.experiment.syntax.eval_text(this.text);
 
+        // Remove additional quotes.
+        text = this.form.experiment.syntax.remove_quotes(text);
+        
         // Draw the text.
-        this.draw_text(this.text);
+        this.draw_text(text);
     }
 }
  

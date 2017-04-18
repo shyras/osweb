@@ -83,6 +83,9 @@ export default class Canvas {
 
     /** Exit the display and return to default settings. */
     _exitDisplay() {
+        // Clear container.
+        this.clear();
+
         // Set the cursor visibility to default (visible).
         this.experiment._runner._renderer.view.style.cursor = 'default';
 
@@ -90,8 +93,9 @@ export default class Canvas {
         this.experiment._runner._renderer.resize(800, 600);
 
         // Clear the renderer.
-        this.experiment._runner._renderer.clear(0x000000);
         this.experiment._runner._renderer.backgroundColor = 0x000000;
+        this.experiment._runner._renderer.clear();
+        this.experiment._runner._renderer.render(this._container);
     }
 
     /**

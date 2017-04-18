@@ -18,7 +18,7 @@ export default class ButtonWidget extends Widget {
     
         // Set the class public properties.
         this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : true;
-        this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : false;
+        this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : true;
         this.text = properties['text'];
         this.type = 'button';
         this.var = (typeof properties['var'] !== 'undefined') ? properties['var'] : this.var;
@@ -74,8 +74,11 @@ export default class ButtonWidget extends Widget {
         // Update the text.
         var text = this.form.experiment.syntax.eval_text(this.text);
 
+        // Remove additional quotes.
+        text = this.form.experiment.syntax.remove_quotes(text);
+
         // Draw the text.
-        this.draw_text(this.text);
+        this.draw_text(text);
     }
 
     /**

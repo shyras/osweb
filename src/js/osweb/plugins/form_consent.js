@@ -25,7 +25,7 @@ export default class FormConsent extends FormBase {
          // Check if the concense form is completed or the decline sub form.
         if (this.decline_form !== null) {
             // Hide the default form.
-            this.decline_form._canvas._container.visible = true;
+            this.decline_form._canvas._container.visible = false;
             this.form._canvas._container.visible = true;
             this.decline_form = null;
             
@@ -33,17 +33,16 @@ export default class FormConsent extends FormBase {
             this.run();
         }
         else {
-            console.log(this.experiment.vars);
             // Check if the consent status is shown.
             if (this.experiment.vars.get('accept_status') === true) {
                 // Accept button is selected, check the checkbox status.
-                if (this.experiment.vars.get('checkbox_status') === this.vars.get('checkbox_text')) {
+                if (this.experiment.syntax.remove_quotes(this.experiment.vars.get('checkbox_status')) === this.vars.get('checkbox_text')) {
                     // Go to the next form, so continue the closure.
                     super._complete();
                 }
                 else { 
                     // Create the decline message form.
-                    this.decline_form = new FormWidget(this.experiment, [1], [1], 10,['50','50','50','50'],'gray', this, 5000,false);
+                    this.decline_form = new FormWidget(this.experiment, [1], [1], 10,['50','50','50','50'],'gray', this, 5000, false);
                 
                     // Create the text widget.
                     var widget = this.experiment.items._newWidgetClass('label', this.decline_form, {text: this.vars.decline_message, center: 'yes'});
@@ -53,7 +52,8 @@ export default class FormConsent extends FormBase {
 
                     // Hide the default form.
                     this.form._canvas._container.visible = false;
-                     
+                    this.decline_form._canvas._container.visible = true;
+
                     // Execute the decline form.                
                     this.decline_form._exec(null);
                 }

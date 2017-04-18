@@ -107,8 +107,11 @@ export default class CheckBoxWidget extends Widget {
         // Update the text.
         var text = this.form.experiment.syntax.eval_text(this.text);
 
+        // Remove additional quotes.
+        text = this.form.experiment.syntax.remove_quotes(text);
+
         // Draw the text.
-        this.draw_text(this.text);
+        this.draw_text(text);
     
         // Set the toggle
         this.set_checked(this.checked);
