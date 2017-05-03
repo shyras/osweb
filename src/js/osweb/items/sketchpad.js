@@ -37,9 +37,6 @@ export default class Sketchpad extends GenericResponse {
 
     /** Implements the complete phase of the Sketchpad item. */
     _complete() {
-        // Clear the canvas.
-        this.canvas.clear();
-
         // Inherited.	
         super._complete();
     }
@@ -85,6 +82,9 @@ export default class Sketchpad extends GenericResponse {
 
     /** Implements the prepare phase of an item. */
     prepare() {
+        // Clear the canvas.
+        this.canvas.clear();
+
         // Draw the elements. 
         for (var i = 0; i < this.elements.length; i++) {
             if (this.elements[i].is_shown() === true) {

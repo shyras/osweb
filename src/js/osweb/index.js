@@ -15,7 +15,7 @@
 import Runner from './system/runner.js';
 
 export const VERSION_NAME = 'OSWeb (ES2016)';
-export const VERSION_NUMBER = '3.0.051 (01-02-2017)';
+export const VERSION_NUMBER = '3.0.053 (03-05-2017)';
 
 // Add replaceAll function to string prototype
 String.prototype.replaceAll = function(str1, str2, ignore) {

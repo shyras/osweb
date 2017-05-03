@@ -36,7 +36,7 @@ export default class Log {
         // Closes the current log.
         if (this._log.length > 0) {
             // Echo the data to the runner.
-            this.experiment._runner.data = this._log.join('');
+            this.experiment._runner._data = this._log.join('');
         };
 
         // Clear the log file.
@@ -119,7 +119,11 @@ export default class Log {
             entry[varList[i]] = value
         }
         this.write(l.join());
-        if(_.isFunction(this.experiment.onLog)) this.experiment.onLog(entry);
+        
+        // If event is attached to the experiment output log. 
+        if (_.isFunction(this.experiment.onLog)) {
+            this.experiment.onLog(entry);
+        }    
     }
 }
  

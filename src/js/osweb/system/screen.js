@@ -14,15 +14,15 @@ export default class Screen {
 
         // Set class properties.
         this._active = true; // If true the introduction screen is shown.
-        this._exit = false; // Exit toggle to prevent dialog when closing experiment.
         this._click = true; // If true all is started with a mouse click.
         this._container = null; // PIXI: Container which holds the screen info. 
+        this._exit = false; // Exit toggle to prevent dialog when closing experiment.
     }   
 
     /** Initialize the fullscreen mode if enabled. */
     _fullScreenInit() {
         // Check if fullscreen must be enabled.
-        if (this._runner._fullscreen === true) {
+        if (this._runner._fullScreen === true) {
             // Get the container element.
             var element = this._runner._container;
 
@@ -50,7 +50,7 @@ export default class Screen {
     /** Finalize the fullscreen mode if if was enabled. */
     _fullScreenExit() {
         // Check if fullscreen must be enabled.
-        if (this._runner._fullscreen === true) {
+        if (this._runner._fullScreen === true) {
             // Set the exit toggle.
             this._exit = true;
       
@@ -75,8 +75,9 @@ export default class Screen {
 	        document.mozFullScreenElement ||
 	        document.msFullscreenElement) {
             // Scale the canvas
-            switch (this._runner._scalemode) {
-                case 'noscale': 
+            console.log('problem' + this._runner._scaleMode);
+            switch (this._runner._scaleMode) {
+                case 'noScale': 
                     // Default mode, no scaling, canbas is centered on the screen. 
                     this._runner._renderer.view.style.top = '0px'; 
                     this._runner._renderer.view.style.bottom = '0px'; 
@@ -86,8 +87,11 @@ export default class Screen {
                     this._runner._renderer.view.style.margin = 'auto';    
                     this._runner._renderer.view.style.display = 'block';    
                     this._runner._renderer.view.style.position = 'absolute'; 
+                    console.log(this._runner._experiment._currentCanvas);
+                    this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
                 break;
-                case 'showall':
+                case 'showAll':
+                    console.log('showall');
                     // Default mode, no scaling, canbas is centered on the screen. 
                     this._runner._renderer.view.style.top = '0px'; 
                     this._runner._renderer.view.style.bottom = '0px'; 
@@ -113,7 +117,8 @@ export default class Screen {
                     this._runner._experiment._currentCanvas._container.scale.y = this._runner._experiment._scale_y;                                
                     this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
                 break;        
-                case 'exactfit':
+                case 'exactFit':
+                    console.log('exactfit');
                     // Fit to the exact window size (cropping).       
                     this._runner._experiment._scale_x = (this._runner._container.clientWidth / this._runner._experiment.vars.width);
                     this._runner._experiment._scale_y = (this._runner._container.clientHeight / this._runner._experiment.vars.height);
@@ -278,7 +283,7 @@ export default class Screen {
                 break;
                 default:
                     this._progressBarOuter.beginFill(0xFFFFFF);
-                    this._progressBarOuter.drawRect(202, 202,  Math.round(percentage * 396), 16);
+                    this._progressBarOuter.drawRect(202, 202, Math.round(percentage * 396), 16);
                     this._progressBarOuter.endFill();
                     this._runner._renderer.render(this._introScreen);    
             }        

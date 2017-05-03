@@ -25,19 +25,22 @@ export default class Runner {
     /** Create a runner which runs an experiment. */
     constructor(content) {
         // Create and set private properties.
-        this._confirm = null;
+        this._confirm = null; // Optionale confirm dialog function.
         this._container = null; // HTML: The container (div) element. 
         this._data = null // Experiment result data.
-        this._fullscreen = false;
-        this._experiment = null; // The JSON experiment container     
-        this._name = ''; // String name of the experiment which is run.
-        this._prompt = null;
-        this._onLog = null; // Function to call when logger is encountered.
-        this._onfinished = null; // Event triggered on finishing the experiment.
+        this._experiment = null; // The JSON experiment container.     
+        this._fullScreen = false; // Full screen toggle mode.
+        this._name = 'noname.exp'; // Name of the experiment which is run.
+        this._onConsole = null; // Event handler for processing print messages. 
+        this._onFinished = null; // Event handler for finishing the experiment.
+        this._onLog = null; // Event handler to call when logger is encountered.
+        this._prompt = null; // Optional prompt dialog function.
         this._renderer = null; // PIXI: The visual stimuli renderer.
-        this._script = null; // Container for the script definition of the experiment.
+        this._scaleMode = 'noScale'; // Scale type used for full screen mode. 
+        this._script = null; // Container for the experiment script.
         this._source = null; // Link to the source experiment file. 
-        this._target = null; // Link to the target location for thr data. 
+        this._subject = null; // If defined containing the subject number. 
+        this._target = null; // Link to the target location for the data. 
 
         // Create and set private class properties.
         this._debugger = new Debugger(this); // Internal error system.
@@ -45,9 +48,9 @@ export default class Runner {
         this._itemStack = new ItemStack(this); // The global item stack.
         this._itemStore = new ItemStore(this); // The global item store.
         this._parameters = new Parameters(this); // Parameter processor.
+        this._pool = new FilePoolStore(this); // The virtual file pool store.    
         this._pythonParser = new PythonParser(this); // Python parser
         this._pythonWorkspace = new PythonWorkspace(this); // Python workspace.
-        this._pool = new FilePoolStore(this); // The virtual file pool store.    
         this._screen = new Screen(this); // Introduction screen renderer.
         this._session = new Session(this); // Session information container.
         this._syntax = new Syntax(this); // The script syntax checker.
@@ -59,7 +62,7 @@ export default class Runner {
 
     /**
      * Setup the content container which shows all the visual output.
-     * @param {String|Object} content - The content (div element) in which the experiment  is projected.
+     * @param {String|Object} content - The content (div element) in which the experiment is projected.
      */
     _setupContent(content) {
         // Check if the experiment container is defined.                     
@@ -97,19 +100,19 @@ export default class Runner {
             ({
                 confirm: this._confirm = null,
                 debug: this._debugger.enabled = false,
-                onconsole: this._onconsole = null,
-                onfinished: this._onfinished = null,
-                onlog: this._onLog = null,
-                fullscreen: this._fullscreen = false,
-                scalemode: this._scalemode = 'noscale',
-                name: this._name = "noname.exp",
-                source: this._source = null,
+                fullScreen: this._fullScreen = false,
+                introClick: this._screen._click = true,
+                introScreen: this._screen._active = true,
                 mimetype: this._mimetype = null,
-                subject: this._subject = null,
-                target: this._target = null,
+                name: this._name = 'noname.exp',
+                onConsole: this._onConsole = null,
+                onFinished: this._onFinished = null,
+                onLog: this._onLog = null,
                 prompt: this._prompt = null,
-                introscreen: this._screen._active = true,
-                introclick: this._screen_click = true
+                scaleMode: this._scaleMode = 'noScale',
+                source: this._source = null,
+                subject: this._subject = null,
+                target: this._target = null
             } = context);
 
             // Set up the introscreen.
@@ -177,9 +180,9 @@ export default class Runner {
         this._experiment = null;
 
         // Check if a callback function is defined. 
-        if (this._onfinished) {
+        if (this._onFinished) {
             // Execute callback function.
-            this._onfinished(this._data, this._session._session);
+            this._onFinished(this._data, this._session._session);
         }
     }
 
@@ -187,7 +190,7 @@ export default class Runner {
      * Requests fullscreen mode from runner
      * @return {void} 
      */
-    enterFullscreen(){
+    enterFullscreen() {
         this._fullscreen = true;
         this._screen._fullScreenInit();
     }
@@ -199,12 +202,6 @@ export default class Runner {
     exitFullscreen(){
         this._fullscreen = true;
         this._screen._fullScreenExit();
-    }
-
-    /** Exit a running experiment. */
-    exit() {
-        // Set status of the event system to break.
-        this._events._status = constants.TIMER_BREAK;
     }
 
     /**
@@ -235,6 +232,12 @@ export default class Runner {
         }catch(e) {
             this.debugger.addError('Could not resize renderer: ' + e.message);
         }
+    }
+
+    /** Exit a running experiment. */
+    exit() {
+        // Set state of the event system to break.
+        this._events._state = constants.TIMER_BREAK;
     }
 
     /** Run an experiment */

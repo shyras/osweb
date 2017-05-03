@@ -57,12 +57,11 @@ export default class Parameters {
     }
 
     /**
-     * Callback function for a dialog when a value is entered and the OK button
-     * has been clicked
-     * @param  {variou} value The value entered in the prompts input box
-     * @return {void}
+     * Callback function for dialog when aits OK button has been clicked.
+     * @param {Object} parameter - The parameter to set.
+     * @param {String} value - The value to set.
      */
-    _onParamConfirm(parameter, value){
+    _onParamConfirm(parameter, value) {
          // Get the response information
         parameter.response = value;
 
@@ -73,11 +72,9 @@ export default class Parameters {
         this._processParameters();
     }
 
-    /**
-     * Callback function for dialog when its cancel button has been clicked
-     * @return {void}
-     */
-    _onParamCancel(){
+    /** Callback function for dialog when its cancel button has been clicked. */
+    _onParamCancel() {
+        // Exit the runner.
         this._runner._exit();
     }
 
@@ -87,19 +84,18 @@ export default class Parameters {
      */
     _processParameter(parameter) {
         // Check if a user request is required.
-        if (parameter.promptEnabled == true) {                     
+        if (parameter.promptEnabled === true) {                     
             // Use passed function that displays a prompt. This leaves the display
             // of the prompt to the library or system that implements osweb.
-            if(isFunction(this._runner._prompt)){
+            if (isFunction(this._runner._prompt)) {
                 this._runner._prompt( parameter.title, parameter.prompt, 
                     parameter.defaultValue, parameter.dataType, 
-                    this._onParamConfirm.bind(this, parameter), this._onParamCancel.bind(this) );
-            }else{
-                // Fall back to the window prompt method if no function has been
-                // passed
-                result = window.prompt( parameter.prompt,  parameter.defaultValue );
+                    this._onParamConfirm.bind(this, parameter), this._onParamCancel.bind(this));
+            } else {
+                // Fallback to the window prompt if no function has been passed.
+                result = window.prompt(parameter.prompt, parameter.defaultValue);
 
-                if( result == null ){
+                if( result === null ){
                     this._onParamCancel();
                 } else {
                     this._onParamConfirm(parameter, result);
@@ -122,7 +118,7 @@ export default class Parameters {
         // Transfer the startup info items to the context.
         for (var i = 0; i < this._parameters.length; i++) {
             // Additional run for subject_nr
-            if (this._parameters[i].name == 'subject_nr') {
+            if (this._parameters[i].name === 'subject_nr') {
                 this._runner._experiment.set_subject(this._parameters[i].response);
             } else {
                 this._runner._experiment.vars.set(this._parameters[i].name, 

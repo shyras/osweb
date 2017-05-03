@@ -35,8 +35,9 @@
 					<form class="navbar-form navbar-right">
 						<div class="form-group">
 							<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
+							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsole(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Console off</button>
+							<button class="btn btn-default" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Debug off</button>
 							<button class="btn btn-default" id="fullscreen_button" status="off" type="button" onclick="toggleFullscreen(); return false"><i class="fa fa-arrows-alt" aria-hidden="true"></i>Fullscreen off</button>
-							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsoleWindow(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Console off</button>
 						</div>
 					</form>
 					<form class="navbar-form">
@@ -54,17 +55,12 @@
 				</div>
 			</div>
 		</nav>
-		
 		<!-- Body - Alert container -->
-        <div class="container" style="margin-top:64px;">
-			<div class="row">
-				<div class="col-md-12">
-					<div class="alert alert-warning">
-						This is a tech preview of osweb. It is under heavy development, and not ready for general use!
-					</div>
-				</div>
+   		<nav class="navbar navbar-default cogsci-navbar navbar-fixed-bottom alert alert-warning"> 
+			<div class="container">
+				This is a tech preview of osweb. It is under heavy development, and not ready for general use!
 			</div>
-		</div>
+		</nav>
 		<!-- Body - Experiment canvas and form container -->
     	<div id="body_div">
 	 		<!-- Body - OsWeb section -->
@@ -80,8 +76,25 @@
 	</body>				
     <script>
 		// Create the context container for the experiment definitions.
-		var context = {};
-        var runner = osweb.getRunner('osweb_div');
+		var context = {
+			confirm: confirm,
+			debug: true,
+			fullScreen: false,
+			introClick: true,
+			introScreen: true,
+			name: 'test',
+			onConsole: null,
+			onFinished: onFinishedHandler,
+			onLog: onLogHandler,
+			prompt: prompt,
+			scaleMode: 'exactFit',
+			source: null,
+			subject: null,
+			target: null
+		};
+	
+		// Retrieve the runner object from the osweb library.
+	    var runner = osweb.getRunner('osweb_div');
 	
 	 	// Set position of notifications
 	    alertify.set('notifier', 'position', 'bottom-right');
@@ -110,66 +123,32 @@
 	    // Prevent the run/stop button from keeping focus after the subject nr dialog box is
 	    // closed. Otherwise the stop button is activated when users press spacebar for a
 	    // response to the canvas.
-    	document.getElementById('run_button').onfocus = function(){
+    	document.getElementById('run_button').onfocus = function() {
 		    this.blur();
 	    };
 
 	    // Hack to set the value of the file upload button
 	    document.getElementById('file_button').text = 'Select file'; 
-
-	    function confirm(title, message, onConfirm, onCancel){
-            alertify.confirm( 
-                title, 
-                message, 
-                function() {
-                    onConfirm();
-                }, 
-                function() {
-                    onCancel();
-                }.bind(this)
-            );
-	    }
-
-	    function prompt(title, message, defaultValue, dataType, onConfirm, onCancel){
-            alertify.prompt( 
-                title, 
-                message, 
-                defaultValue,
-                function(evt, value) {
-                    onConfirm(value);
-                }, 
-                function() {
-                    onCancel();
-                }.bind(this)
-            );
-	    }
 	 
-   	    /**
- 	     * Disable some buttons once an experiment is loaded.
- 	     * @return {void}
- 	     */
+   	    /** Disable some buttons once an experiment is loaded. */
 	    function buttonsSetToFileLoaded() {
 			document.getElementById('file_button').disabled = true;
 			document.getElementById('run_button').disabled = false;
 			document.getElementById('fullscreen_button').disabled = false;
 			document.getElementById('console_button').disabled = false;
+			document.getElementById('debug_button').disabled = false;
 	    }
 
-		/** 
-		 * Enable experiment loading buttons. 
- 	     * @return {void}
- 	     */
+		/** Enable experiment loading buttons. */
 		function buttonsSetToFileSelection() {
 			document.getElementById('file_button').disabled = false;
 			document.getElementById('run_button').disabled = true;
 			document.getElementById('fullscreen_button').disabled = true;
 			document.getElementById('console_button').disabled = true;
+			document.getElementById('debug_button').disabled = true;
 		}
 
-	    /**
- 	     * Method for handling the hidden file load button.			 
- 	     * @return {void}
- 	     */
+	    /** Method for handling the hidden file load button. */
 	    function handleBrowseClick() {
 		    // Simulate a file input click.
 		    var fileInput = document.getElementById('browse');
@@ -178,8 +157,7 @@
 
 	    /**
  	     * Method for handling the hidden file load button.			 
-	     * @param {Object} event  The change event.
- 	     * @return {void}
+	     * @param {Object} event - The change event.
  	     */
 	    function handleChange(event) {
 		    // Update the button status.
@@ -188,68 +166,77 @@
 		    // Update the interface.
 		    var fileInput = document.getElementById('browse');
 		    var textInput = document.getElementById('filename');
-		    textInput.value = fileInput.value;
+		    textInput.value = fileInput.value.split('\\').pop().split('/').pop();
 
 		    // Send feedback to the user.
 		    alertify.message('Loaded local file: ' + textInput.value);
 
 		    // Only select the first file.
-		    var file = event.target.files[0]; 
-
-		    // Set the experment context container.
-	        context = {
-				confirm: confirm,
-				debug: true,
-				fullscreen: false,
-				introscreen: true,
-				introclick: true,
-				prompt: prompt,
-				onconsole: onConsole,
-				onfinished: onExperimentFinished,
-				name: 'test',
-			//	scalemode: 'noscale',
-				scalemode: 'showall',
-			//	scalemode: 'exactfit',
-				source: file, 
-				target: null
-			}
+		    context.source = event.target.files[0];
 		}   
 
-        /**
- 	     * Show canvas in fullscreen mode (Esc minimizes it again)
- 	     * @returns {void}
- 	     */
-	    function toggleFullscreen() {
-    		var button = document.getElementById('fullscreen_button');
-			if (button.getAttribute('status') === 'off') {
-				button.setAttribute('status','on');
-				button.textContent = 'Fullscreen on'
-			} else {
-				button.setAttribute('status','off');
-				button.textContent = 'Fullscreen off'
-			}
-		}	
-
-	    /**
- 	     * Show/hide console window used by the console print method.
- 	     * @returns {void}
- 	     */
-	    function toggleConsoleWindow() {
+	    /** Show/hide console used by the console print method. */
+	    function toggleConsole() {
 			var button = document.getElementById('console_button');
 		    var c = document.getElementById('osweb_console');
 		    if (c.style.display === 'none') {
+				// Set the console handler
+				context.onConsole = onConsoleHandler;
+				
+				// Set interface.
 			    c.style.display = '';
 				button.textContent = 'Console on';
 		    } else {
+				// Clear the console handler
+				context.onConsole = null;
+				
+				// Set interface.
 			    c.style.display = 'none';
 				button.textContent = 'Console off';
 		    }	
 	    }
-	
-        /**
- 	     * Runs an experiment loaded from file or server.
- 	     * @returns {void}
- 	     */
+
+	    /** Enabled/Disable debugger. */
+	    function toggleDebug() {
+    		var button = document.getElementById('debug_button');
+			if (button.getAttribute('status') === 'off') {
+				// Enabled the fullScreen mode.
+				context.debug = true; 
+				
+				// Set the interface.
+				button.setAttribute('status','on');
+				button.textContent = 'Debug on';
+			} else {
+				// Disable the fullscreen mode.
+				context.debug = false; 
+
+				// Set the interface.
+				button.setAttribute('status','off');
+				button.textContent = 'Debug off';
+			}
+	    }
+
+        /** Show canvas in fullscreen mode (Esc minimizes it again) */
+	    function toggleFullscreen() {
+    		var button = document.getElementById('fullscreen_button');
+			if (button.getAttribute('status') === 'off') {
+				// Enabled the fullScreen mode.
+				context.fullScreen = true; 
+				
+				// Set the interface.
+				button.setAttribute('status','on');
+				button.textContent = 'Fullscreen on';
+			} else {
+				// Disable the fullscreen mode.
+				context.fullScreen = false; 
+
+				// Set the interface.
+				button.setAttribute('status','off');
+				button.textContent = 'Fullscreen off';
+			}
+		}	
+
+        /** Runs an experiment loaded from file. */
 	    function runExperiment(){
 			// 'Run experiment' has been clicked
 			buttonsSetToFileLoaded();
@@ -261,7 +248,7 @@
 				document.getElementById('run_button').classList.add('btn-danger');
 
 				// Set the fullscreen toggle.
-				context.fullscreen = (document.getElementById('fullscreen_button').getAttribute('status') === 'on');
+				context.fullScreen = (document.getElementById('fullscreen_button').getAttribute('status') === 'on');
 				
 	    		// Run the experiment within the Runner with the given context.
 		    	runner.run(context);
@@ -279,13 +266,68 @@
 			}
 	     } 
 
-	    /**
- 	     * Callback function for optional data processing after an experiment is finished.
-	     * @param {Object} data - The result data in JSON format
- 	     * @param {Object} sessionData - The session data in JSON format
- 	     * @returns {void}
+   	    /**
+ 	     * Function to handle confirm dialog messages from the runner.
+	     * @param {String} title - The title of the dialog box.
+		 * @param {String} message - The message qwithin the dialog box.
+ 	     * @param {Object} onConfirm - The confirm event.
+ 	     * @param {Object} onCancel - The cancel event.
  	     */
-	    function onExperimentFinished(data, sessionData) {
+	    function confirm(title, message, onConfirm, onCancel) {
+            alertify.confirm( 
+                title, 
+                message, 
+                function() {
+                    onConfirm();
+                }, 
+                function() {
+                    onCancel();
+                }.bind(this)
+            );
+	    }
+
+		/**
+ 	     * Function to handle input prompt dialog messages from the runner.
+	     * @param {String} title - The title of the dialog box.
+		 * @param {String} message - The message qwithin the dialog box.
+		 * @param {String} defaultValue - The default value for the input field.
+		 * @param {String} dataType - The datatype to store.
+ 	     * @param {Object} onConfirm - The confirm event.
+ 	     * @param {Object} onCancel - The cancel event.
+ 	     */
+	    function prompt(title, message, defaultValue, dataType, onConfirm, onCancel) {
+            alertify.prompt( 
+                title, 
+                message, 
+                defaultValue,
+                function(evt, value) {
+                    onConfirm(value);
+                }, 
+                function() {
+                    onCancel();
+                }.bind(this)
+            );
+	    }
+
+ 		/**
+     	 * Callback function to print console text to an HTML element.
+     	 * @param {String} text - A line of text to print to a console element.
+         */
+ 		function onConsoleHandler(text) {
+			// Log the session data to the console.
+			if (text !== null) {
+        		// Add the text to the console window.
+				var a = document.getElementById('osweb_console_text').value;
+            	a = a + text + '\r\n';
+            	document.getElementById('osweb_console_text').value = a;  
+			}	
+		}
+
+		/** Callback function for processing after an experiment is finished. 
+		 * @param {Object} data - The result data.
+		 * @param {Object} sessionData - The session data.
+		 */
+	    function onFinishedHandler(data, sessionData) {
 			// Reset the input buttons
 			buttonsSetToFileSelection();
 
@@ -298,30 +340,27 @@
 
 			// Log the optional data to the console.
 			if (data !== null) {
-				console.log('-- experiment result data --');
+				console.log('-- experiment data --');
 				console.log(data);
 			}
 
-			// Log the o[ptional session data to the console.
+			// Log the optional session data to the console.
 			if (sessionData !== null) {
 				console.log('-- experiment session data --');
 				console.log(sessionData);
-			}	
+			}
 	    }
 
- 		/**
-     	 * Event handler to print console text to an HTML element.
-     	 * @param {String} consoleText - A line of text to print to a console element.
-         */
- 		function onConsole(consoleText) {
-			// Log the session data to the console.
-			if (consoleText !== null) {
-        		// Add the text to the console window.
-				var a = document.getElementById('osweb_console_text').value;
-            	a = a + consoleText + '\r\n';
-            	document.getElementById('osweb_console_text').value = a;  
-			}	
-		}
+		/**
+ 	     * Callback function for processing log data
+		 * @param {Object} data - The result data.
+ 	     */
+	    function onLogHandler(data) {
+			// Log the optional data to the console.
+			if (data !== null) {
+				console.log(data);
+			}
+		}	
 
     </script>
 </html> 
