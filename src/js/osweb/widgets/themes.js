@@ -1,4 +1,3 @@
-   
 /** Class representing OpenSesame themes. */
 export default class Themes {
     /** Create a themes object which cpntains a list of html themes. */

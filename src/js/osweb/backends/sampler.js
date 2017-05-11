@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
 import * as sound from 'pixi-sound';
-
 import { constants } from '../system/constants.js';
 
 /** Class representing a sampler. */
@@ -62,7 +61,7 @@ export default class Sampler {
 
         if (this._name !== '') {
             // Set the sound properties.
-            // this._instance.volume = this.volume;
+            PIXI.sound.volume(this._name, this.volume);
 
             // Play the actual sound.
             PIXI.sound.play(this._name);

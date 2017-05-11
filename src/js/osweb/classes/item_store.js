@@ -15,6 +15,12 @@ export default class ItemStore {
         this._runner = runner; // Parent runner attached to the item store.    
     }    
 
+    /** Clear all the items in the store. */
+    _clean_up() {
+        // Clear the items.
+        this._items = {};
+    }
+
     /**
      * Checks of the classname is defined within the osweb namespace.
      * @param {String} className - name of the class to check.
@@ -23,9 +29,6 @@ export default class ItemStore {
     _isClass(className) {
         // Return true if the classname is found in the item classes.
         return (className in itemClasses);
-
-        // Not working correctly on Firefox, disable for now.
-        //return typeof className === 'function' && /^\s*class\s+/.test(className.toString());
     }
 
     /**
@@ -75,12 +78,6 @@ export default class ItemStore {
 
         // Return the element
         return widget;
-    }
-
-    /** Clear all the items in the store. */
-    clean_up() {
-        // Clear the items.
-        this._items = {};
     }
 
     /**

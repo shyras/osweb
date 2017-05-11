@@ -82,6 +82,7 @@ export default class BaseElement {
     is_shown() {
         // Set the self of the current workspace.
         this.experiment.python_workspace['self'] = this.sketchpad;
+        
         // Determines whether the element should be shown, based on the show-if statement.
         return this.experiment.python_workspace._eval(this.experiment.syntax.compile_cond(this.properties['show_if']));
     }

@@ -1,10 +1,10 @@
+import GenericResponse from './generic_response.js';
+import Keyboard from '../backends/keyboard.js';
+
 /**
  * Class representing a keyboard response item.
  * @extends GenericResponse
  */
-import GenericResponse from './generic_response.js';
-import Keyboard from '../backends/keyboard.js';
-
 export default class KeyboardResponse extends GenericResponse {
     /**
      * Create a keyboard response item which waits for a keyboard response.

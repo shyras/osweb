@@ -1,23 +1,17 @@
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+import Mouse from '../backends/mouse.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a GeneralResponse item. 
  * @extends Item
  */
-import Item from './item.js';
-import Keyboard from '../backends/keyboard.js';
-import Mouse from '../backends/mouse.js';
-
-import { constants } from '../system/constants.js';
-
 export default class GenericResponse extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.
         super(experiment, name, script)     
-
-        // Create and set public properties. 
-        this.auto_response = "a";
-        this.process_feedback = false;
-        this.synonyms = null;
 
         // Create and set private properties. 
         this._allowed_responses = null;
@@ -27,6 +21,11 @@ export default class GenericResponse extends Item {
         this._mouse = null;
         this._responsetype = constants.RESPONSE_NONE;
         this._timeout = -1;
+
+        // Create and set public properties. 
+        this.auto_response = "a";
+        this.process_feedback = false;
+        this.synonyms = null;
     }   
 
     /** Implements the complete phase of the general response item. */
@@ -124,7 +123,7 @@ export default class GenericResponse extends Item {
             this._duration_func = this.auto_responder;
         } else {
             var final_duration = (this._timeout !== -1) ? this._timeout : this._duration;
-            this._keyboard.set_config(final_duration, this._allowed_responses);
+            this._keyboard._set_config(final_duration, this._allowed_responses);
         }
     }
 
@@ -136,7 +135,7 @@ export default class GenericResponse extends Item {
             this._duration_func = this.auto_responder_mouse;
         } else {
             var final_duration = (this._timeout !== -1) ? this._timeout : this._duration;
-            this._mouse.set_config(final_duration, this._allowed_responses, false);
+            this._mouse._set_config(final_duration, this._allowed_responses, false);
         }
     }
 
@@ -185,7 +184,7 @@ export default class GenericResponse extends Item {
         this.experiment._start_response_interval = this.sri;
         this.experiment._end_response_interval = retval.rtTime;
         this.experiment.vars.response = this.syntax.sanitize(retval.resp);
-        this.synonyms = this._keyboard.synonyms(this.experiment.vars.response);
+        this.synonyms = this._keyboard._synonyms(this.experiment.vars.response);
         this.response_bookkeeping();
     }
 
@@ -194,7 +193,7 @@ export default class GenericResponse extends Item {
         this.experiment._start_response_interval = this.sri;
         this.experiment._end_response_interval = retval.rtTime;
         this.experiment.vars.response = retval.resp;
-        this.synonyms = this._mouse.synonyms(this.experiment.vars.response);
+        this.synonyms = this._mouse._synonyms(this.experiment.vars.response);
         this.experiment.vars.cursor_x = retval.event.clientX;
         this.experiment.vars.cursor_y = retval.event.clientY;
         this.response_bookkeeping();

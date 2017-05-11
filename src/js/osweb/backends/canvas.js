@@ -372,7 +372,6 @@ export default class Canvas {
      * @param {Object} style_args - JSON object containing style arguments (optional).
      */
     clear(background_color, style_args) {
-        console.log('clear');
         // Clear the stage by temoving al the child elements.
         for (var i = this._container.children.length - 1; i >= 0; i--) {
             this._container.removeChild(this._container.children[i]);
@@ -383,7 +382,8 @@ export default class Canvas {
      * Copies the contents of the passed canvas onto current one.
      * @param {Object} canvas - The source canvas to copy.
      */
-    copy(canvas) {}
+    copy(canvas) {
+    }
 
     /**
      * Draws an ellipse element on the canvas.
@@ -788,7 +788,8 @@ export default class Canvas {
     }
 
     /** Implements the prepare phase of a canvas. */
-    prepare() {}
+    prepare() {
+    }
 
     /**
      * Draws a rectangle element on the canvas.

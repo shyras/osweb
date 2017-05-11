@@ -1,10 +1,10 @@
+import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
+
 /**
  * Class representing a textline element.
  * @extends BaseElement
  */
-import BaseElement from './base_element.js';
-import Styles from '../backends/styles.js';
-
 export default class Textline extends BaseElement {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
@@ -42,9 +42,9 @@ export default class Textline extends BaseElement {
         styles.color = this._properties.color;
         styles.font_family = this._properties.font_family;
         styles.font_size = this._properties.font_size;
-        styles.font_italic = this._properties.font_italic == 'yes';
-        styles.font_bold = this._properties.font_bold == 'yes';
-        styles.font_underline = this._properties.font_underline == 'yes';
+        styles.font_italic = (this._properties.font_italic === 'yes');
+        styles.font_bold = (this._properties.font_bold === 'yes');
+        styles.font_underline = (this._properties.font_underline === 'yes');
 
         this.sketchpad.canvas.text(text, this._properties.center, 
             this._properties.x, this._properties.y, this._properties.html, 

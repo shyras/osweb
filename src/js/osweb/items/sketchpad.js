@@ -1,17 +1,17 @@
+import GenericResponse from './generic_response.js';
+import Canvas from '../backends/canvas.js';
+
 /**
  * Class representing a Sketchpad item. 
  * @extends GeneralResponse
  */
-import GenericResponse from './generic_response.js';
-import Canvas from '../backends/canvas.js';
-
 export default class Sketchpad extends GenericResponse {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
         // Inherited.
         super(experiment, name, script)     
 
-        // Create and set private properties. 
+        // Create and set public properties. 
         this.canvas = new Canvas(experiment, false);
         this.elements = [];
     

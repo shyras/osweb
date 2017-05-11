@@ -43,13 +43,6 @@ export default class FormBase extends Item {
         // PIXI: Set the cursor visibility to none (default).
         this.experiment._runner._renderer.view.style.cursor = 'none';
 
-        // Remove the panel from the zebra form
-        //this.experiment._runner._formCanvas.root.remove(this.form._panel);
-
-        // Hide the form canvas, and show the experiment canvas.
-        //this.experiment._runner._formContainer.style.display = 'none';
-        //this.experiment._runner._renderer.view.style.display = 'inline';
-
         // Set the timer to normal mode.
         this.experiment._runner._events._state = constants.TIMER_NONE;
 

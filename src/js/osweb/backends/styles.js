@@ -251,7 +251,7 @@ export default class Styles {
     _isInt(value) {
         var x;
         return isNaN(value) ? !1 : (x = parseFloat(value), (0 | x) === x);
-    };
+    }
 
     /**
      * Checks if value is possibly specified as 'yes'/'no' or 1/0 instead of
@@ -452,3 +452,4 @@ export default class Styles {
         this._penwidth = val;
     }
 }
+ 

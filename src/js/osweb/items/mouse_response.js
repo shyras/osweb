@@ -1,10 +1,10 @@
+import GenericResponse from './generic_response.js';
+import Mouse from '../backends/mouse.js';
+
 /**
  * Class representing a mouse response item.
  * @extends GenericResponse
  */
-import GenericResponse from './generic_response.js';
-import Mouse from '../backends/mouse.js';
-
 export default class MouseResponse extends GenericResponse {
     /**
      * Create an mouse response item which waits for a mouse response.
@@ -74,12 +74,12 @@ export default class MouseResponse extends GenericResponse {
         this.set_item_onset();
 
         // Show the cursor if defined.
-        if (this.vars.show_cursor == 'yes') {
+        if (this.vars.show_cursor === 'yes') {
             this._mouse.show_cursor(true);
         }
 
         // Flush responses, to make sure that earlier responses are not carried over.
-        if (this._flush == 'yes') {
+        if (this._flush === 'yes') {
             this._mouse.flush();
         }
 

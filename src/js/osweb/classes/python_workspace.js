@@ -26,9 +26,9 @@ export default class PythonWorkspace {
 
             //Evaluate the expression.
             var eval_string = this._runner._syntax.remove_quotes(bytecode);
-            if (eval_string == "always") {
+            if (eval_string === 'always') {
                 return true;
-            } else if (eval_string == "never") {
+            } else if (eval_string === 'never') {
                 return false;
             } else {
                 return eval(eval_string);

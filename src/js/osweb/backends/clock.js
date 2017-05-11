@@ -34,13 +34,13 @@ export default class Clock {
 
     /**
      * Sleeps (pauses) for a duration (in milliseconds).
-     * @param {Number} duration - The duration to wait in ms.
+     * @param {Number} ms - The duration to wait in ms.
      */
-    sleep(duration) {
+    sleep(ms) {
         // Sleeps (pauses) for a duration (in milliseconds).
         if (this._experiment !== null) {
             // Set the event processor.
-            this._experiment._runner._events._run(duration, constants.RESPONSE_DURATION, null);
+            this._experiment._runner._events._run(ms, constants.RESPONSE_DURATION, null);
         }
     }
 

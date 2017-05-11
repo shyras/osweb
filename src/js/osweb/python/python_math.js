@@ -37,63 +37,76 @@ export default class PythonMath {
         filbert.pythonRuntime.imports['math']['tan'] = this.tan; 
         filbert.pythonRuntime.imports['math']['e'] = this.e; 
         filbert.pythonRuntime.imports['math']['pi'] = this.pi; 
-    };
+    }
      
-    // Definition of public methods - Number-theoretic and representation functions.
-
-    
+    /** Import 'ceil' function for osweb script. */
     ceil(x) {
     }
 
+    /** Import 'copysign' function for osweb script. */
     copysign(x, y) {
     }
 
+    /** Import 'fabs' function for osweb script. */
     fabs(x) {
     }
 
+    /** Import 'factorial' function for osweb script. */
     factorial(x) {
     }
 
+    /** Import 'floor' function for osweb script. */
     floor(x) {
         return Math.floor(x);
     }
 
+    /** Import 'fmod' function for osweb script. */
     fmod(x, y) {
     }
 
+    /** Import 'frexp' function for osweb script. */
     frexp(x) {
     }
 
+    /** Import 'fsum' function for osweb script. */
     fsum(iterable) {
     }
 
+    /** Import 'acos' function for osweb script. */
     acos(x) {
         return Math.acos(x);
     }
 
+    /** Import 'asin' function for osweb script. */
     asin(x) {
         return Math.asin(x);
     }
 
+    /** Import 'atan' function for osweb script. */
     atan(x) {
         return Math.atan(x);
     }
 
+    /** Import 'atan2' function for osweb script. */
     atan2(y, x) {
         return Math.atan2(y, x);
     }
 
+    /** Import 'cos' function for osweb script. */
     cos(x) {
         return Math.cos(x);
     }
 
+    /** Import 'hypot' function for osweb script. */
     hypot(x, y) {
     }
 
+    /** Import 'sin' function for osweb script. */
     sin(x) {
         return Math.sin(x);
     }
 
+    /** Import 'tan' function for osweb script. */
     tan(x) {
         return Math.tan(x);
     }

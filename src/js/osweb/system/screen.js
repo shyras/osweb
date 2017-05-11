@@ -75,7 +75,6 @@ export default class Screen {
 	        document.mozFullScreenElement ||
 	        document.msFullscreenElement) {
             // Scale the canvas
-            console.log('problem' + this._runner._scaleMode);
             switch (this._runner._scaleMode) {
                 case 'noScale': 
                     // Default mode, no scaling, canbas is centered on the screen. 
@@ -87,11 +86,9 @@ export default class Screen {
                     this._runner._renderer.view.style.margin = 'auto';    
                     this._runner._renderer.view.style.display = 'block';    
                     this._runner._renderer.view.style.position = 'absolute'; 
-                    console.log(this._runner._experiment._currentCanvas);
                     this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
                 break;
                 case 'showAll':
-                    console.log('showall');
                     // Default mode, no scaling, canbas is centered on the screen. 
                     this._runner._renderer.view.style.top = '0px'; 
                     this._runner._renderer.view.style.bottom = '0px'; 
@@ -118,7 +115,6 @@ export default class Screen {
                     this._runner._renderer.render(this._runner._experiment._currentCanvas._container);
                 break;        
                 case 'exactFit':
-                    console.log('exactfit');
                     // Fit to the exact window size (cropping).       
                     this._runner._experiment._scale_x = (this._runner._container.clientWidth / this._runner._experiment.vars.width);
                     this._runner._experiment._scale_y = (this._runner._container.clientHeight / this._runner._experiment.vars.height);

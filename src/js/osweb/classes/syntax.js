@@ -16,7 +16,7 @@ export default class Syntax {
      * Compile a os condition for further processing.
      * @param {String} cnd - The condition to compile.
      * @param {Boolean} bytecode - The condition is converted to a python AST tree.
-     * @return {string} - The compiled condition.
+     * @return {String} - The compiled condition.
      */
     compile_cond(cnd, bytecode) {
         // Check for conditional paramters.
@@ -27,20 +27,20 @@ export default class Syntax {
         } else if (cnd.toLowerCase() === 'never') {
             return false;
         } else {
-            if (cnd[0] == '=') {
+            if (cnd[0] === '=') {
                 cnd = cnd.substr(1);
             } else {
                 cnd = this.remove_quotes(cnd);
                 // Scan for literals (strings, numbers, etc).
                 cnd = cnd.replace(/(?!(?:and|or|not)\b)(?:".*?"|'.*?'|\[(?:\w+?|=.+)\]|\b\w+\b)/g , (match, offset, string) => {
-                    if(string[offset] == '[' && string[offset+match.length-1] == ']'){
+                    if (string[offset] == '[' && string[offset+match.length-1] == ']') {
                         // Check if match is a variable.
-                        if(string[offset-1] == "\\" && string[offset-2] != "\\"){
+                        if (string[offset-1] == "\\" && string[offset-2] != "\\") {
                             // Check if the current match is escaped, and simpl\w+?|=.+y return it untouched if so.
                             return `"${match}"`;
                         }
                         // Check if the variable contains a Python expression
-                        if(match[1] == "="){
+                        if (match[1] == "=") {
                             const expression = match.substring(2, match.length-1);
                             const ast = this._runner._pythonParser._parse(expression);
                             return this._runner._pythonParser._run_statement(ast);
@@ -49,13 +49,13 @@ export default class Syntax {
                         // Return the var. notation otherwise
                         const content = match.substring(1,match.length-1);
                         return `var.${content}`;
-                    }else if([`"`,`'`].includes(string[offset]) && 
-                        string[offset] == string[offset+match.length-1]){
+                    } else if ([`"`,`'`].includes(string[offset]) && 
+                        string[offset] == string[offset+match.length-1]) {
                         // Check if match is between quotes. Don't do anything then
                         return match;
-                    }else if(!Number.isNaN(Number(match))){
+                    } else if (!Number.isNaN(Number(match))) {
                         return Number(match);
-                    }else{
+                    } else {
                         return `"${match}"`;
                     }
                 });
@@ -64,10 +64,10 @@ export default class Syntax {
                 cnd = cnd.replace(/([^!<>\=\-+*])(=)([^=])/g, '$1==$3');
             }
         }
-        if(bytecode === true){
+        if (bytecode === true) {
             let ast = this._runner._pythonParser._parse(cnd);
             return this._runner._pythonParser._run_statement(ast);
-        }else{
+        } else {
             return cnd;
         }
     }
@@ -288,3 +288,4 @@ export default class Syntax {
         return (result !== null) ? result : [];
     }
 }
+ 

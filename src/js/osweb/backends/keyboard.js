@@ -10,12 +10,12 @@ export default class Keyboard {
      */
     constructor(experiment, timeOut, keyList) {
         // Create and set private properties. 
-        this.experiment = experiment; // Anchor to the experiment object. 
-        this.keylist = (typeof keylist === 'undefined') ? [] : keylist; // List of acceptable response keys. 
-        this.timeout = (typeof timeout === 'undefined') ? null : timeout; // Duration in millisecond for time-out.
+        this._experiment = experiment; // Anchor to the experiment object. 
+        this._keyList = (typeof keyList === 'undefined') ? [] : keyList; // List of acceptable response keys. 
+        this._timeOut = (typeof timeOut === 'undefined') ? null : timeOut; // Duration in millisecond for time-out.
 
         // Set constant properties.
-        this.SYNONIEM_MAP = [
+        this._SYNONIEM_MAP = [
             [' ', 'space', 'SPACE'],
             ['"', 'quotedbl', 'QUOTEDBL'],
             ['!', 'exclaim', 'EXCLAIM'],
@@ -162,26 +162,47 @@ export default class Keyboard {
     _get_default_from_synoniem(responses) {
         var defaults = [];
         for (var i = 0; i < responses.length; i++) {
-            var synoniem = this.synonyms(responses[i]);
+            var synoniem = this._synonyms(responses[i]);
             defaults.push(synoniem[0]);
         }
         return defaults;
     }
 
     /**
-     * Returns the default configuration for the keyboard backend.
-     * @return {Object} - JSON object width the default values.
+     * Set the configuration for the keyboard backend.
+     * @param {Number} timeOut - Duration in ms for time out.
+     * @param {Array} keyList - List of acceptable response keys.
      */
-    default_config() {
-        // Return the default configuration.
-        return {
-            'timeout': null,
-            'keylist': []
-        };
+    _set_config(timeOut, keyList) {
+        // Set the properties.
+        this._keyList = keyList;
+        this._timeOut = timeOut;
     }
 
-    /** Clear all pending keyboard input, not limited to the keyboard. */
+    /**
+     * Convert a response value to its default value (remove synoniem).
+     * @param {String} button - A response.
+     * @return {String|Null} - Default value of the response.
+     */
+    _synonyms(button) {
+        if (typeof button !== 'undefined') {
+            for (var i = 0; i < this._SYNONIEM_MAP.length; i++) {
+                for (var j = 0; j < this._SYNONIEM_MAP[i].length; j++) {
+                    if (this._SYNONIEM_MAP[i][j] == button) {
+                        return this._SYNONIEM_MAP[i];
+                        break;
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /** Clear all pending keyboard input. */
     flush() {
+        // Always returns false because flusihing is not possible.
+        return false;
     }
 
     /**
@@ -189,15 +210,15 @@ export default class Keyboard {
      * @param {Number} timeOut - Duration in ms for time out.
      * @param {Array} keyList - List of acceptable response keys.
      */
-    get_key(timeout, keylist) {
+    get_key(timeOut, keyList) {
         // Collects a single key press.
-        this.keylist = (typeof keylist === 'undefined') ? this.keylist : keylist;
-        this.timeout = (typeof timeout === 'undefined') ? this.timeout : timeout;
+        this._keyList = (typeof keyList === 'undefined') ? this._keyList : keyList;
+        this._timeOut = (typeof timeOut === 'undefined') ? this._timeOut : timeOut;
 
-        if (this.experiment != null) {
+        if (this._experiment !== null) {
             // Set the event processor.
-            this.experiment._runner._events._run(this.timeout, constants.RESPONSE_KEYBOARD, this.keylist);
-        };
+            this._experiment._runner._events._run(this._timeOut, constants.RESPONSE_KEYBOARD, this._keyList);
+        }
     }
 
     /**
@@ -206,29 +227,18 @@ export default class Keyboard {
      */
     get_mods() {
         var moderators = [];
-        if (this.experiment._runner._events.keyDownEvent !== null) {
-            if (this.experiment._runner._events.keyDownEvent.event.shiftKey === true) {
+        if (this._experiment._runner._events.keyDownEvent !== null) {
+            if (this._experiment._runner._events.keyDownEvent.event.shiftKey === true) {
                 moderators.push('shift');
-            };
-            if (this.experiment._runner._events.keyDownEvent.event.ctrlKey === true) {
+            }
+            if (this._experiment._runner._events.keyDownEvent.event.ctrlKey === true) {
                 moderators.push('ctrl');
-            };
-            if (this.experiment._runner._events.keyDownEvent.event.altKey === true) {
+            }
+            if (this._experiment._runner._events.keyDownEvent.event.altKey === true) {
                 moderators.push('alt');
-            };
+            }
         }
         return moderators;
-    }
-
-    /**
-     * Set the configuration for the keyboard backend.
-     * @param {Number} timeOut - Duration in ms for time out.
-     * @param {Array} keyList - List of acceptable response keys.
-     */
-    set_config(timeout, keylist) {
-        // Set the properties.
-        this.keylist = keylist;
-        this.timeout = timeout;
     }
 
     /**
@@ -239,33 +249,13 @@ export default class Keyboard {
         // Shows or hides a virtual keyboard.		
         if (visible === true) {
             // Hack to show the virutal keyboard. ## Must be tested!
-            this.experiment._runner._renderer.view.focus();
+            this._experiment._runner._renderer.view.focus();
         } else {
             // Hack to hide the virtual keyboard. ## Must be tested!
             var tmp = document.createElement('input');
             document.body.appendChild(tmp);
             tmp.focus();
             document.body.removeChild(tmp);
-        }
-    }
-
-    /**
-     * Convert a response value to its default value (remove synoniem).
-     * @param {String} button - A response.
-     * @return {String} - Default value of the response.
-     */
-    synonyms(button) {
-        if (typeof button !== 'undefined') {
-            for (var i = 0; i < this.SYNONIEM_MAP.length; i++) {
-                for (var j = 0; j < this.SYNONIEM_MAP[i].length; j++) {
-                    if (this.SYNONIEM_MAP[i][j] == button) {
-                        return this.SYNONIEM_MAP[i];
-                        break;
-                    }
-                }
-            }
-        } else {
-            return null;
         }
     }
 }

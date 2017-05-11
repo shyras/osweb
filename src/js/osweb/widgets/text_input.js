@@ -27,7 +27,6 @@ export default class TextInputWidget extends Widget {
 
     /** Focus theText area widget. */
     focus() {
-        console.log('focus');
     }
 
     /**

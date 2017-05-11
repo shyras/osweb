@@ -194,3 +194,4 @@ export default class CheckBoxWidget extends Widget {
         }     
     } 
 }
+ 

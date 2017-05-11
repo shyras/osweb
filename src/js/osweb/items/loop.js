@@ -1,13 +1,12 @@
+import { isNumber }  from 'underscore';
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a sequence item.
  * @extends Item
  */
-import { isNumber }  from 'underscore';
-import Item from './item.js';
-import Keyboard from '../backends/keyboard.js';
-
-import { constants } from '../system/constants.js';
-
 export default class Loop extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
@@ -41,7 +40,7 @@ export default class Loop extends Item {
 
             this._cycles.push(this._index);
 
-            if (this.vars.order == 'random') {
+            if (this.vars.order === 'random') {
                 this.shuffle(this._cycles);
             }
         } else {
@@ -79,11 +78,11 @@ export default class Loop extends Item {
         if (script != null) {
             var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
-                if ((lines[i] != '') && (this.parse_variable(lines[i]) == false)) {
+                if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
                     var tokens = this.syntax.split(lines[i]);
-                    if ((tokens[0] == 'run') && (tokens.length > 1)) {
+                    if ((tokens[0] === 'run') && (tokens.length > 1)) {
                         this.vars.item = tokens[1];
-                    } else if ((tokens[0] == 'setcycle') && (tokens.length > 3)) {
+                    } else if ((tokens[0] === 'setcycle') && (tokens.length > 3)) {
                         var cycle = tokens[1];
                         var name = tokens[2];
                         var value = this.syntax.remove_quotes(tokens[3]);
@@ -92,7 +91,7 @@ export default class Loop extends Item {
                         value = isNumber(value) ? Number(value) : value;
 
                         // Convert the python expression to javascript.
-                        if (value[0] == '=') {
+                        if (value[0] === '=') {
                             // Parse the python statement. 
                             value = this.experiment._runner._pythonParser._prepare(value.slice(1));
 
@@ -242,20 +241,21 @@ export default class Loop extends Item {
             var exit = false;
             this._index = this._cycles.shift();
             this.apply_cycle(this._index);
-
-            if (this._break_if != null) {
+        
+            // Check the break_if flag.
+            if (this._break_if !== null) {
                 this.python_workspace['this'] = this;
 
                 var break_if = this.syntax.eval_text(this._break_if);
 
-                if (this.python_workspace._eval(break_if) == true) {
+                if (this.python_workspace._eval(break_if) === true) {
                     exit = true;
                 }
             }
 
-            if (exit == false) {
+            // Check the exit status.
+            if (exit === false) {
                 this.experiment.vars.repeat_cycle = 0;
-
                 this.experiment._runner._itemStore.prepare(this.vars.item, this);
             } else {
                 // Break the loop.

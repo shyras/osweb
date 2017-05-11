@@ -1,12 +1,11 @@
+import Item from './item.js';
+import Keyboard from '../backends/keyboard.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a Sequence item. 
  * @extends Item
  */
-import Item from './item.js';
-import Keyboard from '../backends/keyboard.js';
-
-import { constants } from '../system/constants.js';
-
 export default class Sequence extends Item {
     /** The sequence class controls the running of a serie of items. */
     constructor(experiment, name, script) {
@@ -15,7 +14,6 @@ export default class Sequence extends Item {
     
         // Create and set private properties. 
         this._index = -1;
-        this._index_prepare = -1;
         this._items = null;
         this._keyboard = null;
 
@@ -50,7 +48,7 @@ export default class Sequence extends Item {
                 // Add the item to the internal list.
                 this._items.push({
                     'item': this.items[this._index - 1].item,
-                    'cond': this.syntax.compile_cond(this.items[this._index - 1].cond) // Was compile_cond_new.
+                    'cond': this.syntax.compile_cond(this.items[this._index - 1].cond) 
                 });
 
                 // Prepare the item.
@@ -107,7 +105,6 @@ export default class Sequence extends Item {
                             'cond': cond
                         });
                     }
-
                 }
             }
         }
@@ -131,7 +128,7 @@ export default class Sequence extends Item {
 
         // Prepare the items.
         this._prepare_complete();
-    };
+    }
 
     /** Implements the run phase of an item. */
     run() {

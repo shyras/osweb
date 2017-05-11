@@ -1,11 +1,10 @@
+import Item from './item.js';
+import { constants } from '../system/constants.js';
+
 /**
  * Class representing a logger item.
  * @extends Item
  */
-import Item from './item.js';
-
-import { constants } from '../system/constants.js';
-
 export default class Logger extends Item {
     /**
      * Create an experiment item which controls the OpenSesame experiment.
@@ -78,7 +77,7 @@ export default class Logger extends Item {
             this.set_item_onset();
             if (this._logvars == null) {
                 if (this.vars.auto_log === 'yes') {
-                    this._logvars = this.experiment._log.all_vars();
+                    this._logvars = this.experiment._log._get_all_vars();
                 } else {
                     this._logvars = [];
                     for (variable in this.logvars) {

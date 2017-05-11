@@ -88,13 +88,12 @@ export default class Transfer {
      * @param  {string} url The url at which the osexp can be found
      * @return {void}
      */
-    _readRemoteOsexpText(url){
+    _readRemoteOsexpText(url) {
         const request = new XMLHttpRequest();
 
         // Transfer in progress, update of percentage.
         request.addEventListener("progress", (event) => { 
-            if(event.lengthComputable){
-                console.log(event.loaded / event.total);
+            if (event.lengthComputable) {
                 this._runner._screen._updateProgressBar(event.loaded / event.total);
             }
         });
@@ -105,7 +104,6 @@ export default class Transfer {
         });
 
         request.addEventListener("error", (e) => {
-            console.error(e);
             throw new Error("Error transferring osexp: " + e); 
         });
 
@@ -162,7 +160,8 @@ export default class Transfer {
             // Create a file pool element.
             var item = {
                 data: null,
-                folder: this._filePool[this._counter].filename,
+                folder: this._filePool[this._counter].filename.match(/(.*)[\/\\]/)[1]||'',
+                //folder: this._filePool[this._counter].filename,
                 name: this._filePool[this._counter].filename.replace(/^.*[\\\/]/, ''),
                 size: this._filePool[this._counter].length,
                 type: 'undefined'

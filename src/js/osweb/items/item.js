@@ -1,9 +1,8 @@
-/** Class representing an OpenSesame item. */
-
 import { constants } from '../system/constants.js';
 import VarStore from '../classes/var_store.js';
 import Clock from '../backends/clock.js';
 
+/** Class representing an OpenSesame item. */
 export default class Item {
     constructor(experiment, name, script) {
         // Create and set private properties. 
@@ -12,15 +11,13 @@ export default class Item {
         this._status = constants.STATUS_NONE;
 
         // Create and set public properties. 
+        this.clock = (experiment.constructor.name === 'Runner') ? new Clock(this) : experiment.clock;
         this.count = 0;
         this.experiment = (experiment.constructor.name === 'Runner') ? this : experiment;
         this.name = name;
+        this.python_workspace = this._runner._pythonWorkspace;
         this.response_store = this._runner._responseStore;
-
-        // Set the class object properties.
-        this.clock = (experiment.constructor.name === 'Runner') ? new Clock(this) : experiment.clock;
-        this.python_workspace = experiment._pythonWorkspace;
-        this.syntax = experiment._syntax;
+        this.syntax = this._runner._syntax;
         this.vars = new VarStore(this, (experiment.constructor.name === 'Runner') ? null : this.experiment.vars);
     }    
 
@@ -70,11 +67,11 @@ export default class Item {
     parse_comment(line) {
         // Parses comments from a single definition line, indicated by # // or '.
         line = line.trim();
-        if ((line.length > 0) && (line.charAt(0) == '#')) {
+        if ((line.length > 0) && (line.charAt(0) === '#')) {
             // Add comments to the array removing the first character.
             this.comments.push(line.slice(1));
             return true;
-        } else if ((line.length > 1) && (line.charAt(0) == '/')) {
+        } else if ((line.length > 1) && (line.charAt(0) === '/')) {
             // Add comments to the array removing the first two characters.
             this.comments.push(line.slice(2));
             return true;
@@ -140,7 +137,7 @@ export default class Item {
         if (script !== null) {
             var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
-                if ((lines[i] != '') && (this.parse_variable(lines[i]) === false)){
+                if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)){
                     this.parse_line(lines[i]);
                 }
             }
@@ -180,6 +177,8 @@ export default class Item {
     set_item_onset(time) {
         // Set a timestamp for the item's executions
         time = (typeof time === 'undefined') ? this.clock.time() : time;
+        
+        // Add the time stamp to the variable list.
         this.experiment.vars.set('time_' + this.name, time);
     }
 

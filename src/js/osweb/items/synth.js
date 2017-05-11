@@ -1,10 +1,9 @@
+import Sampler from './sampler.js';
 
 /**
  * Class representing a synth item.
  * @extends Sampler
  */
-import Sampler from './sampler.js';
-
 export default class Synth extends Sampler {
     /**
      * Create a synth item which create a synthessised sound wave.
@@ -20,3 +19,4 @@ export default class Synth extends Sampler {
         this.description = 'A basic sound synthesizer';
     }
 }
+ 

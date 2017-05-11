@@ -5,28 +5,24 @@ export default class Log {
     /**
      * Create a log object which stores all the response data.
      * @param {Object} experiment - The experiment to which the logger belongs.
-     * @param {String} path - The path where to store the result data.
      */
-    constructor(experiment, path) {
+    constructor(experiment) {
         // Create and set private properties. 
         this._all_vars = null; // If true all variables are written to the log.  
+        this._experiment = experiment; // Anchor to the experiment object.
+        this._experiment.vars.logfile = ''; // Store the path location into the vars list.   
         this._header_written = false; // If true the header has been written to the log.
         this._log = []; // Array containing the log entries.
-        this._path = ''; // Path to wich the log is written.
-
-        // Create and set public properties. 
-        this.experiment = experiment; // Anchor to the experiment object.
-        this.experiment.vars.logfile = path; // Store the path location into the vars list.   
-    };
+    }
 
     /**
      * Retrieves a list of all variables that exist in the experiment.
      * @return {Array} - A list of all variables.
      */
-    all_vars() {
+    _get_all_vars() {
         // Retrieves a list of all variables that exist in the experiment.
         if (this._all_vars === null) {
-            this._all_vars = this.experiment.vars.inspect();
+            this._all_vars = this._experiment.vars.inspect();
         }
         return this._all_vars;
     }
@@ -36,27 +32,17 @@ export default class Log {
         // Closes the current log.
         if (this._log.length > 0) {
             // Echo the data to the runner.
-            this.experiment._runner._data = this._log.join('');
+            this._experiment._runner._data = this._log.join('');
         };
 
         // Clear the log file.
         this._log = [];
     }
 
-    /** Flush the log file. */
-    flush() {
-        // Flush the log file.
-        this._log = [];
-    }   
-
-    /**
-     * Opens the current log. If a log was already open, it is closed. 
-     * @param {String} path - Path for the log file.
-     */
-    open(path) {
+    /** Opens the current log. If a log was already open, it is closed. */
+    open() {
         // Opens the current log. If a log was already open, it is closed.
         this._header_written = false;
-        this._path = path;
 
         // Check for old data.
         if (this._log !== null) {
@@ -74,11 +60,11 @@ export default class Log {
         // Write one message to the log.
         newLine = (typeof newLine === 'undefined') ? true : newLine;
 
-        // Write a new line.
         if (newLine === true) {
+            // Write a log with a new line.
             this._log.push(msg + '\n');
         } else {
-            // Write the Message line.
+            // Write a log without a new line.
             this._log.push(msg);
         }
     }
@@ -95,7 +81,7 @@ export default class Log {
         var l = [];
         // If no var list defines, retrieve all variable.
         if (varList === null) {
-            varList = this.all_vars();
+            varList = this._get_all_vars();
         }
 
         // Sort the var list.
@@ -114,15 +100,15 @@ export default class Log {
         l = [];
         const entry = {};
         for (var i = 0; i < varList.length; i++) {
-            value = this.experiment.vars.get(varList[i], 'NA', false);
+            value = this._experiment.vars.get(varList[i], 'NA', false);
             l.push('"' + value + '"');
             entry[varList[i]] = value
         }
         this.write(l.join());
         
         // If event is attached to the experiment output log. 
-        if (_.isFunction(this.experiment.onLog)) {
-            this.experiment.onLog(entry);
+        if (_.isFunction(this._experiment.onLog)) {
+            this._experiment.onLog(entry);
         }    
     }
 }

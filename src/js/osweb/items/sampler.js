@@ -1,12 +1,11 @@
+import GenericResponse from './generic_response.js';
+import SamplerBackend from '../backends/sampler.js';
+import Syntax from '../classes/syntax.js';
 
 /**
  * Class representing a sampler item.
  * @extends GenericResponse
  */
-import GenericResponse from './generic_response.js';
-import SamplerBackend from '../backends/sampler.js';
-import Syntax from '../classes/syntax.js';
-
 export default class Sampler extends GenericResponse {
     /**
      * Create a sampler  item which plays a sound.

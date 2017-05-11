@@ -1,9 +1,9 @@
+import Item from './item.js';
+
 /**
  * Class representing an inline item.
  * @extends Item
  */
-import Item from './item.js';
-
 export default class InlineScript extends Item {
     /**
      * Create an inline item which executes inline python code.
@@ -26,7 +26,6 @@ export default class InlineScript extends Item {
         // Process the script.
         this.from_string(script);
     }
-
 
     /** Implements the complete phase of an item. */ 
     _complete() {
@@ -53,7 +52,6 @@ export default class InlineScript extends Item {
 
     /** Reset all item variables to their default value. */
     reset() {
-        this._var_info = null;
         this.vars._prepare = '';
         this.vars._run = '';
     }
@@ -73,25 +71,20 @@ export default class InlineScript extends Item {
             var lines = script.split('\n');
             for (var i = 0; i < lines.length; i++) {
                 var tokens = this.syntax.split(lines[i]);
-
                 if ((tokens !== null) && (tokens.length > 0)) {
                     switch (tokens[0]) {
                         case 'set':
                             this.parse_variable(lines[i]);
-
                             break;
                         case '__end__':
                             read_run_lines = false;
                             read_prepare_lines = false;
-
                             break;
                         case '___prepare__':
                             read_prepare_lines = true;
-
                             break;
                         case '___run__':
                             read_run_lines = true;
-
                             break;
                         default:
                             if (read_run_lines === true) {
@@ -118,7 +111,7 @@ export default class InlineScript extends Item {
         this._run_tree = this.experiment._runner._pythonParser._parse(this.vars._run);
         
         // Execute the run code.
-        if (this._prepare_tree != null) {
+        if (this._prepare_tree !== null) {
             // Set the current item.
             this.experiment._runner._events._currentItem = this;
         
@@ -148,11 +141,10 @@ export default class InlineScript extends Item {
         this.set_item_onset();
 
         // Execute the run code.
-        if (this._run_tree != null) {
+        if (this._run_tree !== null) {
             // Start the parser
             this.experiment._runner._pythonParser._run(this, this._run_tree);
-        }
-        else {
+        } else {
             // To prevent prepeare script from running twice.
             this.experiment._runner._pythonParser._status = 0;
             

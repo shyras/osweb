@@ -11,13 +11,13 @@ export default class Mouse {
      */
     constructor(experiment, timeOut, buttonList, visible) {
         // Create and set public properties. 
-        this.experiment = experiment; // Anchor to the experiment object.
-        this.timeout = (typeof timeout === 'undefined') ? null : timeout; // Duration in millisecond for time-out. 
-        this.buttonlist = (typeof buttonlist === 'undefined') ? null : buttonlist; // List of acceptable response buttons.	
-        this.visible = (typeof visible === 'undefined') ? false : visible; // if true the mouse cursor is visible.
-    
+        this._experiment = experiment; 
+        this._timeOut = (typeof timeOut === 'undefined') ? null : timeOut; 
+        this._buttonList = (typeof buttonList === 'undefined') ? null : buttonList; 
+        this._visible = (typeof visible === 'undefined') ? false : visible; 
+        
         // Set constant properties.
-        this.SYNONIEM_MAP = [
+        this._SYNONIEM_MAP = [
             ['1', 'left_button'],
             ['2', 'middle_button'],
             ['3', 'right_button'],
@@ -35,28 +35,50 @@ export default class Mouse {
         // Return the default synoniem value from a response.
         var defaults = [];
         for (var i = 0; i < responses.length; i++) {
-            var synoniem = this.synonyms(responses[i]);
+            var synoniem = this._synonyms(responses[i]);
             defaults.push(synoniem[0]);
         }
         return defaults;
     }
 
     /**
-     * Returns the dedault configuration for the mouse backend.
-     * @return {Object} - JSON object width the default values.
+     * Set the configuration for the mouse backend.
+     * @param {Number} timeOut - Duration in ms for time out.
+     * @param {Array} buttonList - List of acceptable response buttons.
+     * @param {Boolean} visible - Toggle for showing the mouse cursor.
      */
-    default_config() {
-        // Return the default configuration.
-        return {
-            'timeout': null,
-            'buttonlist': null,
-            'visible': false
-        };
+    _set_config(timeOut, buttonList, visible) {
+        // Set mouse properties.          
+        this._timeOut = timeOut;
+        this._buttonList = buttonList;
+        this._visible = visible;
     }
 
-    /** Clear all pending keyboard input, not limited to the keyboard. */
+    /**
+     * Convert a response value to its default value (remove synoniem).
+     * @param {String} button - A response.
+     * @return {String|Null} - Default value of the response or null if none.
+     */
+    _synonyms(button) {
+        if (typeof button !== 'undefined') {
+            for (var i = 0; i < this._SYNONIEM_MAP.length; i++) {
+                for (var j = 0; j < this._SYNONIEM_MAP[i].length; j++) {
+                    if (this._SYNONIEM_MAP[i][j] == button) {
+                        return this._SYNONIEM_MAP[i];
+                        break;
+                    }
+                }
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /** Clear all pending mouse input. */
     flush() {
-    };
+        // Always returns false because flusihing is not possible.
+        return false;
+    }
 
     /**
      * Collects a single mouse click.
@@ -64,18 +86,18 @@ export default class Mouse {
      * @param {Array} buttonList - List of acceptable response buttons.
      * @param {Boolean} visible - Toggle for showing the mouse cursor.
      */
-    get_click(timeout, buttonlist, visible) {
+    get_click(timeOut, buttonList, visible) {
         // Collects a single mouse click.
-        this.timeout = (typeof timeout === 'undefined') ? this.timeout : timeout;
-        this.buttonlist = (typeof buttonlist === 'undefined') ? this.buttonlist : buttonlist;
-        this.visible = (typeof visible === 'undefined') ? this.visible : visible;
+        this._timeOut = (typeof timeOut === 'undefined') ? this._timeOut : timeOut;
+        this._buttonList = (typeof buttonList === 'undefined') ? this._buttonList : buttonList;
+        this._visible = (typeof visible === 'undefined') ? this._visible : visible;
 
-        if (this.experiment != null) {
+        if (this._experiment !== null) {
             // Hide or show the mouse.
-            this.show_cursor(this.visible);
+            this.show_cursor(this._visible);
 
             // Set the event processor.
-            this.experiment._runner._events._run(this.timeout, constants.RESPONSE_MOUSE, this.buttonlist);
+            this._experiment._runner._events._run(this._timeOut, constants.RESPONSE_MOUSE, this._buttonList);
         };
     }
 
@@ -86,11 +108,11 @@ export default class Mouse {
      */
     get_pos() {
         // Returns the current mouse position. !Warning: this methods uses the state in the last known mouse respone, not the current state.
-        if (this.experiment._runner._events._mouseMoveEvent !== null) {
+        if (this._experiment._runner._events._mouseMoveEvent !== null) {
             return {
-                'rtTime': this.experiment._runner._events._mouseMoveEvent.rtTime,
-                'x': this.experiment._runner._events._mouseMoveEvent.event.clientX,
-                'y': this.experiment._runner._events._mouseMoveEvent.event.clientY
+                'rtTime': this._experiment._runner._events._mouseMoveEvent.rtTime,
+                'x': this._experiment._runner._events._mouseMoveEvent.event.clientX,
+                'y': this._experiment._runner._events._mouseMoveEvent.event.clientY
             };
         } else {
             return {
@@ -108,11 +130,11 @@ export default class Mouse {
      */
     get_pressed() {
         // Returns the current button state of the mouse buttons. !Warning: this methods uses the state in the last known mouse respone, not the current state.
-        if (this.experiment._runner.events._mouse_press !== null) {
+        if (this._experiment._runner.events._mouse_press !== null) {
             return {
-                'buttons': [(this.experiment._runner._events._mouseDownEvent.event.button === 0), 
-                            (this.experiment._runner._events._mouseDownEvent.event.button === 1), 
-                            (this.experiment._runner._events._mouseDownEvent.event.button === 2)]
+                'buttons': [(this._experiment._runner._events._mouseDownEvent.event.button === 0), 
+                            (this._experiment._runner._events._mouseDownEvent.event.button === 1), 
+                            (this._experiment._runner._events._mouseDownEvent.event.button === 2)]
             };
         } else {
             return {
@@ -121,57 +143,25 @@ export default class Mouse {
         }
     }
 
-    /**
-     * Set the configuration for the keyboard backend.
-     * @param {Number} timeOut - Duration in ms for time out.
-     * @param {Array} keyList - List of acceptable response keys.
-     */
-    set_config(timeout, buttonlist, visible) {
-        // Set mouse properties.          
-        this.timeout = timeout;
-        this.buttonlist = buttonlist;
-        this.visible = visible;
-    }
-
     /** Sets the current position of the cursor. */	
     set_pos(pos) {
     }
 
     /**
      * Shows or hides the mouse cursor.		
-     * @param {Boolean} visible - If true the mouse cursor is shown.
+     * @param {Boolean} show - If true the mouse cursor is shown.
      */
-    show_cursor(visible) {
+    show_cursor(show) {
         // Set the property
-        this.visible = visible;
+        this._visible = show;
 
         // Immediately changes the visibility of the mouse cursor.	
-        if (visible === true) {
+        if (show === true) {
             // Show the mouse cursor.
-            this.experiment._runner._renderer.view.style.cursor = 'default';
+            this._experiment._runner._renderer.view.style.cursor = 'default';
         } else {
             // Set the cursor visibility to none.
-            this.experiment._runner._renderer.view.style.cursor = 'none';
-        }
-    }
-
-    /**
-     * Convert a response value to its default value (remove synoniem).
-     * @param {String} button - A response.
-     * @return {String} - Default value of the response.
-     */
-    synonyms(button) {
-        if (typeof button !== 'undefined') {
-            for (var i = 0; i < this.SYNONIEM_MAP.length; i++) {
-                for (var j = 0; j < this.SYNONIEM_MAP[i].length; j++) {
-                    if (this.SYNONIEM_MAP[i][j] == button) {
-                        return this.SYNONIEM_MAP[i];
-                        break;
-                    }
-                }
-            }
-        } else {
-            return null;
+            this._experiment._runner._renderer.view.style.cursor = 'none';
         }
     }
 } 

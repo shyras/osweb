@@ -1,5 +1,4 @@
 import filbert from 'filbert';
-
 import PythonMath from './python_math.js';
 import PythonOpenSesame from './python_opensesame.js';
 import PythonRandom from './python_random.js';
@@ -24,9 +23,10 @@ export default class PythonParser {
         // Definition of private properties.
         this._classes = {}; // Accessible classes within the script code.
         this._function_stack = []; // Function call stack.   
+        this._global_return_value = null; // Global return value for blocking calls.
         this._inline_script = null; // Parent inline_script item.
         this._node = null; // Current active node.  
-        this._global_return_value = null; // Global return value for blocking calls.
+        this._onConsole = null;
         this._stack = 0; // Stack counter (hack to precent stack overflow).
         this._statement = null; // process one statement or an script.
         this._status = 0; // Status of the walker.
@@ -42,6 +42,11 @@ export default class PythonParser {
         this._variables['pool'] = this._runner._pool;
         this._variables['var'] = this._runner._experiment.vars;
 
+        // Set the console handler.
+        if (this._runner._onConsole !== null) {
+            this._onConsole = this._runner._onConsole; 
+        }
+        
         // Initialize internal libraries to the interpreter.
         this.python_math._initialize();
         this.python_opensesame._initialize();
@@ -67,13 +72,11 @@ export default class PythonParser {
                     locations: locations,
                     ranges: ranges});
                 return ast;
-            } 
-            catch (e) {
+            } catch (e) {
                 this._runner._debugger.addError('Script parsing error: ' + e.message);
                 return null;
             }
-        } 
-        else {
+        } else {
             return null;
         } 
     }
@@ -88,13 +91,11 @@ export default class PythonParser {
 
         if ((items[0] === '__pythonRuntime') && (items[1] === 'imports')) {
             return this._variables[items[2]];
-        }
-        else {
+        } else {
             // Return the object context
             if (this._variables[items[0]] !== undefined) {
                 return this._variables[items[0]];
-            }
-            else {
+            } else {
                 return window[items[0]];
             }
         }     
@@ -115,8 +116,7 @@ export default class PythonParser {
             if (items[1] === 'imports') {
                 var import_lib = filbert.pythonRuntime.imports[items[2]];
                 return import_lib[items[3]];
-            }
-            else {
+            } else {
                 var default_lib = filbert.pythonRuntime[items[1]];
                  return default_lib[items[2]];
             }    
@@ -125,17 +125,14 @@ export default class PythonParser {
             if (this._variables[items[0]] !== undefined) {
                 if (items.length === 1) {
                     return this._variables[items[0]];
-                }
-                else {
+                } else {
                     return this._variables[items[0]][items[1]];
                 }
-            } 
-            else {
+            } else {
                 if (window[items[0]] !== undefined) {
                     if (items.length === 1) {
                         return window[items[0]];
-                    }
-                    else {
+                    } else {
                         return window[items[0]][items[1]];
                     }
                 }    
@@ -158,32 +155,34 @@ export default class PythonParser {
                     if (items.length === 1) {
                         if (this._variables[items[0]] !== undefined) {
                             return this._variables[items[0]];
-                        }    
-                        else {
+                        } else {
                             return window[items[0]];
                         }    
-                    }
-                    else {
+                    } else {
                         if (items[0].indexOf('__filbertRight') !== -1) {
                             if (items[1].indexOf('__filbertIndex') !== -1) {
                                 var container = this._variables[items[0]];
                                 var index = this._variables[items[1]];
                                 return container[index];
-                            }
-                            else { 
+                            } else { 
                                 if (this._variables[items[0]] !== undefined) {
                                     return this._variables[items[0]][items[1]];
-                                }
-                                else {
+                                } else {
                                     return window[items[0]][items[1]];
                                 }
                             } 
-                        } 
-                        else {
+                        } else if (items[0] === '__pythonRuntime') {
+                            if (items[1] === 'imports') {
+                                var import_lib = filbert.pythonRuntime.imports[items[2]];
+                                return import_lib[items[3]];
+                            } else {
+                                var default_lib = filbert.pythonRuntime[items[1]];
+                                return default_lib[items[2]];
+                            }    
+                        } else {
                             if (this._variables[items[0]] !== undefined) {
                                 return this._variables[items[0]][items[1]];
-                            }
-                            else {
+                            } else {
                                 return window[items[0]][items[1]];
                             }
                         } 
@@ -209,16 +208,13 @@ export default class PythonParser {
         if (items.length === 1) {
             if (window[items[0]] !== undefined) {
                 window[items[0]] = value; 
-            }
-            else {
+            } else {
                 this._variables[items[0]] = value; 
             }
-        }
-        else {
+        } else {
             if (window[items[0]] !== undefined) {
                 window[items[0]][items[1]] = value;
-            }
-            else {
+            } else {
                 this._variables[items[0]][items[1]] = value;
             }
         }
@@ -261,8 +257,7 @@ export default class PythonParser {
                     
             // Return to the processor.
             this._process_nodes();
-        } 
-        else {
+        } else {
             // Redefine the return values.
             for (var i = 0; i < this._node.return_values.length; i++) {
                 this._node.return_values[i] = this._get_element_value(this._node.return_values[i]);
@@ -394,8 +389,7 @@ export default class PythonParser {
                     case '%': 
                         if ((typeof left === 'number') && (typeof right === 'number')) {
                             return_value.value = left % right;
-                        }
-                        else {
+                        } else {
                             return_value.value = left.replace(/%s/g, right);
                         }
                         break;
@@ -430,8 +424,7 @@ export default class PythonParser {
                     
             // Return to the processor.
             this._process_nodes();
-        } 
-        else {
+        } else {
             // Reset node index and return to the parent node.
             if (this._node.break === true) {
                 this._node.break = false;
@@ -472,8 +465,7 @@ export default class PythonParser {
 
                     // Return to the node processessor.
                     this._process_nodes();
-                } 
-                else {
+                } else {
                     // Set parent node.
                     this._node.status = 1;
                     this._set_node(this._node.callee);
@@ -499,15 +491,23 @@ export default class PythonParser {
                     // Adjust the status to special.
                     this._node.status = 2;
                 
+                    // Check the context.
+                    if (typeof context === 'undefined') {
+                        context = this;
+                    } 
+
                     // Execute the blocking call.
                     caller.apply(context, tmp_arguments);
-                }            
-                else {
+                } else {
+                    // Check the context.
+                    if (typeof context === 'undefined') {
+                        context = this;
+                    } 
+
                     // Execute the call, check first for internal function call.
                     if (this._node.callee.type === 'FunctionExpression') {
                         return_value = {type: 'literal', value: caller};
-                    }
-                    else {
+                    } else {
                         return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)};
                     }
 
@@ -558,8 +558,7 @@ export default class PythonParser {
 
             // Return to the node processor.
             this._process_nodes();
-        }
-        else {
+        } else {
             // Set parent node.
             this._node.status = 0;
             this._node = this._node.parent;
@@ -602,8 +601,7 @@ export default class PythonParser {
                         
                     // Return to the node processessor.
                     this._process_nodes();
-                }    
-                else {
+                } else {
                     // Range has ended.
                     this._node.status = 0;
                     this._node.return_values = [];
@@ -663,8 +661,7 @@ export default class PythonParser {
                     // Execute the body.
                     this._set_node(this._node.body);
                     this._process_nodes();
-                }
-                else {
+                } else {
                     this._node.index = 0;
                     this._node.status = 0;
                     this._node.return_values = [];
@@ -743,15 +740,13 @@ export default class PythonParser {
 
                     // Return to the node processor.
                     this._process_nodes();
-                }
-                else if (this._node.alternate !== null) {
+                } else if (this._node.alternate !== null) {
                     this._node.status = 2;
                     this._set_node(this._node.alternate);
 
                     // Return to the node processor.
                     this._process_nodes();
-                }
-                else {
+                } else {
                     this._node.status = 2;
                     this._process_nodes();
                 }
@@ -890,8 +885,7 @@ export default class PythonParser {
 
                 // Return to the node processessor.
                 this._process_nodes();
-            } 
-            else {
+            } else {
                 // Set parent node.
                 this._node.status = 1;
                 this._set_node(this._node.callee);
@@ -899,8 +893,7 @@ export default class PythonParser {
                 // Return to the node processor.
                 this._process_nodes();
             }
-        }
-        else {
+        } else {
             // Get the caller and context element. 
             var return_value = this._node.return_values.pop();
             var caller = this._get_element(return_value);    
@@ -940,8 +933,7 @@ export default class PythonParser {
                     
             // Return to the processor.
             this._process_nodes();
-        } 
-        else {
+        } else {
             // Change status and end the running process.            
             this._node.index = 0;
             this._status = 2;
@@ -997,8 +989,7 @@ export default class PythonParser {
 
             // Return to the node processor.
             this._process_nodes();
-        }
-        else {
+        } else {
             var return_value = {type: 'literal'};
 
             // process the operator.
@@ -1035,8 +1026,7 @@ export default class PythonParser {
 
             // Return to the node processor.
             this._process_nodes();
-        }
-        else {
+        } else {
             // Process the init value.
             switch (this._node.operator) {
                 case '++' : 
@@ -1065,8 +1055,7 @@ export default class PythonParser {
         
             // Return to the processor.
             this._process_nodes();
-        } 
-        else
+        } else
         {    
             // Reset node index and return to the parent node.
             this._node.index = 0;
@@ -1128,8 +1117,7 @@ export default class PythonParser {
                     this._node.return_values = [];
                     this._node = this._node.parent;
                     this._process_nodes();            
-                }
-                else {
+                } else {
                     // Process object.
                     this._node.status = 1;
                     this._set_node(this._node.test);
@@ -1150,8 +1138,7 @@ export default class PythonParser {
 
                     // Return to the node processor.
                     this._process_nodes();
-                }
-                else {
+                } else {
                     // Set parent node.
                     this._node.status = 0;
                     this._node.return_values = [];
@@ -1168,13 +1155,11 @@ export default class PythonParser {
         if (this._statement === null) {
             // Script processing.
             this._process_nodes_jump();
-        }
-        else {
+        } else {
             if (this._node === this._statement) {
                 // Return the result value of the expression.
                 return (this._node.body[0].return_values[0].value);
-            }
-            else {
+            } else {
                 // Statement processing.
                 this._process_nodes_timeout();
             }
@@ -1193,8 +1178,7 @@ export default class PythonParser {
             setTimeout(function() { 
                 this._process_nodes_timeout();
             }.bind(this),1);
-        }
-        else {
+        } else {
             // Process the nodes without a timeout.
             this._process_nodes_timeout();
         }

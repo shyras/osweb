@@ -28,7 +28,7 @@ export default class TouchResponse extends MouseResponse {
         // Resets all item variables to their default value.
         this.vars._ncol = 2;
         this.vars._nrow = 1;
-    };
+    }
 
     /** Implements the prepare phase of an item. */
     prepare() {
@@ -37,7 +37,7 @@ export default class TouchResponse extends MouseResponse {
 
         // Inherited.
         super.prepare();
-    };
+    }
 
     /**
      * Process a mouse click response.
@@ -48,12 +48,12 @@ export default class TouchResponse extends MouseResponse {
         this.experiment._start_response_interval = this.sri;
         this.experiment._end_response_interval = retval.rtTime;
         this.experiment.vars.response = retval.resp;
-        this.synonyms = this._mouse.synonyms(this.experiment.vars.response);
+        this.synonyms = this._mouse._synonyms(this.experiment.vars.response);
         this.experiment.vars.cursor_x = retval.event.clientX;
         this.experiment.vars.cursor_y = retval.event.clientY;
 
         var rect = this._runner._renderer.view.getBoundingClientRect();
-        if (this.experiment.vars.uniform_coordinates == 'yes') {
+        if (this.experiment.vars.uniform_coordinates === 'yes') {
             this._x = retval.event.clientX - rect.left;
             this._y = retval.event.clientY - rect.top;
             //this._x = pRetval.event.clientX - rect.left + (this.experiment.vars.width / 2);

@@ -1,4 +1,5 @@
 import filbert from 'filbert';
+
 /** Class implementing a python string library. */
 export default class PythonString {
     /**
@@ -14,12 +15,15 @@ export default class PythonString {
     _initialize() {
     }
     
+    /** Import 'capitalize' function for osweb script. */
     capitalize() {
     }
 
+    /** Import 'center' function for osweb script. */
     center(width, fillchar) {
     }
 
+    /** Import 'upper' function for osweb script. */
     upper() {
     }
 }

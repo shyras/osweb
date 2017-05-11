@@ -1,9 +1,9 @@
+import Sketchpad from './sketchpad.js';
+
 /**
  * Class representing a feedback item.
  * @extends Sketchpad
  */
-import Sketchpad from './sketchpad.js';
-
 export default class Feedback extends Sketchpad {
     /**
      * Create a feedback which show feedback info to the subhect.
@@ -36,6 +36,7 @@ export default class Feedback extends Sketchpad {
         // Inherited.
         super.reset();
         
+        // Reset the variables.
         this.vars.reset_variables = 'yes';
     }
 

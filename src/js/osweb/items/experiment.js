@@ -1,45 +1,31 @@
+import Item from './item.js';
+import Canvas from '../backends/canvas.js';
+import Log from '../backends/log';
+import { constants } from '../system/constants.js';
+import { VERSION_NAME, VERSION_NUMBER } from '../index.js';
+
 /**
  * Class representing an Experiment item. 
  * @extends Item
  */
-import Item from './item.js';
-import Canvas from '../backends/canvas.js';
-import Log from '../backends/log';
-
-import {
-	constants
-} from '../system/constants.js';
-import {
-	VERSION_NAME,
-	VERSION_NUMBER
-} from '../index.js';
-
 export default class Experiment extends Item {
-	/** The experiment class defines the starting point for an expriment. */
-	constructor(experiment, name, script, poolFolder, experimentPath,
-		fullScreen, autoResponse, logFile, subjectNr, workspace,
-		resources, heartbeatInterval) {
+	/** The experiment class defines the starting point for an experiment. */
+	constructor(experiment, name, script) {
 		// Inherited.
 		super(experiment, name, script)
 
-		// Set the optional arguments
-		logFile = (typeof logFile === 'undefined') ? null : logFile;
+		// Create and set private properties. 
+		this._canvas = new Canvas(this);
+		this._currentCanvas = this._canvas;
+		this._log = new Log(this);
+		this._scale_x = 1; // Scaling of the canvas for fullscreen mode.
+		this._scale_y = 1; // Scaling of the canvas for fullscreen mode.
 
 		// Create and set public properties. 
 		this.debug = this._runner._debugger.enabled;
 		this.items = this._runner._itemStore;
-		this.logfile = logFile;
 		this.pool = this._runner._pool;
-
-		// Create and set private properties. 
-		this._canvas = new Canvas(this);
-		this._scale_x = 1; // Scaling of the canvas for fullscreen mode.
-		this._scale_y = 1; // Scaling of the canvas for fullscreen mode.
-		this._currentCanvas = this.canvas;
-		this._log = new Log(this, this.logfile);
-		this._pythonWorkspace = this._runner._pythonWorkspace;
-		this._syntax = this._runner._syntax;
-
+	
 		// Set default variables
 		this.vars.start = 'experiment';
 		this.vars.title = 'My Experiment';
@@ -89,7 +75,7 @@ export default class Experiment extends Item {
 	set_subject(pNr) {
 		// Sets the subject number and parity (even/ odd). 
 		this.vars.subject_nr = pNr;
-		if ((pNr % 2) == 0) {
+		if ((pNr % 2) === 0) {
 			this.vars.subject_parity = 'even';
 		} else {
 			this.vars.subject_parity = 'odd';
@@ -171,9 +157,10 @@ export default class Experiment extends Item {
 
 	/** Open a connection to the log file. */
 	init_log() {
-		this._log.open(this.logfile);
+		this._log.open();
 	}
 
+	/** Event handler for external data retrieval. */
 	onLog(data){
 		// Function to be overwritten by external handler
 	}
@@ -193,7 +180,6 @@ export default class Experiment extends Item {
 				this.vars.datetime = new Date().toString();
 				this.vars.opensesame_version = VERSION_NUMBER;
 				this.vars.opensesame_codename = VERSION_NAME;
-				this.running = true;
 				this.init_clock();
 				this.init_display();
 				this.init_log();
@@ -221,9 +207,6 @@ export default class Experiment extends Item {
 
 	/** Ends an experiment. */
 	end() {
-		// Disable the run toggle.
-		this.running = false;
-
 		// Close the log file.
 		this._log.close();
 
@@ -231,3 +214,4 @@ export default class Experiment extends Item {
 		this._runner._finalize();
 	}
 }
+ 

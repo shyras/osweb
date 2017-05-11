@@ -1,10 +1,10 @@
+import BaseElement from './base_element.js';
+import Styles from '../backends/styles.js';
+
 /**
  * Class representing an arrow element.
  * @extends BaseElement
  */
-import BaseElement from './base_element.js';
-import Styles from '../backends/styles.js';
-
 export default class Circle extends BaseElement {
     /**
      * Create an experiment item which controls the OpenSesame experiment.

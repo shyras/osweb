@@ -1,22 +1,16 @@
 import * as PIXI from 'pixi.js';
-
-import {
-    constants
-} from './constants.js'
-
+import { constants } from './constants.js'
 import Debugger from './debugger.js';
 import Events from './events.js';
 import Parameters from './parameters.js';
 import Screen from './screen.js';
 import Session from './session.js';
 import Transfer from './transfer.js';
-
 import ItemStack from '../classes/item_stack.js';
 import ItemStore from '../classes/item_store.js';
 import PythonWorkspace from '../classes/python_workspace.js';
 import FilePoolStore from '../classes/file_pool_store.js';
 import Syntax from '../classes/syntax.js';
-
 import PythonParser from '../python/python.js';
 import Experiment from '../items/experiment.js';
 
@@ -28,7 +22,7 @@ export default class Runner {
         this._confirm = null; // Optionale confirm dialog function.
         this._container = null; // HTML: The container (div) element. 
         this._data = null // Experiment result data.
-        this._experiment = null; // The JSON experiment container.     
+        this._experiment = null; // The experiment container.     
         this._fullScreen = false; // Full screen toggle mode.
         this._name = 'noname.exp'; // Name of the experiment which is run.
         this._onConsole = null; // Event handler for processing print messages. 
@@ -131,7 +125,9 @@ export default class Runner {
         // Create the experiment item. 
         this._experiment = new Experiment(this, this._name, this._script);
         this._experiment.from_string(this._script);
-        if(this._onLog){
+        
+        // Set the onlog event handler (if defined).
+        if (this._onLog) {
             this._experiment.onLog = this._onLog;
         }
 
@@ -161,8 +157,8 @@ export default class Runner {
         this._debugger._finalize();
 
         // Clear the item store and file pool.
-        this._itemStore.clean_up();
-        this._pool.clean_up();
+        this._itemStore._clean_up();
+        this._pool._clean_up();
 
         // Exit the runner.
         this._exit();
@@ -247,7 +243,7 @@ export default class Runner {
     }
 
     /**
-     * Frees the PIXI and zebra context to free up memory, and work better if
+     * Frees the PIXI context to free up memory, and work better if
      * there are multiple occurences of osweb running on the same page.
      * @return {void}
      */

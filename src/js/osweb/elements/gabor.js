@@ -1,10 +1,9 @@
+import BaseElement from './base_element.js';
+
 /**
  * Class representing an arrow element.
  * @extends BaseElement
  */
-
-import BaseElement from './base_element.js';
-
 export default class Gabor extends BaseElement {
     /**
      * Create an experiment item which controls the OpenSesame experiment.

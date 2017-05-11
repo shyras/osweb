@@ -246,7 +246,7 @@ export default class Events {
             // Process the event.
             this._processMouseEvent(event, 0);
         }
-    };
+    }
 
     /**
      * Process and convert mouse events into response objects.
@@ -339,11 +339,9 @@ export default class Events {
             break;    
             case constants.TIMER_PAUSE:
                 // Do nothing in the loop
-                console.log('setting osweb in pause mode.');
             break;
             case constants.TIMER_RESUME:
                 // Do nothing in the loop
-                console.log('resuming osweb from pause mode.');
             break;
             case constants.TIMER_BREAK:
                 // Adjus the status. 

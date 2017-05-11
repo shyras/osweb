@@ -78,12 +78,12 @@
 		// Create the context container for the experiment definitions.
 		var context = {
 			confirm: confirm,
-			debug: true,
+			debug: false,
 			fullScreen: false,
 			introClick: true,
 			introScreen: true,
 			name: 'test',
-			onConsole: null,
+			onConsole: onConsoleHandler,
 			onFinished: onFinishedHandler,
 			onLog: onLogHandler,
 			prompt: prompt,
