@@ -182,54 +182,6 @@ export default class Runner {
         }
     }
 
-    /**
-     * Requests fullscreen mode from runner
-     * @return {void} 
-     */
-    enterFullscreen() {
-        this._fullscreen = true;
-        this._screen._fullScreenInit();
-    }
-
-    /**
-     * Exit fullscreen mode from runner
-     * @return {void} 
-     */
-    exitFullscreen(){
-        this._fullscreen = true;
-        this._screen._fullScreenExit();
-    }
-
-    /**
-     * Sets the pixel dimensions of the canvas. It does not change the actual
-     * size of the canvas itself
-     * @param {int} width  The target width
-     * @param {int} height The target height
-     * @return {void}
-     */
-    setPixelDimensions(width, height){
-        // First check if height and width are passed and are numeric.
-        // If not fall back to experiments width and height.
-        // If that doesn't work, fall back to 1024x768 resolution.
-        try{
-            exp_width = parseInt(this._experiment.vars.width);
-            exp_height = parseInt(this._experiment.vars.height);
-        }catch(e){
-            console.warn("Could not determine experiment dimensions: " + e.message);
-            exp_width = 800;
-            exp_height = 600;
-        }
-
-        width = parseInt(height) || exp_width;
-        height = parseInt(height) || exp_height;
-
-        try{
-            this._renderer.resize(width, height);
-        }catch(e) {
-            this.debugger.addError('Could not resize renderer: ' + e.message);
-        }
-    }
-
     /** Exit a running experiment. */
     exit() {
         // Set state of the event system to break.
@@ -240,14 +192,5 @@ export default class Runner {
     run(context) {
         // Build the experiment.
         this._setupContext(context);
-    }
-
-    /**
-     * Frees the PIXI context to free up memory, and work better if
-     * there are multiple occurences of osweb running on the same page.
-     * @return {void}
-     */
-    cleanUp(){
-        this._renderer.destroy();
     }
 }

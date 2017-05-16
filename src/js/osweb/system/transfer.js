@@ -26,7 +26,7 @@ export default class Transfer {
                 this._readOsexpFromFile(source);
             } else {
                 // Check if the source is a script string.
-                if(!this._processScript(source)){
+                if (!this._processScript(source)) {
                     // Server source, check if the url is valid
                     this._readOsexpFromServer(source);
                 }
@@ -146,9 +146,9 @@ export default class Transfer {
             this._runner._script = contents;
             
             // Start buiding the experiment.
-            this._runner._build();
+            this._readWebFonts();
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -161,7 +161,6 @@ export default class Transfer {
             var item = {
                 data: null,
                 folder: this._filePool[this._counter].filename.match(/(.*)[\/\\]/)[1]||'',
-                //folder: this._filePool[this._counter].filename,
                 name: this._filePool[this._counter].filename.replace(/^.*[\\\/]/, ''),
                 size: this._filePool[this._counter].length,
                 type: 'undefined'
@@ -204,15 +203,40 @@ export default class Transfer {
         {
             // Clear the variables.
             this._filePool = null;    
-            
-            // All files have been process, start the experiment process.
-            this._runner._screen._updateProgressBar(100);
-            this._runner._screen._updateIntroScreen('Building experiment structure.');
 
-            // Continue the experiment build.
-            this._runner._build();
+            // Continue loading webfonts.
+            this._readWebFonts();
         }    
     }
+
+    /** Read webfonts */
+    _readWebFonts() {    
+        // Update the introscreen
+        this._runner._screen._updateProgressBar(100);
+        this._runner._screen._updateIntroScreen('Retrieving required webfonts.');
+    
+        // Load the required fonts using webfont.
+        WebFont.load({
+            google: {
+                families: ['Droid Sans','Droid Serif','Droid Sans Mono'],
+                urls: ['//fonts.googleapis.com/css?family=Droid Sans',
+                       '//fonts.googleapis.com/css?family=Droid Serif',
+                       '//fonts.googleapis.com/css?family=Droid Sans Mono']
+	        },
+            active: function() {
+                this._readWebFontsDone();
+            }.bind(this)
+        });
+    }   
+
+    /** Finished reading webfonts */
+    _readWebFontsDone() {    
+        // Update the introscreen
+        this._runner._screen._updateIntroScreen('Building experiment structure.');
+
+        // Continue the experiment build.
+        this._runner._build();
+    }    
 
     /**
      * Writing experiment result data to a location.

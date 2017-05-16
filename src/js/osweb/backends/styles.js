@@ -4,15 +4,15 @@ export default class Styles {
     constructor() {
         // Set class private properties.
         this._background_color = 0x000000;
-        this._bidi = false
-        this._color = 0xFFFFFF;
+        this._bidi = false;
+        this._color = 'white';
         this._fill = false;
-        this._font_bold = false;
-        this._font_family = 'Sans serif';
+        this._font_bold = true;
+        this._font_family = 'Arial';
         this._font_italic = false;
-        this._font_size = 12;
+        this._font_size = 24;
         this._font_underline = false;
-        this._html = true;
+        this._html = false;
         this._penwidth = 1;
 
         // Set constant default colors.

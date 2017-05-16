@@ -21,18 +21,6 @@ export default class Canvas {
         this._height = this.experiment._runner._renderer.height; // Height of the HTML canvas used for drawing.
         this._styles = new Styles(); // The style container.
         this._width = this.experiment._runner._renderer.width; // Width of the HTML canvas used for drawing. 
-
-        // Initialize a new styles object to store the default styles in.
-        this._styles.background_color = 'black';
-        this._styles.bidi = false;
-        this._styles.color = 'white'; // Foreground color of canvas.
-        this._styles.fill = false; // If true fill mode is used.
-        this._styles.font_bold = true;
-        this._styles.font_family = 'Arial';
-        this._styles.font_italic = false;
-        this._styles.font_size = 24;
-        this._styles.font_underline = false;
-        this._styles.penwidth = 1; // Default penwidth for drawing shapes.  
     }
 
     /**
@@ -847,6 +835,9 @@ export default class Canvas {
         // Set the scaling.
         this._container.scale.x = this.experiment._scale_x;
         this._container.scale.y = this.experiment._scale_y;
+        
+        // Set renderer baxckground and render the content.
+        this.experiment._runner._renderer.backgroundColor = this._styles._background_color;
         this.experiment._runner._renderer.render(this._container);
 
         // Return the current time.
@@ -956,6 +947,15 @@ export default class Canvas {
                 fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
                 fill: element_style.color
             };
+            console.log('b');
+            console.log(text_style);
+
+            /* var text_style = {
+                fontFamily: element_style.font_family,
+                fontSize: element_style.font_size,
+                fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
+                fill: element_style.color
+            }; */
             var text_element = new PIXI.Text(text, text_style);
 
             if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
