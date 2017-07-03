@@ -21,7 +21,6 @@ import osweb from './js/osweb/index.js';
 
 if (typeof window !== 'undefined') {
 	window.alertify = require('alertifyjs');
-	window.screenfull = require('screenfull');
 	window.osweb = osweb;
 	window.osweb.printVersionInfo();
 }
