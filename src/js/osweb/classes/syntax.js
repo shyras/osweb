@@ -104,11 +104,10 @@ export default class Syntax {
      * Evaluate a given text with optional variable definitions.
      * @param {Boolean|Number|Object|String} txt - The text to evaluate.
      * @param {Object} vars - The variables used for evaluation.
-     * @param {Boolean} roundFloat - The variables used for evaluation.
-     * @param {Object} variable - The variables used for evaluation.
+     * @param {Boolean} addQuotes - The add quotes toggle.
      * @return {Boolean|Number|Object|String} - The result of the evaluated text.
      */
-    eval_text(text, vars, roundFloat) {
+    eval_text(text, vars, addQuotes) {
         // if pTxt is an object then it is a parsed python expression.
         if (isObject(text)) {
             return this._runner._pythonParser._run_statement(text);
@@ -122,17 +121,17 @@ export default class Syntax {
         and replaces them with variable values as found in OpenSesame's var store */
         let result = text.replace(/\[(\w+|=.+)\]/g, (match, content, offset, string) => {
             // Check if the current match is escaped, and simply return it untouched if so.
-            if(string[offset-1] == "\\" && string[offset-2] != "\\") return match;
+            if (string[offset-1] === "\\" && string[offset-2] !== "\\") return match;
 
             // Check if contents of [] start with an =. In this case they should be
             // evaluated as a Python statement
-            if(content[0] == '='){
+            if (content[0] === '=') {
                 // Convert python statement to ast tree and run it.
-                const ast = this._runner._pythonParser._parse(content.substring(1,content.length));
+                const ast = this._runner._pythonParser._parse(content.substring(1, content.length));
                 return this._runner._pythonParser._run_statement(ast);
-            }else{
+            } else {
                 try {
-                    if ((typeof vars === 'undefined') || (typeof vars[content] === 'undefined')) {
+                    if ((vars !== 'null') || (typeof vars[content] === 'undefined')) {
                         var value = this._runner._experiment.vars[content];
                     } else {
                         var value = vars[content];
@@ -140,12 +139,19 @@ export default class Syntax {
                 } catch (err) {
                     this._runner._debugger.addError(`Could not find variable '${content}': ${err.message}`);
                 }
-
-                // Temporyary hack for string types.
-                return isString(value)?`"${value}"`:value;
+                
+                if (addQuotes === true) {
+                    // Temporyary hack for string types.
+                    return isString(value) ? `"${value}"` : value;
+                } else {
+                    return value;    
+                }
             }
         });
         
+        // Check if contenst has additional quotes
+        console.log(result);
+
         return this.strip_slashes(result);
     }
 

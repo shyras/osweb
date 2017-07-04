@@ -30,7 +30,7 @@ export default class VarStore {
         // Gets an experimental variable.
         if (variable in this) {
             if (typeof this[variable] == 'string') {
-                value = this._item.syntax.eval_text(this[variable]);
+                value = this._item.syntax.eval_text(this[variable], null, true);
             } else {
                 value = this[variable];
             }
@@ -38,7 +38,7 @@ export default class VarStore {
         // If value is not found locally, look in experiment object.
         if (value == null && this._parent && variable in this._parent){
             if (typeof this._parent[variable] == 'string') {
-                value = this._item.syntax.eval_text(this._parent[variable]);
+                value = this._item.syntax.eval_text(this._parent[variable], null, true);
             } else {
                 value = this._parent[variable];
             } 

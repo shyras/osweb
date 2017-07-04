@@ -22,6 +22,7 @@ export default class Events {
         this._responseType = constants.RESPONSE_NONE; // Set type of response (0 = none, 1 = keyboard, 2 = mouse, 3 = sound). 
         this._soundHasEnded = false; // Sound play is finished.
         this._state = constants.TIMER_NONE; // Current status of the runner.  
+        this._statePrevious = constants.TIMER_NONE; // Previous state, used when pausing experiment.
         this._timeHandler = null; // Timing event handler.
         this._timeOut = -1; // Duration before timeout occures. 
         this._timeStamp = -1; // Moment of update checking.
@@ -151,8 +152,15 @@ export default class Events {
             'rtTime': this._runner._experiment.clock.time()
         }; 
 
-        // Only select this event when the collection mode is set for this.
-        if ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES)) {
+        // Check for esc key to pause the experiment.
+        if ((event.keyCode === 27) && (this._state !== constants.TIMER_PAUSE)) {
+            // Set system to paused.
+            this._statePrevious = this._state;
+            this._state = constants.TIMER_PAUSE;
+
+            // Show the pause screen.
+            this._runner._screen._showPauseScreen();
+        } else if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
             // Process the event.
             this._processKeyboardEvent(event, 1);
         } 
@@ -164,7 +172,7 @@ export default class Events {
      */
     _keyUp(event) {
         // Only select this event when the collection mode is set for this.
-        if ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES)) {
+        if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
             // Process the event.
             this._processKeyboardEvent(event, 0);
         }  
@@ -230,7 +238,7 @@ export default class Events {
         }; 
 
         // Only select this event when the collection mode is set for this.
-        if ((this._mousePressMode === constants.PRESSES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES)) {
+        if ((this._state === constants.TIMER_WAIT) && ((this._mousePressMode === constants.PRESSES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES))) {
             // Process the event.
             this._processMouseEvent(event, 1);
         }
@@ -242,7 +250,7 @@ export default class Events {
      */
     _mouseUp(event) {
         // Only select this event when the collection mode is set for this.
-        if ((this._mousePressMode === constants.RELEASES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES)) {
+        if ((this._state === constants.TIMER_WAIT) && ((this._mousePressMode === constants.RELEASES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES))) {
             // Process the event.
             this._processMouseEvent(event, 0);
         }

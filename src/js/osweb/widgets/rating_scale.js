@@ -191,7 +191,7 @@ export default class RatingScaleWidget extends Widget {
                 this._drawCheckBox(_x, cy - 5);
 
                 // Update the text.
-                var text = this.form.experiment.syntax.eval_text(this._nodes[i]);
+                var text = this.form.experiment.syntax.eval_text(this._nodes[i], null, false);
 
                 // Create the text label;
                 this._drawText(_x, cy - 8, this._nodes[i], true);
@@ -213,7 +213,7 @@ export default class RatingScaleWidget extends Widget {
                 this._drawCheckBox(cx - 5, _y);
 
                 // Update the text.
-                var text = this.form.experiment.syntax.eval_text(this._nodes[i]);
+                var text = this.form.experiment.syntax.eval_text(this._nodes[i], null, false);
 
                 // Create the text label;
                 this._drawText(cx - 8, _y, this._nodes[i], false);

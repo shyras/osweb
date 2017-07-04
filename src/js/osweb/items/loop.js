@@ -246,7 +246,7 @@ export default class Loop extends Item {
             if (this._break_if !== null) {
                 this.python_workspace['this'] = this;
 
-                var break_if = this.syntax.eval_text(this._break_if);
+                var break_if = this.syntax.eval_text(this._break_if, null, true);
 
                 if (this.python_workspace._eval(break_if) === true) {
                     exit = true;

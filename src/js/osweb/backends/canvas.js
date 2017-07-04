@@ -60,13 +60,12 @@ export default class Canvas {
      */
     _containsHTML(str) {
         let doc;
-        try{
+        try {
             doc = new DOMParser().parseFromString(str, "text/html");
             return Array.from(doc.childNodes).some(node => node.nodeType === 1);
-        }catch(e){
+        } catch(e) {
             console.error("Could not parse DOM: " + e.message);
         }
-        
     }
 
     /** Exit the display and return to default settings. */
@@ -261,6 +260,7 @@ export default class Canvas {
             case 3:
                 // PIXI - Create the text style element.  
                 var text_style = {
+                    fontFamily: element_style.font_family,
                     fontStyle: (element_style.font_italic === true) ? 'italic' : 'normal',
                     fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
                     fontSize: element_style.font_size,
@@ -947,15 +947,6 @@ export default class Canvas {
                 fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
                 fill: element_style.color
             };
-            console.log('b');
-            console.log(text_style);
-
-            /* var text_style = {
-                fontFamily: element_style.font_family,
-                fontSize: element_style.font_size,
-                fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
-                fill: element_style.color
-            }; */
             var text_element = new PIXI.Text(text, text_style);
 
             if ([1, '1', true, 'yes'].indexOf(center) !== -1) {

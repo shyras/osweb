@@ -22,7 +22,7 @@ export default class PythonWorkspace {
             return bytecode;
         } else if (typeof bytecode === 'string') {
             // Open sesame script, first check for parameter values.   
-            bytecode = this._runner._syntax.eval_text(bytecode);
+            bytecode = this._runner._syntax.eval_text(bytecode, null, true);
 
             //Evaluate the expression.
             var eval_string = this._runner._syntax.remove_quotes(bytecode);

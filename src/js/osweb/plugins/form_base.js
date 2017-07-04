@@ -122,7 +122,7 @@ export default class FormBase extends Item {
                       var varName = String(this._widgets[i][j]).substr(0, String(this._widgets[i][j]).indexOf('='));
                     var varValue = String(this._widgets[i][j]).substring(String(this._widgets[i][j]).indexOf('=') + 1, String(this._widgets[i][j]).length);
                     kwdict[varName] = this.syntax.remove_quotes(varValue);
-                    kwdict[varName] = this.syntax.eval_text(kwdict[varName], this.vars);
+                    kwdict[varName] = this.syntax.eval_text(kwdict[varName], this.vars, true);
                     parameters.push(this.syntax.remove_quotes(varValue));
                 }
             }

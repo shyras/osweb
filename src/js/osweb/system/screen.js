@@ -297,5 +297,27 @@ export default class Screen {
             this._runner._renderer.render(this._introScreen);    
         }
     }
+
+    /** Show the pause screen. */
+    _showPauseScreen() {
+        // Open Sesame is running, request subject to continue of to stop.
+        if (isFunction(this._runner._confirm)) {
+            this._runner._confirm('Esc key pressed, pausing experiment.', 
+                'Please press ok the resume the experiment otherwise cancel to stop.', 
+                this._onPauseScreenConfirm.bind(this), this._onPauseScreenCancel.bind(this));
+        }
+    }    
+  
+    /** Event handler to respond to dialog ok conmfirmation. */
+    _onPauseScreenConfirm() {
+        // Restore the old state.
+        this._runner._events._state = this._runner._events._statePrevious;
+    }
+
+    /** Event handler to respond to dialog cancel confirmation. */
+    _onPauseScreenCancel() {
+        // Exit the experiment.
+        this._runner._finalize();
+    }
 }
  

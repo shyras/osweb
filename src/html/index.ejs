@@ -73,7 +73,7 @@
 		var context = {
 			confirm: confirm,
 			debug: false,
-			fullScreen: false,
+			fullScreen: true,
 			introClick: true,
 			introScreen: true,
 			name: 'test',
@@ -277,7 +277,7 @@
                 function() {
                     onCancel();
                 }.bind(this)
-            );
+            ).showModal();
 	    }
 
 		/**
@@ -290,7 +290,7 @@
  	     * @param {Object} onCancel - The cancel event.
  	     */
 	    function prompt(title, message, defaultValue, dataType, onConfirm, onCancel) {
-            alertify.prompt( 
+        	alertify.prompt( 
                 title, 
                 message, 
                 defaultValue,
@@ -300,7 +300,7 @@
                 function() {
                     onCancel();
                 }.bind(this)
-            );
+            ).showModal();
 	    }
 
  		/**

@@ -72,10 +72,10 @@ export default class ButtonWidget extends Widget {
         }
 
         // Update the text.
-        var text = this.form.experiment.syntax.eval_text(this.text);
+        var text = this.form.experiment.syntax.eval_text(this.text, null, false);
 
         // Remove additional quotes.
-        text = this.form.experiment.syntax.remove_quotes(text);
+        // text = this.form.experiment.syntax.remove_quotes(text);
 
         // Draw the text.
         this.draw_text(text);
