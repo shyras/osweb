@@ -119,7 +119,7 @@ export default class LabelWidget extends Widget {
         }
 
         // Update the text.
-        var text = this.form.experiment.syntax.eval_text(this.text, null, false);
+        var text = this.form.experiment.syntax.eval_text(this.text, this.form.item.vars, false);
 
         // Remove additional quotes.
         // text = this.form.experiment.syntax.remove_quotes(text);

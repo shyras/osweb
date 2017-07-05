@@ -80,7 +80,10 @@ export default class TextInputWidget extends Widget {
         }
 
         // Add the text_element to the container.
-        this._container.interactive = true;
+        if (this.form.item.vars.only_render === 'no') { 
+            this._container.interactive = true;
+        }       
+        
         this._container.addChild(inputField);
     }
 

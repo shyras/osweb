@@ -131,7 +131,7 @@ export default class Syntax {
                 return this._runner._pythonParser._run_statement(ast);
             } else {
                 try {
-                    if ((vars !== 'null') || (typeof vars[content] === 'undefined')) {
+                    if ((vars === null) || (typeof vars[content] === 'undefined')) {
                         var value = this._runner._experiment.vars[content];
                     } else {
                         var value = vars[content];
@@ -139,7 +139,7 @@ export default class Syntax {
                 } catch (err) {
                     this._runner._debugger.addError(`Could not find variable '${content}': ${err.message}`);
                 }
-                
+
                 if (addQuotes === true) {
                     // Temporyary hack for string types.
                     return isString(value) ? `"${value}"` : value;
@@ -150,8 +150,6 @@ export default class Syntax {
         });
         
         // Check if contenst has additional quotes
-        console.log(result);
-
         return this.strip_slashes(result);
     }
 

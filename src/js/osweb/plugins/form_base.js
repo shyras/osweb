@@ -122,7 +122,8 @@ export default class FormBase extends Item {
                       var varName = String(this._widgets[i][j]).substr(0, String(this._widgets[i][j]).indexOf('='));
                     var varValue = String(this._widgets[i][j]).substring(String(this._widgets[i][j]).indexOf('=') + 1, String(this._widgets[i][j]).length);
                     kwdict[varName] = this.syntax.remove_quotes(varValue);
-                    kwdict[varName] = this.syntax.eval_text(kwdict[varName], this.vars, true);
+                    kwdict[varName] = this.syntax.eval_text(kwdict[varName], this.form.item.vars, true);
+                    kwdict[varName] = this.syntax.remove_quotes(kwdict[varName])
                     parameters.push(this.syntax.remove_quotes(varValue));
                 }
             }
@@ -170,17 +171,15 @@ export default class FormBase extends Item {
         // Inherited.	
         super.run();
 
-        // Set the timer to form pause.
-        this.experiment._runner._events._state = constants.TIMER_FORM;
-
-        // PIXI: Set the cursor visibility to none (default).
-        this.experiment._runner._renderer.view.style.cursor = 'default';
-
         // Execute the form.
         if (this.vars.only_render === 'yes') {
+            // Render the form.
             this.form.render();
-        }    
-        else {
+
+            // Continue the process.
+            this._complete();
+
+        } else {
             this.form._exec(this.focus_widget);
         }    
     }

@@ -75,6 +75,12 @@ export default class FormWidget {
             focus_widget.focus();
         }
     
+        // Set the timer to form pause.
+        this.experiment._runner._events._state = constants.TIMER_FORM;
+
+        // PIXI: Set the cursor visibility to none (default).
+        this.experiment._runner._renderer.view.style.cursor = 'default';
+
         // Set the onset time.
         this.item.set_item_onset();
 

@@ -59,7 +59,7 @@ export default class ButtonWidget extends Widget {
     /** General drawing method for the label widget. */
     render() {
         // Set the interactive mode (if not set yet).
-        if (this._container.interactive === false) {
+        if ((this.form.item.vars.only_render === 'no') && (this._container.interactive === false)) {
             this._container.interactive = true;
             this._container.buttonMode = true;
             this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height);
