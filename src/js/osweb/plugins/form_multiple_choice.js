@@ -13,7 +13,7 @@ export default class FormMultipleChoice extends FormBase {
      */
     constructor(experiment, name, script) {
   	    // Inherited.
-	  	  super(experiment, name, script, 'form_multiple_choice' ,'A simple multiple choise item');
+        super(experiment, name, script, 'form_multiple_choice' ,'A simple multiple choise item');
     }
 
     /** Implements the complete phase of an item. */
@@ -24,6 +24,8 @@ export default class FormMultipleChoice extends FormBase {
 
     /** Implements the run phase of an item. */
     run() {
+        console.log(this);
+
         // Inherited.	
         super.run();
     }

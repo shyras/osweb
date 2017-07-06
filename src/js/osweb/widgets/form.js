@@ -1,5 +1,6 @@
 import Canvas from '../backends/canvas.js';
 import Themes from './themes.js';
+import { constants } from '../system/constants.js';
 
 /** Class representing an Form widget for showing widgets. */
 export default class FormWidget {
@@ -72,7 +73,7 @@ export default class FormWidget {
         // Enabled the focus widget.
         if (focus_widget !== null) {
             // Focus the text_input widget.
-            focus_widget.focus();
+            focus_widget.setFocus();
         }
     
         // Set the timer to form pause.

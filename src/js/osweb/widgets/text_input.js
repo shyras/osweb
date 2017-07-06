@@ -17,6 +17,7 @@ export default class TextInputWidget extends Widget {
 
         // Set the class public properties.
         this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : false;
+        this.focus = false;
         this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : true;
         this.stub = (typeof properties['stub'] !== 'undefined') ? properties['stub'] : 'Type here...';
         this.text = (typeof properties['text'] !== 'undefined') ? properties['text'] : '';
@@ -25,8 +26,10 @@ export default class TextInputWidget extends Widget {
         this.type = 'text_input';
     }
 
-    /** Focus theText area widget. */
-    focus() {
+    /** Focus the Text area widget. */
+    setFocus() {
+        // Set focus toggle.
+        this.focus = true;
     }
 
     /**
@@ -34,6 +37,7 @@ export default class TextInputWidget extends Widget {
      * @param {Object} event - The response event.
      */
     response(event) {
+        console.log(event);
         // Only respond to enter key.
         if ((event.code === 13) && (this.return_accepts === true)) {
             // Set the variable.
@@ -81,7 +85,19 @@ export default class TextInputWidget extends Widget {
 
         // Add the text_element to the container.
         if (this.form.item.vars.only_render === 'no') { 
+            console.log('interactive');
             this._container.interactive = true;
+
+            inputField.trigger()
+
+            inputField.on("keydown", function(event) { 
+                this.response(event); 
+            }.bind(this));
+
+            // Focus the input field.
+            if (this.focus === true) {
+                inputField.setFocus();
+            }    
         }       
         
         this._container.addChild(inputField);
