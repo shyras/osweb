@@ -1282,8 +1282,12 @@ export default class PythonParser {
         this._process_nodes();
         
         // Return the result value of the expression.
-        var return_value = ast_tree.body[0].return_values[0].value;
-        
+        if (ast_tree.body[0].return_values[0].type === 'identifier') {
+            var return_value = this._get_element_value(ast_tree.body[0].return_values[0])        
+        } else {
+            var return_value = ast_tree.body[0].return_values[0].value;
+        }
+
         // Clear the return value container for next cycle.
         ast_tree.body[0].return_values = [];
         

@@ -46,7 +46,7 @@ export default class Sampler extends GenericResponse {
         // Create the sample
         if (this.vars.sample !== '') {
             // Retrieve the content from the file pool.
-            this._sample = this._runner._pool[this.syntax.eval_text(this.vars.sample), null, true];
+            this._sample = this._runner._pool[this.syntax.eval_text(this.vars.sample, this.vars, false)];
             this._sampler = new SamplerBackend(this.experiment, this._sample);
             this._sampler.volume = this.vars.volume;
             this._sampler.duration = this.vars.duration;

@@ -3,7 +3,7 @@ import * as sound from 'pixi-sound';
 import { constants } from '../system/constants.js';
 
 /** Class representing a sampler. */
-export default class Sampler {
+export default class SamplerBackend {
     /**
      * Create a sampler object which controls the sampler device.
      * @param {Object} experiment - The experiment to which the sampler belongs.
@@ -33,11 +33,16 @@ export default class Sampler {
         if (source !== null) {
             // Set the sound object.  
             this._name = source.name;
-            PIXI.sound.add(source.name, {
-                src: source.data.src,
-                preload: true,
-                complete: this.experiment._runner._events._audioEnded.bind(this)
-            });
+            
+            // Check if the sourse is not already in the sound. 
+            if (PIXI.sound.exists(source.name) === false) { 
+                console.log('adding sound' + source.name);
+                PIXI.sound.add(source.name, {
+                    src: source.data.src,
+                    preload: true,
+                    complete: this.experiment._runner._events._audioEnded.bind(this)
+                });
+            }    
         }
     }
 
@@ -59,11 +64,14 @@ export default class Sampler {
         this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch;
         this.volume = (typeof volume === 'undefined') ? this.volume : volume;
 
+        console.log(this._name);
+        console.log(PIXI.sound);
+
         if (this._name !== '') {
             // Set the sound properties.
-            PIXI.sound.volume(this._name, this.volume);
-
-            // Play the actual sound.
+            //PIXI.sound.volume(this._name, this.volume);
+        
+            // Play the actual sound.   
             PIXI.sound.play(this._name);
         }
     }

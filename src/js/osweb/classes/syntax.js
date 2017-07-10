@@ -148,7 +148,7 @@ export default class Syntax {
                 }
             }
         });
-        
+
         // Check if contenst has additional quotes
         return this.strip_slashes(result);
     }

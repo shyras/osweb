@@ -47,7 +47,8 @@ export default class FormWidget {
 
         // Create the form canvas. 
         this._canvas = new Canvas(this.experiment, false);
-        
+        this._canvas._styles.background_color = experiment.vars.background;
+
         // Set the form dimensions.
         this._canvas._container.height = experiment.vars.height; 
         this._canvas._container.width = experiment.vars.width;

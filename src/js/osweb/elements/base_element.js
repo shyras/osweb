@@ -56,7 +56,8 @@ export default class BaseElement {
         var yc = this.experiment.vars.height / 2;
 
         for (var property in this.properties) {
-            var value = this.sketchpad.syntax.eval_text(this.properties[property], null, (property !== 'text'));
+            var value = this.sketchpad.syntax.eval_text(this.properties[property], null, false);
+
             if ((property == 'x') || (property == 'x1') || (property == 'x2')) {
                 value = Number(value) + xc;
             };

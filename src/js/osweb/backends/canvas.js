@@ -593,11 +593,11 @@ export default class Canvas {
         // Scale the image. 
         sprite.scale.x = scale;
         sprite.scale.y = scale;
-
+        
         // Position the image
         if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
-            sprite.x = x - ((sprite.width * scale) / 2);
-            sprite.y = y - ((sprite.height * scale) / 2);
+            sprite.x = x - (sprite.width / 2);
+            sprite.y = y - (sprite.height / 2);
         } else {
             sprite.x = x;
             sprite.y = y;
