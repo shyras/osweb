@@ -36,18 +36,17 @@ export default class TextInputWidget extends Widget {
      * Process the response for the text input widget.
      * @param {Object} event - The response event.
      */
-    response(event) {
-        console.log(event);
-        // Only respond to enter key.
-        if ((event.code === 13) && (this.return_accepts === true)) {
-            // Set the variable.
-            this.set_var(this._text_input.getValue(), this.var);
+    response(widget, event) {
+        // Set the variable.
+        widget.set_var(widget.inputField.text, widget.var);
 
+        // Only respond to enter key.
+        if ((event.keyCode === 13) && (widget.return_accepts === true)) {
             // Complete the item element.
-            if (this.form.timeout === null) {
-                this.form.item._complete();
+            if (widget.form.timeout === null) {
+                widget.form.item._complete();
             } else {
-                this.form.experiment._runner._events._currentItem._status = osweb.constants.STATUS_FINALIZE; 
+                widget.form.experiment._runner._events._currentItem._status = osweb.constants.STATUS_FINALIZE; 
             }    
         } 
     }
@@ -58,49 +57,33 @@ export default class TextInputWidget extends Widget {
      * @param {Number|String} pHtml - Toggle if the text contains html (ignored).
      */
     draw_text(text, html) {
+        // Create the background color element.
+        var rectangle = new PIXI.Graphics();
+        rectangle.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number'), 1);
+        rectangle.beginFill(this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number'));
+        rectangle.drawRect(1, 1, this._container._width - 2, this._container._height - 2);
+        rectangle.endFill();
+        rectangle.x = 0;
+        rectangle.y = 0; 
+        this._container.addChild(rectangle);
+       
         // PIXI - Create the text element  
         var text_style = {
-            fontFamily: this.form.experiment.vars.font_family,
+            fontFamily: this.form._canvas._styles.font_family,
             fontSize: this.form.experiment.vars.font_size,
             fontStyle: (this.form.experiment.vars.font_italic === 'yes') ? 'italic' : 'normal',
             fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
             fill: this.form.experiment.vars.foreground
         };
-        var inputField = new PixiTextInput(text, text_style);
-        
-        if (this.frame === true) {
-            inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].backgroundColor); 
-        } else {
-            inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number');
-        }    
-
-        // Position the text element.
-        if (this.center === true) {
-            inputField.x = (this._container._width - inputField.width) / 2;  
-            inputField.y = (this._container._height - inputField.height) / 2;  
-        } else {
-            inputField.x = 5;
-            inputField.y = 5;
-        }
-
-        // Add the text_element to the container.
-        if (this.form.item.vars.only_render === 'no') { 
-            console.log('interactive');
-            this._container.interactive = true;
-
-            inputField.trigger()
-
-            inputField.on("keydown", function(event) { 
-                this.response(event); 
-            }.bind(this));
-
-            // Focus the input field.
-            if (this.focus === true) {
-                inputField.setFocus();
-            }    
-        }       
-        
-        this._container.addChild(inputField);
+        this.inputField = new PixiTextInput(text, text_style);
+        this.inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number');
+        this.inputField.x = 5;
+        this.inputField.y = 5;
+        this.inputField.width = this._container._width - 10;
+        this.inputField.update = this.response;
+        this.inputField.widget = this;
+        this.inputField.focus();
+        this._container.addChild(this.inputField);
     }
 
     /** General drawing method for the label widget. */

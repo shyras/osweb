@@ -941,6 +941,8 @@ export default class Canvas {
             }
         } else {
             // PIXI - Create the text element  
+            console.log(element_style.font_family);
+            
             var text_style = {
                 fontFamily: element_style.font_family,
                 fontSize: element_style.font_size,

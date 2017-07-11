@@ -52,7 +52,8 @@ export default class FormWidget {
         // Set the form dimensions.
         this._canvas._container.height = experiment.vars.height; 
         this._canvas._container.width = experiment.vars.width;
-        
+        this._canvas._styles.font_family = experiment.vars.font_family;
+
         // Create the themes object.
         this._themes = new Themes();
     }

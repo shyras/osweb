@@ -35,7 +35,7 @@ export default class ButtonWidget extends Widget {
     draw_text(text, html) {
         // PIXI - Create the text element  
         var text_style = {
-            fontFamily: this.form.experiment.vars.font_family,
+            fontFamily: this.form._canvas._styles.font_family,
             fontSize: this.form.experiment.vars.font_size,
             fontStyle: (this.form.experiment.vars.font_italic === 'yes') ? 'italic' : 'normal',
             fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
@@ -73,9 +73,6 @@ export default class ButtonWidget extends Widget {
 
         // Update the text.
         var text = this.form.experiment.syntax.eval_text(this.text, null, false);
-
-        // Remove additional quotes.
-        // text = this.form.experiment.syntax.remove_quotes(text);
 
         // Draw the text.
         this.draw_text(text);
