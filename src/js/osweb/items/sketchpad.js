@@ -98,8 +98,6 @@ export default class Sketchpad extends GenericResponse {
 
     /** Implements the run phase of the Sketschpad. */
     run() {
-        console.log(this.vars.duration);
-        
         // Inherited.	
         super.run();
 
