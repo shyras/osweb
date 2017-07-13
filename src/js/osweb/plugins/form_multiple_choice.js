@@ -23,9 +23,28 @@ export default class FormMultipleChoice extends FormBase {
     }
 
     /** Implements the run phase of an item. */
-    run() {
-        console.log(this);
+    prepare() {
+        //  
+        this.vars.cols = '1;1;';
+        this.vars.rows = '1;1;';
+        this._widgets = [];
 
+        this._widgets.push(this.syntax.split('0 0 2 1 label text="[form_title]"'));
+        this._widgets.push(this.syntax.split('0 1 2 1 label center=no text="[question]"'));
+        // Add the individual labels.
+        for (var i = 0;i < this.options.length; i++) {
+            this._widgets.push(this.syntax.split('0 ' + String(i + 2) + ' 2 1 checkbox group=group1 center=no text="' + this.options[i] + '"'));
+            this.vars.rows = this.vars.rows + '1;'    
+        }    
+        this._widgets.push(this.syntax.split('0 ' + String(i + 3) + ' 2 2 button text="[button_text]"'));
+        this.vars.rows = this.vars.rows + '1;1;'    
+
+        // Inherited prepare.
+        super.prepare();
+    }
+
+    /** Implements the run phase of an item. */
+    run() {
         // Inherited.	
         super.run();
     }

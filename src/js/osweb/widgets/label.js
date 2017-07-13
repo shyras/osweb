@@ -32,6 +32,9 @@ export default class LabelWidget extends Widget {
      * @param {Array} - Array of text lines.
      */
     text_lines(text, width, height, text_style) {
+        console.log('label');
+        console.log(text);
+        
         // Create a temporary canvas context.
         var canvas = document.createElement('canvas');
         canvas.width  = 800;
@@ -56,7 +59,13 @@ export default class LabelWidget extends Widget {
             // Get the next word and the length of the word with one space.   
             var word = words.shift();
             var word_length = buffer_context.measureText(word + ' ').width; 
-            if ((line_length + word_length) > width) {
+            if (word === '<br/>') {
+                // line is done, add it to the lines.
+                lines.push(line);
+                // Set the new line.
+                line = '';
+                line_length = word_length;
+            } else if ((line_length + word_length) > width) {
                 // line is done, add it to the lines.
                 lines.push(line);
                 // Set the new line.
@@ -100,10 +109,16 @@ export default class LabelWidget extends Widget {
         // Create the lines.
         for (var i = 0; i < text_elements.length; i++) {
             var text_element = new PIXI.Text(text_elements[i], text_style);
-            text_element.x = (this.center === true) ? (this._container._width - text_element.width) / 2: 5;
-            text_element.y = y;
+            text_element.x = Math.round((this.center === true) ? (this._container._width - text_element.width) / 2: 5);
+            text_element.y = Math.round(y);
             y = y  + lineProperties.height;
+            
+            
             // Add the text_element to the container.
+            console.log(text_element.x);
+            console.log(text_element.y);
+            console.log(text_element.text);
+            
             this._container.addChild(text_element);
         }        
     }

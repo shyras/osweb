@@ -88,17 +88,13 @@ export default class GenericResponse extends Item {
 
     // Prepare the duration of the stimulus interaction. */
     prepare_duration() {
+        // Get duration. 
+        this._duration = this.syntax.remove_quotes(this.vars.get('duration'));
+
         // Prepare the duration.
-        if (this.vars.get('duration') !== null) {
-            if (typeof this.vars.duration === 'number') {
-                // Prepare a duration in milliseconds
-                this._duration = this.vars.duration;
-                if (this._duration === 0) {
-                    this._responsetype = constants.RESPONSE_NONE;
-                } else {
-                    this._responsetype = constants.RESPONSE_DURATION;
-                }
-            } else {
+        if (this._duration !== null) {
+            if ((this._duration == 'keypress') || (this._duration == 'mouseclick') || 
+                (this._duration == 'sound') || (this._duration === 'video')) {   
                 this._duration = -1;
                 if (this.vars.duration === 'keypress') {
                     this.prepare_duration_keypress();
@@ -111,7 +107,15 @@ export default class GenericResponse extends Item {
                 } else if (this.vars.duration === 'video') {
                     this._responsetype = constants.RESPONSE_VIDEO;
                 }
-            }
+            } else {   
+                // Prepare a duration in milliseconds
+                this._duration = Number(this._duration);
+                if (this._duration === 0) {
+                    this._responsetype = constants.RESPONSE_NONE;
+                } else {
+                    this._responsetype = constants.RESPONSE_DURATION;
+                }
+            } 
         }
     }
 

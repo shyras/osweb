@@ -24,10 +24,12 @@ export default class FormBase extends Item {
         this.description = 'A generic form plug-in';
         this.focus_widget = null;
         this.form = null;
+        this.options = [];
         this.rows = [];
         this.timeout = null;
-
+        
         // Set the class private properties.
+        this._form_options = false;
         this._form_text = false;
 
         // Set the class public properties.
@@ -75,20 +77,26 @@ export default class FormBase extends Item {
         var list = this.syntax.split(line);
 
         if ((this._form_text === true) && (list[0] !== '__end__')) {
-            this.vars['form_text'] = this.vars['form_text'] + line.replace('\t', '') + '<br />';
+            this.vars['form_text'] = this.vars['form_text'] + line.replace('\t', '') + ' <br/> ';
+        }
+        if ((this._form_options === true) && (list[0] !== '__end__')) {
+            this.options.push(line.replace('\t',''));
         }
 
         // Check for widget definition.
         if (list[0] === 'widget') {
             // Remove widget command.
             list.shift();
-         
+      
             // Add widget to the list.
             this._widgets.push(list);
+        } else if (list[0] === '__options__') {
+            this._form_options = true;
         } else if (list[0] === '__form_text__') {
             this.vars['form_text'] = '';
             this._form_text = true;
         } else if (list[0] === '__end__') {
+            this._form_options = false;
             this._form_text = false;
         }
     }

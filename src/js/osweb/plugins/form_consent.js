@@ -41,21 +41,22 @@ export default class FormConsent extends FormBase {
                     super._complete();
                 }
                 else { 
+                    console.log('decline form');
                     // Create the decline message form.
-                    this.decline_form = new FormWidget(this.experiment, [1], [1], 10,['50','50','50','50'],'gray', this, 5000, false);
+                    this.decline_form = new FormWidget(this.experiment, [1], [1], 10, ['50','50','50','50'], 'gray', this, 5000, false);
                 
                     // Create the text widget.
                     var widget = this.experiment.items._newWidgetClass('label', this.decline_form, {text: this.vars.decline_message, center: 'yes'});
                    
-                    // Add the widget to the form.
-                    this.decline_form.set_widget(widget,[0,0],1,1);
+                    // Add the widget to the parent form.                    
+                    this.decline_form.set_widget(widget, [0,0], 1, 1);
 
                     // Hide the default form.
                     this.form._canvas._container.visible = false;
                     this.decline_form._canvas._container.visible = true;
 
                     // Execute the decline form.                
-                    this.decline_form._exec(null);
+                    this.decline_form._exec(null); 
                 }
             }
             else {
