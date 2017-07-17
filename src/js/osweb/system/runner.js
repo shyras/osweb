@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { constants } from './constants.js'
 import Debugger from './debugger.js';
+import Convertor from './convertor.js';
 import Events from './events.js';
 import Parameters from './parameters.js';
 import Screen from './screen.js';
@@ -38,6 +39,7 @@ export default class Runner {
 
         // Create and set private class properties.
         this._debugger = new Debugger(this); // Internal error system.
+        this._convertor = new Convertor(this);
         this._events = new Events(this); // The event processor. 
         this._itemStack = new ItemStack(this); // The global item stack.
         this._itemStore = new ItemStore(this); // The global item store.
@@ -124,6 +126,11 @@ export default class Runner {
     _build() {
         // Create the experiment item. 
         this._experiment = new Experiment(this, this._name, this._script);
+        
+        console.log('<>');
+        this._convertor.parseScript(this._script);
+
+
         this._experiment.from_string(this._script);
         
         // Set the onlog event handler (if defined).

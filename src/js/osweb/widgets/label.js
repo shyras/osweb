@@ -32,9 +32,6 @@ export default class LabelWidget extends Widget {
      * @param {Array} - Array of text lines.
      */
     text_lines(text, width, height, text_style) {
-        console.log('label');
-        console.log(text);
-        
         // Create a temporary canvas context.
         var canvas = document.createElement('canvas');
         canvas.width  = 800;
@@ -113,12 +110,7 @@ export default class LabelWidget extends Widget {
             text_element.y = Math.round(y);
             y = y  + lineProperties.height;
             
-            
             // Add the text_element to the container.
-            console.log(text_element.x);
-            console.log(text_element.y);
-            console.log(text_element.text);
-            
             this._container.addChild(text_element);
         }        
     }

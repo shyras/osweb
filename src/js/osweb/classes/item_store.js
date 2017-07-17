@@ -134,6 +134,8 @@ export default class ItemStore {
         if (this._isClass(type) === true) {
             // Add the new item as property of items.
             this._items[name] = this._newItemClass(type, this._runner._experiment, name, script);
+        
+            return this._items[name];
         } else {
             // Unkwone class definition, show error message.
             this._runner._debugger.addError('Unknown class definition within osweb script: ' + type);
