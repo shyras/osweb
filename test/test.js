@@ -13,6 +13,7 @@ if (node_mode) {
 	global.window = document.defaultView;
 	global.window.document = global.document;
 
+	/*
 	global.Canvas = require('canvas');
 	global.Image = require('canvas').Image;
 
@@ -45,14 +46,7 @@ if (node_mode) {
 		userAgent: 'node.js'
 	}; // could be anything
 
-	// Zebra shim
-	global.zebra = {
-		ui: {
-			zCanvas: function(id, w, h){
-				return "Boop!";
-			}
-		}
-	}
+	*/
 
 	var osweb = require('../src/js/osweb/index.js').default;
 	var renderTarget = document.createElement("div");
@@ -328,7 +322,7 @@ describe('Syntax', function() {
 		});
 	});
 });
-
+/*
 if(!node_mode){
 	describe('Canvas', function() {
 			// Suppress error output
@@ -389,6 +383,7 @@ if(!node_mode){
 	// 	self.assertRaises(osexception, color.to_hex, colorspec)
 	});
 }
+*/
 
 describe('response', function() {
 	// def assertState(self, response, response_time, correct, total_responses,
