@@ -19,7 +19,6 @@ export default class Feedback extends Sketchpad {
         this.description = 'Provides feedback to the participant';
     }
 
-
     /** Implements the complete phase of an item. */
     _complete() {
         // Inherited.	

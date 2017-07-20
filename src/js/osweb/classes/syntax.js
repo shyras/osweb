@@ -65,8 +65,7 @@ export default class Syntax {
             }
         }
         if (bytecode === true) {
-            let ast = this._runner._pythonParser._parse(cnd);
-            return this._runner._pythonParser._run_statement(ast);
+            return this._runner._pythonParser._parse(cnd);
         } else {
             return cnd;
         }

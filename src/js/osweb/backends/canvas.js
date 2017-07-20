@@ -368,9 +368,11 @@ export default class Canvas {
 
     /**
      * Copies the contents of the passed canvas onto current one.
-     * @param {Object} canvas - The source canvas to copy.
+     * @param  {osweb.canvas} canvas The source canvas to copy
+     * @return {void}
      */
     copy(canvas) {
+        this._container = canvas._container.clone(true);
     }
 
     /**

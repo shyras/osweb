@@ -149,7 +149,7 @@ export default class Sequence extends Item {
             // Set the workspace.
             this._runner._pythonWorkspace['self'] = this;
 
-            // Check if the item may run.                            
+            // Check if the item may run.  
             if (this._runner._pythonWorkspace._eval(current_item.cond) === true) {
                 // run the current item of the sequence object.
                 this._runner._itemStore.run(current_item.item, this);
