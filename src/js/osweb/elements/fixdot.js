@@ -29,9 +29,8 @@ export default class Fixdot extends BaseElement {
         super.draw();
 
 		// Create a styles object containing style information
-		var styles = new Styles();
+		var styles = new Styles(this.sketchpad);
 		styles.color = this._properties.color;
-
 		// Draw the fixdot element to the canvas of the sketchpad.
 		this.sketchpad.canvas.fixdot(this._properties.x, this._properties.y, 
 			this._properties.style, styles);

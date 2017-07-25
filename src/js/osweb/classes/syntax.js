@@ -120,8 +120,6 @@ export default class Syntax {
         /** The replacer function detects variable entries in the passed text
         and replaces them with variable values as found in OpenSesame's var store */
         let result = text.replace(/\[(\w+|=.+?)\]/g, (match, content, offset, string) => {
-            // // Check if the current match is escaped, and simply return it untouched if so.
-            // if (string[offset-1] === "\\" && string[offset-2] !== "\\") return match;
             // Check if contents of [] start with an =. In this case they should be
             // evaluated as a Python statement
             content = this.unescapeBrackets(content);
