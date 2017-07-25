@@ -66,7 +66,7 @@ export default class Transfer {
 		// Osexp files can be basic text files, or be a zip file.
 		// Check if mimetype of supplied file is known, and load it accordingly.
 		if (this._runner._mimetype.indexOf('text/') != -1) {
-			contents = this._readRemoteOsexpText(url);
+			var contents = this._readRemoteOsexpText(url);
 		} else {
 			// Reading and extracting an osexp file from a server location.
 			TarGZ.load(url,
