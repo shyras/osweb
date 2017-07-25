@@ -25,6 +25,7 @@ export default class Runner {
         this._data = null // Experiment result data.
         this._experiment = null; // The experiment container.     
         this._fullScreen = false; // Full screen toggle mode.
+        this._mimetype = null; // Distinction between text and binanry files.
         this._name = 'noname.exp'; // Name of the experiment which is run.
         this._onConsole = null; // Event handler for processing print messages. 
         this._onFinished = null; // Event handler for finishing the experiment.

@@ -34,6 +34,18 @@
 				<div id="navbar" class="collapse navbar-collapse">
 					<form class="navbar-form navbar-right">
 						<div class="form-group">
+						</div>
+					</form>
+					<form class="navbar-form navbar-right">
+						<div class="form-group">
+							<select style="height:34px;padding-right: 5px;" id="exampleTasks" class="taskselect" selected="false" onchange="selectExampleTask()">>
+	 					  	    <option disabled selected value> -- select an example task -- </option>
+  								<option value="binary;capybaras.osexp">Capybars</option>
+  								<option value="binary;GazecuingTheeyeshaveitAndroid.osexp">Gaze Cuing</option>
+  								<option value="binary;stroop.osexp">Stroop</option>
+							</select>
+						</div>
+						<div class="form-group">
 							<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled><i class="fa fa-play" aria-hidden="true"></i> Run</button>
 							<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsole(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Console off</button>
 							<button class="btn btn-default" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false"><i class="'fa fa-terminal" aria-hidden="true"></i>Debug off</button>
@@ -76,6 +88,7 @@
 			fullScreen: true,
 			introClick: true,
 			introScreen: true,
+			mimetype: '',
 			name: 'test',
 			onConsole: onConsoleHandler,
 			onFinished: onFinishedHandler,
@@ -165,9 +178,21 @@
 		    // Send feedback to the user.
 		    alertify.message('Loaded local file: ' + textInput.value);
 
-		    // Only select the first file.
+			// Only select the first file.
 		    context.source = event.target.files[0];
 		}   
+
+		function selectExampleTask() {
+		    // Update the button status.
+		    buttonsSetToFileLoaded();
+
+			var exampleTasks = document.getElementById("exampleTasks");
+            var selectedTask = exampleTasks.options[exampleTasks.selectedIndex].value;
+			var items = selectedTask.split(';');
+
+			context.mimetype = items[0] + '/';
+			context.source = '../test-osexp/' + items[1];
+		}
 
 	    /** Show/hide console used by the console print method. */
 	    function toggleConsole() {
