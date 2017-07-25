@@ -581,9 +581,12 @@ export default class Canvas {
     image(fname, center, x, y, scale) {
         // Get image from file pool.
         var name = this.experiment._runner._syntax.remove_quotes(fname);
-        var img = this.experiment._runner._pool[name].data;
-
-        // Create a temporary canvas to make an image data array.        
+        var path = this.experiment._runner._pool[name];
+        if (typeof(path) == 'undefined') {
+            this.experiment._runner._debugger.addError(`"${fname}" does not exist`);
+        }
+        var img = path.data;
+        // Create a temporary canvas to make an image data array.
         var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
