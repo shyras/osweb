@@ -248,7 +248,15 @@ describe('Syntax', function() {
 		});
 		it('Should process string code: [="\\[test\\]"]', function() {
 			expect(runner._syntax.eval_text(
-				'[="\[test\]"]', tmp_var_store)).to.equal('[test]');
+				'[="\\[test\\]"]', tmp_var_store)).to.equal('[test]');
+		});
+		it('Should process multiple variables: w: [width], h: [height]', function() {
+			expect(runner._syntax.eval_text(
+				'w: [width], h: [height]', tmp_var_store)).to.equal('w: 1024, h: 768');
+		});
+		it('Should process multiple code blocks: w: [=1024], h: [=768]', function() {
+			expect(runner._syntax.eval_text(
+				'w: [=1024], h: [=768]', tmp_var_store)).to.equal('w: 1024, h: 768');
 		});
 	});
 

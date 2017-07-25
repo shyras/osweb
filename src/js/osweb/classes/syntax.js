@@ -116,14 +116,13 @@ export default class Syntax {
             return text;
         }
 
+        text = this.escapeBrackets(text);
         /** The replacer function detects variable entries in the passed text
         and replaces them with variable values as found in OpenSesame's var store */
         let result = text.replace(/\[(\w+|=.+?)\]/g, (match, content, offset, string) => {
-            // Check if the current match is escaped, and simply return it untouched if so.
-            if (string[offset-1] === "\\" && string[offset-2] !== "\\") return match;
-
             // Check if contents of [] start with an =. In this case they should be
             // evaluated as a Python statement
+            content = this.unescapeBrackets(content);
             if (content[0] === '=') {
                 // Convert python statement to ast tree and run it.
                 const ast = this._runner._pythonParser._parse(content.substring(1, content.length));
@@ -149,7 +148,7 @@ export default class Syntax {
         });
 
         // Check if contenst has additional quotes
-        return this.strip_slashes(result);
+        return this.strip_slashes(this.unescapeBrackets(result));
     }
 
     /**
@@ -290,5 +289,43 @@ export default class Syntax {
         var result = line.match(/(?:[^\s"]+|"[^"]*")+/g);
         return (result !== null) ? result : [];
     }
+    
+    /**
+     * Replaces all escaped brackets by a placeholder string of the format
+     * `%%OPEN:1:%%`
+     * @param {String} text - The text to escape.
+     * @return {String} - The escaped text.
+     */
+    escapeBrackets(text) {
+    
+        let result = text.replace(/\\+[\[\]]/g, (match, content, offset, str) => {
+            let n_brackets = match.length-1;
+            if (n_brackets % 2 == 1) {
+                let chartype = match[match.length-1] == '[' ? 'OPEN' : 'CLOSE';
+                return `%%${chartype}:${n_brackets}:%%`;
+            }
+            return match;
+        })
+        return result;
+    }
+    
+    /**
+     * Replaces all placeholder strings by escaped brackets.
+     * `%%OPEN:1:%%`
+     * @param {String} text - The text to unescape.
+     * @return {String} - The unescaped text.
+     */	
+    unescapeBrackets(text) {
+    
+        let result = text.replace(/%%(OPEN|CLOSE):\d+:%%/g, (match, content, offset, str) => {		
+            let chartype = match.substr(2,4) == 'OPEN' ? '[' : ']';
+            let i1 = match.indexOf(':')+1;
+            let i2 = match.lastIndexOf(':');
+            let n_brackets = parseInt(match.substr(i1, i2-i1));
+            return Array(n_brackets).join('\\') + chartype;
+        })
+        return result;	
+    }
+    
 }
  
