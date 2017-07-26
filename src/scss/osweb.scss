@@ -125,3 +125,39 @@ label.css-label {
     -ms-user-select: none;
     user-select: none;
 }   
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  overflow: hidden;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 30px;
+}
+
+#footerbar {
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e7e7e7;
+  border-top: 1px solid #e7e7e7;
+  overflow: hidden;
+  padding-top: 3px;  
+  width: 100%;  
+}
+
+#copyright {
+  float: left;
+}
+
+#licence {
+  float: right;
+}
