@@ -45,8 +45,7 @@ var settings = {
       new webpack.NamedModulesPlugin(),
       new CopyWebpackPlugin([
          { from: 'src/js/dependencies/gzip.js', to: 'js/' },
-         { from: 'example-experiments/lexical-decision.osexp', to: 'osexp/' },
-         { from: 'example-experiments/gaze-cuing.osexp', to: 'osexp/' }
+         { from: 'example-experiments/*.osexp', to: 'osexp/', flatten: true },
       ],{debug: 'info'})
    ],
    node: {
