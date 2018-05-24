@@ -131,33 +131,9 @@ module.exports = settings;
       })
     );
   }
-  if (!env || env.development || env.production) {
-    // settings.module.loaders.push({
-    //   test: /\.css$/,
-    //   loader: ExtractTextPlugin.extract({
-    //     fallback: 'style-loader',
-    //     use: 'css-loader'
-    //   })
-    // }, {
-    //   test: /\.scss$/,
-    //   loader: ExtractTextPlugin.extract({
-    //     fallback: 'style-loader',
-    //     //resolve-url-loader may be chained before sass-loader if necessary
-    //     use: ['css-loader', 'sass-loader']
-    //   })
-    // });
-    // settings.plugins.push(new ExtractTextPlugin('css/styles.css'));
-  }
 
   if (env && (env.devserver || env.production)) {
     if (env.devserver) {
-      settings.module.loaders.push({
-        test: /\.scss$/,
-        loaders: 'style-loader!css-loader!sass-loader'
-      }, {
-        test: /\.css$/,
-        loader: 'style-loader!css-loader'
-      });
       settings.plugins.push(
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('devserver')
@@ -165,10 +141,6 @@ module.exports = settings;
         new webpack.HotModuleReplacementPlugin()
       );
 
-      settings.devServer = {
-        contentBase: './public_html',
-        hot: true
-      };
     } else if (env.production) {
       settings.devtool = 'source-map',
         settings.module.loaders.push({
@@ -183,11 +155,6 @@ module.exports = settings;
       settings.plugins.push(
         new webpack.DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('production')
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-          compressor: {
-            warnings: false,
-          },
         }),
         new webpack.optimize.OccurrenceOrderPlugin()
       );
