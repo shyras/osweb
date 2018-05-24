@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { isObject } from 'underscore';
+import { isObject } from 'lodash';
 import Styles from './styles.js';
 
 /** Class representing a drawing canvas. */

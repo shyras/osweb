@@ -1,4 +1,4 @@
-import { isNumber }  from 'underscore';
+import { isNumber }  from 'lodash';
 import Widget from './widget.js';
 import * as PIXI from 'pixi.js';
 import { constants } from '../system/constants.js';

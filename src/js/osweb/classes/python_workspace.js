@@ -1,4 +1,4 @@
-import { isBoolean } from 'underscore';
+import { isBoolean } from 'lodash';
 
 /** Class representing a python workspace. */
 export default class PythonWorkspace {

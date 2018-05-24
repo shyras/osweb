@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'devserver') {
 	}
 }
 
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap';
 import './scss/osweb.scss';
 import './scss/alertify.min.css';
 import './scss/alertify.theme.bootstrap.css';

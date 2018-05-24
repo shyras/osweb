@@ -1,5 +1,5 @@
 import Item from '../items/item.js';
-import { isNumber, isObject, isString }  from 'underscore';
+import { isNumber, isObject, isString }  from 'lodash';
 
 /**
  * Class representing a advanced delay item.

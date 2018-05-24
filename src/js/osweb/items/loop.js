@@ -1,4 +1,4 @@
-import { isNumber }  from 'underscore';
+import { isNumber }  from 'lodash';
 import Item from './item.js';
 import Keyboard from '../backends/keyboard.js';
 import { constants } from '../system/constants.js';

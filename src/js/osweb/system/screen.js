@@ -1,5 +1,5 @@
 import { VERSION_NUMBER } from '../index.js';
-import { isFunction } from 'underscore';
+import { isFunction } from 'lodash';
 import { constants } from '../system/constants.js';
 
 /** Class representing a Screen. */

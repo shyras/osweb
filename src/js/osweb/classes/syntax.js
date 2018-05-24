@@ -1,4 +1,4 @@
-import { isNumber, isObject, isString }  from 'underscore';
+import { isNumber, isObject, isString }  from 'lodash';
 
 /** Class representing a syntax checker. */
 export default class Syntax {
@@ -9,7 +9,7 @@ export default class Syntax {
     constructor(runner) {
         // Create and set private properties. 
         this._runner = runner; // Parent runner attached to the syntax class.
-        this.isNumber = isNumber; // attach underscore function to class;    
+        this.isNumber = isNumber; // attach lodash function to class;    
     }
 
     /**

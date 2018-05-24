@@ -1,4 +1,4 @@
-import { isNumber }  from 'underscore';
+import { isNumber }  from 'lodash';
 
 /** Class representing a convertor. */
 export default class Convertor {

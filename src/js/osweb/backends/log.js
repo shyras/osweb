@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import _ from 'lodash';
 
 /** Class representing a data logger. */
 export default class Log {

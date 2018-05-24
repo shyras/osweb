@@ -1,141 +1,152 @@
 /*  osweb CSS Definitions */
 
+@import "~bootstrap/scss/bootstrap";
 body {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
-#body_div{
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%,-50%, 0);
-    position: absolute;
+#body_div {
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  position: absolute;
 }
 
-#osweb_div{
-    background-color: #000000;
-    height: 100%;
-    min-width: 800px;
-    min-height: 600px;
+#osweb_div {
+  background-color: #000000;
+  height: 100%;
+  min-width: 800px;
+  min-height: 600px;
 }
 
-#osweb_form{ 
-    .cell { 
-        display: table-cell; 
-    }
+#osweb_form {
+  .cell {
+    display: table-cell;
+  }
 }
 
-.table, .cell { 
-    height: 100%; 
+.table,
+.cell {
+  height: 100%;
 }
 
 #osweb_video {
-    display : none;
+  display: none;
 }
 
 #dialogoverlay {
-    display: none;
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%,-50%, 0);
-    position: absolute;
-    background: #FFF;
-    opacity: .8;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  position: absolute;
+  background: #FFF;
+  opacity: .8;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
 }
 
 #dialogbox {
-    display: none;
-    top: 50%;
-    left: 50%;
-    transform: translate3d(-50%,-50%, 0);
-    position: absolute;
-
-    background: #000;
-    border-radius: 3px; 
-    
-    width: 400px;
-    z-index: 10;
-
-    > div { 
-        background          :#FFF; 
-        margin              :2px;
-
-        > #dialogboxhead { 
-            background          : #666; 
-            color               : #CCC; 
-            font-size           : 12px; 
-            padding             : 10px; 
-        }
-
-        > #dialogboxbody { 
-            background          : #333; 
-            color               : #FFF; 
-            padding             : 20px; 
-        }
-
-        > #dialogboxfoot { 
-            background          : #666; 
-            padding             : 10px; 
-            text-align          : right; 
-        }
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  position: absolute;
+  background: #000;
+  border-radius: 3px;
+  width: 400px;
+  z-index: 10;
+  >div {
+    background: #FFF;
+    margin: 2px;
+    >#dialogboxhead {
+      background: #666;
+      color: #CCC;
+      font-size: 12px;
+      padding: 10px;
     }
+    >#dialogboxbody {
+      background: #333;
+      color: #FFF;
+      padding: 20px;
+    }
+    >#dialogboxfoot {
+      background: #666;
+      padding: 10px;
+      text-align: right;
+    }
+  }
 }
 
 :full-screen canvas,
 :-webkit-full-screen canvas,
 :-ms-full-screen canvas,
-:-moz-full-screen canvas{
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    margin: auto;
-    width: 100%;
-    height: 50%;
-    background-color: black;
+:-moz-full-screen canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100%;
+  height: 50%;
+  background-color: black;
 }
 
 input[type=checkbox].css-checkbox {
-    position:absolute; z-index:-1000; left:-1000px; overflow: hidden; clip: rect(0 0 0 0); height:1px; width:1px; margin:-1px; padding:0; border:0;
+  position: absolute;
+  z-index: -1000;
+  left: -1000px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  width: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
 }
 
-input[type=checkbox].css-checkbox + label.css-label {
-    padding-left:35px;
-    height:30px; 
-    display:inline-block;
-    line-height:30px;
-    background-repeat:no-repeat;
-    background-position: 0 0;
-    font-size:30px;
-    vertical-align:middle;
-    cursor:pointer;
+input[type=checkbox].css-checkbox+label.css-label {
+  padding-left: 35px;
+  height: 30px;
+  display: inline-block;
+  line-height: 30px;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  font-size: 30px;
+  vertical-align: middle;
+  cursor: pointer;
 }
 
-input[type=checkbox].css-checkbox:checked + label.css-label {
-    background-position: 0 -30px;
+input[type=checkbox].css-checkbox:checked+label.css-label {
+  background-position: 0 -30px;
 }
 
 label.css-label {
-    background-image:url(http://csscheckbox.com/checkboxes/u/csscheckbox_3f5bd3f7617a578c200aa742689c997e.png);
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}   
+  background-image: url(http://csscheckbox.com/checkboxes/u/csscheckbox_3f5bd3f7617a578c200aa742689c997e.png);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
 /* Sticky footer styles
 -------------------------------------------------- */
+
 html {
   position: relative;
   min-height: 100%;
 }
+
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
+
 .footer {
   position: absolute;
   overflow: hidden;
@@ -150,8 +161,8 @@ body {
   border-bottom: 1px solid #e7e7e7;
   border-top: 1px solid #e7e7e7;
   overflow: hidden;
-  padding-top: 3px;  
-  width: 100%;  
+  padding-top: 3px;
+  width: 100%;
 }
 
 #copyright {

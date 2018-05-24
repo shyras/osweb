@@ -1,4 +1,4 @@
-import { isFunction } from 'underscore';
+import { isFunction } from 'lodash';
 
 /** Class representing a parameter processor. */
 export default class Parameters {
