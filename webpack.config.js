@@ -1,13 +1,13 @@
 // webpack.config.js - Common settings
 const webpack = require('webpack');
 const path = require('path');
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const settings = {
-  devtool: 'cheap-module-source-map',
+module.exports = (env, args) => ({
+  devtool: args.mode == 'production'?'source-map':'cheap-module-source-map',
   entry: {
     osweb: path.join(__dirname, 'src', 'entry.js'),
     vendor: [
@@ -117,48 +117,4 @@ const settings = {
       }
     }
   }
-}
-
-module.exports = settings;
-
-// Change settings depending on if production or devserver flags have been
-// passed.
-/* module.exports = function (env) {
-  if (!env || env.development) {
-    settings.plugins.push(
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development')
-      })
-    );
-  }
-
-  if (env && (env.devserver || env.production)) {
-    if (env.devserver) {
-      settings.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify('devserver')
-        }),
-        new webpack.HotModuleReplacementPlugin()
-      );
-
-    } else if (env.production) {
-      settings.devtool = 'source-map',
-        settings.module.loaders.push({
-          test: /\.(js|ts)$/,
-          exclude: /(node_modules|bower_components)/,
-          loader: 'babel-loader?cacheDirectory=true',
-          query: {
-            presets: ['env']
-          }
-        });
-
-      settings.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env.NODE_ENV': JSON.stringify('production')
-        }),
-        new webpack.optimize.OccurrenceOrderPlugin()
-      );
-    }
-  }
-  return settings;
-}; */
+})

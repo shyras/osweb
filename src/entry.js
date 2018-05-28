@@ -3,16 +3,6 @@ This script ties all needed modules or files together and provides the
 correct setting for the webpack-devserver
 */
 
-if (process.env.NODE_ENV === 'devserver') {
-	// A bit stupid, but to enable hot module reloading for the HTML file, we need
-	// to import it here.
-	require('raw-loader!./html/index.ejs');
-	// Accept hot module reloading
-	if (module.hot) {
-		module.hot.accept()
-	}
-}
-
 import 'bootstrap';
 import './scss/osweb.scss';
 import './scss/alertify.min.css';
