@@ -19,63 +19,69 @@
 <body>
 	<!-- <script src="js/PixiTextInput.js"></script> -->
 	<!-- Body - Command bar definitions -->
-	<nav class="navbar navbar-expand-lg navbar-light bg-light cogsci-navbar">
-		<a class="navbar-brand" href="/">
-			<img alt="Brand" src="<%= require('../img/osdoc.png') %>">
-			<span>OSWeb</span>
-		</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-		  aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
+	<div class="d-flex h-100 flex-column">
+		<nav class="navbar navbar-expand-lg navbar-light">
+			<a class="navbar-brand" href="/">
+				<img alt="Brand" src="<%= require('../img/osdoc.png') %>">
+				<span>OSWeb</span>
+			</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<ul class="navbar-nav mr-auto">
-			</ul>
-			<form class="form-inline my-2 my-lg-0">
-				<div class="input-group mr-md-5">
-					<div class="input-group-prepend">
-						<div class="input-group-text">Loaded:</div>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+				</ul>
+				<form class="form-inline">
+					<div class="input-group mr-md-5">
+						<div class="input-group-prepend">
+							<div class="input-group-text">Loaded:</div>
+						</div>
+						<input type="text" class="form-control" id="filename" placeholder="No experiment loaded" readonly />
 					</div>
-					<input type="text" class="form-control" id="filename" placeholder="No experiment loaded" readonly />
-				</div>
-				<div class="form-group mr-md-5">
-					<input type="file" id="browse" name="fileupload" style="display: none" onChange="handleChange(event);" />
-					<button class="btn btn-primary mr-sm-2 mdi mdi-upload" type="button" id="file_button" onclick="handleBrowseClick();">
-						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Load local file</span>
-					</button>
-					or
-					<select id="exampleTasks" class="form-control mx-sm-2" selected="false" onchange="selectExampleTask()">>
-						<option disabled selected value>Choose example experiment</option>
-						<option value="text;lexical-decision.osexp">Lexical decision</option>
-						<option value="binary;gaze-cuing.osexp">Gaze cuing</option>
-						<option value="text;Posner1980.osexp">Posner cueing</option>
-					</select>
-				</div>
-				<div class="btn-group mx-md-2" role="group">
-					<button class="btn btn-default mdi mdi-console" id="console_button" type="button" onclick="toggleConsole(); return false">
-						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Console</span>
-					</button>
-					<button class="btn btn-default mdi mdi-bug" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
-						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Debug window</span>
-					</button>
-					<button class="btn btn-default mdi mdi-fullscreen" id="fullscreen_button" status="off"
-						type="button" onclick="toggleFullscreen(); return false">
-						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Fullscreen</span>
-					</button>
-				</div>
-				<button class="btn btn-success mdi mdi-play" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled>
-					<span class="d-none d-sm-inline d-lg-none d-xl-inline">Run</span>
-				</button>
-			</form>
-		</div>
-	</nav>
+				</form>
 
-	<main>
+				<form class="form-inline">
+					<div class="form-group mr-md-5 mt-2 mt-sm-0">
+						<input type="file" id="browse" name="fileupload" style="display: none" onChange="handleChange(event);" />
+						<button class="btn btn-primary mr-sm-2 mdi mdi-upload" type="button" id="file_button" onclick="handleBrowseClick();">
+							<span class="d-none d-sm-inline d-lg-none d-xl-inline">Load local file</span>
+						</button>
+						or
+						<select id="exampleTasks" class="form-control mx-sm-2" selected="false" onchange="selectExampleTask()">>
+							<option disabled selected value>Choose example experiment</option>
+							<option value="text;lexical-decision.osexp">Lexical decision</option>
+							<option value="binary;gaze-cuing.osexp">Gaze cuing</option>
+							<option value="text;Posner1980.osexp">Posner cueing</option>
+						</select>
+					</div>
+				</form>
+				<form class="form-inline mt-2 mt-lg-0">
+					<div class="btn-group mr-2" role="group">
+						<button class="btn btn-default mdi mdi-console" id="console_button" type="button" onclick="toggleConsole(); return false">
+							<span class="d-lg-none d-xl-inline">Console</span>
+						</button>
+						<button class="btn btn-default mdi mdi-bug" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
+							<span class="d-lg-none d-xl-inline">Debug</span>
+						</button>
+						<button class="btn btn-default mdi mdi-fullscreen" id="fullscreen_button" status="off"
+							type="button" onclick="toggleFullscreen(); return false">
+							<span class="d-lg-none d-xl-inline">Fullscreen</span>
+						</button>
+					</div>
+					<button class="btn btn-success mdi mdi-play" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled>
+						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Run</span>
+					</button>
+				</form>
+			</div>
+		</nav>
+
 		<!-- Body - Experiment canvas and form container -->
-		<div id="body_div">
+		<main class="d-flex container justify-content-center flex-column" style="flex: 1">
 			<!-- Body - OsWeb section -->
-			<div id="osweb_div">
+			<div class='osweb-canvas-container'>
+				<div id="osweb_div" class='aspectwrapper'></div>
 			</div>
 			<!-- Body - Console section -->
 			<div id="console_div">
@@ -83,20 +89,17 @@
 					<textarea id="osweb_console_text" rows="4" cols="80" style="width:100%;background-color:#000000;color:#00FF00;"></textarea>
 				</div>
 			</div>
-		</div>
-	</main>
+		</main>
 
-	<footer class="footer">
-		<div class="row justify-content-around text-muted">
-			<div id="copyright">
-				OSWeb 1.0.0a — Copyright Jaap Bos, Daniël Schreij & Sebastiaan Mathôt 2016-2017
-			</div>
-			<div id="licence">
-				OSWEB is distributed under the terms of the GNU General Public License 3.
-			</div>
-		</div>
-	</footer>
+
+		<footer class="container text-muted text-center">
+			OSWeb 1.0.0a — Copyright Jaap Bos, Daniël Schreij & Sebastiaan Mathôt 2016-2017<br>
+			OSWEB is distributed under the terms of the GNU General Public License 3.
+		</footer>
+
+	</div>
 </body>
+
 <script>
 	// Create the context container for the experiment definitions.
 	var context = {
