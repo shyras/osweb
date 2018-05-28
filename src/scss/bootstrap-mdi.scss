@@ -1,0 +1,31 @@
+h2 { margin: 15px 0 10px 0; }
+h3 { font-size: 1.2em; }
+// Bootstrap v4 Specific Tweaks
+.alert.mdi::before { margin: 0 3px 0 -3px; }
+.btn.mdi:not(:empty)::before{ margin: 0 3px 0 -3px; }
+.breadcrumb-item {
+  a.mdi, span.mdi {
+    &::before { margin: 0 2px 0 -2px }
+  }
+}
+.dropdown-item.mdi::before { margin: 0 8px 0 -10px; }
+.list-group-item.mdi::before { margin: 0 6px 0 -6px; }
+.modal-title.mdi::before { margin: 0 4px 0 0; }
+.nav-link.mdi::before { margin: 0 4px 0 -4px; }
+.navbar-brand.mdi::before { margin: 0 4px 0 0; }
+.popover-title.mdi::before { margin: 0 4px 0 -4px; }
+// Collapse Demo
+.btn.mdi-chevron-up.collapsed::before {
+  content: '\f140';
+}
+.bd-example-popover-static {
+    padding-bottom: 1.5rem;
+    background-color: #f9f9f9
+}
+.bd-example-popover-static .popover {
+    position: relative;
+    display: block;
+    float: left;
+    width: 260px;
+    margin: 0.75rem
+}

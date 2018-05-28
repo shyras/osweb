@@ -1,0 +1,205 @@
+---
+API: 2
+OpenSesame: 3.1.6
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Posner cueing task"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/Users/daniel/Sites/osweb/test-osexp"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
+set bidi no
+set background black
+
+define sketchpad boxes
+	set duration 1000
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
+
+define sketchpad boxes_ISI
+	set duration "[delay]"
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run trials always
+
+define feedback feedback
+	set reset_variables yes
+	set duration 500
+	set description "Provides feedback to the participant"
+	draw fixdot color=green show_if="[correct] = 1" style=default x=0 y=0 z_index=0
+	draw fixdot color=red show_if="[correct] = 0" style=default x=0 y=0 z_index=0
+
+define sketchpad fixation
+	set duration 500
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+
+define sketchpad left_flash
+	set duration 50
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=5 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
+
+define sketchpad left_target
+	set duration 0
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
+	draw circle color=white fill=1 penwidth=1 r=10 show_if=always x=-224 y=0 z_index=0
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define keyboard_response response
+	set timeout infinite
+	set flush yes
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses "z;m"
+
+define sketchpad right_flash
+	set duration 50
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=5 show_if=always w=128 x=160 y=-64 z_index=0
+
+define sketchpad right_target
+	set duration 0
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=-288 y=-64 z_index=0
+	draw rect color=white fill=0 h=128 penwidth=1 show_if=always w=128 x=160 y=-64 z_index=0
+	draw circle color=white fill=1 penwidth=1 r=10 show_if=always x=224 y=0 z_index=0
+
+define sequence trial
+	set flush_keyboard yes
+	set description "A single trial"
+	run fixation always
+	run boxes always
+	run left_flash "[cue_side] = left"
+	run right_flash "[cue_side] = 'right'"
+	run boxes_ISI always
+	run left_target "[target_side] = 'left'"
+	run right_target "[target_side] = 'right'"
+	run response always
+	run logger always
+	run feedback always
+
+define loop trials
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "The list of trials"
+	set cycles 12
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 delay 100
+	setcycle 0 target_side left
+	setcycle 0 cue_side left
+	setcycle 0 correct_response z
+	setcycle 0 cue valid
+	setcycle 1 delay 300
+	setcycle 1 target_side left
+	setcycle 1 cue_side left
+	setcycle 1 correct_response z
+	setcycle 1 cue valid
+	setcycle 2 delay 500
+	setcycle 2 target_side left
+	setcycle 2 cue_side left
+	setcycle 2 correct_response z
+	setcycle 2 cue valid
+	setcycle 3 delay 100
+	setcycle 3 target_side right
+	setcycle 3 cue_side left
+	setcycle 3 correct_response m
+	setcycle 3 cue invalid
+	setcycle 4 delay 300
+	setcycle 4 target_side right
+	setcycle 4 cue_side left
+	setcycle 4 correct_response m
+	setcycle 4 cue invalid
+	setcycle 5 delay 500
+	setcycle 5 target_side right
+	setcycle 5 cue_side left
+	setcycle 5 correct_response m
+	setcycle 5 cue invalid
+	setcycle 6 delay 100
+	setcycle 6 target_side left
+	setcycle 6 cue_side right
+	setcycle 6 correct_response z
+	setcycle 6 cue invalid
+	setcycle 7 delay 300
+	setcycle 7 target_side left
+	setcycle 7 cue_side right
+	setcycle 7 correct_response z
+	setcycle 7 cue invalid
+	setcycle 8 delay 500
+	setcycle 8 target_side left
+	setcycle 8 cue_side right
+	setcycle 8 correct_response z
+	setcycle 8 cue invalid
+	setcycle 9 delay 100
+	setcycle 9 target_side right
+	setcycle 9 cue_side right
+	setcycle 9 correct_response m
+	setcycle 9 cue valid
+	setcycle 10 delay 300
+	setcycle 10 target_side right
+	setcycle 10 cue_side right
+	setcycle 10 correct_response m
+	setcycle 10 cue valid
+	setcycle 11 delay 500
+	setcycle 11 target_side right
+	setcycle 11 cue_side right
+	setcycle 11 correct_response m
+	setcycle 11 cue valid
+	run trial
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description Instructions
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="This cueing task is based on that of Posner (1980).<br /><br />You will see two boxes, of which one<br />will briefly flash. Ignore this flash.<br /><br />After this, a dot will appear in one of the boxes. <br /><br />Press z if the dot appears in the left box.<br />Press m if the dot appears in the right box.<br /><br />This is a reaction time task, which means<br />that you should respond as fast as you can, <br />but make as few mistakes as possible.<br /><br />Press space to begin" x=0 y=0 z_index=0
+

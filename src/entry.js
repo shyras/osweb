@@ -1,4 +1,4 @@
-/* This is the entry script for the webpack builder 
+/* This is the entry script for the webpack builder
 This script ties all needed modules or files together and provides the
 correct setting for the webpack-devserver
 */

@@ -11,6 +11,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link href="https://cdn.materialdesignicons.com/2.4.85/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
 	<!-- JavaScript -->
 	<script type="text/javascript" src="js/gzip.js"></script>
 </head>
@@ -32,37 +33,40 @@
 			<ul class="navbar-nav mr-auto">
 			</ul>
 			<form class="form-inline my-2 my-lg-0">
-				<div class="form-group">
-					<select id="exampleTasks" class="form-control" selected="false" onchange="selectExampleTask()">>
-						<option disabled selected value> Example experiments … </option>
+				<div class="input-group mr-md-5">
+					<div class="input-group-prepend">
+						<div class="input-group-text">Loaded:</div>
+					</div>
+					<input type="text" class="form-control" id="filename" placeholder="No experiment loaded" readonly />
+				</div>
+				<div class="form-group mr-md-5">
+					<input type="file" id="browse" name="fileupload" style="display: none" onChange="handleChange(event);" />
+					<button class="btn btn-primary mr-sm-2 mdi mdi-upload" type="button" id="file_button" onclick="handleBrowseClick();">
+						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Load local file</span>
+					</button>
+					or
+					<select id="exampleTasks" class="form-control mx-sm-2" selected="false" onchange="selectExampleTask()">>
+						<option disabled selected value>Choose example experiment</option>
 						<option value="text;lexical-decision.osexp">Lexical decision</option>
 						<option value="binary;gaze-cuing.osexp">Gaze cuing</option>
+						<option value="text;Posner1980.osexp">Posner cueing</option>
 					</select>
 				</div>
 				<div class="btn-group mx-md-2" role="group">
-					<button class="btn btn-success" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled>
-						<i class="fa fa-play" aria-hidden="true"></i> Run
+					<button class="btn btn-default mdi mdi-console" id="console_button" type="button" onclick="toggleConsole(); return false">
+						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Console</span>
 					</button>
-					<button class="btn btn-default" id="console_button" type="button" onclick="toggleConsole(); return false">
-						<i class="'fa fa-terminal" aria-hidden="true"></i> Console off
+					<button class="btn btn-default mdi mdi-bug" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
+						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Debug window</span>
 					</button>
-					<button class="btn btn-default" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
-						<i class="'fa fa-terminal" aria-hidden="true"></i>Debug off
-					</button>
-					<button class="btn btn-default" id="fullscreen_button" status="off" type="button" onclick="toggleFullscreen(); return false">
-						<i class="fa fa-arrows-alt" aria-hidden="true"></i>Fullscreen off
+					<button class="btn btn-default mdi mdi-fullscreen" id="fullscreen_button" status="off"
+						type="button" onclick="toggleFullscreen(); return false">
+						<span class="d-none d-sm-inline d-lg-none d-xl-inline">Fullscreen</span>
 					</button>
 				</div>
-			</form>
-			<form class="form-inline my-2 my-lg-0">
-				<input type="file" id="browse" name="fileupload" style="display: none" onChange="handleChange(event);" />
-				<div class="btn-group" role="group" aria-label="Load experiment">
-					<button class="btn btn-primary" type="button" id="file_button" onclick="handleBrowseClick();">Local file</button>
-				</div>
-			</form>
-			<form class="form-inline my-2 my-lg-0 ml-sm-2">
-				<span class="input-group-addon mx-sm-2" id="loaded-exp">Loaded:</span>
-				<input type="text" class="form-control" id="filename" placeholder="No experiment loaded" readonly />
+				<button class="btn btn-success mdi mdi-play" id="run_button" type="button" status="run" onclick="runExperiment(); return false" disabled>
+					<span class="d-none d-sm-inline d-lg-none d-xl-inline">Run</span>
+				</button>
 			</form>
 		</div>
 	</nav>
@@ -205,6 +209,9 @@
 
 		context.mimetype = items[0] + '/';
 		context.source = './osexp/' + items[1];
+
+		var textInput = document.getElementById('filename');
+		textInput.value = items[1];
 	}
 
 	/** Show/hide console used by the console print method. */
@@ -217,14 +224,14 @@
 
 			// Set interface.
 			c.style.display = '';
-			button.textContent = 'Console on';
+			button.classList.add('btn-primary');
 		} else {
 			// Clear the console handler
 			context.onConsole = null;
 
 			// Set interface.
 			c.style.display = 'none';
-			button.textContent = 'Console off';
+			button.classList.remove('btn-primary');
 		}
 	}
 
@@ -237,14 +244,14 @@
 
 			// Set the interface.
 			button.setAttribute('status', 'on');
-			button.textContent = 'Debug on';
+			button.classList.add('btn-primary');
 		} else {
 			// Disable the fullscreen mode.
 			context.debug = false;
 
 			// Set the interface.
 			button.setAttribute('status', 'off');
-			button.textContent = 'Debug off';
+			button.classList.remove('btn-primary');
 		}
 	}
 
@@ -257,14 +264,14 @@
 
 			// Set the interface.
 			button.setAttribute('status', 'on');
-			button.textContent = 'Fullscreen on';
+			button.classList.add('btn-primary');
 		} else {
 			// Disable the fullscreen mode.
 			context.fullScreen = false;
 
 			// Set the interface.
 			button.setAttribute('status', 'off');
-			button.textContent = 'Fullscreen off';
+			button.classList.remove('btn-primary');
 		}
 	}
 
@@ -275,9 +282,9 @@
 
 		if (document.getElementById('run_button').getAttribute('status') === 'run') {
 			document.getElementById('run_button').setAttribute('status', 'stop');
-			document.getElementById('run_button').innerHTML = '<i class="fa fa-stop" aria-hidden="true"></i> Stop';
-			document.getElementById('run_button').classList.remove('btn-success');
-			document.getElementById('run_button').classList.add('btn-danger');
+			document.getElementById('run_button').innerHTML = 'Stop';
+			document.getElementById('run_button').classList.remove('btn-success', 'mdi-play');
+			document.getElementById('run_button').classList.add('btn-danger', 'mdi-stop');
 
 			// Set the fullscreen toggle.
 			context.fullScreen = (document.getElementById('fullscreen_button').getAttribute('status') === 'on');
@@ -368,9 +375,9 @@
 		// Reset the run button.
 		document.getElementById('run_button').value = 'Run experiment';
 		document.getElementById('run_button').setAttribute('status', 'run');
-		document.getElementById('run_button').innerHTML = '<i class="fa fa-play" aria-hidden="true"></i> Run';
-		document.getElementById('run_button').classList.remove('btn-danger');
-		document.getElementById('run_button').classList.add('btn-success');
+		document.getElementById('run_button').innerHTML = 'Run';
+		document.getElementById('run_button').classList.remove('btn-danger', 'mdi-stop');
+		document.getElementById('run_button').classList.add('btn-success', 'mdi-play');
 
 		// Log the optional data to the console.
 		if (data !== null) {
