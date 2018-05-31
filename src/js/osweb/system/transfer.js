@@ -120,24 +120,32 @@ export default class Transfer {
    */
   async fetch(url) {
     return new Promise((resolve, reject) => {
+      let blob = null;
       const request = new XMLHttpRequest();
+      const fr = new FileReader();
 
       request.responseType = "blob";
       // Transfer in progress, update of percentage.
-      request.addEventListener("progress", (event) => {
+      request.onprogress = (event) => {
         if (event.lengthComputable) {
           this._runner._screen._updateProgressBar(event.loaded / event.total);
         }
-      });
+      };
 
       // Transfer finished.
-      request.addEventListener("load", (event) => {
-        return resolve(request.response);
-      });
+      request.onload = (event) => {
+        blob = request.response;//xhr.response is now a blob object
 
-      request.addEventListener("error", (e) => {
+        myReader.onloadend = (e) => {
+          const buffer = e.srcElement.result;//arraybuffer object
+        };
+
+        return resolve(request.response);
+      };
+
+      request.onerror = (e) => {
         return reject(new Error("Error transferring osexp: " + e));
-      });
+      };
 
       request.open('GET', url, true);
       request.send();
