@@ -211,7 +211,7 @@
 		var items = selectedTask.split(';');
 
 		context.mimetype = items[0] + '/';
-		context.source = './osexp/' + items[1];
+		context.source = '/osexp/' + items[1];
 
 		var textInput = document.getElementById('filename');
 		textInput.value = items[1];

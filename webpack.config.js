@@ -7,12 +7,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, args) => ({
-  devtool: args.mode == 'production'?'source-map':'cheap-module-source-map',
+  devtool: args.mode == 'production' ? 'source-map' : 'cheap-module-source-map',
   entry: {
     osweb: path.join(__dirname, 'src', 'entry.js'),
     vendor: [
       'filbert', 'lodash', 'pixi.js', 'pixi-sound', 'random-seed', 'webfontloader',
-      'bootstrap', 'alertifyjs'
+      'bootstrap', 'alertifyjs', 'pako'
     ]
   },
   output: {
@@ -37,7 +37,7 @@ module.exports = (env, args) => ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            presets: ['@babel/preset-env']
+            presets: ['@babel/polyfill', '@babel/preset-env']
           }
         }
       },
