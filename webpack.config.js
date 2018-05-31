@@ -9,7 +9,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = (env, args) => ({
   devtool: args.mode == 'production' ? 'source-map' : 'cheap-module-source-map',
   entry: {
-    osweb: path.join(__dirname, 'src', 'entry.js'),
+    osweb: ['@babel/polyfill', path.join(__dirname, 'src', 'entry.js')],
     vendor: [
       'filbert', 'lodash', 'pixi.js', 'pixi-sound', 'random-seed', 'webfontloader',
       'bootstrap', 'alertifyjs', 'pako'
@@ -37,7 +37,7 @@ module.exports = (env, args) => ({
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
-            presets: ['@babel/polyfill', '@babel/preset-env']
+            presets: ['@babel/preset-env']
           }
         }
       },
@@ -93,15 +93,10 @@ module.exports = (env, args) => ({
     }),
     new webpack.NamedModulesPlugin(),
     new CopyWebpackPlugin([{
-        from: 'src/js/dependencies/gzip.js',
-        to: 'js/'
-      },
-      {
-        from: 'example-experiments/*.osexp',
-        to: 'osexp/',
-        flatten: true
-      }
-    ], {
+      from: 'example-experiments/*.osexp',
+      to: 'osexp/',
+      flatten: true
+    }], {
       debug: 'info'
     })
   ],

@@ -14,17 +14,17 @@ OSWeb is built using node.js and webpack, and therefore the installation process
 
 First, go to the root of the OSWEB folder and install the dependencies with the command:
 
-	npm install
+    npm install
 
 Then build OSWEB by running:
 
-	npm run build
+    npm run dev
 
 This will generate the application in the `public_html` folder.
 
 If you want to build OSweb with production settings you can run:
 
-    npm run build:production
+    npm run prod
 
 The production version is uglified and minified, which results in smaller file sizes, and thus shorter loading times when serving Osweb from a web server. The building process does take considerably longer because of these steps.
 
@@ -38,7 +38,7 @@ Alternatively, you can start a development server with:
 
 Once the development server is started, you can visit `http://localhost:8080` in your browser and you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser.
 
-# Unit tests
+## Unit tests
 
 Unit tests can be run with
 
