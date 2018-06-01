@@ -32,7 +32,10 @@ export default class Transfer {
     }
 
     if (source.constructor === File) {
-      // Source is a local loaded file, load binary.
+      // Source is a local loaded file. Try to read as text first
+      
+      
+      // Script loading directly failed, try to load binary.
       await this._readOsexpFromFile(source);
     } else if (isString(source)) {
       // First try and see if the source string can be parsed as an OS script directly
@@ -55,6 +58,12 @@ export default class Transfer {
    * @param {Object} file - A file object containing the experiment.
    */
   async _readOsexpFromFile(osexpFile) {
+    try {
+      const fileAsString = await readFileAsText(osexpFile)
+      return this._processScript(fileAsString)
+    } catch (e) {
+      this._runner._debugger.addMessage(`Could not read osexp file as plain text: ${e.message}. File is probably binary`)
+    }
     // Reading and extracting an osexp file from a file location.
     try {
       const files = await decompress(
@@ -96,13 +105,7 @@ export default class Transfer {
       this._runner._debugger.addError('Error transferring osexp: ' + e);
       return;
     }
-
-    try {
-      const fileAsString = await readFileAsText(remoteFile);
-      return this._processScript(fileAsString)
-    } catch (e) {
-      return this._readOsexpFromFile(remoteFile);
-    }
+    return this._readOsexpFromFile(remoteFile);
   }
 
   /**

@@ -19,10 +19,10 @@
 	<!-- <script src="js/PixiTextInput.js"></script> -->
 	<!-- Body - Command bar definitions -->
 	<div class="d-flex h-100 flex-column">
-		<nav class="navbar navbar-expand-lg navbar-light">
+		<nav class="navbar navbar-expand-md navbar-light bg-light">
 			<a class="navbar-brand" href="/">
 				<img alt="Brand" src="<%= require('../img/osdoc.png') %>">
-				<span>OSWeb</span>
+				OSWeb
 			</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
 				aria-expanded="false" aria-label="Toggle navigation">
@@ -58,13 +58,13 @@
 				</form>
 				<form class="form-inline mt-2 mt-lg-0">
 					<div class="btn-group mr-2" role="group">
-						<button class="btn btn-default mdi mdi-console" id="console_button" type="button" onclick="toggleConsole(); return false">
+						<button class="btn mdi mdi-console" id="console_button" type="button" onclick="toggleConsole(); return false">
 							<span class="d-lg-none d-xl-inline">Console</span>
 						</button>
-						<button class="btn btn-default mdi mdi-bug" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
-							<span class="d-lg-none d-xl-inline">Debug</span>
+						<button class="btn mdi mdi-bug" id="debug_button" status="off" type="button" onclick="toggleDebug(); return false">
+							<span class="d-sm-none d-xl-inline">Debug</span>
 						</button>
-						<button class="btn btn-default mdi mdi-fullscreen" id="fullscreen_button" status="off"
+						<button class="btn mdi mdi-fullscreen" id="fullscreen_button" status="off"
 							type="button" onclick="toggleFullscreen(); return false">
 							<span class="d-lg-none d-xl-inline">Fullscreen</span>
 						</button>
@@ -91,7 +91,7 @@
 		</main>
 
 
-		<footer class="container text-muted text-center">
+		<footer class="text-center bg-light text-muted">
 			OSWeb 1.0.0a — Copyright Jaap Bos, Daniël Schreij & Sebastiaan Mathôt 2016-2017<br>
 			OSWEB is distributed under the terms of the GNU General Public License 3.
 		</footer>
@@ -158,20 +158,20 @@
 
 	/** Disable some buttons once an experiment is loaded. */
 	function buttonsSetToFileLoaded() {
-		document.getElementById('file_button').disabled = true;
+		// document.getElementById('file_button').disabled = true;
 		document.getElementById('run_button').disabled = false;
-		document.getElementById('fullscreen_button').disabled = false;
-		document.getElementById('console_button').disabled = false;
-		document.getElementById('debug_button').disabled = false;
+		// document.getElementById('fullscreen_button').disabled = false;
+		// document.getElementById('console_button').disabled = false;
+		// document.getElementById('debug_button').disabled = false;
 	}
 
 	/** Enable experiment loading buttons. */
 	function buttonsSetToFileSelection() {
-		document.getElementById('file_button').disabled = false;
-		document.getElementById('run_button').disabled = true;
-		document.getElementById('fullscreen_button').disabled = true;
-		document.getElementById('console_button').disabled = true;
-		document.getElementById('debug_button').disabled = true;
+		// document.getElementById('file_button').disabled = false;
+		// document.getElementById('run_button').disabled = true;
+		// document.getElementById('fullscreen_button').disabled = true;
+		// document.getElementById('console_button').disabled = true;
+		// document.getElementById('debug_button').disabled = true;
 	}
 
 	/** Method for handling the hidden file load button. */
