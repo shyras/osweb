@@ -107,6 +107,8 @@
 		]
 	},
 	"jest": {
-		"setupFiles": ["./src/js/tests/setupEnv.js"]
-  }
+		"setupFiles": [
+			"./src/js/tests/setupEnv.js"
+		]
+	}
 }
