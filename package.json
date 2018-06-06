@@ -33,7 +33,7 @@
 		"dev": "webpack --mode development --progress",
 		"prod": "webpack --mode production --progress",
 		"deploy": "npm run build:production && surge -p public_html -d osweb.cogsci.nl",
-		"test": "mocha --recursive --reporter spec -r jsdom-global/register --compilers js:babel-core/register"
+		"test": "jest"
 	},
 	"dependencies": {
 		"axios": "^0.18.0",
@@ -52,9 +52,11 @@
 		"@babel/preset-env": "^7.0.0-beta.49",
 		"alertifyjs": "^1.11.1",
 		"autoprefixer": "^8.6.0",
+		"babel-core": "^7.0.0-bridge.0",
+		"babel-jest": "^23.0.1",
 		"babel-loader": "^8.0.0-beta.3",
 		"bootstrap": "^4.1.1",
-		"chai": "^4.1.2",
+		"canvas-prebuilt": "^1.6.5-prerelease.1",
 		"copy-webpack-plugin": "^4.5.1",
 		"css-loader": "^0.28.11",
 		"del": "^3.0.0",
@@ -69,27 +71,21 @@
 		"file-loader": "^1.1.11",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
+		"jest": "^23.1.0",
+		"jest-mock-console": "^0.3.5",
 		"jquery": "^3.3.1",
-		"jsdom": "11.11.0",
-		"jsdom-global": "3.0.2",
-		"jshint": "^2.9.5",
 		"mini-css-extract-plugin": "^0.4.0",
-		"mocha": "^5.2.0",
 		"node-sass": "^4.9.0",
 		"path": "^0.12.7",
 		"popper.js": "^1.14.3",
 		"postcss-loader": "^2.1.5",
 		"precss": "^3.1.2",
-		"proxyquire": "^2.0.1",
-		"raw-loader": "^0.5.1",
 		"rimraf": "^2.6.2",
 		"sass-loader": "^7.0.3",
-		"should": "^13.2.1",
-		"sinon": "^5.1.0",
 		"style-loader": "^0.21.0",
 		"url-loader": "^1.0.1",
 		"webpack": "^4.11.1",
-		"webpack-cli": "^2.1.5",
+		"webpack-cli": "^3.0.2",
 		"webpack-dev-server": "^3.1.4"
 	},
 	"eslintConfig": {
@@ -102,5 +98,15 @@
 			"shared-node-browser": true,
 			"mocha": true
 		}
-	}
+	},
+	"babel": {
+		"presets": [
+			[
+				"@babel/preset-env"
+			]
+		]
+	},
+	"jest": {
+		"setupFiles": ["./src/js/tests/setupEnv.js"]
+  }
 }

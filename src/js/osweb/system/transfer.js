@@ -1,10 +1,11 @@
-import WebFont from 'webfontloader';
+import WebFont from 'webfontloader'
 import {
   decompress,
   readFileAsText
-} from './util';
-import isString from 'lodash/isString';
-import axios from 'axios';
+} from './util'
+import isString from 'lodash/isString'
+import isObject from 'lodash/isObject'
+import axios from 'axios'
 
 /** Class representing a information stream processor. */
 export default class Transfer {
@@ -26,16 +27,13 @@ export default class Transfer {
     this._runner._screen._updateProgressBar(-1);
 
     // Check type of object.
-    if (source === null) {
+    if (!isString(source) && (!isObject(source) || source.constructor !== File)) {
       this._runner._debugger.addError('No osexp source file defined.');
       return;
     }
 
     if (source.constructor === File) {
       // Source is a local loaded file. Try to read as text first
-      
-      
-      // Script loading directly failed, try to load binary.
       await this._readOsexpFromFile(source);
     } else if (isString(source)) {
       // First try and see if the source string can be parsed as an OS script directly
@@ -176,20 +174,20 @@ export default class Transfer {
         };
 
         // Determine the file type and generate the appropriate osweb item
-        var ext = currentFile.name.substr(currentFile.name.lastIndexOf('.') + 1);
+        const ext = currentFile.name.substr(currentFile.name.lastIndexOf('.') + 1);
         if ((ext === 'jpg') || (ext === 'png')) {
           // Create a new file pool mage item.
-          var img = new Image();
+          const img = new Image();
           img.src = currentFile.getBlobUrl();
           item.data = img;
           item.type = 'image';
         } else if ((ext === 'wav') || (ext === 'ogg')) {
-          var ado = new Audio();
+          const ado = new Audio();
           ado.src = currentFile.getBlobUrl();
           item.data = ado;
           item.type = 'sound';
         } else if (ext === 'ogv') {
-          var ado = document.createElement('VIDEO');
+          const ado = document.createElement('VIDEO');
           ado.src = currentFile.getBlobUrl();
           item.data = ado;
           item.type = 'video';

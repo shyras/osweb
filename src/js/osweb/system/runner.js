@@ -92,7 +92,7 @@ export default class Runner {
    */
   _setupContext(context) {
     // Check if the script parameter is defined.
-    if ((typeof context !== 'undefined') || (context === null)) {
+    if (typeof context !== 'undefined') {
       // Initialize the context parameters.
       // Use ES6 destructuring to determine values and set default ones if
       // required.
