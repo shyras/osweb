@@ -42,7 +42,12 @@ export default class Transfer {
       } catch (e) {
         // If that doesn't work, treat the source as an URL and attempt to read it from
         // the remote server
-        await this._readOsexpFromServer(source);
+        try {
+          const remoteFile = await this._readOsexpFromServer(source);
+          await this._readOsexpFromFile(remoteFile);
+        } catch (e) {
+          return; // stop process; errors already logged in functions
+        }
       }
     }
     // Read in and generate the webfonts
@@ -84,7 +89,8 @@ export default class Transfer {
       // Process the file pool items
       return await this._processOsexpPoolItems(poolFiles);
     } catch (err) {
-      this._runner._debugger.addError(`Error reading local osexp: ${err}`);
+      this._runner._debugger.addError(`Error reading local osexp: ${err}`)
+      throw err
     }
   }
 
@@ -95,15 +101,12 @@ export default class Transfer {
   async _readOsexpFromServer(url) {
     // Osexp files can be basic text files, or be a zip file.
     // Check if mimetype of supplied file is known, and load it accordingly.
-    let remoteFile;
-
     try {
-      remoteFile = await this.fetch(url);
+      return await this.fetch(url);
     } catch (e) {
       this._runner._debugger.addError('Error transferring osexp: ' + e);
-      return;
+      throw e;
     }
-    return this._readOsexpFromFile(remoteFile);
   }
 
   /**
@@ -218,6 +221,7 @@ export default class Transfer {
       // Update the progress bar.
       this._runner._screen._updateProgressBar(asyncIterator.currentIndex / poolFiles.length);
     }
+    return true;
   }
 
   /**
