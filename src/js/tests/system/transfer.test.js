@@ -65,6 +65,8 @@ describe('Testing transfer module', () => {
       await expect( transfer._readOsexpFromServer() ).rejects.toThrow()
       expect(mockAddError).toHaveBeenCalledTimes(1)
     })
+
+    
   })
 })
 
