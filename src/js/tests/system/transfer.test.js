@@ -1,7 +1,6 @@
 import Transfer from '../../osweb/system/transfer'
 import Runner from '../../osweb/system/runner'
 import { osexpString } from '../testExps'
-import fs from 'fs'
 
 const mockUpdateIntroScreen = jest.fn()
 const mockUpdateProgressBar = jest.fn()
@@ -31,7 +30,7 @@ jest.mock('../../osweb/system/runner', () => {
 
 const transfer = new Transfer(new Runner())
 
-describe('Transfer module', () => {
+describe('Transfer class', () => {
   beforeEach(() => {
     Runner.mockClear()
     mockUpdateIntroScreen.mockClear()
