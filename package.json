@@ -73,6 +73,7 @@
 		"file-loader": "^1.1.11",
 		"html-loader": "^0.5.5",
 		"html-webpack-plugin": "^3.2.0",
+		"husky": "^1.0.0-rc.8",
 		"jest": "^23.1.0",
 		"jest-mock-console": "^0.3.5",
 		"jquery": "^3.3.1",
@@ -91,11 +92,16 @@
 		"webpack-dev-server": "^3.1.4"
 	},
 	"eslintConfig": {
+		"root": true,
+		"parser": "babel-eslint",
 		"env": {
 			"browser": true,
-			"shared-node-browser": true,
-			"mocha": true
-		}
+			"node": true,
+			"jest": true
+		},
+		"extends": "standard",
+		"rules": {},
+		"globals": {}
 	},
 	"babel": {
 		"presets": [
@@ -108,5 +114,10 @@
 		"setupFiles": [
 			"./src/js/tests/setupEnv.js"
 		]
+	},
+	"husky": {
+		"hooks": {
+			"pre-push": "npm test"
+		}
 	}
 }
