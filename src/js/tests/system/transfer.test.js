@@ -1,5 +1,7 @@
 import Transfer from '../../osweb/system/transfer'
 import Runner from '../../osweb/system/runner'
+import { osexpString } from '../testExps'
+import fs from 'fs'
 
 const mockUpdateIntroScreen = jest.fn()
 const mockUpdateProgressBar = jest.fn()
@@ -19,17 +21,17 @@ jest.mock('../../osweb/system/runner', () => {
         addMessage: mockAddMessage,
         addError: mockAddError
       },
-      _pool:{
+      _pool: {
         add: mockPoolAdd
       },
-      _build: mockBuildFn,
-    };
-  });
-});
+      _build: mockBuildFn
+    }
+  })
+})
 
 const transfer = new Transfer(new Runner())
 
-describe('Testing transfer module', () => {
+describe('Transfer module', () => {
   beforeEach(() => {
     Runner.mockClear()
     mockUpdateIntroScreen.mockClear()
@@ -48,25 +50,52 @@ describe('Testing transfer module', () => {
       }
       expect(mockAddError).toHaveBeenCalledTimes(invalidParams.length)
     })
-    test('Should update the status display', () => {
+    it('Should update the status display', () => {
       transfer._readSource()
       expect(mockUpdateIntroScreen).toHaveBeenCalledTimes(1)
       expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(-1)
     })
   })
 
-  describe('_readOsexpFromServer', () => {
-    test('Should throw an error if url is invalid or unavailable', async () => {
-      await expect( transfer._readOsexpFromServer() ).rejects.toThrow()
-      await expect( transfer._readOsexpFromServer('nonsense') ).rejects.toThrow()
+  describe('_readOsexpFromString', () => {
+    it('Should throw an error if an invalid osexp representation is supplied', () => {
+      expect(transfer._readOsexpFromString('abc')).rejects.toThrow()
     })
 
-    test('Should log an error to the debugger if url is invalid or unavailable', async () => {
-      await expect( transfer._readOsexpFromServer() ).rejects.toThrow()
-      expect(mockAddError).toHaveBeenCalledTimes(1)
+    it('Should set the script variable of the runner if an experiment has been successfully recognized', () => {
+      expect(transfer._readOsexpFromString(osexpString)).resolves.toBe(true)
+      expect(mockUpdateProgressBar).toHaveBeenCalledTimes(1)
+      expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(100)
+      expect(transfer._runner._script).toBe(osexpString)
     })
 
-    
+    it('Should be able to read osexp strings from files', async () => {
+      const osexpFile = new File([osexpString], 'test.osexp')
+      await expect(transfer._readOsexpFromString(osexpFile)).resolves.toBe(true)
+      expect(mockUpdateProgressBar).toHaveBeenCalledTimes(1)
+      expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(100)
+      expect(transfer._runner._script).toBe(osexpString)
+    })
+  })
+
+  describe('_readOsexpFromFile', () => {
+    it('Should log an unsuccesful attempt to read osexp as a string', async () => {
+      await expect(transfer._readOsexpFromFile('abc')).rejects.toThrow()
+      expect(mockAddMessage).toHaveBeenCalledTimes(1)
+    })
+
+    // it('Should be able to read an osexp from a file', async () => {
+    //   const osexpFile = fs.readFileSync('test-osexp/capybaras.osexp')
+    //   const blob = new Blob([new Uint8Array(osexpFile)])
+    //   console.log(blob)
+    //   await expect(transfer._readOsexpFromFile(blob)).resolves.toBe(true)
+    // })
+  })
+
+  describe('fetch', () => {
+    it('Should throw an error if url is invalid or unavailable', async () => {
+      await expect(transfer.fetch()).rejects.toThrow()
+      await expect(transfer.fetch('nonsense')).rejects.toThrow()
+    })
   })
 })
-
