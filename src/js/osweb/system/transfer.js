@@ -2,7 +2,7 @@ import WebFont from 'webfontloader'
 import {
   decompress,
   readFileAsText,
-  isUrl
+  parseUrl
 } from './util'
 import isString from 'lodash/isString'
 import isObject from 'lodash/isObject'
@@ -42,11 +42,14 @@ export default class Transfer {
         return
       }
     } else if (isString(source)) {
+      console.log(source)
       // Check if the source string is an URL
-      if (isUrl(source)) {
+      const uri = parseUrl(source)
+
+      if (uri) {
         // Attempt to download and load the remote experiment
         try {
-          const remoteFile = await this.fetch(source)
+          const remoteFile = await this.fetch(uri.href)
           await this._readOsexpFromFile(remoteFile)
         } catch (e) {
           this._runner._debugger.addError(`Error reading remote osexp: ${e}`)

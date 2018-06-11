@@ -95,23 +95,26 @@ export function readFileAsText (inputFile) {
 }
 
 /**
+ * Returns current host as detected by browser
+ *
+ * @returns String
+ */
+function getHost () {
+  return window.location.origin
+}
+
+/**
  * Checks if the passed string contains a valid URL
  *
  * @export
  * @param {String} str The string to check
  * @returns boolean
  */
-export function isUrl (str) {
-  var pattern = new RegExp('^((https?:)?\\/\\/)?' + // protocol
-  '(?:\\S+(?::\\S*)?@)?' + // authentication
-  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-  '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-  '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-  '(\\#[-a-z\\d_]*)?$', 'i') // fragment locater
-  if (!pattern.test(str)) {
+export function parseUrl (str) {
+  try {
+    return new URL(str, getHost())
+  } catch (e) {
+    console.error(e)
     return false
-  } else {
-    return true
   }
 }

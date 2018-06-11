@@ -1,14 +1,16 @@
-import { isUrl } from '../../osweb/system/util'
+const util = require('../../osweb/system/util')
+util.getHost = () => 'http://localhost'
 
-describe('isUrl', () => {
-  it('Should return true when supplied with a valid URL', () => {
-    expect(isUrl('http://osweb.nl')).toBe(true)
-    // expect(isUrl('/test-osexp/capybaras.osexp')).toBe(true)
+const parseUrl = util.parseUrl
+
+describe('parseUrl', () => {
+  it('Should return an URL Object when supplied with a valid URL', () => {
+    expect(parseUrl('http://osweb.nl')).toBe(true)
+    expect(parseUrl('/test-osexp/capybaras.osexp')).toBe(true)
   })
 
-  it('Should return when supplied with an invalid URL', () => {
-    expect(isUrl('abc')).toBe(false)
-    expect(isUrl('http://')).toBe(false)
-    expect(isUrl('http://test')).toBe(false)
+  it('Should return false when supplied with an invalid URL', () => {
+    expect(parseUrl('abc')).toBe(false)
+    expect(parseUrl('http://')).toBe(false)
   })
 })
