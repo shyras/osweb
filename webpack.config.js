@@ -5,9 +5,10 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const pkgconfig = require('./package.json')
 
 module.exports = (env, args) => ({
-  devtool: args.mode == 'production' ? 'source-map' : 'cheap-module-source-map',
+  devtool: args.mode === 'production' ? 'source-map' : 'cheap-module-source-map',
   entry: {
     osweb: ['@babel/polyfill', path.join(__dirname, 'src', 'entry.js')],
     vendor: [
@@ -82,9 +83,9 @@ module.exports = (env, args) => ({
   },
   plugins: [
     new HtmlWebpackPlugin({
+      title: pkgconfig.name + ' ' + pkgconfig.version,
       template: 'src/html/index.ejs',
       inject: 'head',
-      title: 'OSweb 2.0',
       favicon: './src/img/osdoc.png'
     }),
     new MiniCssExtractPlugin({

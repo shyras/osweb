@@ -11,6 +11,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title><%= htmlWebpackPlugin.options.title || 'Osweb'%></title>
 	<link href="https://cdn.materialdesignicons.com/2.4.85/css/materialdesignicons.min.css" media="all" rel="stylesheet" type="text/css" />
 	<!-- JavaScript -->
 </head>
@@ -92,7 +93,7 @@
 
 
 		<footer class="text-center bg-light text-muted">
-			OSWeb 1.0.0a — Copyright Jaap Bos, Daniël Schreij & Sebastiaan Mathôt 2016-2017<br>
+			<%= htmlWebpackPlugin.options.title || 'Osweb'%> — Copyright Jaap Bos, Daniël Schreij & Sebastiaan Mathôt 2016-2017<br>
 			OSWEB is distributed under the terms of the GNU General Public License 3.
 		</footer>
 
