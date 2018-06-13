@@ -42,11 +42,10 @@ export default class Transfer {
         return
       }
     } else if (isString(source)) {
-      console.log(source)
       // Check if the source string is an URL
       const uri = parseUrl(source)
 
-      if (uri) {
+      if (uri !== false) {
         // Attempt to download and load the remote experiment
         try {
           const remoteFile = await this.fetch(uri.href)
@@ -156,7 +155,7 @@ export default class Transfer {
   /**
    * Asynchronously iterate over file pool files and generate items for them.
    *
-   * @param {any} poolFiles The array containing file pool files
+   * @param {array} poolFiles The array containing file pool files
    * @returns void
    * @memberof Transfer
    */

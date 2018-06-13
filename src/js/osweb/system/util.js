@@ -100,7 +100,7 @@ export function readFileAsText (inputFile) {
  * @returns String
  */
 function getHost () {
-  return window.location.origin
+  return window.location.origin !== 'null' ? window.location.origin : 'http://nodejs.test'
 }
 
 /**
@@ -112,9 +112,9 @@ function getHost () {
  */
 export function parseUrl (str) {
   try {
-    return new URL(str, getHost())
+    const host = getHost()
+    return new URL(str, host)
   } catch (e) {
-    console.error(e)
     return false
   }
 }
