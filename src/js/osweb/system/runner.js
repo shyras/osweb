@@ -128,10 +128,7 @@ export default class Runner {
   _build () {
     // Create the experiment item.
     this._experiment = new Experiment(this, this._name, this._script)
-
-    console.log('<>')
     this._convertor.parseScript(this._script)
-
     this._experiment.from_string(this._script)
 
     // Set the onlog event handler (if defined).

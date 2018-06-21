@@ -87,7 +87,7 @@ export default class Loop extends Item {
             var name = tokens[2]
             var value = this.syntax.remove_quotes(tokens[3])
 
-            console.log('>>' + cycle)
+            // console.log('>>' + cycle)
 
             // Check if the value is numeric
             value = isNumber(value) ? Number(value) : value

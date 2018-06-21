@@ -38,9 +38,8 @@ export default class SamplerBackend {
 
       // Check if the sourse is not already in the sound.
       if (PIXI.sound.exists(source.name) === false) {
-        console.log('adding sound' + source.name)
         PIXI.sound.add(source.name, {
-          src: source.data.src,
+          url: source.data.src,
           preload: true,
           complete: this.experiment._runner._events._audioEnded.bind(this)
         })
@@ -66,12 +65,9 @@ export default class SamplerBackend {
     this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch
     this.volume = (typeof volume === 'undefined') ? this.volume : volume
 
-    console.log(this._name)
-    console.log(PIXI.sound)
-
     if (this._name !== '') {
       // Set the sound properties.
-      // PIXI.sound.volume(this._name, this.volume);
+      PIXI.sound.volume(this._name, this.volume)
 
       // Play the actual sound.
       PIXI.sound.play(this._name)
