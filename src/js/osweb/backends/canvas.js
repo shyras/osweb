@@ -9,7 +9,7 @@ export default class Canvas {
    * @param {Boolean} auto_prepare - If true the canvas is prepared after drawing.
    * @param {Object} style_args - Optional styling argument for the canvas.
    */
-  constructor (experiment, auto_prepare, style_args) {
+  constructor (experiment, auto_prepare) {
     // Create and set public properties.
     this.auto_prepare = (typeof auto_prepare === 'undefined') ? true : auto_prepare // Set autoprepare toggle (not supported yet).
     this.experiment = experiment // Anchor to the experiment object.
@@ -86,25 +86,25 @@ export default class Canvas {
 
   /**
    * Checks if addiotional style is defined otherwise use default.
-   * @param {Object} style_args - The additional style.
+   * @param {Object} styleArgs - The additional style.
    * @return {Object} - returns a style object.
    */
-  _getStyle (style_args) {
+  _getStyle (styleArgs) {
     // Check if the supplied style does exist.
-    if (typeof (style_args) === 'undefined') {
+    if (typeof (styleArgs) === 'undefined') {
       return this._styles
     } else {
       var styles = new Styles()
-      styles._background_color = (typeof (style_args._background_color) !== 'undefined') ? style_args._background_color : 0x000000
-      styles._bidi = (typeof (style_args._bidi) !== 'undefined') ? style_args._bidi : false
-      styles._color = (typeof (style_args._color) !== 'undefined') ? style_args._color : 0xffffff
-      styles._fill = (typeof (style_args._fill) !== 'undefined') ? style_args._fill : false
-      styles._font_bold = (typeof (style_args._font_bold) !== 'undefined') ? style_args._font_bold : true
-      styles._font_family = (typeof (style_args._font_family) !== 'undefined') ? style_args._font_family : 'Arial'
-      styles._font_italic = (typeof (style_args._font_italic) !== 'undefined') ? style_args._font_italic : false
-      styles._font_size = (typeof (style_args._font_size) !== 'undefined') ? style_args._font_size : 24
-      styles._font_underline = (typeof (style_args._font_underline) !== 'undefined') ? style_args._font_underline : false
-      styles._penwidth = (typeof (style_args._penwidth) !== 'undefined') ? style_args._penwidth : 1
+      styles._background_color = (typeof (styleArgs._background_color) !== 'undefined') ? styleArgs._background_color : 0x000000
+      styles._bidi = (typeof (styleArgs._bidi) !== 'undefined') ? styleArgs._bidi : false
+      styles._color = (typeof (styleArgs._color) !== 'undefined') ? styleArgs._color : 0xffffff
+      styles._fill = (typeof (styleArgs._fill) !== 'undefined') ? styleArgs._fill : false
+      styles._font_bold = (typeof (styleArgs._font_bold) !== 'undefined') ? styleArgs._font_bold : true
+      styles._font_family = (typeof (styleArgs._font_family) !== 'undefined') ? styleArgs._font_family : 'Arial'
+      styles._font_italic = (typeof (styleArgs._font_italic) !== 'undefined') ? styleArgs._font_italic : false
+      styles._font_size = (typeof (styleArgs._font_size) !== 'undefined') ? styleArgs._font_size : 24
+      styles._font_underline = (typeof (styleArgs._font_underline) !== 'undefined') ? styleArgs._font_underline : false
+      styles._penwidth = (typeof (styleArgs._penwidth) !== 'undefined') ? styleArgs._penwidth : 1
       return styles
     }
   }
@@ -191,30 +191,30 @@ export default class Canvas {
    * @param {Object} textBlock - Object containing the translated text block.
    * @param {Object} currentStyle - Object containing the current style to use.
    */
-  _parseHtmlNode (html_node, text_block, current_style) {
+  _parseHtmlNode (htmlNode, textBlock, currentStyle) {
     // Create a style for the current leven
-    var element_style = this._getStyle(current_style)
+    var elementStyle = this._getStyle(currentStyle)
 
     // Process the node content itself.
-    switch (html_node.nodeType) {
+    switch (htmlNode.nodeType) {
       case 1:
         // Select the proper html tag
-        switch (html_node.nodeName) {
+        switch (htmlNode.nodeName) {
           case 'B':
             // Process bold tag.
-            element_style.font_bold = true
+            elementStyle.font_bold = true
             break
           case 'BR':
             // Process break tag, get the total width of the line.
-            text_block.row.height = (text_block.row.height > 0) ? text_block.row.height : text_block.prev_height
-            text_block.row.width = (text_block.x_pos > text_block.row.width) ? text_block.x_pos : text_block.row.width
-            text_block.width = (text_block.width > text_block.row.width) ? text_block.width : text_block.row.width
-            text_block.y_pos = text_block.y_pos + text_block.row.height
-            text_block.x_pos = 4
-            text_block.height = text_block.height + text_block.row.height
+            textBlock.row.height = (textBlock.row.height > 0) ? textBlock.row.height : textBlock.prev_height
+            textBlock.row.width = (textBlock.x_pos > textBlock.row.width) ? textBlock.x_pos : textBlock.row.width
+            textBlock.width = (textBlock.width > textBlock.row.width) ? textBlock.width : textBlock.row.width
+            textBlock.y_pos = textBlock.y_pos + textBlock.row.height
+            textBlock.x_pos = 4
+            textBlock.height = textBlock.height + textBlock.row.height
             // new row with elements.
-            text_block.rows.push(text_block.row)
-            text_block.row = {
+            textBlock.rows.push(textBlock.row)
+            textBlock.row = {
               ascent: 0,
               width: 0,
               height: 0,
@@ -225,12 +225,12 @@ export default class Canvas {
             break
           case 'I':
             // Process italic tag.
-            element_style.font_italic = true
+            elementStyle.font_italic = true
             break
           case 'SPAN':
             // Get the style tokens.
-            if (html_node.attributes.length > 0) {
-              var tokens = html_node.attributes[0].value.split(';')
+            if (htmlNode.attributes.length > 0) {
+              var tokens = htmlNode.attributes[0].value.split(';')
               // parse through the style tokens.
               for (var j = 0; j < tokens.length; j++) {
                 var property = tokens[j].slice(0, tokens[j].indexOf(':'))
@@ -238,13 +238,13 @@ export default class Canvas {
                 // Set the supported properties.
                 switch (property) {
                   case 'color':
-                    element_style.color = value
+                    elementStyle.color = value
                     break
                   case 'font-size':
-                    element_style.font_size = value
+                    elementStyle.font_size = value
                     break
                   case 'font-family':
-                    element_style.font_family = value
+                    elementStyle.font_family = value
                     break
                 }
               }
@@ -252,46 +252,46 @@ export default class Canvas {
             break
           case 'U':
             // Process underline tag.
-            element_style.font_underline = true
+            elementStyle.font_underline = true
             break
         }
         break
       case 3:
         // PIXI - Create the text style element.
-        var text_style = {
-          fontFamily: element_style.font_family,
-          fontStyle: (element_style.font_italic === true) ? 'italic' : 'normal',
-          fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
-          fontSize: element_style.font_size,
-          fill: element_style.color
+        var textStyle = {
+          fontFamily: elementStyle.font_family,
+          fontStyle: (elementStyle.font_italic === true) ? 'italic' : 'normal',
+          fontWeight: (elementStyle.font_bold === true) ? 'bold' : 'normal',
+          fontSize: elementStyle.font_size,
+          fill: elementStyle.color
         }
 
         // Create the text element and get the dimension.
         var bounds = {}
-        var text_element = new PIXI.Text(html_node.textContent, text_style)
-        text_element.getBounds(false, bounds)
+        var textElement = new PIXI.Text(htmlNode.textContent, textStyle)
+        textElement.getBounds(false, bounds)
 
         // Get the height and descent (for vertical positioning);
-        var dimension = this._getTextBaseline(html_node.textContent, element_style.font_family, element_style.font_size, element_style.font_bold)
+        var dimension = this._getTextBaseline(htmlNode.textContent, elementStyle.font_family, elementStyle.font_size, elementStyle.font_bold)
 
         // Position the text element and update the width.
-        text_element.x = text_block.x_pos
-        text_element.y = text_block.y_pos
-        text_block.x_pos = text_block.x_pos + bounds.width
-        text_block.row.width = (text_block.x_pos > text_block.row.width) ? text_block.x_pos : text_block.row.width
-        text_block.width = (text_block.width > text_block.row.width) ? text_block.width : text_block.row.width
-        text_block.row.height = ((bounds.height + 1) > text_block.row.height) ? bounds.height + 1 : text_block.row.height
-        text_block.row.ascent = (dimension.ascent > text_block.row.ascent) ? dimension.ascent : text_block.row.ascent
-        text_block.prev_height = text_block.row.height
-        text_block.row.text_elements.push(text_element)
-        text_block.row.text_dimensions.push(dimension)
-        text_block.row.text_underline.push(element_style.font_underline)
+        textElement.x = textBlock.x_pos
+        textElement.y = textBlock.y_pos
+        textBlock.x_pos = textBlock.x_pos + bounds.width
+        textBlock.row.width = (textBlock.x_pos > textBlock.row.width) ? textBlock.x_pos : textBlock.row.width
+        textBlock.width = (textBlock.width > textBlock.row.width) ? textBlock.width : textBlock.row.width
+        textBlock.row.height = ((bounds.height + 1) > textBlock.row.height) ? bounds.height + 1 : textBlock.row.height
+        textBlock.row.ascent = (dimension.ascent > textBlock.row.ascent) ? dimension.ascent : textBlock.row.ascent
+        textBlock.prev_height = textBlock.row.height
+        textBlock.row.text_elements.push(textElement)
+        textBlock.row.text_dimensions.push(dimension)
+        textBlock.row.text_underline.push(elementStyle.font_underline)
         break
     }
 
     // Process the cild nodes recursive (if any).
-    for (var i = 0; i < html_node.childNodes.length; i++) {
-      this._parseHtmlNode(html_node.childNodes[i], text_block, element_style, (i === (html_node.childNodes.length - 1)))
+    for (var i = 0; i < htmlNode.childNodes.length; i++) {
+      this._parseHtmlNode(htmlNode.childNodes[i], textBlock, elementStyle, (i === (htmlNode.childNodes.length - 1)))
     }
   }
 
@@ -312,17 +312,17 @@ export default class Canvas {
    * @param {Number} sy - The starting y coordinate of the element.
    * @param {Number} ex - The ending x coordinate of the element.
    * @param {Number} ey - The ending y coordinate of the element.
-   * @param {Number} body_width - The width of the element body.
-   * @param {Number} body_length - The height of the element body.
-   * @param {Number} head_width - The width of the element head.
-   * @param {Object} style_args - Optional styling arguments for the element.
+   * @param {Number} bodyWidth - The width of the element body.
+   * @param {Number} bodyLength - The height of the element body.
+   * @param {Number} headWidth - The width of the element head.
+   * @param {Object} styleArgs - Optional styling arguments for the element.
    */
-  arrow (sx, sy, ex, ey, body_width, body_length, head_width, style_args) {
+  arrow (sx, sy, ex, ey, bodyWidth, bodyLength, headWidth, styleArgs) {
     // Calculate coordinate points for the arrow.
-    var points = this._arrow_shape(sx, sy, ex, ey, body_width, body_length, head_width)
+    var points = this._arrow_shape(sx, sy, ex, ey, bodyWidth, bodyLength, headWidth)
 
     // Draw the arrow as a polygon.
-    this.polygon(points, style_args)
+    this.polygon(points, styleArgs)
   }
 
   /**
@@ -330,17 +330,17 @@ export default class Canvas {
    * @param {Number} sx - The x coordinate of the element.
    * @param {Number} sy - The y coordinate of the element.
    * @param {Number} ex - The radius the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  circle (x, y, r, style_args) {
+  circle (x, y, r, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
 
     // Create a circle element.
     var circle = new PIXI.Graphics()
-    circle.lineStyle(element_style.penwidth, element_style.color, 1)
-    if (element_style.fill === true) {
-      circle.beginFill(element_style.background_color)
+    circle.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
+    if (elementStyle.fill === true) {
+      circle.beginFill(elementStyle.background_color)
       circle.drawCircle(0, 0, r)
       circle.endFill()
     } else {
@@ -358,7 +358,7 @@ export default class Canvas {
    * @param {Number} background_color - The color to draw (optional).
    * @param {Object} style_args - JSON object containing style arguments (optional).
    */
-  clear (background_color, style_args) {
+  clear (backgroundColor, styleArgs) {
     // Clear the stage by temoving al the child elements.
     for (var i = this._container.children.length - 1; i >= 0; i--) {
       this._container.removeChild(this._container.children[i])
@@ -380,17 +380,17 @@ export default class Canvas {
    * @param {Number} y - The y coordinate of the element.
    * @param {Number} w - The width the element.
    * @param {Number} h - The height the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  ellipse (x, y, w, h, style_args) {
+  ellipse (x, y, w, h, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
 
     // Create an ellipse element.
     var ellipse = new PIXI.Graphics()
-    ellipse.lineStyle(element_style.penwidth, element_style.color, 1)
-    if (element_style.fill === true) {
-      ellipse.beginFill(element_style.background_color)
+    ellipse.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
+    if (elementStyle.fill === true) {
+      ellipse.beginFill(elementStyle.background_color)
       ellipse.drawEllipse(0, 0, (w / 2), (h / 2))
       ellipse.endFill()
     } else {
@@ -407,14 +407,14 @@ export default class Canvas {
    * Draws a fixdot element on the canvas.
    * @param {Number} x - The x coordinate of the element.
    * @param {Number} y - The y coordinate of the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  fixdot (x, y, style, style_args) {
+  fixdot (x, y, style, styleArgs) {
     // Check the color and style arguments.
     style = (typeof style === 'undefined') ? 'default' : style
 
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
 
     if (typeof x === 'undefined') {
       if (this.uniform_coordinates === true) {
@@ -446,20 +446,20 @@ export default class Canvas {
     var styles = new Styles()
     if ((style.indexOf('open') !== -1) || (style === 'default')) {
       styles._fill = true
-      styles._background_color = element_style.color
-      styles._color = element_style.color
+      styles._background_color = elementStyle.color
+      styles._color = elementStyle.color
       this.ellipse(x - s, y - s, 2 * s, 2 * s, styles)
-      styles._background_color = element_style.background_color
-      styles._color = element_style.background_color
+      styles._background_color = elementStyle.background_color
+      styles._color = elementStyle.background_color
       this.ellipse(x - h, y - h, 2 * h, 2 * h, styles)
     } else if (style.indexOf('filled') !== -1) {
       styles._fill = true
-      styles._background_color = element_style.color
-      styles._color = element_style.color
+      styles._background_color = elementStyle.color
+      styles._color = elementStyle.color
       this.ellipse(x - s, y - s, 2 * s, 2 * s, styles)
     } else if (style.indexOf('cross') !== -1) {
       styles._penwidth = 1
-      styles._color = element_style.color
+      styles._color = elementStyle.color
       this.line(x, y - s, x, y + s, styles)
       this.line(x - s, y, x + s, y, styles)
     } else {
@@ -469,47 +469,52 @@ export default class Canvas {
 
   /**
    * Draws a gabor element on the canvas.
-   * @param {Number} x - The x coordinate of the element.
-   * @param {Number} y - The y coordinate of the element.
-   * @param {String} env - The type of envelop used  for the element.
-   * @param {Object} size - Optional styling argument for the element.
-   * @param {Number} stdev - The standard deviation  for the element.
-   * @param {Number|String} color1 - The first color for the element.
-   * @param {Number|String} color2 - Teh second color for the element.
-   * @param {String} bgmode - The type of background mode for the element.
+   *
+   * @param {Number} x The x coordinate of the element
+   * @param {Number} y The y coordinate of the element
+   * @param {float} orient The rotation of the element (range between 0 and 1)
+   * @param {float} freq The frequency of the bands
+   * @param {String} env The type of envelope used for the element
+   * @param {*} size The size of the gabor
+   * @param {*} stdev The standard deviation of the guass fade
+   * @param {*} phase The phase of the element (start offset)
+   * @param {*} color1 The first color for the element
+   * @param {*} color2 The second color for the element
+   * @param {*} bgmode The background mode of the element
+   * @memberof Canvas
    */
   gabor (x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode) {
     // Returns a surface containing a Gabor patch.
     env = this._match_env(env)
 
     // Create a temporary canvas to make an image data array.
-    var canvas = document.createElement('canvas')
+    const canvas = document.createElement('canvas')
     canvas.width = size
     canvas.height = size
-    var ctx = canvas.getContext('2d')
-    var px = ctx.getImageData(0, 0, size, size)
+    const ctx = canvas.getContext('2d')
+    const px = ctx.getImageData(0, 0, size, size)
 
     // Conver the orientation to radians.
-    orient = (orient * Math.PI / 180)
+    orient = Math.PI * orient / 180
     color1 = this._styles._convertColorValueToRGB(color1)
     color2 = this._styles._convertColorValueToRGB(color2)
 
     // rx and ry reflect the real coordinates in the target image
-    for (var rx = 0; rx < size; rx++) {
-      for (var ry = 0; ry < size; ry++) {
+    for (let rx = 0; rx < size; rx++) {
+      for (let ry = 0; ry < size; ry++) {
         // Distance from the center
-        var dx = rx - 0.5 * size
-        var dy = ry - 0.5 * size
+        const dx = rx - 0.5 * size
+        const dy = ry - 0.5 * size
 
         // Get the coordinates (x, y) in the unrotated Gabor patch.
-        var t = Math.atan2(dy, dx) + orient
-        var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
-        var ux = r * Math.cos(t)
-        var uy = r * Math.sin(t)
-        var f
+        const t = Math.atan2(dy, dx) + orient
+        const r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
+        const ux = r * Math.cos(t)
+        const uy = r * Math.sin(t)
+        let f
 
         // Get the amplitude without the envelope (0 .. 1).
-        var amp = 0.5 + 0.5 * Math.cos(2.0 * Math.PI * (ux * freq + phase))
+        let amp = 0.5 + 0.5 * Math.cos(2.0 * Math.PI * (ux * freq + phase))
 
         // The envelope adjustment
         if (env === 'g') {
@@ -533,16 +538,18 @@ export default class Canvas {
           amp = amp * f
         }
 
-        // Recalculate the collor values.
-        var r = color1.r * amp + color2.r * (1.0 - amp)
-        var g = color1.g * amp + color2.g * (1.0 - amp)
-        var b = color1.b * amp + color2.b * (1.0 - amp)
+        // Recalculate the color values.
+        const color = {
+          r: color1.r * amp + color2.r * (1.0 - amp),
+          g: color1.g * amp + color2.g * (1.0 - amp),
+          b: color1.b * amp + color2.b * (1.0 - amp)
+        }
 
         // Set the color values at pixel level.
         var position = rx * 4 + (ry * size * 4)
-        px.data[position] = r
-        px.data[position + 1] = g
-        px.data[position + 2] = b
+        px.data[position] = color.r
+        px.data[position + 1] = color.g
+        px.data[position + 2] = color.b
         px.data[position + 3] = 255
       }
     }
@@ -643,15 +650,15 @@ export default class Canvas {
    * @param {Number} sy - The starting y coordinate of the element.
    * @param {Number} ex - The ending x coordinate of the element.
    * @param {Number} ey - The ending y coordinate of the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  line (sx, sy, ex, ey, style_args) {
+  line (sx, sy, ex, ey, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
 
     // Create a line element.
     var line = new PIXI.Graphics()
-    line.lineStyle(element_style.penwidth, element_style.color, 1)
+    line.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     line.moveTo(0, 0)
     line.lineTo(ex - sx, ey - sy)
     line.x = sx
@@ -688,12 +695,13 @@ export default class Canvas {
     color2 = this._styles._convertColorValueToRGB(color2)
 
     // rx and ry reflect the real coordinates in the target image
-    for (var rx = 0; rx < size; rx++) {
-      for (var ry = 0; ry < size; ry++) {
+    for (let rx = 0; rx < size; rx++) {
+      for (let ry = 0; ry < size; ry++) {
         // Distance from the center
-        var ux = rx - 0.5 * size
-        var uy = ry - 0.5 * size
-        var r = Math.sqrt(Math.pow(ux, 2) + Math.pow(uy, 2))
+        const ux = rx - 0.5 * size
+        const uy = ry - 0.5 * size
+        const r = Math.sqrt(Math.pow(ux, 2) + Math.pow(uy, 2))
+        let f
         // Get the amplitude without the envelope (0 .. 1)
         var amp = Math.random()
         // The envelope adjustment
@@ -719,15 +727,17 @@ export default class Canvas {
         }
 
         // Recalculate the collor values.
-        var r = color1.r * amp + color2.r * (1.0 - amp)
-        var g = color1.g * amp + color2.g * (1.0 - amp)
-        var b = color1.b * amp + color2.b * (1.0 - amp)
+        const color = {
+          r: color1.r * amp + color2.r * (1.0 - amp),
+          g: color1.g * amp + color2.g * (1.0 - amp),
+          b: color1.b * amp + color2.b * (1.0 - amp)
+        }
 
         // Set the color values at pixel level.
         var position = rx * 4 + (ry * size * 4)
-        px.data[position] = r
-        px.data[position + 1] = g
-        px.data[position + 2] = b
+        px.data[position] = color.r
+        px.data[position + 1] = color.g
+        px.data[position + 2] = color.b
         px.data[position + 3] = 255
       }
     }
@@ -749,11 +759,11 @@ export default class Canvas {
   /**
    * Draws a polygon element on the canvas.
    * @param {Array} verticles - The coordinates of the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  polygon (verticles, style_args) {
+  polygon (verticles, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
 
     // Adjust the points.
     var path = []
@@ -766,9 +776,9 @@ export default class Canvas {
 
     // Create a polygon element.
     var polygon = new PIXI.Graphics()
-    polygon.lineStyle(element_style.penwidth, element_style.color, 1)
-    if (element_style.fill === true) {
-      polygon.beginFill(element_style.background_color)
+    polygon.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
+    if (elementStyle.fill === true) {
+      polygon.beginFill(elementStyle.background_color)
       polygon.drawPolygon(path)
       polygon.endFill()
     } else {
@@ -788,16 +798,16 @@ export default class Canvas {
    * @param {Number} y - The y coordinate of the element.
    * @param {Number} w - The width of the element.
    * @param {Number} h - The height of the element.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  rect (x, y, w, h, style_args) {
+  rect (x, y, w, h, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    var elementStyle = this._getStyle(styleArgs)
     // Create a rectangle element.
     var rectangle = new PIXI.Graphics()
-    rectangle.lineStyle(element_style.penwidth, element_style.color, 1)
-    if (element_style.fill === true) {
-      rectangle.beginFill(element_style.background_color)
+    rectangle.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
+    if (elementStyle.fill === true) {
+      rectangle.beginFill(elementStyle.background_color)
       rectangle.drawRect(0, 0, w, h)
       rectangle.endFill()
     } else {
@@ -858,19 +868,18 @@ export default class Canvas {
    * @param {Number} x - The x coordinate of the element.
    * @param {Number} y - The y coordinate of the element.
    * @param {Boolean} html - If true the text parameter contains HTML tags.
-   * @param {Object} style_args - Optional styling argument for the element.
+   * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  text (text, center, x, y, html, style_args) {
+  text (text, center, x, y, html, styleArgs) {
     // Get the style
-    var element_style = this._getStyle(style_args)
+    const elementStyle = this._getStyle(styleArgs)
 
     // Only jump through the HTML rendering hoops if the html == 'yes' and
     // text actually contains HTML markup.
     if ((html === 'yes') && (this._containsHTML(text))) {
       //  Define the text block object.
-      var text_elements = []
-      var text_block = {
-        element_style: element_style,
+      const textBlock = {
+        element_style: elementStyle,
         height: 0,
         row: {
           ascent: 0,
@@ -888,80 +897,80 @@ export default class Canvas {
       }
 
       // First create a div container for parsing the html text.
-      var div = document.createElement('div')
+      const div = document.createElement('div')
       document.body.appendChild(div)
-      div.style.fontFamily = element_style.font_family
-      div.style.fontSize = String(element_style.font_size) + 'px'
-      div.style.fontWeight = (element_style.font_bold === true) ? 'bold' : 'normal'
+      div.style.fontFamily = elementStyle.font_family
+      div.style.fontSize = String(elementStyle.font_size) + 'px'
+      div.style.fontWeight = (elementStyle.font_bold === true) ? 'bold' : 'normal'
       div.style.lineHeight = 'normal'
       div.style.display = 'inline-block'
       div.style.visibility = 'hidden'
       div.innerHTML = text
 
       // Parse the html recursive.
-      this._parseHtmlNode(div, text_block, element_style)
+      this._parseHtmlNode(div, textBlock, elementStyle)
 
       // Remove the html div.
       document.body.removeChild(div)
 
       // Add the last row (if any).
-      if (text_block.row.text_elements.length !== 0) {
-        text_block.height = text_block.height + text_block.row.height
-        text_block.rows.push(text_block.row)
+      if (textBlock.row.text_elements.length !== 0) {
+        textBlock.height = textBlock.height + textBlock.row.height
+        textBlock.rows.push(textBlock.row)
       }
 
       // Recalculate the x and y positions depending on height, width and centering.
-      text_block.y_pos = 0
-      for (var i = 0; i < text_block.rows.length; i++) {
+      textBlock.y_pos = 0
+      for (let i = 0; i < textBlock.rows.length; i++) {
         // Parse a textline.
-        for (var j = 0; j < text_block.rows[i].text_elements.length; j++) {
+        for (let j = 0; j < textBlock.rows[i].text_elements.length; j++) {
           // Check for vertical correction.
-          var adjust = text_block.rows[i].ascent - text_block.rows[i].text_dimensions[j].ascent
-          text_block.rows[i].text_elements[j].y = text_block.y_pos + adjust
+          const adjust = textBlock.rows[i].ascent - textBlock.rows[i].text_dimensions[j].ascent
+          textBlock.rows[i].text_elements[j].y = textBlock.y_pos + adjust
 
           // Check for horizontal centering.
           if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
-            text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x - (text_block.rows[i].width / 2)
-            text_block.rows[i].text_elements[j].y = text_block.rows[i].text_elements[j].y + y - (text_block.height / 2)
+            textBlock.rows[i].text_elements[j].x = textBlock.rows[i].text_elements[j].x + x - (textBlock.rows[i].width / 2)
+            textBlock.rows[i].text_elements[j].y = textBlock.rows[i].text_elements[j].y + y - (textBlock.height / 2)
           } else {
-            text_block.rows[i].text_elements[j].x = text_block.rows[i].text_elements[j].x + x
-            text_block.rows[i].text_elements[j].y = text_block.rows[i].text_elements[j].y + y + 6
+            textBlock.rows[i].text_elements[j].x = textBlock.rows[i].text_elements[j].x + x
+            textBlock.rows[i].text_elements[j].y = textBlock.rows[i].text_elements[j].y + y + 6
           }
 
           // if underlined add additional styling.
-          if (text_block.rows[i].text_underline[j] === true) {
-            this.line(text_block.rows[i].text_elements[j].x,
-              text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7,
-              text_block.rows[i].text_elements[j].x + text_block.rows[i].text_elements[j].width,
-              text_block.rows[i].text_elements[j].y + text_block.rows[i].text_dimensions[j].ascent + 7,
-              element_style)
+          if (textBlock.rows[i].text_underline[j] === true) {
+            this.line(textBlock.rows[i].text_elements[j].x,
+              textBlock.rows[i].text_elements[j].y + textBlock.rows[i].text_dimensions[j].ascent + 7,
+              textBlock.rows[i].text_elements[j].x + textBlock.rows[i].text_elements[j].width,
+              textBlock.rows[i].text_elements[j].y + textBlock.rows[i].text_dimensions[j].ascent + 7,
+              elementStyle)
           }
 
           // PIXI - Add text element to the stage.
-          this._container.addChild(text_block.rows[i].text_elements[j])
+          this._container.addChild(textBlock.rows[i].text_elements[j])
         }
-        text_block.y_pos = text_block.y_pos + text_block.rows[i].height
+        textBlock.y_pos = textBlock.y_pos + textBlock.rows[i].height
       }
     } else {
       // PIXI - Create the text element
-      var text_style = {
-        fontFamily: element_style.font_family,
-        fontSize: element_style.font_size,
-        fontWeight: (element_style.font_bold === true) ? 'bold' : 'normal',
-        fill: element_style.color
+      var textStyle = {
+        fontFamily: elementStyle.font_family,
+        fontSize: elementStyle.font_size,
+        fontWeight: (elementStyle.font_bold === true) ? 'bold' : 'normal',
+        fill: elementStyle.color
       }
-      var text_element = new PIXI.Text(text, text_style)
+      var textElement = new PIXI.Text(text, textStyle)
 
       if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
-        text_element.x = x - (text_element.width / 2)
-        text_element.y = y - (text_element.height / 2)
+        textElement.x = x - (textElement.width / 2)
+        textElement.y = y - (textElement.height / 2)
       } else {
-        text_element.x = x
-        text_element.y = y
+        textElement.x = x
+        textElement.y = y
       }
 
       // PIXI - Add text element to the stage.
-      this._container.addChild(text_element)
+      this._container.addChild(textElement)
     }
   }
 }

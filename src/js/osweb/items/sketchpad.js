@@ -97,9 +97,9 @@ export default class Sketchpad extends GenericResponse {
     super.run()
 
     // Check if background color needs to be changed
-    var background_color = this.vars.get('background')
-    if (background_color) {
-      this.canvas._styles.background_color = background_color
+    const backgroundColor = this.vars.get('background')
+    if (backgroundColor) {
+      this.canvas._styles.background_color = backgroundColor
     }
 
     // Set the onset and start the stimulus response process.

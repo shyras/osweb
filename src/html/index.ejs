@@ -54,6 +54,7 @@
 							<option value="text;lexical-decision.osexp">Lexical decision</option>
 							<option value="binary;gaze-cuing.osexp">Gaze cuing</option>
 							<option value="text;Posner1980.osexp">Posner cueing</option>
+							<option value="binary;sketchpad_test.osexp">Sketchpad test</option>
 						</select>
 					</div>
 				</form>
@@ -159,20 +160,7 @@
 
 	/** Disable some buttons once an experiment is loaded. */
 	function buttonsSetToFileLoaded() {
-		// document.getElementById('file_button').disabled = true;
 		document.getElementById('run_button').disabled = false;
-		// document.getElementById('fullscreen_button').disabled = false;
-		// document.getElementById('console_button').disabled = false;
-		// document.getElementById('debug_button').disabled = false;
-	}
-
-	/** Enable experiment loading buttons. */
-	function buttonsSetToFileSelection() {
-		// document.getElementById('file_button').disabled = false;
-		// document.getElementById('run_button').disabled = true;
-		// document.getElementById('fullscreen_button').disabled = true;
-		// document.getElementById('console_button').disabled = true;
-		// document.getElementById('debug_button').disabled = true;
 	}
 
 	/** Method for handling the hidden file load button. */
@@ -372,8 +360,6 @@
 	 * @param {Object} sessionData - The session data.
 	 */
 	function onFinishedHandler(data, sessionData) {
-		// Reset the input buttons
-		buttonsSetToFileSelection();
 
 		// Reset the run button.
 		document.getElementById('run_button').value = 'Run experiment';
