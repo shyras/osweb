@@ -1,4 +1,4 @@
-OpenSesame = {
+const OpenSesame = {
   API: 2,
   OpenSesame: '3.1.6',
   Platform: 'nt',
@@ -62,7 +62,7 @@ OpenSesame = {
         y: 0,
         z_index: 0
       }, {
-        type: fixdot,
+        type: 'fixdot',
         color: '#ff000b',
         show_if: '[correct] = 0',
         style: 'default',

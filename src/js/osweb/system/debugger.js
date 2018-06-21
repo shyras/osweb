@@ -1,6 +1,6 @@
 import {
   constants
-} from './constants.js';
+} from './constants.js'
 
 /** Class representing a debugger. */
 export default class Debugger {
@@ -8,68 +8,68 @@ export default class Debugger {
    * Create a debugger which handles errors and messahes during an session.
    * @param {Object} runner - The runner class to which the debugger belongs.
    */
-  constructor(runner) {
+  constructor (runner) {
     // Create and set private properties.
-    this._runner = runner; // Parent runner attached to the debugger.
+    this._runner = runner // Parent runner attached to the debugger.
 
     // Create and set public properties.
-    this.enabled = true; // Enable the debugger.
-    this.error = false; // True if an error occured.
-    this.messageLog = new Array(); // Arraty with alle log messages.
+    this.enabled = true // Enable the debugger.
+    this.error = false // True if an error occured.
+    this.messageLog = [] // Arraty with alle log messages.
   }
 
   /** Initialize the debugger object class. */
-  _initialize() {
+  _initialize () {
     // Clear the log.
-    this.messageLog = [];
+    this.messageLog = []
   }
 
   /** Finalize the debugger object class. */
-  _finalize() {
+  _finalize () {
     // If enabled push the messages to the javascript console.
     if (this.enabled === true) {
-      console.log(this.messageLog);
+      console.log(this.messageLog)
     }
 
     // Clear the log.
-    this.messageLog = [];
+    this.messageLog = []
   }
 
   /**
    * Show a fatal error to the user and stops the running of the experiment.
-   * @param {String} error_text - The error shown to the user.
+   * @param {String} errorText - The error shown to the user.
    */
-  addError(error_text) {
+  addError (errorText) {
     // Set the error flag.
-    this.error = true;
+    this.error = true
 
     // Set status of the event system to break.
-    this._runner._events.state = constants.TIMER_ERROR;
+    this._runner._events.state = constants.TIMER_ERROR
 
     // Throw the exception.
-    console.error('OSWeb has stopped running due to a fatal error.');
-    throw new Error(error_text);
+    console.error('OSWeb has stopped running due to a fatal error.')
+    throw new Error(errorText)
   }
 
   /**
    * Add a message to the debugger list.
    * @param {String} message - The message to be added to the list.
    */
-  addMessage(message_text) {
+  addMessage (messageText) {
     // Push the error message to the log.
-    this.messageLog.push(message_text);
+    this.messageLog.push(messageText)
 
     if (this.enabled === true) {
-      console.log(message_text);
+      console.log(messageText)
     }
   }
 
   /**
    * Mirror function for the AddMessage method.
-   * @param {String} message_text - The message to be added to the list.
+   * @param {String} messageText - The message to be added to the list.
    */
-  msg(message_text) {
+  msg (messageText) {
     // Push the error message to the log.
-    this.addMesage(message_text);
+    this.addMesage(messageText)
   }
 }
