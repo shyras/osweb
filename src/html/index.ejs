@@ -51,10 +51,9 @@
 						or
 						<select id="exampleTasks" class="form-control mx-sm-2" selected="false" onchange="selectExampleTask()">>
 							<option disabled selected value>Choose example experiment</option>
-							<option value="text;lexical-decision.osexp">Lexical decision</option>
-							<option value="binary;gaze-cuing.osexp">Gaze cuing</option>
-							<option value="text;Posner1980.osexp">Posner cueing</option>
-							<option value="binary;sketchpad_test.osexp">Sketchpad test</option>
+							<% htmlWebpackPlugin.options.exampleExperiments.forEach(function(exp){ %>
+								<option value="<%= exp.file %>"><%= exp.title %></option>
+							<% }); %>
 						</select>
 					</div>
 				</form>
@@ -196,13 +195,17 @@
 
 		var exampleTasks = document.getElementById("exampleTasks");
 		var selectedTask = exampleTasks.options[exampleTasks.selectedIndex].value;
-		var items = selectedTask.split(';');
 
-		context.mimetype = items[0] + '/';
-		context.source = '/osexp/' + items[1];
+		// context.mimetype = items[0] + '/';
+		context.source = selectedTask;
 
 		var textInput = document.getElementById('filename');
-		textInput.value = items[1];
+		const elements = selectedTask.split('/')
+		if( elements.length === 1) {
+			textInput.value = elements[0]
+		} else {
+			textInput.value = elements.pop()
+		}
 	}
 
 	/** Show/hide console used by the console print method. */

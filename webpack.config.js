@@ -1,11 +1,23 @@
 // webpack.config.js - Common settings
 const webpack = require('webpack')
 const path = require('path')
+const fs = require('fs')
+const startCase = require('lodash').startCase
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const pkgconfig = require('./package.json')
+
+// Folder to which example experiments are copied
+const exampleFolder = 'osexp'
+
+// A list of experiments that are found in example-experiments
+// With this list, the dropdown of example experiments is populated on the demo page
+const exampleExperiments = fs.readdirSync('example-experiments').map(item => ({
+  file: path.join(exampleFolder, item),
+  title: startCase(item.substr(0, item.lastIndexOf('.')))
+}))
 
 module.exports = (env, args) => ({
   devtool: args.mode === 'production' ? 'source-map' : 'cheap-module-source-map',
@@ -86,7 +98,8 @@ module.exports = (env, args) => ({
       title: pkgconfig.name + ' ' + pkgconfig.version,
       template: 'src/html/index.ejs',
       inject: 'head',
-      favicon: './src/img/osdoc.png'
+      favicon: './src/img/osdoc.png',
+      exampleExperiments
     }),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
@@ -95,7 +108,7 @@ module.exports = (env, args) => ({
     new webpack.NamedModulesPlugin(),
     new CopyWebpackPlugin([{
       from: 'example-experiments/*.osexp',
-      to: 'osexp/',
+      to: exampleFolder,
       flatten: true
     }], {
       debug: 'info'
