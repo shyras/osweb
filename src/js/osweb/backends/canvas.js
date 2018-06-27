@@ -371,7 +371,12 @@ export default class Canvas {
    * @return {void}
    */
   copy (canvas) {
-    this._container = canvas._container.clone(true)
+    this.clear()
+
+    // Loop over the shapes on the passed canvas and copy them onto the current one
+    for (const shape of canvas._container.children) {
+      this._container.addChild(shape.clone())
+    }
   }
 
   /**

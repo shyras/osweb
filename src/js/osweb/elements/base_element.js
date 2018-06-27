@@ -30,23 +30,30 @@ export default class BaseElement {
   }
 
   /**
-     * Parses the element from a definition string.
-.    * @param {String} script - The definition script line to be parsed.
-     */
+   * Parses the element from a definition string.
+   *
+   * @param {String} script The definition script line to be parsed.
+   * @memberof BaseElement
+   */
   from_string (script) {
     this.properties = this.sketchpad.syntax.parse_cmd(script)[2]
   }
 
   /**
    * Determines the drawing order of the elements.
-   * @param {Number} - The drawing order (value) of the element.
+   *
+   * @returns {Number}
+   * @memberof BaseElement
    */
   z_index () {
-    //  Determines the drawing order of the elements.
     return this.properties.z_index
   }
 
-  /** Calculate the dynamic elements within properties. */
+  /**
+   * Calculate the dynamic elements within properties.
+   *
+   * @memberof BaseElement
+   */
   eval_properties () {
     // Evaluates all properties and return them.
     this._properties = {}
@@ -58,10 +65,10 @@ export default class BaseElement {
       var value = this.sketchpad.syntax.eval_text(this.properties[property], null, false)
 
       if ((property === 'x') || (property === 'x1') || (property === 'x2')) {
-        value = Number(value) + xc
+        value = Math.round(Number(value) + xc)
       };
       if ((property === 'y') || (property === 'y1') || (property === 'y2')) {
-        value = Number(value) + yc
+        value = Math.round(Number(value) + yc)
       };
 
       this._properties[property] = value
@@ -69,9 +76,11 @@ export default class BaseElement {
   }
 
   /**
-     * Determines whether the element should be shown, based on the show-if statement.
-.    * @return {Boolean} - Returns true if the element must be shown.
-     */
+   * Determines whether the element should be shown, based on the show-if statement.
+   *
+   * @returns {Boolean} Returns true if the element must be shown.
+   * @memberof BaseElement
+   */
   is_shown () {
     // Set the self of the current workspace.
     this.experiment.python_workspace['self'] = this.sketchpad
@@ -80,7 +89,11 @@ export default class BaseElement {
     return this.experiment.python_workspace._eval(this.experiment.syntax.compile_cond(this.properties['show_if']))
   }
 
-  /** Implements the draw phase of an element. */
+  /**
+   * Draws the element
+   *
+   * @memberof BaseElement
+   */
   draw () {
     // Calculate the dynamic properties.
     this.eval_properties()

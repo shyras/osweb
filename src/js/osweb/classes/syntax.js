@@ -303,10 +303,10 @@ export default class Syntax {
    */
   escapeBrackets (text) {
     let result = text.replace(/\\+[[\]]/g, (match, content, offset, str) => {
-      let n_brackets = match.length - 1
-      if (n_brackets % 2 === 1) {
+      let NBrackets = match.length - 1
+      if (NBrackets % 2 === 1) {
         let chartype = match[match.length - 1] === '[' ? 'OPEN' : 'CLOSE'
-        return `%%${chartype}:${n_brackets}:%%`
+        return `%%${chartype}:${NBrackets}:%%`
       }
       return match
     })
@@ -324,8 +324,8 @@ export default class Syntax {
       let chartype = match.substr(2, 4) === 'OPEN' ? '[' : ']'
       let i1 = match.indexOf(':') + 1
       let i2 = match.lastIndexOf(':')
-      let n_brackets = parseInt(match.substr(i1, i2 - i1))
-      return Array(n_brackets).join('\\') + chartype
+      let nBrackets = parseInt(match.substr(i1, i2 - i1))
+      return Array(nBrackets).join('\\') + chartype
     })
     return result
   }
