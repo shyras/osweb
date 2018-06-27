@@ -172,13 +172,13 @@ export default class Canvas {
    * @return {String} - The envelop type to use.
    */
   _match_env (env) {
-    if ((env === 'c') || (env === 'circular') || (env === 'round')) {
+    if (['c', 'circular', 'round'].includes(env)) {
       return 'c'
-    } else if ((env === 'g') || (env === 'gaussian') || (env === 'gauss') || (env === 'normal') || (env === 'rect') || (env === 'square')) {
+    } else if (['g', 'gaussian', 'gauss', 'normal', 'rect', 'square'].includes(env)) {
       return 'g'
-    } else if ((env === 'rectangular') || (env === 'rectangle')) {
+    } else if (['rectangular', 'rectangle'].includes(env)) {
       return 'r'
-    } else if ((env === 'l') || (env === 'linear') || (env === 'lin') || (env === 'ln')) {
+    } else if (['l', 'linear', 'lin', 'ln'].includes(env)) {
       return 'l'
     } else {
       return 'g'
@@ -518,7 +518,8 @@ export default class Canvas {
 
         // The envelope adjustment
         if (env === 'g') {
-          f = Math.exp(Math.pow(-0.5 * (ux / stdev), 2) - Math.pow(0.5 * (uy / stdev), 2))
+          // $f = exp(-0.5 * pow($x / $std, 2) - 0.5 * pow($y / $std, 2));
+          f = Math.exp(-0.5 * Math.pow(ux / stdev, 2) - 0.5 * Math.pow(uy / stdev, 2))
         } else if (env === 'l') {
           f = Math.max(0, (0.5 * size - r) / (0.5 * size))
         } else if (env === 'c') {
