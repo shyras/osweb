@@ -1,6 +1,6 @@
 import Transfer from '../../osweb/system/transfer'
 import Runner from '../../osweb/system/runner'
-import { osexpString } from '../testExps'
+import { osexpString } from '../_helpers/testExps'
 
 const mockUpdateIntroScreen = jest.fn()
 const mockUpdateProgressBar = jest.fn()
