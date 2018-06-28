@@ -134,33 +134,31 @@ export default class Canvas {
     var div = document.createElement('div')
     div.append(text, block)
     document.body.appendChild(div)
-    try {
-      // Set the variables.
-      var result = {}
-      var rect
-      var top1
-      var top2
 
-      // Calculate the ascent
-      block.style.verticalAlign = 'baseline'
-      rect = block.getBoundingClientRect()
-      top1 = rect.top + document.body.scrollTop
-      rect = text.getBoundingClientRect()
-      top2 = rect.top + document.body.scrollTop
-      result.ascent = Math.round(top1 - top2)
+    // Set the variables.
+    var result = {}
+    var rect
+    var top1
+    var top2
 
-      // Calculate the descent and the heigt.
-      block.style.verticalAlign = 'bottom'
-      rect = block.getBoundingClientRect()
-      top1 = rect.top + document.body.scrollTop
-      rect = text.getBoundingClientRect()
-      top2 = rect.top + document.body.scrollTop
-      result.height = Math.round(top1 - top2)
-      result.descent = result.height - result.ascent
-    } finally {
-      // Remove the div from the body.
-      document.body.removeChild(div)
-    }
+    // Calculate the ascent
+    block.style.verticalAlign = 'baseline'
+    rect = block.getBoundingClientRect()
+    top1 = rect.top + document.body.scrollTop
+    rect = text.getBoundingClientRect()
+    top2 = rect.top + document.body.scrollTop
+    result.ascent = Math.round(top1 - top2)
+
+    // Calculate the descent and the heigt.
+    block.style.verticalAlign = 'bottom'
+    rect = block.getBoundingClientRect()
+    top1 = rect.top + document.body.scrollTop
+    rect = text.getBoundingClientRect()
+    top2 = rect.top + document.body.scrollTop
+    result.height = Math.round(top1 - top2)
+    result.descent = result.height - result.ascent
+
+    document.body.removeChild(div)
 
     // Return the result.
     return result
