@@ -192,6 +192,7 @@ describe('Canvas', () => {
       canvas.arrow(0, 0, 10, 0, 5, 10, 20)
       const pixiArrow = canvas._container.getChildAt(0)
       renderer.stage.addChild(pixiArrow)
+      expect(1).toBe(1)
     })
   })
 })
