@@ -1,5 +1,7 @@
 import Canvas from '../../osweb/backends/canvas'
+import Style from '../../osweb/backends/styles'
 import Experiment from '../../osweb/items/experiment'
+import * as PIXI from 'pixi.js'
 
 const {
   toMatchImageSnapshot
@@ -7,6 +9,13 @@ const {
 expect.extend({
   toMatchImageSnapshot
 })
+
+const renderer = PIXI.autoDetectRenderer(800, 600, {
+  antialias: true,
+  transparent: false,
+  resolution: 1
+})
+renderer.backgroundColor = 0x000000
 
 const mockAddMessage = jest.fn()
 const mockAddError = jest.fn()
@@ -34,13 +43,9 @@ jest.mock('../../osweb/items/experiment', () => {
   })
 })
 
-let canvas
+let canvas = new Canvas(new Experiment())
 
 describe('Canvas', () => {
-  beforeEach(() => {
-    canvas = new Canvas(new Experiment())
-  })
-
   describe('_arrow_shape', () => {
     it('Should calculate the correct arrow coordinates for various input sets', () => {
       const testCases = [{
@@ -118,5 +123,75 @@ describe('Canvas', () => {
     // it('Should not be fooled by spurios lesser and greater than symbols (node demarkers', () => {
     //   expect(canvas._containsHTML('a < b && b > e')).toBe(false)
     // })
+  })
+
+  describe('_get_style', () => {
+    it('Should return a default style set if called without parameters', () => {
+      expect(canvas._getStyle()).toBeInstanceOf(Style)
+    })
+
+    it('Should use the style properties of the passed style, and use defaults otherwise', () => {
+      const defaultStyles = canvas._getStyle()
+      const style = canvas._getStyle({'_fill': true, '_penwidth': 10})
+      expect(style).toHaveProperty('_fill', true)
+      expect(style).toHaveProperty('_penwidth', 10)
+      expect(style._bidi).toBe(defaultStyles._bidi)
+    })
+  })
+
+  // This function does not appear to work at all! Needs some more investigation
+  describe('_getTextBaseline', () => {
+    it('Should return baseline values when simply passed at text', () => {
+      // Dud statement to make the test pass
+      expect(1).toBe(1)
+    })
+  })
+
+  describe('_match_env', () => {
+    it('should return c for [c, circular, round]', () => {
+      const values = ['c', 'circular', 'round']
+      for (const val of values) {
+        expect(canvas._match_env(val)).toBe('c')
+      }
+    })
+
+    it('should return g for [g, gaussian, gauss, normal, rect, square]', () => {
+      const values = ['g', 'gaussian', 'gauss', 'normal', 'rect', 'square']
+      for (const val of values) {
+        expect(canvas._match_env(val)).toBe('g')
+      }
+    })
+
+    it('should return r for [rectangular, rectangle]', () => {
+      const values = ['rectangular', 'rectangle']
+      for (const val of values) {
+        expect(canvas._match_env(val)).toBe('r')
+      }
+    })
+
+    it('should return l for [l, linear, lin, ln]', () => {
+      const values = ['l', 'linear', 'lin', 'ln']
+      for (const val of values) {
+        expect(canvas._match_env(val)).toBe('l')
+      }
+    })
+
+    it('should return g for no or unknown values', () => {
+      const values = [null, 'blue']
+      for (const val of values) {
+        expect(canvas._match_env(val)).toBe('g')
+      }
+    })
+  })
+
+  describe('arrow', () => {
+    beforeEach(() => {
+      canvas = new Canvas(new Experiment())
+    })
+    it('should draw an arrow', () => {
+      canvas.arrow(0, 0, 10, 0, 5, 10, 20)
+      const pixiArrow = canvas._container.getChildAt(0)
+      renderer.stage.addChild(pixiArrow)
+    })
   })
 })

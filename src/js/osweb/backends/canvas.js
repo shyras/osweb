@@ -94,52 +94,53 @@ export default class Canvas {
     if (typeof (styleArgs) === 'undefined') {
       return this._styles
     } else {
-      var styles = new Styles()
-      styles._background_color = (typeof (styleArgs._background_color) !== 'undefined') ? styleArgs._background_color : 0x000000
-      styles._bidi = (typeof (styleArgs._bidi) !== 'undefined') ? styleArgs._bidi : false
-      styles._color = (typeof (styleArgs._color) !== 'undefined') ? styleArgs._color : 0xffffff
-      styles._fill = (typeof (styleArgs._fill) !== 'undefined') ? styleArgs._fill : false
-      styles._font_bold = (typeof (styleArgs._font_bold) !== 'undefined') ? styleArgs._font_bold : true
-      styles._font_family = (typeof (styleArgs._font_family) !== 'undefined') ? styleArgs._font_family : 'Arial'
-      styles._font_italic = (typeof (styleArgs._font_italic) !== 'undefined') ? styleArgs._font_italic : false
-      styles._font_size = (typeof (styleArgs._font_size) !== 'undefined') ? styleArgs._font_size : 24
-      styles._font_underline = (typeof (styleArgs._font_underline) !== 'undefined') ? styleArgs._font_underline : false
-      styles._penwidth = (typeof (styleArgs._penwidth) !== 'undefined') ? styleArgs._penwidth : 1
+      const styles = new Styles()
+      // Shorter notation: (but keeping old code in comments if this does not work as expected)
+      Object.assign(styles, styleArgs)
+      // styles._background_color = (typeof (styleArgs._background_color) !== 'undefined') ? styleArgs._background_color : 0x000000
+      // styles._bidi = (typeof (styleArgs._bidi) !== 'undefined') ? styleArgs._bidi : false
+      // styles._color = (typeof (styleArgs._color) !== 'undefined') ? styleArgs._color : 0xffffff
+      // styles._fill = (typeof (styleArgs._fill) !== 'undefined') ? styleArgs._fill : false
+      // styles._font_bold = (typeof (styleArgs._font_bold) !== 'undefined') ? styleArgs._font_bold : true
+      // styles._font_family = (typeof (styleArgs._font_family) !== 'undefined') ? styleArgs._font_family : 'Arial'
+      // styles._font_italic = (typeof (styleArgs._font_italic) !== 'undefined') ? styleArgs._font_italic : false
+      // styles._font_size = (typeof (styleArgs._font_size) !== 'undefined') ? styleArgs._font_size : 24
+      // styles._font_underline = (typeof (styleArgs._font_underline) !== 'undefined') ? styleArgs._font_underline : false
+      // styles._penwidth = (typeof (styleArgs._penwidth) !== 'undefined') ? styleArgs._penwidth : 1
       return styles
     }
   }
 
   /**
    * Calculates the height, ascent en descent in pixels for the given font.
-   * @param {String} textLine - The line of text.
-   * @param {String} fontFamily - The font family to use.
-   * @param {Number} fontSize - The size of the font.
-   * @return {Object} - object containing the height, ascent en descent of the text.
+   * @param {String} textLine The line of text.
+   * @param {String} fontFamily The font family to use.
+   * @param {Number} fontSize The size of the font.
+   * @return {Object} object containing the height, ascent en descent of the text.
    */
   _getTextBaseline (textLine, fontFamily, fontSize, fontBold) {
     // Create the text element.
-    var text = document.createElement('span')
-    text.style.fontFamily = fontFamily
-    text.style.fontFamily = 'Arial'
+    const text = document.createElement('span')
+    text.style.fontFamily = fontFamily || 'Arial'
     text.style.fontWeight = (fontBold === true) ? 'bold' : 'normal'
     text.style.fontSize = String(fontSize) + 'px'
     text.innerHTML = textLine
     // Create the calculation div.
-    var block = document.createElement('div')
+    const block = document.createElement('div')
     block.style.display = 'inline-block'
     block.style.lineHeight = 'normal'
-    block.style.width = '1px'
-    block.style.height = '0px'
+    // block.style.width = '1px'
+    // block.style.height = '0px'
     // Create the container div.
-    var div = document.createElement('div')
+    const div = document.createElement('div')
     div.append(text, block)
     document.body.appendChild(div)
 
     // Set the variables.
-    var result = {}
-    var rect
-    var top1
-    var top2
+    const result = {}
+    let rect
+    let top1
+    let top2
 
     // Calculate the ascent
     block.style.verticalAlign = 'baseline'
@@ -287,7 +288,7 @@ export default class Canvas {
         break
     }
 
-    // Process the cild nodes recursive (if any).
+    // Process the child nodes recursive (if any).
     for (var i = 0; i < htmlNode.childNodes.length; i++) {
       this._parseHtmlNode(htmlNode.childNodes[i], textBlock, elementStyle, (i === (htmlNode.childNodes.length - 1)))
     }
