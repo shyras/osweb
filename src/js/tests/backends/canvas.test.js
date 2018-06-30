@@ -1,21 +1,12 @@
+import parseDataURL from 'data-urls'
+
 import Canvas from '../../osweb/backends/canvas'
 import Style from '../../osweb/backends/styles'
 import Experiment from '../../osweb/items/experiment'
 import * as PIXI from 'pixi.js'
 
-const {
-  toMatchImageSnapshot
-} = require('jest-image-snapshot')
-expect.extend({
-  toMatchImageSnapshot
-})
-
-const renderer = PIXI.autoDetectRenderer(800, 600, {
-  antialias: true,
-  transparent: false,
-  resolution: 1
-})
-renderer.backgroundColor = 0x000000
+const { toMatchImageSnapshot } = require('jest-image-snapshot')
+expect.extend({ toMatchImageSnapshot })
 
 const mockAddMessage = jest.fn()
 const mockAddError = jest.fn()
@@ -44,6 +35,15 @@ jest.mock('../../osweb/items/experiment', () => {
 })
 
 let canvas = new Canvas(new Experiment())
+let app = new PIXI.Application({
+  width: 800,
+  height: 600,
+  antialias: true,
+  transparent: false,
+  resolution: 1
+})
+app.renderer.backgroundColor = 0x061639
+document.body.appendChild(app.view)
 
 describe('Canvas', () => {
   describe('_arrow_shape', () => {
@@ -132,7 +132,10 @@ describe('Canvas', () => {
 
     it('Should use the style properties of the passed style, and use defaults otherwise', () => {
       const defaultStyles = canvas._getStyle()
-      const style = canvas._getStyle({'_fill': true, '_penwidth': 10})
+      const style = canvas._getStyle({
+        '_fill': true,
+        '_penwidth': 10
+      })
       expect(style).toHaveProperty('_fill', true)
       expect(style).toHaveProperty('_penwidth', 10)
       expect(style._bidi).toBe(defaultStyles._bidi)
@@ -186,13 +189,18 @@ describe('Canvas', () => {
 
   describe('arrow', () => {
     beforeEach(() => {
+      // Clear the screen
+      app.stage.removeChildren()
+      // Reset the buffer/canvas
       canvas = new Canvas(new Experiment())
     })
     it('should draw an arrow', () => {
-      canvas.arrow(0, 0, 10, 0, 5, 10, 20)
-      const pixiArrow = canvas._container.getChildAt(0)
-      renderer.stage.addChild(pixiArrow)
-      expect(1).toBe(1)
+      canvas.arrow(50, 50, 100, 100, 20, 10, 20, {_color: 'white'})
+      app.renderer.render(canvas._container)
+      const dataUrl = app.view.toDataURL('image/png')
+
+      const img = parseDataURL(dataUrl)
+      expect(img.body).toMatchImageSnapshot()
     })
   })
 })
