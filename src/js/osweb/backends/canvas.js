@@ -409,8 +409,9 @@ export default class Canvas {
 
   /**
    * Draws a fixdot element on the canvas.
-   * @param {Number} x - The x coordinate of the element.
-   * @param {Number} y - The y coordinate of the element.
+   * @param {int} x - The x coordinate of the element.
+   * @param {int} y - The y coordinate of the element.
+   * @param {String} - The style of the fixation dot.
    * @param {Object} styleArgs - Optional styling argument for the element.
    */
   fixdot (x, y, style, styleArgs) {
@@ -782,13 +783,9 @@ export default class Canvas {
     // Create a polygon element.
     var polygon = new PIXI.Graphics()
     polygon.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
-    if (elementStyle.fill === true) {
-      polygon.beginFill(elementStyle.background_color)
-      polygon.drawPolygon(path)
-      polygon.endFill()
-    } else {
-      polygon.drawPolygon(path)
-    }
+    if (elementStyle.fill === true) polygon.beginFill(elementStyle.background_color)
+    polygon.drawPolygon(path)
+    if (elementStyle.fill === true) polygon.endFill()
 
     // Add the polygon item to container.
     this._container.addChild(polygon)
