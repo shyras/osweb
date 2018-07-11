@@ -712,7 +712,7 @@ export default class Canvas {
         var amp = Math.random()
         // The envelope adjustment
         if (env === 'g') {
-          f = Math.exp(Math.pow(-0.5 * (ux / stdev), 2) - Math.pow(0.5 * (uy / stdev), 2))
+          f = Math.exp(-0.5 * Math.pow(ux / stdev, 2) - 0.5 * Math.pow(uy / stdev, 2))
         } else if (env === 'l') {
           f = Math.max(0, (0.5 * size - r) / (0.5 * size))
         } else if (env === 'c') {

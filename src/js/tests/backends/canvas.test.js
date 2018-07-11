@@ -44,6 +44,9 @@ const dimensions = {
   height: experiment._runner._renderer.height
 }
 
+const cy = dimensions.height / 2
+const cy = dimensions.width / 2
+
 let canvas = new Canvas(new Experiment())
 let app = new PIXI.Application({
   width: dimensions.width,
@@ -55,6 +58,12 @@ let app = new PIXI.Application({
 document.body.appendChild(app.view)
 
 const canvasSnapshot = () => parseDataURL(app.view.toDataURL('image/png'))
+const refreshCanvas = () => {
+  // Clear the screen
+  app.stage.removeChildren()
+  // Reset the buffer/canvas
+  canvas = new Canvas(experiment)
+}
 
 describe('Canvas', () => {
   describe('_arrow_shape', () => {
@@ -121,6 +130,7 @@ describe('Canvas', () => {
       }
     })
   })
+
   describe('_contains_HTML', () => {
     it('Should return true if the string contains HTML markup', () => {
       expect(canvas._containsHTML('<b>abc</b>')).toBe(true)
@@ -204,13 +214,34 @@ describe('Canvas', () => {
       penwidth: 1,
       fill: 0
     }
-    const cy = dimensions.height / 2
 
-    beforeEach(() => {
-      // Clear the screen
-      app.stage.removeChildren()
-      // Reset the buffer/canvas
-      canvas = new Canvas(experiment)
+    beforeEach(refreshCanvas)
+
+    it('should draw lines', () => {
+      const params = [
+        [0, -32 + cy, 0, 32 + cy, {...defaultStyle}],
+        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, color: 'red'}],
+        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 2}],
+        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 4}],
+        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 8}],
+        [-32, cy, 32, cy, {...defaultStyle}],
+        [-32, -32 + cy, 32, 32 + cy, {...defaultStyle}],
+        [-32, 32 + cy, 32, -32 + cy, {...defaultStyle, penwidth: 4, color: 'green'}]
+      ]
+
+      let xIncr = dimensions.width / (params.length + 1)
+      let x = xIncr
+
+      for (const stim of params) {
+        stim[0] += x
+        stim[2] += x
+        x += xIncr
+        canvas.line(...stim)
+      }
+
+      app.renderer.render(canvas._container)
+      const img = canvasSnapshot()
+      expect(img.body).toMatchImageSnapshot()
     })
 
     it('should draw arrows', () => {
@@ -352,4 +383,98 @@ describe('Canvas', () => {
       expect(img.body).toMatchImageSnapshot()
     })
   })
+
+  describe('patches', () => {
+    beforeEach(refreshCanvas)
+
+    it('should draw gabors', () => {
+      // (x, y, orient, freq, env, size, stdev, phase, color1, color2, bgmode)
+      const params = [
+        [0, cy, 0, 0.1, 'g', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'g', 96, 12, 0, 'red', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'g', 96, 12, 0, 'black', 'red', 'avg'],
+        [0, cy, 0, 0.1, 'g', 96, 12, 0, 'white', 'black', 'col2'],
+        [0, cy, 0, 0.1, 'l', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'c', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'r', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'g', 128, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.05, 'g', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'g', 96, 6, 0, 'white', 'black', 'avg'],
+        [0, cy, 45, 0.1, 'g', 96, 12, 0, 'white', 'black', 'avg'],
+        [0, cy, 0, 0.1, 'g', 96, 12, 0.5, 'white', 'black', 'avg']
+      ]
+
+      let xIncr = Math.max(150, dimensions.width / (params.length + 1))
+      let x = xIncr
+      let addY = -100
+
+      for (const stim of params) {
+        stim[0] += x
+        stim[1] += addY
+        // wrap to next line if too many patches are on one plane.
+        canvas.gabor(...stim)
+
+        if (x >= dimensions.width - 150) {
+          x = xIncr
+          addY += 200
+        } else {
+          x += xIncr
+        }
+      }
+
+      app.renderer.render(canvas._container)
+      const img = canvasSnapshot()
+      expect(img.body).toMatchImageSnapshot()
+    })
+
+    it('should draw noise patches', () => {
+      // (x, y, env, size, stdev, color1, color2, bgmode)
+      const params = [
+        [0, cy, 'g', 96, 12, 'white', 'black', 'avg'],
+        [0, cy, 'g', 96, 18, 'white', 'black', 'avg'],
+        [0, cy, 'g', 96, 12, 'red', 'black', 'avg'],
+        [0, cy, 'g', 96, 12, 'black', 'red', 'avg'],
+        [0, cy, 'g', 96, 12, 'white', 'black', 'col2'],
+        [0, cy, 'l', 96, 12, 'white', 'black', 'avg'],
+        [0, cy, 'c', 96, 12, 'white', 'black', 'avg'],
+        [0, cy, 'r', 96, 12, 'white', 'black', 'avg'],
+        [0, cy, 'g', 128, 12, 'white', 'black', 'avg'],
+        [0, cy, 'g', 96, 6, 'white', 'black', 'avg']
+      ]
+
+      let xIncr = Math.max(150, dimensions.width / (params.length + 1))
+      let x = xIncr
+      let addY = -100
+
+      for (const stim of params) {
+        stim[0] += x
+        stim[1] += addY
+        // wrap to next line if too many patches are on one plane.
+        canvas.noise(...stim)
+
+        if (x >= dimensions.width - 150) {
+          x = xIncr
+          addY += 200
+        } else {
+          x += xIncr
+        }
+      }
+
+      app.renderer.render(canvas._container)
+      const img = canvasSnapshot()
+      expect(img.body).toMatchImageSnapshot()
+    })
+  })
+
+  // describe('images', () => {
+  //   it('should draw images at various scales and points of origin', () => {
+  //     refreshCanvas()
+  //     // Add image to filepool
+  //     const testImg = new Image()
+  //     testImg.src = '../_resources/spongebob'
+  //     experiment._runner._pool['spongebob'] = {data: testImg}
+
+  //     canvas.image('spongebob', cx, cy)
+  //   })
+  // })
 })
