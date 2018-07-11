@@ -462,7 +462,11 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      // Since noise patches have random pixels, the failure threshold needs to be higher
+      expect(img.body).toMatchImageSnapshot({
+        failureThreshold: '0.075',
+        failureThresholdType: 'percent'
+      })
     })
   })
 
