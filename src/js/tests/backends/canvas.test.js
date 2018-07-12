@@ -8,6 +8,10 @@ import * as PIXI from 'pixi.js'
 // Add image snapshot matcher to Jest expect function suite
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
 expect.extend({ toMatchImageSnapshot })
+const defaultSnapshotSettings = {
+  failureThreshold: '0.0075',
+  failureThresholdType: 'percent'
+}
 
 // Set up some mock functions for the runner
 const mockAddMessage = jest.fn()
@@ -241,7 +245,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw arrows', () => {
@@ -268,7 +272,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw circles', () => {
@@ -292,7 +296,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw fixation dots', () => {
@@ -323,7 +327,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw ellipses', () => {
@@ -349,7 +353,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw rects', () => {
@@ -380,7 +384,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
   })
 
@@ -424,7 +428,7 @@ describe('Canvas', () => {
 
       app.renderer.render(canvas._container)
       const img = canvasSnapshot()
-      expect(img.body).toMatchImageSnapshot()
+      expect(img.body).toMatchImageSnapshot(defaultSnapshotSettings)
     })
 
     it('should draw noise patches', () => {
