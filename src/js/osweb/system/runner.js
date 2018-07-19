@@ -89,7 +89,7 @@ export default class Runner {
    * Setup the context from which the experiment is created.
    * @param {Object} context - An JSON object containing information about the experiment.
    */
-  _setupContext (context) {
+  async _setupContext (context) {
     // Check if the script parameter is defined.
     if (typeof context !== 'undefined') {
       // Initialize the context parameters.
@@ -116,8 +116,26 @@ export default class Runner {
       // Set up the introscreen.
       this._screen._setupIntroScreen()
 
+      this._screen._updateIntroScreen('Loading experiment.')
+      this._screen._updateProgressBar(-1)
+
       // Load the script file, using the source parameter.
-      this._transfer._readSource(this._source)
+      try {
+        this._script = await this._transfer._readSource(this._source)
+      } catch (e) {
+        this._debugger.addError(`Error reading osexp: ${e}`)
+        this._exit()
+        return
+      }
+
+      // Update the introscreen
+      this._screen._updateIntroScreen('Building experiment structure.')
+
+      // Continue the experiment build.
+      this._build()
+
+      // Initialize the parameters class and request user input.
+      await this._parameters._initialize()
     } else {
       // Show error message.
       this.debugger.addError('No context parameter specified.')
@@ -135,9 +153,6 @@ export default class Runner {
     if (this._onLog) {
       this._experiment.onLog = this._onLog
     }
-
-    // Initialize the parameters class and request user input.
-    this._parameters._initialize()
   }
 
   /** initialize the runner. */

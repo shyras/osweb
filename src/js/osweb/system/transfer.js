@@ -24,22 +24,20 @@ export default class Transfer {
    * @param {Object|String} source - A file object or a String containing the experiment or a download URL.
    */
   async _readSource (source) {
-    this._runner._screen._updateIntroScreen('Loading experiment.')
-    this._runner._screen._updateProgressBar(-1)
-
     // Check type of object.
     if (!isString(source) && (!isObject(source) || source.constructor !== File)) {
-      this._runner._debugger.addError('No osexp source file defined.')
-      return
+      throw new Error('No osexp source file defined.')
     }
+
+    // This var will hold the OS script after parsing
+    let osScript
 
     if (source.constructor === File) {
       // Source is a local file.
       try {
-        await this._readOsexpFromFile(source)
+        osScript = await this._readOsexpFromFile(source)
       } catch (e) {
-        this._runner._debugger.addError(`Error reading local osexp: ${e}`)
-        return
+        throw new Error(`Could not read local osexp, ${e}`)
       }
     } else if (isString(source)) {
       // Check if the source string is an URL
@@ -49,24 +47,22 @@ export default class Transfer {
         // Attempt to download and load the remote experiment
         try {
           const remoteFile = await this.fetch(uri.href)
-          await this._readOsexpFromFile(remoteFile)
+          osScript = await this._readOsexpFromFile(remoteFile)
         } catch (e) {
-          this._runner._debugger.addError(`Error reading remote osexp: ${e}`)
-          return
+          throw new Error(`Could not read remote osexp, ${e}`)
         }
       } else {
         try {
-          this._processScript(source)
+          osScript = this._processScript(source)
         } catch (e) {
-          this._runner._debugger.addError(`Error reading source string: ${e}\n\n${source}`)
-          return
+          throw new Error(`Could not read source string, ${e}\n\n${source}`)
         }
       }
     }
     // Read in and generate the webfonts
     await this._readWebFonts()
-    // Build the experiment and fire off!
-    this._buildExperiment()
+
+    return osScript
   }
 
   /**
@@ -91,7 +87,7 @@ export default class Transfer {
     try {
       return await this._readOsexpFromString(osexpFile)
     } catch (e) {
-      this._runner._debugger.addMessage(`Could not read osexp file as plain text: ${e.message}. File is probably binary`)
+      this._runner._debugger.addMessage(`Could not read osexp file as plain text: ${e.message}.\nFile is probably binary`)
     }
     // Reading and extracting an osexp file from a file location.
     const files = await decompress(
@@ -99,12 +95,12 @@ export default class Transfer {
       (progress) => this._runner._screen._updateProgressBar(progress)
     )
 
-    // Find the script in the array of extracted files. Throw an error it isn't found.
+    // Find the script in the array of extracted files. Throw an error if it isn't found.
     const expFileIndex = files.findIndex((item) => item.name === 'script.opensesame')
     if (expFileIndex === -1) throw new Error('Could not locate experiment script')
     // Pop the script out of the file array and proccess it
     const expFile = files.splice(expFileIndex, 1)[0]
-    this._processScript(expFile.readAsString())
+    const script = this._processScript(expFile.readAsString())
 
     // According to the zlib convention followed by the pako library we use to decompress
     // the osexp file, files have a type of 0, so filter these out.
@@ -112,7 +108,8 @@ export default class Transfer {
       (item) => item.type === '0'
     )
     // Process the file pool items
-    return this._processOsexpPoolItems(poolFiles)
+    await this._processOsexpPoolItems(poolFiles)
+    return script
   }
 
   /**
@@ -147,9 +144,8 @@ export default class Transfer {
     // Disable the progressbar.
     this._runner._screen._updateProgressBar(100)
     // Set the script paramter.
-    this._runner._script = contents
-
-    return true
+    // this._runner._script = contents
+    return contents
   }
 
   /**
@@ -254,19 +250,6 @@ export default class Transfer {
         inactive: () => reject(new Error('Could not load webfonts'))
       })
     })
-  }
-
-  /**
-   * Build the experiment and run it
-   *
-   * @memberof Transfer
-   */
-  _buildExperiment () {
-    // Update the introscreen
-    this._runner._screen._updateIntroScreen('Building experiment structure.')
-
-    // Continue the experiment build.
-    this._runner._build()
   }
 
   /**

@@ -1,0 +1,237 @@
+---
+API: 2.1
+OpenSesame: 3.2.4b1
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Optimal Viewing Position"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend legacy
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/daniel/Repos/osweb/example-experiments"
+set disable_garbage_collection yes
+set description "Loosely based on O'Regan & Jacobs (1992)"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
+set bidi yes
+set background black
+
+define feedback block_feedback
+	set reset_variables yes
+	set duration keypress
+	set description "Provides feedback to the participant"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="BREAK<br /><br /><br />You can take a short break<br /><br />Your average response time was [avg_rt] ms<br />Your accuracy was [acc] %<br /><br /><br />Press any key to continue ...<br /><br /><br />" x=0 y=0 z_index=0
+
+define loop block_loop
+	set source_file ""
+	set source table
+	set skip 0
+	set repeat 1
+	set order random
+	set offset no
+	set item trial_sequence
+	set description "A single block of trials"
+	set cycles 20
+	set continuous no
+	set column_order ""
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word watch
+	setcycle 0 word_x "[x1]"
+	setcycle 0 correct_response "[word_response]"
+	setcycle 1 word wetch
+	setcycle 1 word_x "[x1]"
+	setcycle 1 correct_response "[nonword_response]"
+	setcycle 2 word games
+	setcycle 2 word_x "[x1]"
+	setcycle 2 correct_response "[word_response]"
+	setcycle 3 word gimer
+	setcycle 3 word_x "[x1]"
+	setcycle 3 correct_response "[nonword_response]"
+	setcycle 4 word watch
+	setcycle 4 word_x "[x2]"
+	setcycle 4 correct_response "[word_response]"
+	setcycle 5 word wetch
+	setcycle 5 word_x "[x2]"
+	setcycle 5 correct_response "[nonword_response]"
+	setcycle 6 word games
+	setcycle 6 word_x "[x2]"
+	setcycle 6 correct_response "[word_response]"
+	setcycle 7 word gimer
+	setcycle 7 word_x "[x2]"
+	setcycle 7 correct_response "[nonword_response]"
+	setcycle 8 word watch
+	setcycle 8 word_x "[x3]"
+	setcycle 8 correct_response "[word_response]"
+	setcycle 9 word wetch
+	setcycle 9 word_x "[x3]"
+	setcycle 9 correct_response "[nonword_response]"
+	setcycle 10 word games
+	setcycle 10 word_x "[x3]"
+	setcycle 10 correct_response "[word_response]"
+	setcycle 11 word gimer
+	setcycle 11 word_x "[x3]"
+	setcycle 11 correct_response "[nonword_response]"
+	setcycle 12 word watch
+	setcycle 12 word_x "[x4]"
+	setcycle 12 correct_response "[word_response]"
+	setcycle 13 word wetch
+	setcycle 13 word_x "[x4]"
+	setcycle 13 correct_response "[nonword_response]"
+	setcycle 14 word games
+	setcycle 14 word_x "[x4]"
+	setcycle 14 correct_response "[word_response]"
+	setcycle 15 word gimer
+	setcycle 15 word_x "[x4]"
+	setcycle 15 correct_response "[nonword_response]"
+	setcycle 16 word watch
+	setcycle 16 word_x "[x5]"
+	setcycle 16 correct_response "[word_response]"
+	setcycle 17 word wetch
+	setcycle 17 word_x "[x5]"
+	setcycle 17 correct_response "[nonword_response]"
+	setcycle 18 word games
+	setcycle 18 word_x "[x5]"
+	setcycle 18 correct_response "[word_response]"
+	setcycle 19 word gimer
+	setcycle 19 word_x "[x5]"
+	setcycle 19 correct_response "[nonword_response]"
+	run trial_sequence
+
+define sequence counterbalance
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run instructions always
+
+define sketchpad end_of_experiment
+	set start_response_interval no
+	set duration keypress
+	set description "A sketchpad notifying the participant that the experiment is finished"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The experiment is finished!<br /><br />Thank you for your participation." x=0 y=0 z_index=0
+
+define loop even_participants
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response left
+	setcycle 0 nonword_response right
+	run instructions
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "The main sequence of the experiment"
+	run set_variables always
+	run block_loop always
+	run end_of_experiment always
+
+define sketchpad fixation
+	set start_response_interval no
+	set duration 500
+	set description "Displays stimuli"
+	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=-64 y2=-32 z_index=0
+	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=32 y2=64 z_index=0
+
+define sketchpad instructions
+	set start_response_interval no
+	set duration keypress
+	set description "A sketchpad containing the instructions for the participant"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="INSTRUCTIONS<br /><br /><br />You will see a string of letters.<br /><br />Press the [word_response] arrow key if you see a word<br /><br />Press the [nonword_response] arrow key if you see a non-word<br /><br />Be as fast and accurate as possible!<br /><br /><br />Press any key to begin!<br />" x=0 y=0 z_index=0
+
+define keyboard_response keyboard_response
+	set timeout 2000
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses "left;right"
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define loop odd_participants
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	run ""
+
+define loop set_variables
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 x1 -32
+	setcycle 0 x2 -16
+	setcycle 0 x3 0
+	setcycle 0 x4 16
+	setcycle 0 x5 32
+	setcycle 0 word_response left
+	setcycle 0 nonword_response ""
+	run counterbalance
+
+define feedback trial_feedback
+	set reset_variables no
+	set duration 500
+	set description "Provides feedback to the participant"
+	draw line color=green penwidth=3 show_if="[correct] = 1" x1=0 x2=0 y1=-64 y2=-32 z_index=0
+	draw line color=green penwidth=3 show_if="[correct] = 1" x1=0 x2=0 y1=32 y2=64 z_index=0
+	draw line color=red penwidth=3 show_if="[correct] = 0" x1=0 x2=0 y1=-64 y2=-32 z_index=0
+	draw line color=red penwidth=3 show_if="[correct] = 0" x1=0 x2=0 y1=32 y2=64 z_index=0
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "A single trial"
+	run fixation always
+	run word always
+	run keyboard_response always
+	run trial_feedback always
+	run logger always
+	run block_feedback "([count_trial_sequence] + 1) % 2 == 0"
+
+define sketchpad word
+	set duration 0
+	set description "Displays stimuli"
+	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=-64 y2=-32 z_index=0
+	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=32 y2=64 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text="[word]" x="[word_x]" y=0 z_index=0
+

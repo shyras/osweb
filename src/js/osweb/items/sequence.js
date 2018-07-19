@@ -7,7 +7,7 @@ import { constants } from '../system/constants.js'
  * @extends Item
  */
 export default class Sequence extends Item {
-  /** The sequence class controls the running of a serie of items. */
+  /** The sequence class controls the running of a series of items. */
   constructor (experiment, name, script) {
     // Inherited.
     super(experiment, name, script)
