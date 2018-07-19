@@ -6,9 +6,7 @@ import Canvas from '../backends/canvas.js'
  * @extends GeneralResponse
  */
 export default class Sketchpad extends GenericResponse {
-  /** The sequence class controls the running of a serie of items. */
   constructor (experiment, name, script) {
-    // Inherited.
     super(experiment, name, script)
 
     // Create and set public properties.
@@ -55,10 +53,10 @@ export default class Sketchpad extends GenericResponse {
 
     // Split the string into an array of lines.
     if (script !== null) {
-      var lines = script.split('\n')
-      for (var i = 0; i < lines.length; i++) {
+      const lines = script.split('\n')
+      for (let i = 0; i < lines.length; i++) {
         if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
-          var tokens = this.syntax.split(lines[i])
+          const tokens = this.syntax.split(lines[i])
           if ((tokens.length > 0) && (tokens[0] === 'draw')) {
             if (this.experiment.items._isClass(tokens[1]) === true) {
               var element = this.experiment.items._newElementClass(tokens[1], this, lines[i])

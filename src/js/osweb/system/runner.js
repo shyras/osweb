@@ -135,7 +135,7 @@ export default class Runner {
       this._build()
 
       // Initialize the parameters class and request user input.
-      await this._parameters._initialize()
+      this._parameters._initialize()
     } else {
       // Show error message.
       this.debugger.addError('No context parameter specified.')
