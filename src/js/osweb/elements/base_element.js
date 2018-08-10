@@ -58,11 +58,11 @@ export default class BaseElement {
     // Evaluates all properties and return them.
     this._properties = {}
 
-    var xc = this.experiment.vars.width / 2
-    var yc = this.experiment.vars.height / 2
+    const xc = this.experiment.vars.width / 2
+    const yc = this.experiment.vars.height / 2
 
-    for (var property in this.properties) {
-      var value = this.sketchpad.syntax.eval_text(this.properties[property], null, false)
+    for (let property in this.properties) {
+      let value = this.sketchpad.syntax.eval_text(this.properties[property], null, false)
 
       if ((property === 'x') || (property === 'x1') || (property === 'x2')) {
         value = Math.round(Number(value) + xc)

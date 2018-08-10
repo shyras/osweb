@@ -61,11 +61,11 @@ export default class Sequence extends Item {
       // Remove the prepare phase form the stack.
       this._runner._itemStack.pop()
 
-      // Check if this secuence is part of a parent sequence and must jump back in the prepare phase.
+      // Check if this sequence is part of a parent sequence and must jump back in the prepare phase.
       if (this._parent.type === 'sequence') {
         this._parent._prepare_complete()
       } else {
-        // Execute the next cycle of the sequnce itself.
+        // Execute the next cycle of the sequence itself.
         this._runner._itemStore.run(this.name, this._parent)
       }
     }
@@ -144,17 +144,17 @@ export default class Sequence extends Item {
 
       // Increase the current index.
       this._index++
-      var current_item = this._items[this._index - 1]
+      const currentItem = this._items[this._index - 1]
 
       // Set the workspace.
       this._runner._pythonWorkspace['self'] = this
 
       // Check if the item may run.
-      if (this._runner._pythonWorkspace._eval(current_item.cond) === true) {
+      if (this._runner._pythonWorkspace._eval(currentItem.cond) === true) {
         // run the current item of the sequence object.
-        this._runner._itemStore.run(current_item.item, this)
+        this._runner._itemStore.run(currentItem.item, this)
       } else {
-        // Execute the next cycle of the sequnce itself.
+        // Execute the next cycle of the sequence itself.
         this.run()
       }
     } else {

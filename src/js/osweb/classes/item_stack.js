@@ -23,7 +23,7 @@ export default class ItemStack {
    */
   push (item, phase) {
     // Create the stack item.
-    var stackItem = {
+    const stackItem = {
       'item': item,
       'phase': phase
     }

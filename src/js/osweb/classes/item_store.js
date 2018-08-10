@@ -90,7 +90,8 @@ export default class ItemStore {
   execute (name, parent) {
     // Prepare the item.
     this.prepare(name, parent)
-
+    // Remove the prepare phase call of the item from the stack
+    this._runner._itemStack.pop()
     // Run the item.
     this.run(name, parent)
   }

@@ -79,7 +79,7 @@ export default class Sketchpad extends GenericResponse {
     this.canvas.clear()
 
     // Draw the elements.
-    for (var i = 0; i < this.elements.length; i++) {
+    for (let i = 0; i < this.elements.length; i++) {
       if (this.elements[i].is_shown() === true) {
         this.elements[i].draw()
       }
