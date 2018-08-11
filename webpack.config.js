@@ -14,15 +14,17 @@ const exampleFolder = 'osexp'
 
 // A list of experiments that are found in example-experiments
 // With this list, the dropdown of example experiments is populated on the demo page
-const exampleExperiments = fs.readdirSync('example-experiments').map(item => ({
-  file: path.join(exampleFolder, item),
-  title: startCase(item.substr(0, item.lastIndexOf('.')))
-}))
+const exampleExperiments = fs.readdirSync('example-experiments')
+  .filter(filename => /\.osexp$/i.test(filename))
+  .map(item => ({
+    file: path.join(exampleFolder, item),
+    title: startCase(item.substr(0, item.lastIndexOf('.')))
+  }))
 
 module.exports = (env, args) => ({
   devtool: args.mode === 'production' ? 'source-map' : 'cheap-module-source-map',
   entry: {
-    osweb: ['@babel/polyfill', path.join(__dirname, 'src', 'entry.js')],
+    osweb: ['@babel/polyfill', path.join(__dirname, 'src', 'app.js')],
     vendor: [
       'filbert', 'lodash', 'pixi.js', 'pixi-sound', 'random-seed', 'webfontloader',
       'bootstrap', 'alertifyjs', 'pako'

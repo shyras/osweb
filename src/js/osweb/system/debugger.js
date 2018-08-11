@@ -48,7 +48,7 @@ export default class Debugger {
 
     // Throw the exception.
     console.error('OSWeb has stopped running due to a fatal error.')
-    throw new Error(errorText)
+    console.error(errorText)
   }
 
   /**

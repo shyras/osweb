@@ -4,7 +4,7 @@ import { isFunction } from 'lodash'
 export default class Parameters {
   /**
      * Create an session class which stores information about the client system.
-     * @param {Object} runner - The runner class to which the debugger belongs.
+     * @param {Runner} runner - The runner class to which the debugger belongs.
      */
   constructor (runner) {
     // Create and set private properties.

@@ -76,23 +76,23 @@ export default class Loop extends Item {
 
     // Split the string into an array of lines.
     if (script != null) {
-      var lines = script.split('\n')
-      for (var i = 0; i < lines.length; i++) {
+      const lines = script.split('\n')
+      for (let i = 0; i < lines.length; i++) {
         if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
-          var tokens = this.syntax.split(lines[i])
+          const tokens = this.syntax.split(lines[i])
           if ((tokens[0] === 'run') && (tokens.length > 1)) {
             this.vars.item = tokens[1]
           } else if ((tokens[0] === 'setcycle') && (tokens.length > 3)) {
-            var cycle = tokens[1]
-            var name = tokens[2]
-            var value = this.syntax.remove_quotes(tokens[3])
+            const cycle = tokens[1]
+            const name = tokens[2]
+            let value = this.syntax.remove_quotes(tokens[3])
 
             // console.log('>>' + cycle)
 
             // Check if the value is numeric
             value = isNumber(value) ? Number(value) : value
 
-            // Convert the python expression to javascript.
+            // If a python expression, convert to javascript.
             if (value[0] === '=') {
               // Parse the python statement.
               value = this.experiment._runner._pythonParser._prepare(value.slice(1))
@@ -136,9 +136,9 @@ export default class Loop extends Item {
   apply_cycle (cycle) {
     // Sets all the loop variables according to the cycle.
     if (cycle in this.matrix) {
-      for (var variable in this.matrix[cycle]) {
+      for (const variable in this.matrix[cycle]) {
         // Get the value of the variable.
-        var value = this.matrix[cycle][variable]
+        let value = this.matrix[cycle][variable]
 
         // Check for python expression.
         if (typeof value === 'object') {
@@ -172,27 +172,27 @@ export default class Loop extends Item {
     this._index = 0
 
     // Walk through all complete repeats
-    var whole_repeats = Math.floor(this.vars.repeat)
-    for (var j = 0; j < whole_repeats; j++) {
-      for (var i = 0; i < this.vars.cycles; i++) {
+    var wholeRepeats = Math.floor(this.vars.repeat)
+    for (let j = 0; j < wholeRepeats; j++) {
+      for (let i = 0; i < this.vars.cycles; i++) {
         this._cycles.push(i)
       }
     }
 
     // Add the leftover repeats.
-    var partial_repeats = this.vars.repeat - whole_repeats
-    if (partial_repeats > 0) {
-      var all_cycles = Array.apply(null, {
+    const partialRepeats = this.vars.repeat - wholeRepeats
+    if (partialRepeats > 0) {
+      const allCycles = Array.apply(null, {
         length: this.vars.cycles
       }).map(Number.call, Number)
-      var remainder = Math.floor(this.vars.cycles * partial_repeats)
+      const remainder = Math.floor(this.vars.cycles * partialRepeats)
       for (let i = 0; i < remainder; i++) {
         // Calculate random position.
-        var position = Math.floor(Math.random() * all_cycles.length)
+        const position = Math.floor(Math.random() * allCycles.length)
         // Add position to cycles.
         this._cycles.push(position)
         // Remove position from array.
-        all_cycles.splice(position, 1)
+        allCycles.splice(position, 1)
       }
     }
 
@@ -206,7 +206,7 @@ export default class Loop extends Item {
       } else {
         if (this.vars.offset === 'yes') {
           // Get the skip elements.
-          var skip = this._cycles.slice(0, this.vars.skip)
+          const skip = this._cycles.slice(0, this.vars.skip)
 
           // Remove the skip elements from the original location.
           this._cycles = this._cycles.slice(this.vars.skip)
@@ -240,7 +240,7 @@ export default class Loop extends Item {
     super.run()
 
     if (this._cycles.length > 0) {
-      var exit = false
+      let exit = false
       this._index = this._cycles.shift()
       this.apply_cycle(this._index)
 
@@ -248,9 +248,9 @@ export default class Loop extends Item {
       if (this._break_if !== null) {
         this.python_workspace['this'] = this
 
-        var break_if = this.syntax.eval_text(this._break_if, null, true)
+        const breakIf = this.syntax.eval_text(this._break_if, null, true)
 
-        if (this.python_workspace._eval(break_if) === true) {
+        if (this.python_workspace._eval(breakIf) === true) {
           exit = true
         }
       }
@@ -258,7 +258,13 @@ export default class Loop extends Item {
       // Check the exit status.
       if (exit === false) {
         this.experiment.vars.repeat_cycle = 0
-        this.experiment._runner._itemStore.prepare(this.vars.item, this)
+
+        // Replace with execute
+        if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
+          this.experiment._runner._itemStore.prepare(this.vars.item, this)
+        } else {
+          this.experiment._runner._itemStore.execute(this.vars.item, this)
+        }
       } else {
         // Break the loop.
         this._complete()

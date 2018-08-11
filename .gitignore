@@ -7,3 +7,4 @@ npm-debug.log
 
 # Omit canvas diffs
 src/js/tests/backends/__image_snapshots__/__diff_output__
+example-experiments/quickrun.csv

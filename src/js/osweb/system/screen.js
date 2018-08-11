@@ -243,7 +243,7 @@ export default class Screen {
     // Check if the experiment must be clicked to start.
     if (this._click === true) {
       // Update inroscreen.
-      this._updateIntroScreen('Press with the mouse on this screen to continue.')
+      this._updateIntroScreen('Click with the mouse on this screen to continue.')
 
       // Setup the mouse click response handler.
       var clickHandler = function (event) {

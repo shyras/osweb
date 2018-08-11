@@ -288,16 +288,16 @@
 		} else {
 			// Stop the experiment
 			alertify.confirm('Stopping experiment', 'Are you sure you want to abort the experiment?',
-					function () {
-						runner.exit();
-					},
-					function () {
-						/* What to do when cancelled */
-					})
-				.set('labels', {
-					ok: 'Yes',
-					cancel: 'No'
-				});
+				function () {
+					runner.exit();
+				},
+				function () {
+					/* What to do when cancelled */
+				})
+			.set('labels', {
+				ok: 'Yes',
+				cancel: 'No'
+			});
 		}
 	}
 

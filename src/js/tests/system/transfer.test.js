@@ -45,14 +45,8 @@ describe('Transfer class', () => {
     it('Should log an error if an invalid or no source is supplied', () => {
       const invalidParams = [null, true, 5, {}, [], new FileReader()]
       for (const param of invalidParams) {
-        transfer._readSource(param)
+        expect(transfer._readSource(param)).rejects.toThrow()
       }
-      expect(mockAddError).toHaveBeenCalledTimes(invalidParams.length)
-    })
-    it('Should update the status display', () => {
-      transfer._readSource()
-      expect(mockUpdateIntroScreen).toHaveBeenCalledTimes(1)
-      expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(-1)
     })
   })
 
@@ -61,19 +55,17 @@ describe('Transfer class', () => {
       expect(transfer._readOsexpFromString('abc')).rejects.toThrow()
     })
 
-    it('Should set the script variable of the runner if an experiment has been successfully recognized', () => {
-      expect(transfer._readOsexpFromString(osexpString)).resolves.toBe(true)
+    it('Should recognize a valid script and update the status bar', () => {
+      expect(transfer._readOsexpFromString(osexpString)).resolves.toBe(osexpString)
       expect(mockUpdateProgressBar).toHaveBeenCalledTimes(1)
       expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(100)
-      expect(transfer._runner._script).toBe(osexpString)
     })
 
     it('Should be able to read osexp strings from files', async () => {
       const osexpFile = new File([osexpString], 'test.osexp')
-      await expect(transfer._readOsexpFromString(osexpFile)).resolves.toBe(true)
+      await expect(transfer._readOsexpFromFile(osexpFile)).resolves.toBe(osexpString)
       expect(mockUpdateProgressBar).toHaveBeenCalledTimes(1)
       expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(100)
-      expect(transfer._runner._script).toBe(osexpString)
     })
   })
 
@@ -83,7 +75,7 @@ describe('Transfer class', () => {
       expect(mockAddMessage).toHaveBeenCalledTimes(1)
     })
 
-    // it('Should be able to read an osexp from a file', async () => {
+    // it('Should be able to read binary osexp files', async () => {
     //   const osexpFile = fs.readFileSync('test-osexp/capybaras.osexp')
     //   const blob = new Blob([new Uint8Array(osexpFile)])
     //   console.log(blob)

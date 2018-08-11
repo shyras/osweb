@@ -139,8 +139,11 @@ export default class Syntax {
           } else {
             value = vars[content]
           }
+          // Value could still be an expression, so evaluate again
+          value = this.eval_text(value, vars, addQuotes)
         } catch (err) {
           this._runner._debugger.addError(`Could not find variable '${content}': ${err.message}`)
+          throw err
         }
 
         if (addQuotes === true) {
