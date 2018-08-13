@@ -1,0 +1,159 @@
+---
+API: 2.1
+OpenSesame: 3.2.5b1
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Tilt adaptation after effect"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend legacy
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground black
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/usr/share/opensesame_resources/templates"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
+set background 127
+
+define sketchpad adapter
+	set duration 5000
+	set description "Displays stimuli"
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient="[ori_adapter]" phase=0 show_if=always size=200 stdev=30 x=0 y=0 z_index=0
+
+define sketchpad blank
+	set duration 500
+	set description "Displays stimuli"
+
+define loop block_loop
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 22
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 ori_adapter -20
+	setcycle 0 ori_tester -5
+	setcycle 1 ori_adapter 20
+	setcycle 1 ori_tester -5
+	setcycle 2 ori_adapter -20
+	setcycle 2 ori_tester -4
+	setcycle 3 ori_adapter 20
+	setcycle 3 ori_tester -4
+	setcycle 4 ori_adapter -20
+	setcycle 4 ori_tester -3
+	setcycle 5 ori_adapter 20
+	setcycle 5 ori_tester -3
+	setcycle 6 ori_adapter -20
+	setcycle 6 ori_tester -2
+	setcycle 7 ori_adapter 20
+	setcycle 7 ori_tester -2
+	setcycle 8 ori_adapter -20
+	setcycle 8 ori_tester -1
+	setcycle 9 ori_adapter 20
+	setcycle 9 ori_tester -1
+	setcycle 10 ori_adapter -20
+	setcycle 10 ori_tester 0
+	setcycle 11 ori_adapter 20
+	setcycle 11 ori_tester 0
+	setcycle 12 ori_adapter -20
+	setcycle 12 ori_tester 1
+	setcycle 13 ori_adapter 20
+	setcycle 13 ori_tester 1
+	setcycle 14 ori_adapter -20
+	setcycle 14 ori_tester 2
+	setcycle 15 ori_adapter 20
+	setcycle 15 ori_tester 2
+	setcycle 16 ori_adapter -20
+	setcycle 16 ori_tester 3
+	setcycle 17 ori_adapter 20
+	setcycle 17 ori_tester 3
+	setcycle 18 ori_adapter -20
+	setcycle 18 ori_tester 4
+	setcycle 19 ori_adapter 20
+	setcycle 19 ori_tester 4
+	setcycle 20 ori_adapter -20
+	setcycle 20 ori_tester 5
+	setcycle 21 ori_adapter 20
+	setcycle 21 ori_tester 5
+	run trial_sequence
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run instructions always
+	run block_loop always
+	run goodbye always
+
+define sketchpad fixation
+	set duration 1000
+	set description "Displays stimuli"
+	draw fixdot color=black show_if=always style=default x=0 y=0 z_index=0
+
+define sketchpad goodbye
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="The experiment is finished!<br /><br />Thank you for your participation." x=0 y=0 z_index=0
+
+define sketchpad instructions
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="INSTRUCTIONS<br /><br />On each trial, you will see two patches of tilted lines<br />The first patch is shown for a few seconds<br />The second patch is shown only briefly<br />Indicate whether the second patch was tilted leftwards or rightwards " x=0 y=-160 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=-5 phase=0 show_if=always size=200 stdev=30 x=181.0 y=142.0 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=5 phase=0 show_if=always size=200 stdev=30 x=-181.0 y=142.0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the left key if the<br />second patch looks like this" x=-192 y=0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the right key if the<br />second patch looks like this" x=192 y=0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press any key to begin!" x=0 y=288 z_index=0
+
+define keyboard_response keyboard_response
+	set timeout infinite
+	set flush no
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+
+define sketchpad response_screen
+	set duration 0
+	set description "Displays stimuli"
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Was the second patch tilted<br />leftward (\\) or rightward (/)?<br /><br />Press the left or right arrow key to respond" x=0 y=0 z_index=0
+
+define sketchpad tester
+	set duration 100
+	set description "Displays stimuli"
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient="[ori_tester]" phase=0 show_if=always size=200 stdev=30 x=0 y=0 z_index=0
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run fixation always
+	run adapter always
+	run fixation always
+	run tester always
+	run blank always
+	run response_screen always
+	run keyboard_response always
+
