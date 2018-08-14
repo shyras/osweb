@@ -155,7 +155,7 @@ export default class Syntax {
       }
     })
 
-    // Check if contenst has additional quotes
+    // Check if content has additional quotes
     return this.strip_slashes(this.unescapeBrackets(result))
   }
 
@@ -204,7 +204,7 @@ export default class Syntax {
    * @return {String} - The stripped string.
    */
   strip_slashes (line) {
-    return line.replace(/\\(.)/mg, '$1')
+    return line.replace(/(?<!\\)\\(?=('|"|\\))/mg, '')
   }
 
   /**
@@ -284,7 +284,7 @@ export default class Syntax {
     // Replace quotes.
     line = line.replace(/^"(.+(?="$))"$/, '$1')
 
-    // Replace slashed and return result.
+    // Replace slashes and return result.
     return this.strip_slashes(line)
   }
 

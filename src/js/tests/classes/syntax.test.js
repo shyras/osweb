@@ -23,6 +23,17 @@ describe('Syntax', function () {
     restoreConsole()
   })
 
+  describe('strip_slashes()', function () {
+    it('should strip escape slashes from a string', () => {
+      for (const [input, expectedOutput] of [
+        ['\\\\', '\\'],
+        ['"\\"quoted\\""', '""quoted""']
+      ]) {
+        expect(runner._syntax.strip_slashes(input)).toBe(expectedOutput)
+      }
+    })
+  })
+
   describe('parse_cmd()', function () {
     var checkCmd = function (s, cmd, arglist, kwdict) {
       // parse command into arguments
