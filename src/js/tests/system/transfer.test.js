@@ -86,7 +86,6 @@ describe('Transfer class', () => {
   describe('fetch', () => {
     it('Should throw an error if url is invalid or unavailable', async () => {
       await expect(transfer.fetch()).rejects.toThrow()
-      await expect(transfer.fetch('nonsense')).rejects.toThrow()
     })
   })
 })
