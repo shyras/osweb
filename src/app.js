@@ -18,3 +18,11 @@ if (typeof window !== 'undefined') {
   window.osweb = osweb
   window.osweb.printVersionInfo()
 }
+
+if (module.hot) {
+  module.hot.accept()
+}
+
+if (process.env.NODE_ENV === 'development') {
+  require('webpack-serve-overlay')
+}
