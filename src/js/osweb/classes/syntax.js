@@ -204,7 +204,7 @@ export default class Syntax {
    * @return {String} - The stripped string.
    */
   strip_slashes (line) {
-    return line.replace(/(?<!\\)\\(?=('|"|\\))/mg, '')
+    return line.replace(/(?<!\\)\\(?=['"\\])/mg, '')
   }
 
   /**
