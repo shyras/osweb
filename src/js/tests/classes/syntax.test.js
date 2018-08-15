@@ -53,6 +53,7 @@ describe('Syntax', function () {
     it('should strip escape slashes from a string', () => {
       for (const [input, expectedOutput] of [
         ['\\\\', '\\'],
+        ['\\\\\\', '\\\\'],
         ['"\\"quoted\\""', '""quoted""']
       ]) {
         expect(syntax.strip_slashes(input)).toBe(expectedOutput)
@@ -120,60 +121,61 @@ describe('Syntax', function () {
   })
 
   describe('eval_text()', function () {
-    var tmp_var_store = new VarStore({
+    var tmpVarStore = new VarStore({
       syntax: syntax
     }, null)
-    tmp_var_store.width = 1024
-    tmp_var_store.height = 768
-    tmp_var_store.my_var99 = 99
+
+    tmpVarStore.width = 1024
+    tmpVarStore.height = 768
+    tmpVarStore.my_var99 = 99
 
     it('Should only parse real variables: \\\\[width] = \\[width] = [width]', function () {
       expect(syntax.eval_text(
-        '\\\\[width] = \\[width] = [width]', tmp_var_store)).toBe('\\1024 = [width] = 1024')
+        '\\\\[width] = \\[width] = [width]', tmpVarStore)).toBe('\\1024 = [width] = 1024')
     })
     it('Should not try to parse a variable if [] contents contain spaces: [no var]', function () {
       expect(syntax.eval_text(
-        '[no var]', tmp_var_store)).toBe('[no var]')
+        '[no var]', tmpVarStore)).toBe('[no var]')
     })
     it('Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters: [nóvar]', function () {
       expect(syntax.eval_text(
-        '[nóvar]', tmp_var_store)).toBe('[nóvar]')
+        '[nóvar]', tmpVarStore)).toBe('[nóvar]')
     })
     it('Should parse variables with underscores and numbers: [my_var99]', function () {
       expect(syntax.eval_text(
-        '[my_var99]', tmp_var_store)).toBe('99')
+        '[my_var99]', tmpVarStore)).toBe('99')
     })
     it('Should not try to parse a variable if it is preceded by a backslash: \\[width]', function () {
       expect(syntax.eval_text(
-        '\\[width]', tmp_var_store)).toBe('[width]')
+        '\\[width]', tmpVarStore)).toBe('[width]')
     })
     it('Should ignore characters between variable definitions: [width] x [height]', function () {
       expect(syntax.eval_text(
-        '[width] x [height]', tmp_var_store)).toBe('1024 x 768')
+        '[width] x [height]', tmpVarStore)).toBe('1024 x 768')
     })
     it('Should process python code: [=10*10]', function () {
       expect(syntax.eval_text(
-        '[=10*10]', tmp_var_store)).toBe('100')
+        '[=10*10]', tmpVarStore)).toBe('100')
     })
     it('Should not process python code if it is preceded by a backslash: \\[=10*10]', function () {
       expect(syntax.eval_text(
-        '\\[=10*10]', tmp_var_store)).toBe('[=10*10]')
+        '\\[=10*10]', tmpVarStore)).toBe('[=10*10]')
     })
     it('Should process string code: [="tést"]', function () {
       expect(syntax.eval_text(
-        '[="tést"]', tmp_var_store)).toBe('tést')
+        '[="tést"]', tmpVarStore)).toBe('tést')
     })
     it('Should process string code: [="\\[test\\]"]', function () {
       expect(syntax.eval_text(
-        '[="\\[test\\]"]', tmp_var_store)).toBe('[test]')
+        '[="\\[test\\]"]', tmpVarStore)).toBe('[test]')
     })
     it('Should process multiple variables: w: [width], h: [height]', function () {
       expect(syntax.eval_text(
-        'w: [width], h: [height]', tmp_var_store)).toBe('w: 1024, h: 768')
+        'w: [width], h: [height]', tmpVarStore)).toBe('w: 1024, h: 768')
     })
     it('Should process multiple code blocks: w: [=1024], h: [=768]', function () {
       expect(syntax.eval_text(
-        'w: [=1024], h: [=768]', tmp_var_store)).toBe('w: 1024, h: 768')
+        'w: [=1024], h: [=768]', tmpVarStore)).toBe('w: 1024, h: 768')
     })
   })
 

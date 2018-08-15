@@ -33,7 +33,8 @@ export default class GenericResponse extends Item {
   /** Implements the complete phase of the general response item. */
   _complete () {
     // Check if a timeout has occured which must be treaded as a response.
-    if ((typeof this.vars.timeout !== 'undefined') && ((this.experiment._runner._events._timeStamp - this.experiment.vars.get('time_' + this.name)) > this.vars.timeout)) {
+    if ((typeof this.vars.timeout !== 'undefined') &&
+      ((this.experiment._runner._events._timeStamp - this.experiment.vars.get('time_' + this.name)) > this.vars.timeout)) {
       // Process the timeout none response.
       this.process_response_timeout()
     }
@@ -266,7 +267,7 @@ export default class GenericResponse extends Item {
       this.sri = self.vars.get('time_' + this.name)
       this.experiment._start_response_interval = this.vars.get('time_' + this.name)
     }
-    if (this.experiment._start_response_interval === null) {
+    if (!this.experiment._start_response_interval) {
       this.sri = this.experiment.vars.get('time_' + this.name)
     } else {
       this.sri = this.experiment._start_response_interval
