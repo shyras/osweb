@@ -123,6 +123,9 @@ export default class RatingScaleWidget extends Widget {
     container.on('mousedown', function (event) {
       this.response(event)
     }.bind(this))
+    container.on('touchstart', function (event) {
+      this.response(event)
+    }.bind(this))
   }
 
   /** Draw a label element
