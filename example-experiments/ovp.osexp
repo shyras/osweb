@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.2.5a4
+OpenSesame: 3.2.5
 Platform: posix
 ---
 set width 1024
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/home/sebastiaan/Downloads"
+set experiment_path "/home/sebastiaan/git/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "Loosely based on O'Regan & Jacobs (1992)"
 set coordinates uniform
@@ -35,115 +35,1243 @@ set color_backend legacy
 set clock_backend legacy
 set canvas_backend legacy
 set bidi yes
-set background black
+set background gray
 
 define feedback block_feedback
 	set reset_variables yes
 	set duration keypress
 	set description "Provides feedback to the participant"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="BREAK<br /><br /><br />You can take a short break<br /><br />Your average response time was [avg_rt] ms<br />Your accuracy was [acc] %<br /><br /><br />Press any key to continue ...<br /><br /><br />" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="BREAK<br /><br /><br />Your average response time in this block was [avg_rt] ms<br />Your accuracy was [acc] %<br /><br /><br />Press any key to continue ...<br /><br /><br />" x=0 y=0 z_index=0
 
 define loop block_loop
-	set source_file ""
 	set source table
 	set skip 0
-	set repeat 1
+	set repeat 0.2
 	set order random
 	set offset no
 	set item trial_sequence
 	set description "A single block of trials"
-	set cycles 20
+	set cycles 300
 	set continuous no
 	set column_order ""
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word watch
-	setcycle 0 word_x "[x1]"
+	setcycle 0 word about
+	setcycle 0 lexicality word
 	setcycle 0 correct_response "[word_response]"
-	setcycle 1 word wetch
-	setcycle 1 word_x "[x1]"
-	setcycle 1 correct_response "[nonword_response]"
-	setcycle 2 word games
-	setcycle 2 word_x "[x1]"
+	setcycle 0 word_x "[x1]"
+	setcycle 1 word above
+	setcycle 1 lexicality word
+	setcycle 1 correct_response "[word_response]"
+	setcycle 1 word_x "[x2]"
+	setcycle 2 word words
+	setcycle 2 lexicality word
 	setcycle 2 correct_response "[word_response]"
-	setcycle 3 word gimer
-	setcycle 3 word_x "[x1]"
-	setcycle 3 correct_response "[nonword_response]"
-	setcycle 4 word watch
-	setcycle 4 word_x "[x2]"
+	setcycle 2 word_x "[x3]"
+	setcycle 3 word works
+	setcycle 3 lexicality word
+	setcycle 3 correct_response "[word_response]"
+	setcycle 3 word_x "[x4]"
+	setcycle 4 word world
+	setcycle 4 lexicality word
 	setcycle 4 correct_response "[word_response]"
-	setcycle 5 word wetch
-	setcycle 5 word_x "[x2]"
-	setcycle 5 correct_response "[nonword_response]"
-	setcycle 6 word games
-	setcycle 6 word_x "[x2]"
+	setcycle 4 word_x "[x5]"
+	setcycle 5 word worth
+	setcycle 5 lexicality word
+	setcycle 5 correct_response "[word_response]"
+	setcycle 5 word_x "[x1]"
+	setcycle 6 word would
+	setcycle 6 lexicality word
 	setcycle 6 correct_response "[word_response]"
-	setcycle 7 word gimer
-	setcycle 7 word_x "[x2]"
-	setcycle 7 correct_response "[nonword_response]"
-	setcycle 8 word watch
-	setcycle 8 word_x "[x3]"
+	setcycle 6 word_x "[x2]"
+	setcycle 7 word write
+	setcycle 7 lexicality word
+	setcycle 7 correct_response "[word_response]"
+	setcycle 7 word_x "[x3]"
+	setcycle 8 word wrong
+	setcycle 8 lexicality word
 	setcycle 8 correct_response "[word_response]"
-	setcycle 9 word wetch
-	setcycle 9 word_x "[x3]"
-	setcycle 9 correct_response "[nonword_response]"
-	setcycle 10 word games
-	setcycle 10 word_x "[x3]"
+	setcycle 8 word_x "[x4]"
+	setcycle 9 word wrote
+	setcycle 9 lexicality word
+	setcycle 9 correct_response "[word_response]"
+	setcycle 9 word_x "[x5]"
+	setcycle 10 word years
+	setcycle 10 lexicality word
 	setcycle 10 correct_response "[word_response]"
-	setcycle 11 word gimer
-	setcycle 11 word_x "[x3]"
-	setcycle 11 correct_response "[nonword_response]"
-	setcycle 12 word watch
-	setcycle 12 word_x "[x4]"
+	setcycle 10 word_x "[x1]"
+	setcycle 11 word young
+	setcycle 11 lexicality word
+	setcycle 11 correct_response "[word_response]"
+	setcycle 11 word_x "[x2]"
+	setcycle 12 word which
+	setcycle 12 lexicality word
 	setcycle 12 correct_response "[word_response]"
-	setcycle 13 word wetch
+	setcycle 12 word_x "[x3]"
+	setcycle 13 word while
+	setcycle 13 lexicality word
+	setcycle 13 correct_response "[word_response]"
 	setcycle 13 word_x "[x4]"
-	setcycle 13 correct_response "[nonword_response]"
-	setcycle 14 word games
-	setcycle 14 word_x "[x4]"
+	setcycle 14 word white
+	setcycle 14 lexicality word
 	setcycle 14 correct_response "[word_response]"
-	setcycle 15 word gimer
-	setcycle 15 word_x "[x4]"
-	setcycle 15 correct_response "[nonword_response]"
-	setcycle 16 word watch
-	setcycle 16 word_x "[x5]"
+	setcycle 14 word_x "[x5]"
+	setcycle 15 word whole
+	setcycle 15 lexicality word
+	setcycle 15 correct_response "[word_response]"
+	setcycle 15 word_x "[x1]"
+	setcycle 16 word woman
+	setcycle 16 lexicality word
 	setcycle 16 correct_response "[word_response]"
-	setcycle 17 word wetch
-	setcycle 17 word_x "[x5]"
-	setcycle 17 correct_response "[nonword_response]"
-	setcycle 18 word games
-	setcycle 18 word_x "[x5]"
+	setcycle 16 word_x "[x2]"
+	setcycle 17 word women
+	setcycle 17 lexicality word
+	setcycle 17 correct_response "[word_response]"
+	setcycle 17 word_x "[x3]"
+	setcycle 18 word wants
+	setcycle 18 lexicality word
 	setcycle 18 correct_response "[word_response]"
-	setcycle 19 word gimer
+	setcycle 18 word_x "[x4]"
+	setcycle 19 word watch
+	setcycle 19 lexicality word
+	setcycle 19 correct_response "[word_response]"
 	setcycle 19 word_x "[x5]"
-	setcycle 19 correct_response "[nonword_response]"
+	setcycle 20 word water
+	setcycle 20 lexicality word
+	setcycle 20 correct_response "[word_response]"
+	setcycle 20 word_x "[x1]"
+	setcycle 21 word weeks
+	setcycle 21 lexicality word
+	setcycle 21 correct_response "[word_response]"
+	setcycle 21 word_x "[x2]"
+	setcycle 22 word where
+	setcycle 22 lexicality word
+	setcycle 22 correct_response "[word_response]"
+	setcycle 22 word_x "[x3]"
+	setcycle 23 word video
+	setcycle 23 lexicality word
+	setcycle 23 correct_response "[word_response]"
+	setcycle 23 word_x "[x4]"
+	setcycle 24 word voice
+	setcycle 24 lexicality word
+	setcycle 24 correct_response "[word_response]"
+	setcycle 24 word_x "[x5]"
+	setcycle 25 word users
+	setcycle 25 lexicality word
+	setcycle 25 correct_response "[word_response]"
+	setcycle 25 word_x "[x1]"
+	setcycle 26 word using
+	setcycle 26 lexicality word
+	setcycle 26 correct_response "[word_response]"
+	setcycle 26 word_x "[x2]"
+	setcycle 27 word value
+	setcycle 27 lexicality word
+	setcycle 27 correct_response "[word_response]"
+	setcycle 27 word_x "[x3]"
+	setcycle 28 word until
+	setcycle 28 lexicality word
+	setcycle 28 correct_response "[word_response]"
+	setcycle 28 word_x "[x4]"
+	setcycle 29 word under
+	setcycle 29 lexicality word
+	setcycle 29 correct_response "[word_response]"
+	setcycle 29 word_x "[x5]"
+	setcycle 30 word tried
+	setcycle 30 lexicality word
+	setcycle 30 correct_response "[word_response]"
+	setcycle 30 word_x "[x1]"
+	setcycle 31 word truth
+	setcycle 31 lexicality word
+	setcycle 31 correct_response "[word_response]"
+	setcycle 31 word_x "[x2]"
+	setcycle 32 word tools
+	setcycle 32 lexicality word
+	setcycle 32 correct_response "[word_response]"
+	setcycle 32 word_x "[x3]"
+	setcycle 33 word total
+	setcycle 33 lexicality word
+	setcycle 33 correct_response "[word_response]"
+	setcycle 33 word_x "[x4]"
+	setcycle 34 word trade
+	setcycle 34 lexicality word
+	setcycle 34 correct_response "[word_response]"
+	setcycle 34 word_x "[x5]"
+	setcycle 35 word those
+	setcycle 35 lexicality word
+	setcycle 35 correct_response "[word_response]"
+	setcycle 35 word_x "[x1]"
+	setcycle 36 word three
+	setcycle 36 lexicality word
+	setcycle 36 correct_response "[word_response]"
+	setcycle 36 word_x "[x2]"
+	setcycle 37 word times
+	setcycle 37 lexicality word
+	setcycle 37 correct_response "[word_response]"
+	setcycle 37 word_x "[x3]"
+	setcycle 38 word title
+	setcycle 38 lexicality word
+	setcycle 38 correct_response "[word_response]"
+	setcycle 38 word_x "[x4]"
+	setcycle 39 word today
+	setcycle 39 lexicality word
+	setcycle 39 correct_response "[word_response]"
+	setcycle 39 word_x "[x5]"
+	setcycle 40 word thank
+	setcycle 40 lexicality word
+	setcycle 40 correct_response "[word_response]"
+	setcycle 40 word_x "[x1]"
+	setcycle 41 word their
+	setcycle 41 lexicality word
+	setcycle 41 correct_response "[word_response]"
+	setcycle 41 word_x "[x2]"
+	setcycle 42 word there
+	setcycle 42 lexicality word
+	setcycle 42 correct_response "[word_response]"
+	setcycle 42 word_x "[x3]"
+	setcycle 43 word these
+	setcycle 43 lexicality word
+	setcycle 43 correct_response "[word_response]"
+	setcycle 43 word_x "[x4]"
+	setcycle 44 word thing
+	setcycle 44 lexicality word
+	setcycle 44 correct_response "[word_response]"
+	setcycle 44 word_x "[x5]"
+	setcycle 45 word think
+	setcycle 45 lexicality word
+	setcycle 45 correct_response "[word_response]"
+	setcycle 45 word_x "[x1]"
+	setcycle 46 word third
+	setcycle 46 lexicality word
+	setcycle 46 correct_response "[word_response]"
+	setcycle 46 word_x "[x2]"
+	setcycle 47 word table
+	setcycle 47 lexicality word
+	setcycle 47 correct_response "[word_response]"
+	setcycle 47 word_x "[x3]"
+	setcycle 48 word taken
+	setcycle 48 lexicality word
+	setcycle 48 correct_response "[word_response]"
+	setcycle 48 word_x "[x4]"
+	setcycle 49 word takes
+	setcycle 49 lexicality word
+	setcycle 49 correct_response "[word_response]"
+	setcycle 49 word_x "[x5]"
+	setcycle 50 word suite
+	setcycle 50 lexicality word
+	setcycle 50 correct_response "[word_response]"
+	setcycle 50 word_x "[x1]"
+	setcycle 51 word store
+	setcycle 51 lexicality word
+	setcycle 51 correct_response "[word_response]"
+	setcycle 51 word_x "[x2]"
+	setcycle 52 word story
+	setcycle 52 lexicality word
+	setcycle 52 correct_response "[word_response]"
+	setcycle 52 word_x "[x3]"
+	setcycle 53 word study
+	setcycle 53 lexicality word
+	setcycle 53 correct_response "[word_response]"
+	setcycle 53 word_x "[x4]"
+	setcycle 54 word stuff
+	setcycle 54 lexicality word
+	setcycle 54 correct_response "[word_response]"
+	setcycle 54 word_x "[x5]"
+	setcycle 55 word start
+	setcycle 55 lexicality word
+	setcycle 55 correct_response "[word_response]"
+	setcycle 55 word_x "[x1]"
+	setcycle 56 word state
+	setcycle 56 lexicality word
+	setcycle 56 correct_response "[word_response]"
+	setcycle 56 word_x "[x2]"
+	setcycle 57 word still
+	setcycle 57 lexicality word
+	setcycle 57 correct_response "[word_response]"
+	setcycle 57 word_x "[x3]"
+	setcycle 58 word speed
+	setcycle 58 lexicality word
+	setcycle 58 correct_response "[word_response]"
+	setcycle 58 word_x "[x4]"
+	setcycle 59 word sorry
+	setcycle 59 lexicality word
+	setcycle 59 correct_response "[word_response]"
+	setcycle 59 word_x "[x5]"
+	setcycle 60 word sound
+	setcycle 60 lexicality word
+	setcycle 60 correct_response "[word_response]"
+	setcycle 60 word_x "[x1]"
+	setcycle 61 word south
+	setcycle 61 lexicality word
+	setcycle 61 correct_response "[word_response]"
+	setcycle 61 word_x "[x2]"
+	setcycle 62 word space
+	setcycle 62 lexicality word
+	setcycle 62 correct_response "[word_response]"
+	setcycle 62 word_x "[x3]"
+	setcycle 63 word speak
+	setcycle 63 lexicality word
+	setcycle 63 correct_response "[word_response]"
+	setcycle 63 word_x "[x4]"
+	setcycle 64 word small
+	setcycle 64 lexicality word
+	setcycle 64 correct_response "[word_response]"
+	setcycle 64 word_x "[x5]"
+	setcycle 65 word since
+	setcycle 65 lexicality word
+	setcycle 65 correct_response "[word_response]"
+	setcycle 65 word_x "[x1]"
+	setcycle 66 word sites
+	setcycle 66 lexicality word
+	setcycle 66 correct_response "[word_response]"
+	setcycle 66 word_x "[x2]"
+	setcycle 67 word share
+	setcycle 67 lexicality word
+	setcycle 67 correct_response "[word_response]"
+	setcycle 67 word_x "[x3]"
+	setcycle 68 word short
+	setcycle 68 lexicality word
+	setcycle 68 correct_response "[word_response]"
+	setcycle 68 word_x "[x4]"
+	setcycle 69 word shows
+	setcycle 69 lexicality word
+	setcycle 69 correct_response "[word_response]"
+	setcycle 69 word_x "[x5]"
+	setcycle 70 word seems
+	setcycle 70 lexicality word
+	setcycle 70 correct_response "[word_response]"
+	setcycle 70 word_x "[x1]"
+	setcycle 71 word sense
+	setcycle 71 lexicality word
+	setcycle 71 correct_response "[word_response]"
+	setcycle 71 word_x "[x2]"
+	setcycle 72 word shall
+	setcycle 72 lexicality word
+	setcycle 72 correct_response "[word_response]"
+	setcycle 72 word_x "[x3]"
+	setcycle 73 word sales
+	setcycle 73 lexicality word
+	setcycle 73 correct_response "[word_response]"
+	setcycle 73 word_x "[x4]"
+	setcycle 74 word rules
+	setcycle 74 lexicality word
+	setcycle 74 correct_response "[word_response]"
+	setcycle 74 word_x "[x5]"
+	setcycle 75 word right
+	setcycle 75 lexicality word
+	setcycle 75 correct_response "[word_response]"
+	setcycle 75 word_x "[x1]"
+	setcycle 76 word reply
+	setcycle 76 lexicality word
+	setcycle 76 correct_response "[word_response]"
+	setcycle 76 word_x "[x2]"
+	setcycle 77 word radio
+	setcycle 77 lexicality word
+	setcycle 77 correct_response "[word_response]"
+	setcycle 77 word_x "[x3]"
+	setcycle 78 word range
+	setcycle 78 lexicality word
+	setcycle 78 correct_response "[word_response]"
+	setcycle 78 word_x "[x4]"
+	setcycle 79 word quite
+	setcycle 79 lexicality word
+	setcycle 79 correct_response "[word_response]"
+	setcycle 79 word_x "[x5]"
+	setcycle 80 word press
+	setcycle 80 lexicality word
+	setcycle 80 correct_response "[word_response]"
+	setcycle 80 word_x "[x1]"
+	setcycle 81 word price
+	setcycle 81 lexicality word
+	setcycle 81 correct_response "[word_response]"
+	setcycle 81 word_x "[x2]"
+	setcycle 82 word print
+	setcycle 82 lexicality word
+	setcycle 82 correct_response "[word_response]"
+	setcycle 82 word_x "[x3]"
+	setcycle 83 word posts
+	setcycle 83 lexicality word
+	setcycle 83 correct_response "[word_response]"
+	setcycle 83 word_x "[x4]"
+	setcycle 84 word power
+	setcycle 84 lexicality word
+	setcycle 84 correct_response "[word_response]"
+	setcycle 84 word_x "[x5]"
+	setcycle 85 word point
+	setcycle 85 lexicality word
+	setcycle 85 correct_response "[word_response]"
+	setcycle 85 word_x "[x1]"
+	setcycle 86 word phone
+	setcycle 86 lexicality word
+	setcycle 86 correct_response "[word_response]"
+	setcycle 86 word_x "[x2]"
+	setcycle 87 word place
+	setcycle 87 lexicality word
+	setcycle 87 correct_response "[word_response]"
+	setcycle 87 word_x "[x3]"
+	setcycle 88 word parts
+	setcycle 88 lexicality word
+	setcycle 88 correct_response "[word_response]"
+	setcycle 88 word_x "[x4]"
+	setcycle 89 word party
+	setcycle 89 lexicality word
+	setcycle 89 correct_response "[word_response]"
+	setcycle 89 word_x "[x5]"
+	setcycle 90 word pages
+	setcycle 90 lexicality word
+	setcycle 90 correct_response "[word_response]"
+	setcycle 90 word_x "[x1]"
+	setcycle 91 word paper
+	setcycle 91 lexicality word
+	setcycle 91 correct_response "[word_response]"
+	setcycle 91 word_x "[x2]"
+	setcycle 92 word other
+	setcycle 92 lexicality word
+	setcycle 92 correct_response "[word_response]"
+	setcycle 92 word_x "[x3]"
+	setcycle 93 word offer
+	setcycle 93 lexicality word
+	setcycle 93 correct_response "[word_response]"
+	setcycle 93 word_x "[x4]"
+	setcycle 94 word often
+	setcycle 94 lexicality word
+	setcycle 94 correct_response "[word_response]"
+	setcycle 94 word_x "[x5]"
+	setcycle 95 word order
+	setcycle 95 lexicality word
+	setcycle 95 correct_response "[word_response]"
+	setcycle 95 word_x "[x1]"
+	setcycle 96 word north
+	setcycle 96 lexicality word
+	setcycle 96 correct_response "[word_response]"
+	setcycle 96 word_x "[x2]"
+	setcycle 97 word needs
+	setcycle 97 lexicality word
+	setcycle 97 correct_response "[word_response]"
+	setcycle 97 word_x "[x3]"
+	setcycle 98 word never
+	setcycle 98 lexicality word
+	setcycle 98 correct_response "[word_response]"
+	setcycle 98 word_x "[x4]"
+	setcycle 99 word night
+	setcycle 99 lexicality word
+	setcycle 99 correct_response "[word_response]"
+	setcycle 99 word_x "[x5]"
+	setcycle 100 word music
+	setcycle 100 lexicality word
+	setcycle 100 correct_response "[word_response]"
+	setcycle 100 word_x "[x1]"
+	setcycle 101 word names
+	setcycle 101 lexicality word
+	setcycle 101 correct_response "[word_response]"
+	setcycle 101 word_x "[x2]"
+	setcycle 102 word money
+	setcycle 102 lexicality word
+	setcycle 102 correct_response "[word_response]"
+	setcycle 102 word_x "[x3]"
+	setcycle 103 word month
+	setcycle 103 lexicality word
+	setcycle 103 correct_response "[word_response]"
+	setcycle 103 word_x "[x4]"
+	setcycle 104 word movie
+	setcycle 104 lexicality word
+	setcycle 104 correct_response "[word_response]"
+	setcycle 104 word_x "[x5]"
+	setcycle 105 word model
+	setcycle 105 lexicality word
+	setcycle 105 correct_response "[word_response]"
+	setcycle 105 word_x "[x1]"
+	setcycle 106 word media
+	setcycle 106 lexicality word
+	setcycle 106 correct_response "[word_response]"
+	setcycle 106 word_x "[x2]"
+	setcycle 107 word might
+	setcycle 107 lexicality word
+	setcycle 107 correct_response "[word_response]"
+	setcycle 107 word_x "[x3]"
+	setcycle 108 word march
+	setcycle 108 lexicality word
+	setcycle 108 correct_response "[word_response]"
+	setcycle 108 word_x "[x4]"
+	setcycle 109 word maybe
+	setcycle 109 lexicality word
+	setcycle 109 correct_response "[word_response]"
+	setcycle 109 word_x "[x5]"
+	setcycle 110 word means
+	setcycle 110 lexicality word
+	setcycle 110 correct_response "[word_response]"
+	setcycle 110 word_x "[x1]"
+	setcycle 111 word major
+	setcycle 111 lexicality word
+	setcycle 111 correct_response "[word_response]"
+	setcycle 111 word_x "[x2]"
+	setcycle 112 word makes
+	setcycle 112 lexicality word
+	setcycle 112 correct_response "[word_response]"
+	setcycle 112 word_x "[x3]"
+	setcycle 113 word local
+	setcycle 113 lexicality word
+	setcycle 113 correct_response "[word_response]"
+	setcycle 113 word_x "[x4]"
+	setcycle 114 word locus
+	setcycle 114 lexicality word
+	setcycle 114 correct_response "[word_response]"
+	setcycle 114 word_x "[x5]"
+	setcycle 115 word looks
+	setcycle 115 lexicality word
+	setcycle 115 correct_response "[word_response]"
+	setcycle 115 word_x "[x1]"
+	setcycle 116 word level
+	setcycle 116 lexicality word
+	setcycle 116 correct_response "[word_response]"
+	setcycle 116 word_x "[x2]"
+	setcycle 117 word light
+	setcycle 117 lexicality word
+	setcycle 117 correct_response "[word_response]"
+	setcycle 117 word_x "[x3]"
+	setcycle 118 word lines
+	setcycle 118 lexicality word
+	setcycle 118 correct_response "[word_response]"
+	setcycle 118 word_x "[x4]"
+	setcycle 119 word lists
+	setcycle 119 lexicality word
+	setcycle 119 correct_response "[word_response]"
+	setcycle 119 word_x "[x5]"
+	setcycle 120 word large
+	setcycle 120 lexicality word
+	setcycle 120 correct_response "[word_response]"
+	setcycle 120 word_x "[x1]"
+	setcycle 121 word later
+	setcycle 121 lexicality word
+	setcycle 121 correct_response "[word_response]"
+	setcycle 121 word_x "[x2]"
+	setcycle 122 word learn
+	setcycle 122 lexicality word
+	setcycle 122 correct_response "[word_response]"
+	setcycle 122 word_x "[x3]"
+	setcycle 123 word least
+	setcycle 123 lexicality word
+	setcycle 123 correct_response "[word_response]"
+	setcycle 123 word_x "[x4]"
+	setcycle 124 word leave
+	setcycle 124 lexicality word
+	setcycle 124 correct_response "[word_response]"
+	setcycle 124 word_x "[x5]"
+	setcycle 125 word legal
+	setcycle 125 lexicality word
+	setcycle 125 correct_response "[word_response]"
+	setcycle 125 word_x "[x1]"
+	setcycle 126 word known
+	setcycle 126 lexicality word
+	setcycle 126 correct_response "[word_response]"
+	setcycle 126 word_x "[x2]"
+	setcycle 127 word knows
+	setcycle 127 lexicality word
+	setcycle 127 correct_response "[word_response]"
+	setcycle 127 word_x "[x3]"
+	setcycle 128 word issue
+	setcycle 128 lexicality word
+	setcycle 128 correct_response "[word_response]"
+	setcycle 128 word_x "[x4]"
+	setcycle 129 word ideas
+	setcycle 129 lexicality word
+	setcycle 129 correct_response "[word_response]"
+	setcycle 129 word_x "[x5]"
+	setcycle 130 word image
+	setcycle 130 lexicality word
+	setcycle 130 correct_response "[word_response]"
+	setcycle 130 word_x "[x1]"
+	setcycle 131 word hours
+	setcycle 131 lexicality word
+	setcycle 131 correct_response "[word_response]"
+	setcycle 131 word_x "[x2]"
+	setcycle 132 word house
+	setcycle 132 lexicality word
+	setcycle 132 correct_response "[word_response]"
+	setcycle 132 word_x "[x3]"
+	setcycle 133 word human
+	setcycle 133 lexicality word
+	setcycle 133 correct_response "[word_response]"
+	setcycle 133 word_x "[x4]"
+	setcycle 134 word hands
+	setcycle 134 lexicality word
+	setcycle 134 correct_response "[word_response]"
+	setcycle 134 word_x "[x5]"
+	setcycle 135 word happy
+	setcycle 135 lexicality word
+	setcycle 135 correct_response "[word_response]"
+	setcycle 135 word_x "[x1]"
+	setcycle 136 word heard
+	setcycle 136 lexicality word
+	setcycle 136 correct_response "[word_response]"
+	setcycle 136 word_x "[x2]"
+	setcycle 137 word group
+	setcycle 137 lexicality word
+	setcycle 137 correct_response "[word_response]"
+	setcycle 137 word_x "[x3]"
+	setcycle 138 word guess
+	setcycle 138 lexicality word
+	setcycle 138 correct_response "[word_response]"
+	setcycle 138 word_x "[x4]"
+	setcycle 139 word guide
+	setcycle 139 lexicality word
+	setcycle 139 correct_response "[word_response]"
+	setcycle 139 word_x "[x5]"
+	setcycle 140 word going
+	setcycle 140 lexicality word
+	setcycle 140 correct_response "[word_response]"
+	setcycle 140 word_x "[x1]"
+	setcycle 141 word great
+	setcycle 141 lexicality word
+	setcycle 141 correct_response "[word_response]"
+	setcycle 141 word_x "[x2]"
+	setcycle 142 word green
+	setcycle 142 lexicality word
+	setcycle 142 correct_response "[word_response]"
+	setcycle 142 word_x "[x3]"
+	setcycle 143 word given
+	setcycle 143 lexicality word
+	setcycle 143 correct_response "[word_response]"
+	setcycle 143 word_x "[x4]"
+	setcycle 144 word gives
+	setcycle 144 lexicality word
+	setcycle 144 correct_response "[word_response]"
+	setcycle 144 word_x "[x5]"
+	setcycle 145 word games
+	setcycle 145 lexicality word
+	setcycle 145 correct_response "[word_response]"
+	setcycle 145 word_x "[x1]"
+	setcycle 146 word found
+	setcycle 146 lexicality word
+	setcycle 146 correct_response "[word_response]"
+	setcycle 146 word_x "[x2]"
+	setcycle 147 word front
+	setcycle 147 lexicality word
+	setcycle 147 correct_response "[word_response]"
+	setcycle 147 word_x "[x3]"
+	setcycle 148 word folks
+	setcycle 148 lexicality word
+	setcycle 148 correct_response "[word_response]"
+	setcycle 148 word_x "[x4]"
+	setcycle 149 word force
+	setcycle 149 lexicality word
+	setcycle 149 correct_response "[word_response]"
+	setcycle 149 word_x "[x5]"
+	setcycle 150 word aniet
+	setcycle 150 lexicality nonword
+	setcycle 150 correct_response "[nonword_response]"
+	setcycle 150 word_x "[x1]"
+	setcycle 151 word apoke
+	setcycle 151 lexicality nonword
+	setcycle 151 correct_response "[nonword_response]"
+	setcycle 151 word_x "[x2]"
+	setcycle 152 word woils
+	setcycle 152 lexicality nonword
+	setcycle 152 correct_response "[nonword_response]"
+	setcycle 152 word_x "[x3]"
+	setcycle 153 word wonce
+	setcycle 153 lexicality nonword
+	setcycle 153 correct_response "[nonword_response]"
+	setcycle 153 word_x "[x4]"
+	setcycle 154 word wonde
+	setcycle 154 lexicality nonword
+	setcycle 154 correct_response "[nonword_response]"
+	setcycle 154 word_x "[x5]"
+	setcycle 155 word wobed
+	setcycle 155 lexicality nonword
+	setcycle 155 correct_response "[nonword_response]"
+	setcycle 155 word_x "[x1]"
+	setcycle 156 word wourn
+	setcycle 156 lexicality nonword
+	setcycle 156 correct_response "[nonword_response]"
+	setcycle 156 word_x "[x2]"
+	setcycle 157 word wrile
+	setcycle 157 lexicality nonword
+	setcycle 157 correct_response "[nonword_response]"
+	setcycle 157 word_x "[x3]"
+	setcycle 158 word wrosh
+	setcycle 158 lexicality nonword
+	setcycle 158 correct_response "[nonword_response]"
+	setcycle 158 word_x "[x4]"
+	setcycle 159 word wrute
+	setcycle 159 lexicality nonword
+	setcycle 159 correct_response "[nonword_response]"
+	setcycle 159 word_x "[x5]"
+	setcycle 160 word yeams
+	setcycle 160 lexicality nonword
+	setcycle 160 correct_response "[nonword_response]"
+	setcycle 160 word_x "[x1]"
+	setcycle 161 word yount
+	setcycle 161 lexicality nonword
+	setcycle 161 correct_response "[nonword_response]"
+	setcycle 161 word_x "[x2]"
+	setcycle 162 word whith
+	setcycle 162 lexicality nonword
+	setcycle 162 correct_response "[nonword_response]"
+	setcycle 162 word_x "[x3]"
+	setcycle 163 word whike
+	setcycle 163 lexicality nonword
+	setcycle 163 correct_response "[nonword_response]"
+	setcycle 163 word_x "[x4]"
+	setcycle 164 word whike
+	setcycle 164 lexicality nonword
+	setcycle 164 correct_response "[nonword_response]"
+	setcycle 164 word_x "[x5]"
+	setcycle 165 word whoss
+	setcycle 165 lexicality nonword
+	setcycle 165 correct_response "[nonword_response]"
+	setcycle 165 word_x "[x1]"
+	setcycle 166 word wesan
+	setcycle 166 lexicality nonword
+	setcycle 166 correct_response "[nonword_response]"
+	setcycle 166 word_x "[x2]"
+	setcycle 167 word wesen
+	setcycle 167 lexicality nonword
+	setcycle 167 correct_response "[nonword_response]"
+	setcycle 167 word_x "[x3]"
+	setcycle 168 word wawed
+	setcycle 168 lexicality nonword
+	setcycle 168 correct_response "[nonword_response]"
+	setcycle 168 word_x "[x4]"
+	setcycle 169 word wawed
+	setcycle 169 lexicality nonword
+	setcycle 169 correct_response "[nonword_response]"
+	setcycle 169 word_x "[x5]"
+	setcycle 170 word galer
+	setcycle 170 lexicality nonword
+	setcycle 170 correct_response "[nonword_response]"
+	setcycle 170 word_x "[x1]"
+	setcycle 171 word wooks
+	setcycle 171 lexicality nonword
+	setcycle 171 correct_response "[nonword_response]"
+	setcycle 171 word_x "[x2]"
+	setcycle 172 word quere
+	setcycle 172 lexicality nonword
+	setcycle 172 correct_response "[nonword_response]"
+	setcycle 172 word_x "[x3]"
+	setcycle 173 word neteo
+	setcycle 173 lexicality nonword
+	setcycle 173 correct_response "[nonword_response]"
+	setcycle 173 word_x "[x4]"
+	setcycle 174 word vonde
+	setcycle 174 lexicality nonword
+	setcycle 174 correct_response "[nonword_response]"
+	setcycle 174 word_x "[x5]"
+	setcycle 175 word olers
+	setcycle 175 lexicality nonword
+	setcycle 175 correct_response "[nonword_response]"
+	setcycle 175 word_x "[x1]"
+	setcycle 176 word oling
+	setcycle 176 lexicality nonword
+	setcycle 176 correct_response "[nonword_response]"
+	setcycle 176 word_x "[x2]"
+	setcycle 177 word vasui
+	setcycle 177 lexicality nonword
+	setcycle 177 correct_response "[nonword_response]"
+	setcycle 177 word_x "[x3]"
+	setcycle 178 word untat
+	setcycle 178 lexicality nonword
+	setcycle 178 correct_response "[nonword_response]"
+	setcycle 178 word_x "[x4]"
+	setcycle 179 word urmer
+	setcycle 179 lexicality nonword
+	setcycle 179 correct_response "[nonword_response]"
+	setcycle 179 word_x "[x5]"
+	setcycle 180 word trood
+	setcycle 180 lexicality nonword
+	setcycle 180 correct_response "[nonword_response]"
+	setcycle 180 word_x "[x1]"
+	setcycle 181 word trult
+	setcycle 181 lexicality nonword
+	setcycle 181 correct_response "[nonword_response]"
+	setcycle 181 word_x "[x2]"
+	setcycle 182 word tooch
+	setcycle 182 lexicality nonword
+	setcycle 182 correct_response "[nonword_response]"
+	setcycle 182 word_x "[x3]"
+	setcycle 183 word lolal
+	setcycle 183 lexicality nonword
+	setcycle 183 correct_response "[nonword_response]"
+	setcycle 183 word_x "[x4]"
+	setcycle 184 word trass
+	setcycle 184 lexicality nonword
+	setcycle 184 correct_response "[nonword_response]"
+	setcycle 184 word_x "[x5]"
+	setcycle 185 word thoke
+	setcycle 185 lexicality nonword
+	setcycle 185 correct_response "[nonword_response]"
+	setcycle 185 word_x "[x1]"
+	setcycle 186 word squee
+	setcycle 186 lexicality nonword
+	setcycle 186 correct_response "[nonword_response]"
+	setcycle 186 word_x "[x2]"
+	setcycle 187 word tived
+	setcycle 187 lexicality nonword
+	setcycle 187 correct_response "[nonword_response]"
+	setcycle 187 word_x "[x3]"
+	setcycle 188 word fiple
+	setcycle 188 lexicality nonword
+	setcycle 188 correct_response "[nonword_response]"
+	setcycle 188 word_x "[x4]"
+	setcycle 189 word logay
+	setcycle 189 lexicality nonword
+	setcycle 189 correct_response "[nonword_response]"
+	setcycle 189 word_x "[x5]"
+	setcycle 190 word thunk
+	setcycle 190 lexicality nonword
+	setcycle 190 correct_response "[nonword_response]"
+	setcycle 190 word_x "[x1]"
+	setcycle 191 word freir
+	setcycle 191 lexicality nonword
+	setcycle 191 correct_response "[nonword_response]"
+	setcycle 191 word_x "[x2]"
+	setcycle 192 word thure
+	setcycle 192 lexicality nonword
+	setcycle 192 correct_response "[nonword_response]"
+	setcycle 192 word_x "[x3]"
+	setcycle 193 word thise
+	setcycle 193 lexicality nonword
+	setcycle 193 correct_response "[nonword_response]"
+	setcycle 193 word_x "[x4]"
+	setcycle 194 word thang
+	setcycle 194 lexicality nonword
+	setcycle 194 correct_response "[nonword_response]"
+	setcycle 194 word_x "[x5]"
+	setcycle 195 word snink
+	setcycle 195 lexicality nonword
+	setcycle 195 correct_response "[nonword_response]"
+	setcycle 195 word_x "[x1]"
+	setcycle 196 word therd
+	setcycle 196 lexicality nonword
+	setcycle 196 correct_response "[nonword_response]"
+	setcycle 196 word_x "[x2]"
+	setcycle 197 word lagle
+	setcycle 197 lexicality nonword
+	setcycle 197 correct_response "[nonword_response]"
+	setcycle 197 word_x "[x3]"
+	setcycle 198 word lazen
+	setcycle 198 lexicality nonword
+	setcycle 198 correct_response "[nonword_response]"
+	setcycle 198 word_x "[x4]"
+	setcycle 199 word tokes
+	setcycle 199 lexicality nonword
+	setcycle 199 correct_response "[nonword_response]"
+	setcycle 199 word_x "[x5]"
+	setcycle 200 word suile
+	setcycle 200 lexicality nonword
+	setcycle 200 correct_response "[nonword_response]"
+	setcycle 200 word_x "[x1]"
+	setcycle 201 word stogs
+	setcycle 201 lexicality nonword
+	setcycle 201 correct_response "[nonword_response]"
+	setcycle 201 word_x "[x2]"
+	setcycle 202 word provy
+	setcycle 202 lexicality nonword
+	setcycle 202 correct_response "[nonword_response]"
+	setcycle 202 word_x "[x3]"
+	setcycle 203 word stovy
+	setcycle 203 lexicality nonword
+	setcycle 203 correct_response "[nonword_response]"
+	setcycle 203 word_x "[x4]"
+	setcycle 204 word steff
+	setcycle 204 lexicality nonword
+	setcycle 204 correct_response "[nonword_response]"
+	setcycle 204 word_x "[x5]"
+	setcycle 205 word stace
+	setcycle 205 lexicality nonword
+	setcycle 205 correct_response "[nonword_response]"
+	setcycle 205 word_x "[x1]"
+	setcycle 206 word stass
+	setcycle 206 lexicality nonword
+	setcycle 206 correct_response "[nonword_response]"
+	setcycle 206 word_x "[x2]"
+	setcycle 207 word stull
+	setcycle 207 lexicality nonword
+	setcycle 207 correct_response "[nonword_response]"
+	setcycle 207 word_x "[x3]"
+	setcycle 208 word fleed
+	setcycle 208 lexicality nonword
+	setcycle 208 correct_response "[nonword_response]"
+	setcycle 208 word_x "[x4]"
+	setcycle 209 word rurry
+	setcycle 209 lexicality nonword
+	setcycle 209 correct_response "[nonword_response]"
+	setcycle 209 word_x "[x5]"
+	setcycle 210 word cound
+	setcycle 210 lexicality nonword
+	setcycle 210 correct_response "[nonword_response]"
+	setcycle 210 word_x "[x1]"
+	setcycle 211 word routh
+	setcycle 211 lexicality nonword
+	setcycle 211 correct_response "[nonword_response]"
+	setcycle 211 word_x "[x2]"
+	setcycle 212 word slace
+	setcycle 212 lexicality nonword
+	setcycle 212 correct_response "[nonword_response]"
+	setcycle 212 word_x "[x3]"
+	setcycle 213 word fleak
+	setcycle 213 lexicality nonword
+	setcycle 213 correct_response "[nonword_response]"
+	setcycle 213 word_x "[x4]"
+	setcycle 214 word wrall
+	setcycle 214 lexicality nonword
+	setcycle 214 correct_response "[nonword_response]"
+	setcycle 214 word_x "[x5]"
+	setcycle 215 word rince
+	setcycle 215 lexicality nonword
+	setcycle 215 correct_response "[nonword_response]"
+	setcycle 215 word_x "[x1]"
+	setcycle 216 word sined
+	setcycle 216 lexicality nonword
+	setcycle 216 correct_response "[nonword_response]"
+	setcycle 216 word_x "[x2]"
+	setcycle 217 word chare
+	setcycle 217 lexicality nonword
+	setcycle 217 correct_response "[nonword_response]"
+	setcycle 217 word_x "[x3]"
+	setcycle 218 word sholt
+	setcycle 218 lexicality nonword
+	setcycle 218 correct_response "[nonword_response]"
+	setcycle 218 word_x "[x4]"
+	setcycle 219 word shobs
+	setcycle 219 lexicality nonword
+	setcycle 219 correct_response "[nonword_response]"
+	setcycle 219 word_x "[x5]"
+	setcycle 220 word reems
+	setcycle 220 lexicality nonword
+	setcycle 220 correct_response "[nonword_response]"
+	setcycle 220 word_x "[x1]"
+	setcycle 221 word selps
+	setcycle 221 lexicality nonword
+	setcycle 221 correct_response "[nonword_response]"
+	setcycle 221 word_x "[x2]"
+	setcycle 222 word chall
+	setcycle 222 lexicality nonword
+	setcycle 222 correct_response "[nonword_response]"
+	setcycle 222 word_x "[x3]"
+	setcycle 223 word satch
+	setcycle 223 lexicality nonword
+	setcycle 223 correct_response "[nonword_response]"
+	setcycle 223 word_x "[x4]"
+	setcycle 224 word rutes
+	setcycle 224 lexicality nonword
+	setcycle 224 correct_response "[nonword_response]"
+	setcycle 224 word_x "[x5]"
+	setcycle 225 word rilks
+	setcycle 225 lexicality nonword
+	setcycle 225 correct_response "[nonword_response]"
+	setcycle 225 word_x "[x1]"
+	setcycle 226 word deshy
+	setcycle 226 lexicality nonword
+	setcycle 226 correct_response "[nonword_response]"
+	setcycle 226 word_x "[x2]"
+	setcycle 227 word sosio
+	setcycle 227 lexicality nonword
+	setcycle 227 correct_response "[nonword_response]"
+	setcycle 227 word_x "[x3]"
+	setcycle 228 word rarms
+	setcycle 228 lexicality nonword
+	setcycle 228 correct_response "[nonword_response]"
+	setcycle 228 word_x "[x4]"
+	setcycle 229 word quile
+	setcycle 229 lexicality nonword
+	setcycle 229 correct_response "[nonword_response]"
+	setcycle 229 word_x "[x5]"
+	setcycle 230 word pruss
+	setcycle 230 lexicality nonword
+	setcycle 230 correct_response "[nonword_response]"
+	setcycle 230 word_x "[x1]"
+	setcycle 231 word prilt
+	setcycle 231 lexicality nonword
+	setcycle 231 correct_response "[nonword_response]"
+	setcycle 231 word_x "[x2]"
+	setcycle 232 word pring
+	setcycle 232 lexicality nonword
+	setcycle 232 correct_response "[nonword_response]"
+	setcycle 232 word_x "[x3]"
+	setcycle 233 word pists
+	setcycle 233 lexicality nonword
+	setcycle 233 correct_response "[nonword_response]"
+	setcycle 233 word_x "[x4]"
+	setcycle 234 word pumer
+	setcycle 234 lexicality nonword
+	setcycle 234 correct_response "[nonword_response]"
+	setcycle 234 word_x "[x5]"
+	setcycle 235 word poits
+	setcycle 235 lexicality nonword
+	setcycle 235 correct_response "[nonword_response]"
+	setcycle 235 word_x "[x1]"
+	setcycle 236 word phove
+	setcycle 236 lexicality nonword
+	setcycle 236 correct_response "[nonword_response]"
+	setcycle 236 word_x "[x2]"
+	setcycle 237 word swace
+	setcycle 237 lexicality nonword
+	setcycle 237 correct_response "[nonword_response]"
+	setcycle 237 word_x "[x3]"
+	setcycle 238 word papes
+	setcycle 238 lexicality nonword
+	setcycle 238 correct_response "[nonword_response]"
+	setcycle 238 word_x "[x4]"
+	setcycle 239 word marby
+	setcycle 239 lexicality nonword
+	setcycle 239 correct_response "[nonword_response]"
+	setcycle 239 word_x "[x5]"
+	setcycle 240 word diges
+	setcycle 240 lexicality nonword
+	setcycle 240 correct_response "[nonword_response]"
+	setcycle 240 word_x "[x1]"
+	setcycle 241 word mader
+	setcycle 241 lexicality nonword
+	setcycle 241 correct_response "[nonword_response]"
+	setcycle 241 word_x "[x2]"
+	setcycle 242 word unter
+	setcycle 242 lexicality nonword
+	setcycle 242 correct_response "[nonword_response]"
+	setcycle 242 word_x "[x3]"
+	setcycle 243 word occer
+	setcycle 243 lexicality nonword
+	setcycle 243 correct_response "[nonword_response]"
+	setcycle 243 word_x "[x4]"
+	setcycle 244 word uoten
+	setcycle 244 lexicality nonword
+	setcycle 244 correct_response "[nonword_response]"
+	setcycle 244 word_x "[x5]"
+	setcycle 245 word urper
+	setcycle 245 lexicality nonword
+	setcycle 245 correct_response "[nonword_response]"
+	setcycle 245 word_x "[x1]"
+	setcycle 246 word nombs
+	setcycle 246 lexicality nonword
+	setcycle 246 correct_response "[nonword_response]"
+	setcycle 246 word_x "[x2]"
+	setcycle 247 word neads
+	setcycle 247 lexicality nonword
+	setcycle 247 correct_response "[nonword_response]"
+	setcycle 247 word_x "[x3]"
+	setcycle 248 word nirer
+	setcycle 248 lexicality nonword
+	setcycle 248 correct_response "[nonword_response]"
+	setcycle 248 word_x "[x4]"
+	setcycle 249 word niffs
+	setcycle 249 lexicality nonword
+	setcycle 249 correct_response "[nonword_response]"
+	setcycle 249 word_x "[x5]"
+	setcycle 250 word rubic
+	setcycle 250 lexicality nonword
+	setcycle 250 correct_response "[nonword_response]"
+	setcycle 250 word_x "[x1]"
+	setcycle 251 word nance
+	setcycle 251 lexicality nonword
+	setcycle 251 correct_response "[nonword_response]"
+	setcycle 251 word_x "[x2]"
+	setcycle 252 word runey
+	setcycle 252 lexicality nonword
+	setcycle 252 correct_response "[nonword_response]"
+	setcycle 252 word_x "[x3]"
+	setcycle 253 word moifs
+	setcycle 253 lexicality nonword
+	setcycle 253 correct_response "[nonword_response]"
+	setcycle 253 word_x "[x4]"
+	setcycle 254 word sevie
+	setcycle 254 lexicality nonword
+	setcycle 254 correct_response "[nonword_response]"
+	setcycle 254 word_x "[x5]"
+	setcycle 255 word sedel
+	setcycle 255 lexicality nonword
+	setcycle 255 correct_response "[nonword_response]"
+	setcycle 255 word_x "[x1]"
+	setcycle 256 word necio
+	setcycle 256 lexicality nonword
+	setcycle 256 correct_response "[nonword_response]"
+	setcycle 256 word_x "[x2]"
+	setcycle 257 word mides
+	setcycle 257 lexicality nonword
+	setcycle 257 correct_response "[nonword_response]"
+	setcycle 257 word_x "[x3]"
+	setcycle 258 word mawns
+	setcycle 258 lexicality nonword
+	setcycle 258 correct_response "[nonword_response]"
+	setcycle 258 word_x "[x4]"
+	setcycle 259 word magse
+	setcycle 259 lexicality nonword
+	setcycle 259 correct_response "[nonword_response]"
+	setcycle 259 word_x "[x5]"
+	setcycle 260 word meens
+	setcycle 260 lexicality nonword
+	setcycle 260 correct_response "[nonword_response]"
+	setcycle 260 word_x "[x1]"
+	setcycle 261 word mazar
+	setcycle 261 lexicality nonword
+	setcycle 261 correct_response "[nonword_response]"
+	setcycle 261 word_x "[x2]"
+	setcycle 262 word mamps
+	setcycle 262 lexicality nonword
+	setcycle 262 correct_response "[nonword_response]"
+	setcycle 262 word_x "[x3]"
+	setcycle 263 word lopel
+	setcycle 263 lexicality nonword
+	setcycle 263 correct_response "[nonword_response]"
+	setcycle 263 word_x "[x4]"
+	setcycle 264 word tobus
+	setcycle 264 lexicality nonword
+	setcycle 264 correct_response "[nonword_response]"
+	setcycle 264 word_x "[x5]"
+	setcycle 265 word looch
+	setcycle 265 lexicality nonword
+	setcycle 265 correct_response "[nonword_response]"
+	setcycle 265 word_x "[x1]"
+	setcycle 266 word tuvel
+	setcycle 266 lexicality nonword
+	setcycle 266 correct_response "[nonword_response]"
+	setcycle 266 word_x "[x2]"
+	setcycle 267 word liffs
+	setcycle 267 lexicality nonword
+	setcycle 267 correct_response "[nonword_response]"
+	setcycle 267 word_x "[x3]"
+	setcycle 268 word lones
+	setcycle 268 lexicality nonword
+	setcycle 268 correct_response "[nonword_response]"
+	setcycle 268 word_x "[x4]"
+	setcycle 269 word losts
+	setcycle 269 lexicality nonword
+	setcycle 269 correct_response "[nonword_response]"
+	setcycle 269 word_x "[x5]"
+	setcycle 270 word lalks
+	setcycle 270 lexicality nonword
+	setcycle 270 correct_response "[nonword_response]"
+	setcycle 270 word_x "[x1]"
+	setcycle 271 word titer
+	setcycle 271 lexicality nonword
+	setcycle 271 correct_response "[nonword_response]"
+	setcycle 271 word_x "[x2]"
+	setcycle 272 word leald
+	setcycle 272 lexicality nonword
+	setcycle 272 correct_response "[nonword_response]"
+	setcycle 272 word_x "[x3]"
+	setcycle 273 word leams
+	setcycle 273 lexicality nonword
+	setcycle 273 correct_response "[nonword_response]"
+	setcycle 273 word_x "[x4]"
+	setcycle 274 word leams
+	setcycle 274 lexicality nonword
+	setcycle 274 correct_response "[nonword_response]"
+	setcycle 274 word_x "[x5]"
+	setcycle 275 word lefel
+	setcycle 275 lexicality nonword
+	setcycle 275 correct_response "[nonword_response]"
+	setcycle 275 word_x "[x1]"
+	setcycle 276 word wrown
+	setcycle 276 lexicality nonword
+	setcycle 276 correct_response "[nonword_response]"
+	setcycle 276 word_x "[x2]"
+	setcycle 277 word knone
+	setcycle 277 lexicality nonword
+	setcycle 277 correct_response "[nonword_response]"
+	setcycle 277 word_x "[x3]"
+	setcycle 278 word istux
+	setcycle 278 lexicality nonword
+	setcycle 278 correct_response "[nonword_response]"
+	setcycle 278 word_x "[x4]"
+	setcycle 279 word ucoas
+	setcycle 279 lexicality nonword
+	setcycle 279 correct_response "[nonword_response]"
+	setcycle 279 word_x "[x5]"
+	setcycle 280 word ipays
+	setcycle 280 lexicality nonword
+	setcycle 280 correct_response "[nonword_response]"
+	setcycle 280 word_x "[x1]"
+	setcycle 281 word heers
+	setcycle 281 lexicality nonword
+	setcycle 281 correct_response "[nonword_response]"
+	setcycle 281 word_x "[x2]"
+	setcycle 282 word houle
+	setcycle 282 lexicality nonword
+	setcycle 282 correct_response "[nonword_response]"
+	setcycle 282 word_x "[x3]"
+	setcycle 283 word hunen
+	setcycle 283 lexicality nonword
+	setcycle 283 correct_response "[nonword_response]"
+	setcycle 283 word_x "[x4]"
+	setcycle 284 word hants
+	setcycle 284 lexicality nonword
+	setcycle 284 correct_response "[nonword_response]"
+	setcycle 284 word_x "[x5]"
+	setcycle 285 word hammy
+	setcycle 285 lexicality nonword
+	setcycle 285 correct_response "[nonword_response]"
+	setcycle 285 word_x "[x1]"
+	setcycle 286 word hearn
+	setcycle 286 lexicality nonword
+	setcycle 286 correct_response "[nonword_response]"
+	setcycle 286 word_x "[x2]"
+	setcycle 287 word groap
+	setcycle 287 lexicality nonword
+	setcycle 287 correct_response "[nonword_response]"
+	setcycle 287 word_x "[x3]"
+	setcycle 288 word guoys
+	setcycle 288 lexicality nonword
+	setcycle 288 correct_response "[nonword_response]"
+	setcycle 288 word_x "[x4]"
+	setcycle 289 word guice
+	setcycle 289 lexicality nonword
+	setcycle 289 correct_response "[nonword_response]"
+	setcycle 289 word_x "[x5]"
+	setcycle 290 word wiing
+	setcycle 290 lexicality nonword
+	setcycle 290 correct_response "[nonword_response]"
+	setcycle 290 word_x "[x1]"
+	setcycle 291 word creat
+	setcycle 291 lexicality nonword
+	setcycle 291 correct_response "[nonword_response]"
+	setcycle 291 word_x "[x2]"
+	setcycle 292 word groon
+	setcycle 292 lexicality nonword
+	setcycle 292 correct_response "[nonword_response]"
+	setcycle 292 word_x "[x3]"
+	setcycle 293 word geden
+	setcycle 293 lexicality nonword
+	setcycle 293 correct_response "[nonword_response]"
+	setcycle 293 word_x "[x4]"
+	setcycle 294 word goves
+	setcycle 294 lexicality nonword
+	setcycle 294 correct_response "[nonword_response]"
+	setcycle 294 word_x "[x5]"
+	setcycle 295 word gance
+	setcycle 295 lexicality nonword
+	setcycle 295 correct_response "[nonword_response]"
+	setcycle 295 word_x "[x1]"
+	setcycle 296 word fouse
+	setcycle 296 lexicality nonword
+	setcycle 296 correct_response "[nonword_response]"
+	setcycle 296 word_x "[x2]"
+	setcycle 297 word snont
+	setcycle 297 lexicality nonword
+	setcycle 297 correct_response "[nonword_response]"
+	setcycle 297 word_x "[x3]"
+	setcycle 298 word fothe
+	setcycle 298 lexicality nonword
+	setcycle 298 correct_response "[nonword_response]"
+	setcycle 298 word_x "[x4]"
+	setcycle 299 word foits
+	setcycle 299 lexicality nonword
+	setcycle 299 correct_response "[nonword_response]"
+	setcycle 299 word_x "[x5]"
 	run trial_sequence
 
 define sequence counterbalance
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run odd_participants "[subject_parity] = odd"
-	run even_participants "[subject_parity] = even"
+	run group0 "[subject_nr] % 5 = 0"
+	run group1 "[subject_nr] % 5 = 1"
+	run group2 "[subject_nr] % 5 = 2"
+	run group3 "[subject_nr] % 5 = 3"
+	run group4 "[subject_nr] % 5 = 4"
 
 define sketchpad end_of_experiment
 	set start_response_interval no
 	set duration keypress
 	set description "A sketchpad notifying the participant that the experiment is finished"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The experiment is finished!<br /><br />Thank you for your participation." x=0 y=0 z_index=0
-
-define loop even_participants
-	set source_file ""
-	set source table
-	set repeat 1
-	set order random
-	set description "Repeatedly runs another item"
-	set cycles 1
-	set continuous no
-	set break_if_on_first yes
-	set break_if never
-	setcycle 0 word_response left
-	setcycle 0 nonword_response right
-	run instructions
+	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="The experiment is finished!<br /><br />Thank you for your participation." x=0 y=0 z_index=0
 
 define sequence experiment
 	set flush_keyboard yes
@@ -159,11 +1287,106 @@ define sketchpad fixation
 	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=-64 y2=-32 z_index=0
 	draw line color=white penwidth=3 show_if=always x1=0 x2=0 y1=32 y2=64 z_index=0
 
+define loop group0
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	setcycle 0 x1 -32
+	setcycle 0 x2 -16
+	setcycle 0 x3 0
+	setcycle 0 x4 16
+	setcycle 0 x5 32
+	run instructions
+
+define loop group1
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	setcycle 0 x1 32
+	setcycle 0 x2 -32
+	setcycle 0 x3 -16
+	setcycle 0 x4 0
+	setcycle 0 x5 16
+	run instructions
+
+define loop group2
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	setcycle 0 x1 16
+	setcycle 0 x2 32
+	setcycle 0 x3 -32
+	setcycle 0 x4 -16
+	setcycle 0 x5 0
+	run instructions
+
+define loop group3
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	setcycle 0 x1 0
+	setcycle 0 x2 16
+	setcycle 0 x3 32
+	setcycle 0 x4 -32
+	setcycle 0 x5 -16
+	run instructions
+
+define loop group4
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 word_response right
+	setcycle 0 nonword_response left
+	setcycle 0 x1 -16
+	setcycle 0 x2 0
+	setcycle 0 x3 16
+	setcycle 0 x4 32
+	setcycle 0 x5 -32
+	run instructions
+
 define sketchpad instructions
 	set start_response_interval no
 	set duration keypress
 	set description "A sketchpad containing the instructions for the participant"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="INSTRUCTIONS<br /><br /><br />You will see a string of letters.<br /><br />Press the [word_response] arrow key if you see a word<br /><br />Press the [nonword_response] arrow key if you see a non-word<br /><br />Be as fast and accurate as possible!<br /><br /><br />Press any key to begin!<br />" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="INSTRUCTIONS<br /><br /><br />Thank you for participating in this experiment! :-)<br /><br /><br />You will see 60 strings of letters<br />Press the [word_response] arrow key when you see a word (e.g. cats)<br />Press the [nonword_response] arrow key when you see a non-word (e.g. lekz)<br />Be as fast and accurate as possible!<br /><br /><br />Press any key to begin!<br />" x=0 y=0 z_index=0
 
 define keyboard_response keyboard_response
 	set timeout 2000
@@ -177,20 +1400,6 @@ define logger logger
 	set description "Logs experimental data"
 	set auto_log yes
 
-define loop odd_participants
-	set source_file ""
-	set source table
-	set repeat 1
-	set order random
-	set description "Repeatedly runs another item"
-	set cycles 1
-	set continuous no
-	set break_if_on_first yes
-	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
-	run instructions
-
 define loop set_variables
 	set source_file ""
 	set source table
@@ -201,11 +1410,7 @@ define loop set_variables
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 x1 -32
-	setcycle 0 x2 -16
-	setcycle 0 x3 0
-	setcycle 0 x4 16
-	setcycle 0 x5 32
+	setcycle 0 empty_column ""
 	run counterbalance
 
 define feedback trial_feedback
@@ -225,7 +1430,7 @@ define sequence trial_sequence
 	run keyboard_response always
 	run trial_feedback always
 	run logger always
-	run block_feedback "([count_trial_sequence] + 1) % 2 == 0"
+	run block_feedback "([count_trial_sequence] + 1) % 10 = 0"
 
 define sketchpad word
 	set duration 0
