@@ -28,6 +28,15 @@ const exampleExperiments = fs.readdirSync('example-experiments')
   }))
 
 module.exports = (env, args) => {
+  let outputName = ''
+  if (isDevServer) {
+    outputName += '[name].bundle'
+  } else if (args.mode == 'development') {
+    outputName += '[name].[chunkhash].bundle'
+  } else {
+    outputName += `[name].${pkgconfig.version}.bundle`
+  }
+
   const config = {
     mode: isDevServer ? 'development' : args.mode,
     devtool: (isDevServer || args.mode === 'development') ? 'cheap-module-source-map' : 'source-map',
@@ -36,7 +45,7 @@ module.exports = (env, args) => {
     },
     output: {
       path: path.join(__dirname, 'public_html'),
-      filename: 'js/' + (isDevServer ? '[name].bundle.js' : '[name].[chunkhash].bundle.js')
+      filename: `js/${outputName}.js`
     },
     module: {
       rules: [{
@@ -89,8 +98,7 @@ module.exports = (env, args) => {
       }),
       new webpack.NamedModulesPlugin(),
       new MiniCssExtractPlugin({
-        filename: 'css/[name].css',
-        chunkFilename: 'css/[id].css'
+        filename: `css/${outputName}.css`
       }),
       new CopyWebpackPlugin([{
         from: 'example-experiments/*.osexp',

@@ -1,17 +1,43 @@
 import mockConsole from 'jest-mock-console'
 
-// import Syntax from '../../osweb/classes/syntax'
-import osweb from '../../osweb'
+import Runner from '../../osweb/system/runner'
+import Syntax from '../../osweb/classes/syntax'
+import PythonParser from '../../osweb/python/python'
+// import osweb from '../../osweb'
 import VarStore from '../../osweb/classes/var_store'
+
+const mockUpdateIntroScreen = jest.fn()
+const mockUpdateProgressBar = jest.fn()
+const mockAddMessage = jest.fn()
+const mockAddError = jest.fn()
+
+jest.mock('../../osweb/system/runner', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      _screen: {
+        _updateIntroScreen: mockUpdateIntroScreen,
+        _updateProgressBar: mockUpdateProgressBar
+      },
+      _debugger: {
+        addMessage: mockAddMessage,
+        addError: mockAddError
+      }
+    }
+  })
+})
+
+const runner = new Runner()
+runner._pythonParser = new PythonParser(runner)
+const syntax = new Syntax(runner)
 
 // Already mock the console here to suppress pixi output
 let restoreConsole
 restoreConsole = mockConsole()
 
-const renderTarget = document.createElement('div')
-renderTarget.id = 'renderTarget'
+// const renderTarget = document.createElement('div')
+// renderTarget.id = 'renderTarget'
 
-const runner = osweb.getRunner(renderTarget)
+// const runner = osweb.getRunner(renderTarget)
 restoreConsole()
 
 describe('Syntax', function () {
@@ -31,7 +57,7 @@ describe('Syntax', function () {
         ['\\\\\\"\\\\\\"', '\\"\\"'],
         ['"\\"quoted\\""', '""quoted""']
       ]) {
-        expect(runner._syntax.strip_slashes(input)).toBe(expectedOutput)
+        expect(syntax.strip_slashes(input)).toBe(expectedOutput)
       }
     })
   })
@@ -40,12 +66,12 @@ describe('Syntax', function () {
     var checkCmd = function (s, cmd, arglist, kwdict) {
       // parse command into arguments
       let _cmd, _arglist, _kwdict;
-      [_cmd, _arglist, _kwdict] = runner._syntax.parse_cmd(s)
+      [_cmd, _arglist, _kwdict] = syntax.parse_cmd(s)
       expect(_cmd).toBe(cmd)
       expect(_arglist).toEqual(arglist)
       expect(_kwdict).toEqual(kwdict)
       // translate arguments back to command
-      expect(s).toBe(runner._syntax.create_cmd(_cmd, _arglist, _kwdict))
+      expect(s).toBe(syntax.create_cmd(_cmd, _arglist, _kwdict))
     }
 
     it('should parse command with arguments and keyword arguments', function () {
@@ -96,126 +122,127 @@ describe('Syntax', function () {
   })
 
   describe('eval_text()', function () {
-    const tmpVarStore = new VarStore({
-      syntax: runner._syntax
+    var tmpVarStore = new VarStore({
+      syntax: syntax
     }, null)
+
     tmpVarStore.width = 1024
     tmpVarStore.height = 768
     tmpVarStore.my_var99 = 99
 
     it('Should only parse real variables: \\\\[width] = \\[width] = [width]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '\\\\[width] = \\[width] = [width]', tmpVarStore)).toBe('\\1024 = [width] = 1024')
     })
     it('Should not try to parse a variable if [] contents contain spaces: [no var]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[no var]', tmpVarStore)).toBe('[no var]')
     })
     it('Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters: [nóvar]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[nóvar]', tmpVarStore)).toBe('[nóvar]')
     })
     it('Should parse variables with underscores and numbers: [my_var99]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[my_var99]', tmpVarStore)).toBe('99')
     })
     it('Should not try to parse a variable if it is preceded by a backslash: \\[width]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '\\[width]', tmpVarStore)).toBe('[width]')
     })
     it('Should ignore characters between variable definitions: [width] x [height]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[width] x [height]', tmpVarStore)).toBe('1024 x 768')
     })
     it('Should process python code: [=10*10]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[=10*10]', tmpVarStore)).toBe('100')
     })
     it('Should not process python code if it is preceded by a backslash: \\[=10*10]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '\\[=10*10]', tmpVarStore)).toBe('[=10*10]')
     })
     it('Should process string code: [="tést"]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[="tést"]', tmpVarStore)).toBe('tést')
     })
     it('Should process string code: [="\\[test\\]"]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         '[="\\[test\\]"]', tmpVarStore)).toBe('[test]')
     })
     it('Should process multiple variables: w: [width], h: [height]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         'w: [width], h: [height]', tmpVarStore)).toBe('w: 1024, h: 768')
     })
     it('Should process multiple code blocks: w: [=1024], h: [=768]', function () {
-      expect(runner._syntax.eval_text(
+      expect(syntax.eval_text(
         'w: [=1024], h: [=768]', tmpVarStore)).toBe('w: 1024, h: 768')
     })
   })
 
   describe('compile_cond()', function () {
     it('Should convert a variable within [] to a variable name within the var context', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width] > 100', false)).toEqual('var.width > 100')
     })
     it('Should handle >= correctly', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width] >= 100', false)).toEqual('var.width >= 100')
     })
     it('Should handle <= correctly', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width] <= 100', false)).toEqual('var.width <= 100')
     })
     it('Should convert always to True', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         'always', false)).toEqual(true)
     })
     it('Should convert ALWAYS to True', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         'ALWAYS', false)).toEqual(true)
     })
     it('Should convert never to False', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         'never', false)).toEqual(false)
     })
     it('Should convert NEVER to False', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         'NEVER', false)).toEqual(false)
     })
     it('Should quote literals at the end of the string', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[cue_side] = left', false)).toEqual('var.cue_side == "left"')
     })
     it('Should convert a single = to double ==', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width] = 1024', false)).toEqual('var.width == 1024')
     })
     it('Should handle underscores in variable names', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[my_var99] = 1024', false)).toEqual('var.my_var99 == 1024')
     })
     it('Should handle lack of spaces surrounding = correctly', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width]=1024', false)).toEqual('var.width==1024')
     })
     it("Should not quote reserved words such as 'and' should also process double ==", function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '[width] = 1024 and [height] == 768', false)).toEqual('var.width == 1024 and var.height == 768')
     })
     it('Should process a line starting with the = character as python script', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '=var.width > 100', false)).toEqual('var.width > 100')
     })
     it('Should ignore existing quotes and add new quotes', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '"yes" = yes', false)).toEqual('"yes" == "yes"')
     })
     it('Should process backslashes in a proper way', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         'yes = \'yes\'', false)).toEqual('"yes" == \'yes\'')
     })
     it('Should process more complex structures with brackets', function () {
-      expect(runner._syntax.compile_cond(
+      expect(syntax.compile_cond(
         '("a b c" = abc) or (x != 10) and ([width] == 100)', false)).toEqual('("a b c" == "abc") or ("x" != 10) and (var.width == 100)')
     })
   })
