@@ -94,6 +94,9 @@ export default class CheckBoxWidget extends Widget {
       this._container.on('mousedown', function (event) {
         this.response(event)
       }.bind(this))
+      this._container.on('touchstart', function (event) {
+        this.response(event)
+      }.bind(this))
     }
 
     // Clear the old content.

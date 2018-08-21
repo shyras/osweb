@@ -76,9 +76,11 @@ export default class Events {
     this._mouseDownHandler = this._mouseDown.bind(this)
     this._mouseMoveHandler = this._mouseMove.bind(this)
     this._mouseUpHandler = this._mouseUp.bind(this)
+    this._touchStartHandler = this._touchStart.bind(this)
     this._runner._renderer.view.addEventListener('mousedown', this._mouseDownHandler)
     this._runner._renderer.view.addEventListener('mousemove', this._mouseMoveHandler)
     this._runner._renderer.view.addEventListener('mouseup', this._mouseUpHandler)
+    this._runner._renderer.view.addEventListener('touchstart', this._touchStartHandler)
 
     // Set the current item to the experiment object.
     this._currentItem = this._runner._experiment
@@ -100,6 +102,7 @@ export default class Events {
     this._runner._renderer.view.removeEventListener('mousedown', this._mouseDownHandler)
     this._runner._renderer.view.removeEventListener('mousemove', this._mouseMoveHandler)
     this._runner._renderer.view.removeEventListener('mouseup', this._mouseUpHandler)
+    this._runner._renderer.view.removeEventListener('touchstart', this._touchStartHandler)
 
     // Stop the timing event listener.
     this._timeHandler.stop()
@@ -228,11 +231,25 @@ export default class Events {
   }
 
   /**
+     * Event handler for touch start events, which for now are translated to
+     * moudown events.
+     * @param {Object} event - system touchstart event.
+     */
+  _touchStart (event) {
+    console.log(event)
+    event.button = 0
+    event.clientX = event.changedTouches[0].clientX
+    event.clientY = event.changedTouches[0].clientY
+    this._mouseDown(event)
+  }
+
+  /**
      * Event handler for retrieving mouse down events.
      * @param {Object} event - system mousedown event.
      */
   _mouseDown (event) {
     // Store the mouse down event and its timestamp for use in the mouse class.
+    console.log(event)
     this._mouseDownEvent = {
       'event': event,
       'rtTime': this._runner._experiment.clock.time()
