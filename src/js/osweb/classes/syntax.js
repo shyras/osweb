@@ -204,7 +204,10 @@ export default class Syntax {
    * @return {String} - The stripped string.
    */
   strip_slashes (line) {
-    return line.replace(/(?<!\\)\\(?=['"\\])/mg, '')
+    // Negative lookbehinds require ECMA2018, therefore we fall
+    // back to a more clunky technique
+    // return line.replace(/(?<!\\)\\(?=['"\\])/mg, '')
+    return line.replace(/\\(?=['"])/mg, '').replace(/\\\\/mg, '\\')
   }
 
   /**

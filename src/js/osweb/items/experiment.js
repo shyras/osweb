@@ -38,6 +38,7 @@ export default class Experiment extends Item {
     this.vars.round_decimals = 2
     this.vars.form_clicks = 'no'
     this.vars.uniform_coordinates = 'no'
+    this.vars.sessionid = new Date().valueOf() + Math.floor(Math.random() * 100000)
 
     // Sound parameters.
     this.vars.sound_freq = 48000

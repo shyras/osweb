@@ -54,6 +54,7 @@ describe('Syntax', function () {
       for (const [input, expectedOutput] of [
         ['\\\\', '\\'],
         ['\\\\\\', '\\\\'],
+        ['\\\\\\"\\\\\\"', '\\"\\"'],
         ['"\\"quoted\\""', '""quoted""']
       ]) {
         expect(syntax.strip_slashes(input)).toBe(expectedOutput)

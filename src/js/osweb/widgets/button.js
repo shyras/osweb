@@ -64,6 +64,7 @@ export default class ButtonWidget extends Widget {
       this._container.buttonMode = true
       this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height)
       this._container.on('mousedown', function (event) { this.response(event) }.bind(this))
+      this._container.on('touchstart', function (event) { this.response(event) }.bind(this))
     }
 
     // Draw the frame (if enabled).

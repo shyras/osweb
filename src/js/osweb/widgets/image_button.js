@@ -34,6 +34,9 @@ export default class ImageButtonWidget extends ImageWidget {
       this._container.on('mousedown', function (event) {
         this.response(event)
       }.bind(this))
+      this._container.on('touchstart', function (event) {
+        this.response(event)
+      }.bind(this))
     }
 
     // Inherited.
