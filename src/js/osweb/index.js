@@ -14,8 +14,8 @@
 
 import Runner from './system/runner.js'
 
-export const VERSION_NAME = 'OSWeb (ES2016)'
-export const VERSION_NUMBER = '1.0.2'
+export const VERSION_NAME = OSWEB_VERSION_NAME
+export const VERSION_NUMBER = OSWEB_VERSION_NO
 
 // Add replaceAll function to string prototype
 String.prototype.replaceAll = function (str1, str2, ignore) {
@@ -39,7 +39,7 @@ String.prototype._pySlice = function (start, end, step) {
 const osweb = {
   printVersionInfo: function () {
     // Show library name and library version number in the console.
-    console.log(VERSION_NAME + ' - ' + VERSION_NUMBER)
+    console.log(`${VERSION_NAME} v${VERSION_NUMBER}`)
   },
   getRunner: function (target) {
     return new Runner(target)

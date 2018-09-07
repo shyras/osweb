@@ -1,11 +1,6 @@
-import {
-  VERSION_NUMBER
-} from '../index.js'
-import {
-  isFunction
-} from 'lodash'
-
+import { isFunction } from 'lodash'
 import * as PIXI from 'pixi.js'
+import { VERSION_NUMBER } from '../index.js'
 
 /** Class representing a Screen. */
 export default class Screen {
@@ -24,6 +19,13 @@ export default class Screen {
     this._exit = false // Exit toggle to prevent dialog when closing experiment.
   }
 
+  screenCenter () {
+    return {
+      x: this._runner._renderer.width / 2,
+      y: this._runner._renderer.height / 2
+    }
+  }
+
   /** Initialize the fullscreen mode if enabled. */
   _fullScreenInit () {
     // Check if fullscreen must be enabled.
@@ -33,36 +35,36 @@ export default class Screen {
 
       // Go full-screen
       if (element.requestFullscreen) {
-        document.addEventListener('fullscreenchange', function (e) {
+        document.addEventListener('fullscreenchange', (e) => {
           this._fullScreenChanged(e)
-        }.bind(this))
-        document.addEventListener('fullscreenerror', function (e) {
+        })
+        document.addEventListener('fullscreenerror', (e) => {
           this._fullScreenError(e)
-        }.bind(this))
+        })
         element.requestFullscreen()
       } else if (element.webkitRequestFullscreen) {
-        document.addEventListener('webkitfullscreenchange', function (e) {
+        document.addEventListener('webkitfullscreenchange', (e) => {
           this._fullScreenChanged(e)
-        }.bind(this))
-        document.addEventListener('webkitfullscreenerror', function (e) {
+        })
+        document.addEventListener('webkitfullscreenerror', (e) => {
           this._fullScreenError(e)
-        }.bind(this))
+        })
         element.webkitRequestFullscreen()
       } else if (element.mozRequestFullScreen) {
-        document.addEventListener('mozfullscreenchange', function (e) {
+        document.addEventListener('mozfullscreenchange', (e) => {
           this._fullScreenChanged(e)
-        }.bind(this))
-        document.addEventListener('mozfullscreenerror', function (e) {
+        })
+        document.addEventListener('mozfullscreenerror', (e) => {
           this._fullScreenError(e)
-        }.bind(this))
+        })
         element.mozRequestFullScreen()
       } else if (element.msRequestFullscreen) {
-        document.addEventListener('MSFullscreenChange', function (e) {
+        document.addEventListener('MSFullscreenChange', (e) => {
           this._fullScreenChanged(e)
-        }.bind(this))
-        document.addEventListener('MSFullscreenError', function (e) {
+        })
+        document.addEventListener('MSFullscreenError', (e) => {
           this._fullScreenError(e)
-        }.bind(this))
+        })
         element.msRequestFullscreen()
       }
     }
@@ -204,34 +206,39 @@ export default class Screen {
     if (this._active === true) {
       // Define introscreen elements.
       this._introScreen = new PIXI.Container()
-      this._introLine = new PIXI.Graphics()
-      this._introLine.lineStyle(1, 0xAAAAAA, 1)
-      this._introLine.moveTo(0, 0)
-      this._introLine.lineTo(400, 0)
-      this._introLine.x = 200
-      this._introLine.y = 159
-      this._introScreen.addChild(this._introLine)
-      this._introText1 = new PIXI.Text('Os', {
-        fontFamily: 'Times',
-        fontSize: 24,
-        fill: '#FF0000'
-      })
-      this._introText1.position.set(200, 135)
-      this._introScreen.addChild(this._introText1)
-      this._introText2 = new PIXI.Text('web - version ' + VERSION_NUMBER, {
+
+      const center = this.screenCenter()
+
+      const oswebLogo = new PIXI.Sprite.fromImage('img/opensesame.png')
+      const oswebTitle = new PIXI.Text('OSWeb', {
         fontFamily: 'Arial',
-        fontSize: 14,
+        fontSize: 26,
         fill: '#FFFFFF'
       })
-      this._introText2.position.set(231, 142)
-      this._introScreen.addChild(this._introText2)
-      this._introText3 = new PIXI.Text('', {
+      const versionInfo = new PIXI.Text(VERSION_NUMBER, {
         fontFamily: 'Arial',
-        fontSize: 12,
+        fontSize: 16,
         fill: '#FFFFFF'
       })
-      this._introText3.position.set(200, 163)
-      this._introScreen.addChild(this._introText3)
+
+      oswebLogo.width = oswebLogo.height = 150
+
+      oswebLogo.position.set(center.x - oswebLogo.width / 2, 50)
+      oswebTitle.position.set(center.x - oswebTitle.width / 2, 215)
+      versionInfo.position.set(center.x - versionInfo.width / 2, 250)
+
+      this._introScreen.addChild(oswebLogo, oswebTitle, versionInfo)
+
+      this._statusText = new PIXI.Text('', {
+        fontFamily: 'Arial',
+        fontSize: 18,
+        fill: '#FFFFFF'
+      })
+      this._statusText.position.set(
+        center.x - this._statusText.width / 2,
+        center.y - this._statusText.height / 2
+      )
+      this._introScreen.addChild(this._statusText)
 
       // Show the introduction screen.
       this._runner._renderer.render(this._introScreen)
@@ -243,7 +250,7 @@ export default class Screen {
     // Check if the experiment must be clicked to start.
     if (this._click === true) {
       // Update inroscreen.
-      this._updateIntroScreen('Click with the mouse on this screen to continue.')
+      this._updateIntroScreen('Click here with the mouse to start the experiment')
 
       // Setup the mouse click response handler.
       var clickHandler = function (event) {
@@ -285,18 +292,23 @@ export default class Screen {
    * @param {Number} percentage - The percentage (0-100) of the progress bar.
    */
   _updateProgressBar (percentage) {
+    const xOuter = 200
+    const wOuter = 400
+    const hOuter = 20
+    const yOuter = this._runner._renderer.height / 2 + hOuter
+
     if (this._active === true) {
       // Select the stage.
       switch (percentage) {
         case -1:
           this._progressBarOuter = new PIXI.Graphics()
           this._progressBarOuter.lineStyle(1, 0xFFFFFF, 1)
-          this._progressBarOuter.drawRect(200, 200, 400, 20)
+          this._progressBarOuter.drawRect(xOuter, yOuter, wOuter, hOuter)
           this._progressBarOuter.x = 0
           this._progressBarOuter.y = 0
           this._progressBarInner = new PIXI.Graphics()
           this._progressBarInner.lineStyle(1, 0xFFFFFF, 1)
-          this._progressBarInner.drawRect(202, 202, 1, 16)
+          this._progressBarInner.drawRect(xOuter + 2, yOuter + 2, 1, hOuter - 4)
           this._progressBarInner.x = 0
           this._progressBarInner.y = 0
           this._introScreen.addChild(this._progressBarInner)
@@ -310,7 +322,7 @@ export default class Screen {
           break
         default:
           this._progressBarOuter.beginFill(0xFFFFFF)
-          this._progressBarOuter.drawRect(202, 202, Math.round(percentage * 396), 16)
+          this._progressBarOuter.drawRect(xOuter + 2, yOuter + 2, Math.round(percentage * (wOuter - 4)), hOuter - 4)
           this._progressBarOuter.endFill()
           this._runner._renderer.render(this._introScreen)
       }
@@ -324,7 +336,12 @@ export default class Screen {
   _updateIntroScreen (text) {
     // Update the introscreen elements.
     if (this._active === true) {
-      this._introText3.text = text
+      const center = this.screenCenter()
+      this._statusText.text = text
+      this._statusText.position.set(
+        center.x - this._statusText.width / 2,
+        center.y - this._statusText.height / 2
+      )
       this._runner._renderer.render(this._introScreen)
     }
   }

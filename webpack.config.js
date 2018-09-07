@@ -94,7 +94,9 @@ module.exports = (env, args) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(isDevServer ? 'development' : args.mode)
+        'process.env.NODE_ENV': JSON.stringify(isDevServer ? 'development' : args.mode),
+        'OSWEB_VERSION_NAME': JSON.stringify(pkgconfig.name),
+        'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version)
       }),
       new webpack.NamedModulesPlugin(),
       new MiniCssExtractPlugin({
@@ -103,6 +105,11 @@ module.exports = (env, args) => {
       new CopyWebpackPlugin([{
         from: 'example-experiments/*.osexp',
         to: exampleFolder,
+        flatten: true
+      },
+      {
+        from: 'src/img/*',
+        to: 'img',
         flatten: true
       }], {
         debug: 'info'
