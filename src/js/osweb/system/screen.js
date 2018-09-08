@@ -221,13 +221,24 @@ export default class Screen {
         fill: '#FFFFFF'
       })
 
+      const copyrightText = new PIXI.Text(
+        `Copyright Jaap Bos, Daniel Schreij & Sebastiaan Mathot, 2016 - ${(new Date()).getFullYear()}`,
+        {
+          fontFamily: 'Arial',
+          fontSize: 12,
+          fill: '#FFFFFF'
+        }
+      )
+
       oswebLogo.width = oswebLogo.height = 150
 
       oswebLogo.position.set(center.x - oswebLogo.width / 2, 50)
       oswebTitle.position.set(center.x - oswebTitle.width / 2, 215)
       versionInfo.position.set(center.x - versionInfo.width / 2, 250)
-
-      this._introScreen.addChild(oswebLogo, oswebTitle, versionInfo)
+      copyrightText.position.set(
+        center.x - copyrightText.width / 2,
+        center.y * 2 - copyrightText.height * 2
+      )
 
       this._statusText = new PIXI.Text('', {
         fontFamily: 'Arial',
@@ -236,9 +247,10 @@ export default class Screen {
       })
       this._statusText.position.set(
         center.x - this._statusText.width / 2,
-        center.y - this._statusText.height / 2
+        center.y
       )
-      this._introScreen.addChild(this._statusText)
+      this._introScreen.addChild(oswebLogo, oswebTitle,
+        versionInfo, copyrightText, this._statusText)
 
       // Show the introduction screen.
       this._runner._renderer.render(this._introScreen)
@@ -250,7 +262,15 @@ export default class Screen {
     // Check if the experiment must be clicked to start.
     if (this._click === true) {
       // Update inroscreen.
-      this._updateIntroScreen('Click here with the mouse to start the experiment')
+
+      const text = `
+    Your participation to this experiment should be anonymous.
+        Never provide any personal or sensitive information
+            (e.g. credit card or social security numbers).
+
+                    Click here with the mouse to begin.`
+
+      this._updateIntroScreen(text)
 
       // Setup the mouse click response handler.
       var clickHandler = function (event) {
@@ -292,10 +312,12 @@ export default class Screen {
    * @param {Number} percentage - The percentage (0-100) of the progress bar.
    */
   _updateProgressBar (percentage) {
+    const center = this.screenCenter()
+
     const xOuter = 200
     const wOuter = 400
     const hOuter = 20
-    const yOuter = this._runner._renderer.height / 2 + hOuter
+    const yOuter = center.y + 2 * hOuter
 
     if (this._active === true) {
       // Select the stage.
@@ -340,7 +362,7 @@ export default class Screen {
       this._statusText.text = text
       this._statusText.position.set(
         center.x - this._statusText.width / 2,
-        center.y - this._statusText.height / 2
+        center.y
       )
       this._runner._renderer.render(this._introScreen)
     }
