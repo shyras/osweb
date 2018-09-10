@@ -3,6 +3,7 @@ import PythonMath from './python_math.js'
 import PythonOpenSesame from './python_opensesame.js'
 import PythonRandom from './python_random.js'
 import PythonString from './python_string.js'
+import toNumber from 'lodash/toNumber'
 
 /** Class implementing a python AST interpreter. */
 export default class PythonParser {
@@ -70,7 +71,7 @@ export default class PythonParser {
         var code = script
         var ast = parseFn(code, {
           locations: locations,
-          ranges: ranges})
+          ranges: ranges })
         return ast
       } catch (e) {
         this._runner._debugger.addError('Script parsing error: ' + e.message)
@@ -115,7 +116,10 @@ export default class PythonParser {
       // Check if the identifier is part of the import scope.
       if (items[1] === 'imports') {
         var import_lib = filbert.pythonRuntime.imports[items[2]]
-        return import_lib[items[3]]
+        let value = import_lib[items[3]]
+        // Attempt to convert the value to a number,
+        // if this fails return the original value
+        return isNaN(toNumber(value)) ? value : toNumber(value)
       } else {
         var default_lib = filbert.pythonRuntime[items[1]]
         return default_lib[items[2]]
@@ -173,8 +177,11 @@ export default class PythonParser {
             }
           } else if (items[0] === '__pythonRuntime') {
             if (items[1] === 'imports') {
-              var import_lib = filbert.pythonRuntime.imports[items[2]]
-              return import_lib[items[3]]
+              const import_lib = filbert.pythonRuntime.imports[items[2]]
+              let value = import_lib[items[3]]
+              // Attempt to convert the value to a number,
+              // if this fails return the original value
+              return isNaN(toNumber(value)) ? value : toNumber(value)
             } else {
               var default_lib = filbert.pythonRuntime[items[1]]
               return default_lib[items[2]]
@@ -260,7 +267,7 @@ export default class PythonParser {
       for (var i = 0; i < this._node.return_values.length; i++) {
         this._node.return_values[i] = this._get_element_value(this._node.return_values[i])
       }
-      var return_value = {type: 'literal', value: this._node.return_values}
+      var return_value = { type: 'literal', value: this._node.return_values }
 
       // Set the return value.
       this._set_return_value(return_value)
@@ -356,7 +363,7 @@ export default class PythonParser {
         // define variables.
         var left = this._get_element_value(this._node.return_values[0])
         var right = this._get_element_value(this._node.return_values[1])
-        var return_value = {type: 'literal'}
+        var return_value = { type: 'literal' }
 
         // Select binary operator.
         switch (this._node.operator) {
@@ -504,9 +511,9 @@ export default class PythonParser {
 
           // Execute the call, check first for internal function call.
           if (this._node.callee.type === 'FunctionExpression') {
-            return_value = {type: 'literal', value: caller}
+            return_value = { type: 'literal', value: caller }
           } else {
-            return_value = {type: 'literal', value: caller.apply(context, tmp_arguments)}
+            return_value = { type: 'literal', value: caller.apply(context, tmp_arguments) }
           }
 
           // Set the return value.
@@ -704,7 +711,7 @@ export default class PythonParser {
   /** Process an AST identifier. */
   _identifier () {
     // Retrieve the identifier information.
-    var return_value = {type: 'identifier', value: this._node.name}
+    const return_value = { type: 'identifier', value: this._node.name }
 
     // Set the return value.
     this._set_return_value(return_value)
@@ -766,7 +773,7 @@ export default class PythonParser {
   /** Process an AST literal. */
   _literal () {
     // Retrieve the identifier information.
-    var return_value = {type: 'literal', value: this._node.value}
+    var return_value = { type: 'literal', value: this._node.value }
 
     // Set the return value.
     this._set_return_value(return_value)
@@ -803,7 +810,7 @@ export default class PythonParser {
         // define variables.
         var left = this._get_element_value(this._node.return_values[0])
         var right = this._get_element_value(this._node.return_values[1])
-        var return_value = {type: 'literal'}
+        var return_value = { type: 'literal' }
 
         // Select binary operator.
         switch (this._node.operator) {
@@ -852,7 +859,7 @@ export default class PythonParser {
         break
       case 2:
         // Build the combing return value.
-        var return_value = {type: 'identifier', value: this._node.return_values[0].value + '.' + this._node.return_values[1].value}
+        var return_value = { type: 'identifier', value: this._node.return_values[0].value + '.' + this._node.return_values[1].value }
 
         // Set the return value
         this._set_return_value(return_value)
@@ -904,7 +911,7 @@ export default class PythonParser {
       }
 
       // Execute the call.
-      returnValue = {type: 'literal', value: caller.apply(context, tmp_arguments)}
+      returnValue = { type: 'literal', value: caller.apply(context, tmp_arguments) }
 
       // Set the return value
       this._set_return_value(returnValue)
@@ -960,7 +967,7 @@ export default class PythonParser {
         break
       case 1:
         // Set return value.
-        const returnValue = {type: 'identifier', value: this._node.return_values[0].value}
+        const returnValue = { type: 'identifier', value: this._node.return_values[0].value }
 
         // Set the return value
         this._function_stack.push(returnValue)
@@ -988,7 +995,7 @@ export default class PythonParser {
       // Return to the node processor.
       this._process_nodes()
     } else {
-      var return_value = {type: 'literal'}
+      var return_value = { type: 'literal' }
 
       // process the operator.
       switch (this._node.operator) {

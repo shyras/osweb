@@ -140,9 +140,15 @@ export default class Syntax {
             value = vars[content]
           }
           // Value could still be an expression, so evaluate again
-          value = this.eval_text(value, vars, addQuotes)
+          if (typeof value === 'undefined') {
+            throw new ReferenceError(`Variable '${content}' not present in var store`)
+          }
+
+          if (isString(value)) {
+            value = this.eval_text(value, vars, addQuotes)
+          }
         } catch (err) {
-          this._runner._debugger.addError(`Could not find variable '${content}': ${err.message}`)
+          this._runner._debugger.addError(`Could not resolve variable '${content}': ${err.message}`)
           throw err
         }
 
