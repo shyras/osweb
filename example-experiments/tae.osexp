@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.2.5b1
+OpenSesame: 3.2.5
 Platform: posix
 ---
 set width 1024
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/usr/share/opensesame_resources/templates"
+set experiment_path "/home/sebastiaan/git/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -44,10 +44,11 @@ define sketchpad adapter
 define sketchpad blank
 	set duration 500
 	set description "Displays stimuli"
+	draw fixdot color=black show_if=always style=default x=0 y=0 z_index=0
 
 define loop block_loop
 	set source table
-	set repeat 1
+	set repeat 0.5
 	set order random
 	set description "Repeatedly runs another item"
 	set cycles 22
@@ -122,12 +123,12 @@ define sketchpad instructions
 	set reset_variables no
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="INSTRUCTIONS<br /><br />On each trial, you will see two patches of tilted lines<br />The first patch is shown for a few seconds<br />The second patch is shown only briefly<br />Indicate whether the second patch was tilted leftwards or rightwards " x=0 y=-160 z_index=0
-	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=-5 phase=0 show_if=always size=200 stdev=30 x=181.0 y=142.0 z_index=0
-	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=5 phase=0 show_if=always size=200 stdev=30 x=-181.0 y=142.0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the left key if the<br />second patch looks like this" x=-192 y=0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the right key if the<br />second patch looks like this" x=192 y=0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press any key to begin!" x=0 y=288 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="INSTRUCTIONS<br /><br />On each trial, you will see two patches of tilted lines<br />The first patch is shown for a few seconds<br />The second patch is shown only briefly<br />Indicate whether the second patch was tilted leftwards or rightwards " x=0 y=-224 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=-5 phase=0 show_if=always size=200 stdev=30 x=181.0 y=78.0 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=5 phase=0 show_if=always size=200 stdev=30 x=-181.0 y=78.0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the left key if the<br />second patch looks like this" x=-192.0 y=-64.0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the right key if the<br />second patch looks like this" x=192.0 y=-64.0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="In total, you will respond to 11 patches<br /><br />Press any key to begin!" x=0.0 y=256.0 z_index=0
 
 define keyboard_response keyboard_response
 	set timeout infinite
@@ -136,10 +137,21 @@ define keyboard_response keyboard_response
 	set duration keypress
 	set description "Collects keyboard responses"
 
+define logger logger
+	set description "Logs experimental data"
+	set auto_log no
+	log sessionid
+	log response
+	log response_time
+	log ori_adapter
+	log ori_tester
+	log count_trial_sequence
+
 define sketchpad response_screen
 	set duration 0
 	set description "Displays stimuli"
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Was the second patch tilted<br />leftward (\\) or rightward (/)?<br /><br />Press the left or right arrow key to respond" x=0 y=0 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Was the second patch tilted<br />leftward (\\) or rightward (/)?<br /><br />Press the left or right arrow key to respond" x=0 y=-224 z_index=0
+	draw fixdot color=black show_if=always style=default x=0 y=0 z_index=0
 
 define sketchpad tester
 	set duration 100
@@ -156,4 +168,5 @@ define sequence trial_sequence
 	run blank always
 	run response_screen always
 	run keyboard_response always
+	run logger always
 
