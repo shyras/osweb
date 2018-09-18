@@ -73,7 +73,7 @@ export default class Transfer {
    * @memberof Transfer
    */
   async _readOsexpFromString (osexp) {
-    if (osexp.constructor === File) {
+    if ([File, Blob].includes(osexp.constructor)) {
       osexp = await readFileAsText(osexp)
     }
     return this._processScript(osexp)
@@ -127,8 +127,15 @@ export default class Transfer {
         }
       }
     })
-
-    return new File([response.data], 'downloaded.osexp')
+    let res
+    if (/Edge/.test(navigator.userAgent)) {
+      res = new Blob([response.data])
+      res.name = 'downloaded.osexp'
+    } else {
+      res = new File([response.data], 'downloaded.osexp')
+    }
+    console.log('Returning', res)
+    return res
   }
 
   /**
