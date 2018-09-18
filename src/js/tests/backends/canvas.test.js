@@ -223,14 +223,14 @@ describe('Canvas', () => {
 
     it('should draw lines', () => {
       const params = [
-        [0, -32 + cy, 0, 32 + cy, {...defaultStyle}],
-        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, color: 'red'}],
-        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 2}],
-        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 4}],
-        [0, -32 + cy, 0, 32 + cy, {...defaultStyle, penwidth: 8}],
-        [-32, cy, 32, cy, {...defaultStyle}],
-        [-32, -32 + cy, 32, 32 + cy, {...defaultStyle}],
-        [-32, 32 + cy, 32, -32 + cy, {...defaultStyle, penwidth: 4, color: 'green'}]
+        [0, -32 + cy, 0, 32 + cy, { ...defaultStyle }],
+        [0, -32 + cy, 0, 32 + cy, { ...defaultStyle, color: 'red' }],
+        [0, -32 + cy, 0, 32 + cy, { ...defaultStyle, penwidth: 2 }],
+        [0, -32 + cy, 0, 32 + cy, { ...defaultStyle, penwidth: 4 }],
+        [0, -32 + cy, 0, 32 + cy, { ...defaultStyle, penwidth: 8 }],
+        [-32, cy, 32, cy, { ...defaultStyle }],
+        [-32, -32 + cy, 32, 32 + cy, { ...defaultStyle }],
+        [-32, 32 + cy, 32, -32 + cy, { ...defaultStyle, penwidth: 4, color: 'green' }]
       ]
 
       let xIncr = dimensions.width / (params.length + 1)
@@ -250,14 +250,14 @@ describe('Canvas', () => {
 
     it('should draw arrows', () => {
       const arrowParams = [
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, {...defaultStyle}],
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, {...defaultStyle, fill: 1}],
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, {...defaultStyle, color: 'red'}],
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, {...defaultStyle, penwidth: 8}],
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.5, 30, {...defaultStyle}],
-        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 64, {...defaultStyle}],
-        [-32, cy, 32, cy, 0.5, 0.8, 64, {...defaultStyle}],
-        [-32, -32 + cy, 32, 32 + cy, 0.5, 0.8, 64, {...defaultStyle}]
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, { ...defaultStyle }],
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, { ...defaultStyle, fill: 1 }],
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, { ...defaultStyle, color: 'red' }],
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 30, { ...defaultStyle, penwidth: 8 }],
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.5, 30, { ...defaultStyle }],
+        [0, -32 + cy, 0, 32 + cy, 0.5, 0.8, 64, { ...defaultStyle }],
+        [-32, cy, 32, cy, 0.5, 0.8, 64, { ...defaultStyle }],
+        [-32, -32 + cy, 32, 32 + cy, 0.5, 0.8, 64, { ...defaultStyle }]
       ]
 
       let xIncr = dimensions.width / (arrowParams.length + 1)
@@ -277,12 +277,12 @@ describe('Canvas', () => {
 
     it('should draw circles', () => {
       const circleParams = [
-        [0, cy, 32, {...defaultStyle}],
-        [0, cy, 32, {...defaultStyle, penwidth: 10}],
-        [0, cy, 32, {...defaultStyle, color: 'red'}],
-        [0, cy, 32, {...defaultStyle, fill: true}],
-        [0, cy, 16, {...defaultStyle}],
-        [0, cy, 64, {...defaultStyle}]
+        [0, cy, 32, { ...defaultStyle }],
+        [0, cy, 32, { ...defaultStyle, penwidth: 10 }],
+        [0, cy, 32, { ...defaultStyle, color: 'red' }],
+        [0, cy, 32, { ...defaultStyle, fill: true }],
+        [0, cy, 16, { ...defaultStyle }],
+        [0, cy, 64, { ...defaultStyle }]
       ]
 
       let xIncr = dimensions.width / (circleParams.length + 1)
@@ -300,20 +300,20 @@ describe('Canvas', () => {
     })
 
     it('should draw fixation dots', () => {
-      const styles = {...defaultStyle, background_color: 'black'}
+      const styles = { ...defaultStyle, background_color: 'black' }
 
       const params = [
-        [0, cy, undefined, {...styles}],
-        [0, cy, 'default', {...styles, color: 'red'}],
-        [0, cy, 'large-filled', {...styles}],
-        [0, cy, 'medium-filled', {...styles}],
-        [0, cy, 'small-filled', {...styles}],
-        [0, cy, 'large-open', {...styles}],
-        [0, cy, 'medium-open', {...styles}],
-        [0, cy, 'small-open', {...styles}],
-        [0, cy, 'large-cross', {...styles}],
-        [0, cy, 'medium-cross', {...styles}],
-        [0, cy, 'small-cross', {...styles}]
+        [0, cy, undefined, { ...styles }],
+        [0, cy, 'default', { ...styles, color: 'red' }],
+        [0, cy, 'large-filled', { ...styles }],
+        [0, cy, 'medium-filled', { ...styles }],
+        [0, cy, 'small-filled', { ...styles }],
+        [0, cy, 'large-open', { ...styles }],
+        [0, cy, 'medium-open', { ...styles }],
+        [0, cy, 'small-open', { ...styles }],
+        [0, cy, 'large-cross', { ...styles }],
+        [0, cy, 'medium-cross', { ...styles }],
+        [0, cy, 'small-cross', { ...styles }]
       ]
 
       let xIncr = dimensions.width / (params.length + 1)
@@ -332,14 +332,14 @@ describe('Canvas', () => {
 
     it('should draw ellipses', () => {
       const params = [
-        [0, cy, 64, 64, {...defaultStyle}],
-        [0, cy, 64, 64, {...defaultStyle, penwidth: 10}],
-        [0, cy, 64, 64, {...defaultStyle, color: 'red'}],
-        [0, cy, 64, 64, {...defaultStyle, fill: true}],
-        [0, cy, 32, 32, {...defaultStyle}],
-        [0, cy, 64, 32, {...defaultStyle, penwidth: 5, color: 'green'}],
-        [-32, cy + 32, 128, 32, {...defaultStyle}],
-        [0, cy, 32, 64, {...defaultStyle}]
+        [0, cy, 64, 64, { ...defaultStyle }],
+        [0, cy, 64, 64, { ...defaultStyle, penwidth: 10 }],
+        [0, cy, 64, 64, { ...defaultStyle, color: 'red' }],
+        [0, cy, 64, 64, { ...defaultStyle, fill: true }],
+        [0, cy, 32, 32, { ...defaultStyle }],
+        [0, cy, 64, 32, { ...defaultStyle, penwidth: 5, color: 'green' }],
+        [-32, cy + 32, 128, 32, { ...defaultStyle }],
+        [0, cy, 32, 64, { ...defaultStyle }]
       ]
 
       let xIncr = dimensions.width / (params.length + 1)
@@ -358,15 +358,15 @@ describe('Canvas', () => {
 
     it('should draw rects', () => {
       const params = [
-        [0, cy, 64, 64, {...defaultStyle}],
-        [0, cy, 64, 64, {...defaultStyle, penwidth: 10}],
-        [0, cy, 64, 64, {...defaultStyle, color: 'red'}],
-        [0, cy, 64, 64, {...defaultStyle, fill: true}],
-        [0, cy, 32, 32, {...defaultStyle}],
-        [0, cy, 64, 32, {...defaultStyle, penwidth: 5, color: 'green'}],
-        [0, cy, 96, 32, {...defaultStyle}],
-        [0, cy, 32, 64, {...defaultStyle}],
-        [0, cy, 50, 50, {...defaultStyle,
+        [0, cy, 64, 64, { ...defaultStyle }],
+        [0, cy, 64, 64, { ...defaultStyle, penwidth: 10 }],
+        [0, cy, 64, 64, { ...defaultStyle, color: 'red' }],
+        [0, cy, 64, 64, { ...defaultStyle, fill: true }],
+        [0, cy, 32, 32, { ...defaultStyle }],
+        [0, cy, 64, 32, { ...defaultStyle, penwidth: 5, color: 'green' }],
+        [0, cy, 96, 32, { ...defaultStyle }],
+        [0, cy, 32, 64, { ...defaultStyle }],
+        [0, cy, 50, 50, { ...defaultStyle,
           color: 'yellow',
           background_color: 'yellow',
           fill: true
