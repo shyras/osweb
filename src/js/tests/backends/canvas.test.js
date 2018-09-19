@@ -49,7 +49,7 @@ const dimensions = {
 }
 
 const cy = dimensions.height / 2
-const cx = dimensions.width / 2
+// const cx = dimensions.width / 2
 
 let canvas = new Canvas(new Experiment())
 let app = new PIXI.Application({
