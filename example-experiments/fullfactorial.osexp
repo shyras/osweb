@@ -23,7 +23,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/home/daniel/Repos/OpenSesame/opensesame_resources/templates"
+set experiment_path "/Users/daniel/Sites/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -52,11 +52,12 @@ define loop procedure
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 letter A
 	setcycle 0 color red
-	setcycle 1 letter B
+	setcycle 0 letter A
 	setcycle 1 color green
+	setcycle 1 letter B
 	fullfactorial
+	shuffle
 	run letter
 
 define sketchpad welcome
