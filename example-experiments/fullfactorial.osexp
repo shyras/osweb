@@ -1,0 +1,68 @@
+---
+API: 2.1
+OpenSesame: 3.2.6a1
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "New experiment"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set round_decimals 2
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/daniel/Repos/OpenSesame/opensesame_resources/templates"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set canvas_backend legacy
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run procedure always
+
+define sketchpad letter
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color="[color]" font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[letter]" x=0 y=0 z_index=0
+
+define loop procedure
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 letter A
+	setcycle 0 color red
+	setcycle 1 letter B
+	setcycle 1 color green
+	fullfactorial
+	run letter
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Full factorial loop item test" x=0 y=0 z_index=0
+

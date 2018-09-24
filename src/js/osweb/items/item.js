@@ -161,8 +161,7 @@ export default class Item {
     this._runner._debugger.addMessage('prepare ' + this.name)
 
     // Implements the complete phase of the item (to support blocking script in the prepare phase).
-    if ((this.type === 'sequence') && (this._parent.type === 'sequence')) {
-    } else {
+    if (!(this.type === 'sequence' && this._parent.type === 'sequence')) {
       if ((this._parent !== null) && (this.type !== 'feedback')) {
         // Prepare cycle of parent.
         this._parent._prepare_complete()
