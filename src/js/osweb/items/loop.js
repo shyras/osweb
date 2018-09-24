@@ -1,4 +1,5 @@
-import { shuffle, isNumber } from 'lodash'
+import shuffle from 'lodash/shuffle'
+import isNumber from 'lodash/isNumber'
 import { constants } from '../system/constants.js'
 
 import combos from 'combos'
@@ -43,7 +44,7 @@ export default class Loop extends Item {
       this._cycles.push(this._index)
 
       if (this.vars.order === 'random') {
-        shuffle(this._cycles)
+        this._cycles = shuffle(this._cycles)
       }
     } else {
       // All items are processed, set the status to finalized.
@@ -113,6 +114,8 @@ export default class Loop extends Item {
             // First extract all possible values of the present variables
             this.matrix = combos(get_var_values(this.matrix))
             this.vars.cycles = this.matrix.length
+          } else if (instruction === 'shuffle') {
+            // this.matrix = shuffle(this.matrix)
           }
         }
       }
@@ -138,7 +141,8 @@ export default class Loop extends Item {
             value = this.experiment._runner._pythonParser._runstatement(value)
           } catch (e) {
             // Error during evaluation.
-            this.experiment._runner._debugger.addError('Failed to evaluate experssion in in loop item: ' + this.name + ' (' + value + ')')
+            this.experiment._runner._debugger.addError(
+              'Failed to evaluate experssion in in loop item: ' + this.name + ' (' + value + ')')
           }
         }
 
@@ -188,7 +192,7 @@ export default class Loop extends Item {
 
     // Randomize the list if necessary.
     if (this.vars.order === 'random') {
-      shuffle(this._cycles)
+      this._cycles = shuffle(this._cycles)
     } else {
       // In sequential order, the offset and the skip are relevant.
       if (this._cycles.length < this.vars.skip) {
