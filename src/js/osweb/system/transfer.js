@@ -134,7 +134,6 @@ export default class Transfer {
     } else {
       res = new File([response.data], 'downloaded.osexp')
     }
-    console.log('Returning', res)
     return res
   }
 

@@ -1,7 +1,9 @@
-import { isNumber } from 'lodash'
+import { shuffle, isNumber } from 'lodash'
+import { constants } from '../system/constants.js'
+
+import combos from 'combos'
 import Item from './item.js'
 import Keyboard from '../backends/keyboard.js'
-import { constants } from '../system/constants.js'
 
 /**
  * Class representing a sequence item.
@@ -41,7 +43,7 @@ export default class Loop extends Item {
       this._cycles.push(this._index)
 
       if (this.vars.order === 'random') {
-        this.shuffle(this._cycles)
+        shuffle(this._cycles)
       }
     } else {
       // All items are processed, set the status to finalized.
@@ -79,13 +81,13 @@ export default class Loop extends Item {
       const lines = script.split('\n')
       for (let i = 0; i < lines.length; i++) {
         if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
-          const tokens = this.syntax.split(lines[i])
-          if ((tokens[0] === 'run') && (tokens.length > 1)) {
-            this.vars.item = tokens[1]
-          } else if ((tokens[0] === 'setcycle') && (tokens.length > 3)) {
-            const cycle = tokens[1]
-            const name = tokens[2]
-            let value = this.syntax.remove_quotes(tokens[3])
+          const [instruction, ...params] = this.syntax.split(lines[i])
+          if (instruction === 'run' && params.length > 0) {
+            this.vars.item = params[0]
+          } else if (instruction === 'setcycle' && params.length > 2) {
+            const cycle = params[0]
+            const name = params[1]
+            let value = this.syntax.remove_quotes(params[2])
 
             // console.log('>>' + cycle)
 
@@ -107,24 +109,12 @@ export default class Loop extends Item {
             }
 
             this.matrix[cycle][name] = value
+          } else if (instruction === 'fullfactorial') {
+            // First extract all possible values of the present variables
+            this.matrix = combos(get_var_values(this.matrix))
+            this.vars.cycles = this.matrix.length
           }
         }
-      }
-    }
-  }
-
-  /**
-     * Shuffles a array in ramdom order.
-     * @param {Array} list -The array to shffle.
-     */
-  shuffle (list) {
-    var i, j, t
-    for (i = 1; i < list.length; i++) {
-      j = Math.floor(Math.random() * (1 + i))
-      if (j !== i) {
-        t = list[i]
-        list[i] = list[j]
-        list[j] = t
       }
     }
   }
@@ -198,7 +188,7 @@ export default class Loop extends Item {
 
     // Randomize the list if necessary.
     if (this.vars.order === 'random') {
-      this.shuffle(this._cycles)
+      shuffle(this._cycles)
     } else {
       // In sequential order, the offset and the skip are relevant.
       if (this._cycles.length < this.vars.skip) {
@@ -274,4 +264,17 @@ export default class Loop extends Item {
       this._complete()
     }
   }
+}
+
+function get_var_values (srcMatrix) {
+  return Object.values(srcMatrix).reduce((acc, cycle) => {
+    for (const [key, val] of Object.entries(cycle)) {
+      if (key in acc) {
+        acc[key].push(val)
+      } else {
+        acc[key] = [val]
+      }
+    }
+    return acc
+  }, {})
 }
