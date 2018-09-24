@@ -112,10 +112,25 @@ export default class Loop extends Item {
             this.matrix[cycle][name] = value
           } else if (instruction === 'fullfactorial') {
             // First extract all possible values of the present variables
-            this.matrix = combos(get_var_values(this.matrix))
+            this.matrix = combos(group_by_variable(this.matrix))
             this.vars.cycles = this.matrix.length
           } else if (instruction === 'shuffle') {
-            // this.matrix = shuffle(this.matrix)
+            if (params.length === 1) {
+              const col = params[0]
+              matrixT = group_by_variable(this.matrix)
+              matrixT[col] = shuffle(matrixT[col])
+              this.matrix = ungroup_by_variable(matrixT)
+            } else {
+              this.matrix = shuffle(this.matrix)
+            }
+          } else if (instruction === 'shuffle_horiz') {
+            if (params.length < 1) {
+              this.matrix = this.matrix.map(row => {
+                return row
+              })
+            } else {
+              // Process the column names
+            }
           }
         }
       }
@@ -270,7 +285,13 @@ export default class Loop extends Item {
   }
 }
 
-function get_var_values (srcMatrix) {
+/**
+ * Group matrix values by their variables names
+ *
+ * @param {Object} srcMatrix The source matrix to transform
+ * @returns {Object}
+ */
+function group_by_variable (srcMatrix) {
   return Object.values(srcMatrix).reduce((acc, cycle) => {
     for (const [key, val] of Object.entries(cycle)) {
       if (key in acc) {
@@ -281,4 +302,14 @@ function get_var_values (srcMatrix) {
     }
     return acc
   }, {})
+}
+
+/**
+ * Transforms a grouped matrix back to a normal matrix
+ *
+ * @param {Object} srcMatrix The source matrix to transform
+ * @returns {Object}
+ */
+function ungroup_by_variable (srcMatrix) {
+  return srcMatrix
 }
