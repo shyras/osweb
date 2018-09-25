@@ -1,10 +1,13 @@
-import shuffle from 'lodash/shuffle'
-import isNumber from 'lodash/isNumber'
-import { constants } from '../system/constants.js'
-
 import combos from 'combos'
-import Item from './item.js'
+import isNumber from 'lodash/isNumber'
+import isString from 'lodash/isString'
+import shuffle from 'lodash/shuffle'
+import zip from 'lodash/zip'
+import fromPairs from 'lodash/fromPairs'
+import pick from 'lodash/pick'
 import Keyboard from '../backends/keyboard.js'
+import { constants } from '../system/constants.js'
+import Item from './item.js'
 
 /**
  * Class representing a sequence item.
@@ -12,11 +15,11 @@ import Keyboard from '../backends/keyboard.js'
  */
 export default class Loop extends Item {
   /**
-     * Create an experiment item which controls the OpenSesame experiment.
-     * @param {Object} experiment - The experiment item to which the item belongs.
-     * @param {String} name - The unique name of the item.
-     * @param {String} script - The script containing the properties of the item.
-     */
+   * Create an experiment item which controls the OpenSesame experiment.
+   * @param {Object} experiment - The experiment item to which the item belongs.
+   * @param {String} name - The unique name of the item.
+   * @param {String} script - The script containing the properties of the item.
+   */
   constructor (experiment, name, script) {
     // Inherited create.
     super(experiment, name, script)
@@ -68,9 +71,9 @@ export default class Loop extends Item {
   }
 
   /**
-     * Parse a definition string and retrieve all properties of the item.
-     * @param {String} script - The script containing the properties of the item.
-     */
+   * Parse a definition string and retrieve all properties of the item.
+   * @param {String} script - The script containing the properties of the item.
+   */
   from_string (script) {
     // Creates a loop from a definition in a string.
     this.comments = []
@@ -112,34 +115,15 @@ export default class Loop extends Item {
               this.matrix[cycle][name] = value
               break
             case 'fullfactorial':
-              // First extract all possible values of the present variables
-              this.matrix = combos(group_by_variable(this.matrix))
+              this.matrix = fullfactorial(this.matrix)
               // Set the number of cycles to the length of the generated matrix
               this.vars.cycles = this.matrix.length
               break
             case 'shuffle':
-              if (params.length === 1) {
-                const col = params[0]
-                // Extract the values for the specified column
-                let colValues = this.matrix.map(row => row[col])
-                // ...and shuffle them
-                colValues = shuffle(colValues)
-                // And finally place back the shuffled values into the original matrix
-                this.matrix.forEach((row, i) => {
-                  row[col] = colValues[i]
-                })
-              } else {
-                this.matrix = shuffle(this.matrix)
-              }
+              this.matrix = shuffleVert(this.matrix, params)
               break
-            case 'shuflle_horiz':
-              if (params.length < 1) {
-                this.matrix = this.matrix.map(row => {
-                  return row
-                })
-              } else {
-                // Process the column names
-              }
+            case 'shuffle_horiz':
+              this.matrix = shuffleHoriz(this.matrix, params)
               break
           }
         }
@@ -148,9 +132,9 @@ export default class Loop extends Item {
   }
 
   /**
-     * Prepares the variables for one single cycle within the loop.
-     * @param {Number} cycle -The cycle to apply.
-     */
+   * Prepares the variables for one single cycle within the loop.
+   * @param {Number} cycle -The cycle to apply.
+   */
   apply_cycle (cycle) {
     // Sets all the loop variables according to the cycle.
     if (cycle in this.matrix) {
@@ -315,11 +299,58 @@ function group_by_variable (srcMatrix) {
 }
 
 /**
- * Transforms a grouped matrix back to a normal matrix
- *
- * @param {Object} srcMatrix The source matrix to transform
- * @returns {Object}
+ * Creates a full factorial design of all the variable values in the matrix
+ * @param {array} matrix The array of cycles to fully cross
+ * @returns {array}
  */
-function ungroup_by_variable (srcMatrix) {
-  return srcMatrix
+export function fullfactorial (matrix) {
+  return combos(group_by_variable(matrix))
+}
+
+/**
+ * Shuffles the order of the rows in the matrix. If a column/variable name
+ * is specified, only the rows in this column are shuffled.
+ *
+ * @export
+ * @param {array} matrix The matrix to be shuffles
+ * @param {String} col  The variable/column to be shuffled
+ * @returns {array}
+ */
+export function shuffleVert (matrix, params) {
+  if (params.length === 0) {
+    return shuffle(matrix)
+  } else if (isString(params[0]) && params[0] !== '') {
+    const col = params[0]
+    // Extract the values for the specified column
+    let colValues = Object.values(matrix).map(row => row[col])
+    // ...and shuffle them
+    colValues = shuffle(colValues)
+    // And finally place back the shuffled values into the original matrix
+    return Object.values(matrix).map((row, i) => {
+      row[col] = colValues[i]
+      return row
+    })
+  }
+}
+
+/**
+ * Shuffles the matrix horizontally; shuffle the values of the columns
+ * If column names are specified, only these will be shuffled
+ *
+ * @export
+ * @param {array} matrix
+ * @param {array} params
+ * @returns {array}
+ */
+export function shuffleHoriz (matrix, params) {
+  return Object.values(matrix).map(row => {
+    const vars = params.length === 0
+      ? row
+      : pick(row, params)
+    const keys = Object.keys(vars)
+    let vals = Object.values(vars)
+    vals = shuffle(vals)
+    const res = fromPairs(zip(keys, vals))
+    return { ...row, ...res }
+  })
 }

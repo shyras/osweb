@@ -62,7 +62,7 @@ define loop procedure
 	setcycle 1 color green
 	setcycle 1 letter B
 	fullfactorial
-	shuffle letter
+	shuffle
 	run letter
 
 define sketchpad welcome
