@@ -1,7 +1,7 @@
 ---
 API: 2.1
-OpenSesame: 3.2.6a1
-Platform: posix
+OpenSesame: 3.2.4
+Platform: nt
 ---
 set width 1024
 set uniform_coordinates yes
@@ -13,7 +13,10 @@ set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
+set sampler_backend legacy
 set round_decimals 2
+set mouse_backend psycho
+set keyboard_backend psycho
 set height 768
 set fullscreen no
 set form_clicks no
@@ -23,12 +26,14 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/Users/daniel/Sites/osweb/example-experiments"
+set experiment_path "D:/Users/Daniel/Documents/GitHub/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
 set compensation 0
-set canvas_backend legacy
+set color_backend psycho
+set clock_backend psycho
+set canvas_backend psycho
 set background black
 
 define sequence experiment
@@ -57,7 +62,7 @@ define loop procedure
 	setcycle 1 color green
 	setcycle 1 letter B
 	fullfactorial
-	shuffle
+	shuffle letter
 	run letter
 
 define sketchpad welcome

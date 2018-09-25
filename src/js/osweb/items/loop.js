@@ -83,54 +83,64 @@ export default class Loop extends Item {
       for (let i = 0; i < lines.length; i++) {
         if ((lines[i] !== '') && (this.parse_variable(lines[i]) === false)) {
           const [instruction, ...params] = this.syntax.split(lines[i])
-          if (instruction === 'run' && params.length > 0) {
-            this.vars.item = params[0]
-          } else if (instruction === 'setcycle' && params.length > 2) {
-            const cycle = params[0]
-            const name = params[1]
-            let value = this.syntax.remove_quotes(params[2])
 
-            // console.log('>>' + cycle)
-
-            // Check if the value is numeric
-            value = isNumber(value) ? Number(value) : value
-
-            // If a python expression, convert to javascript.
-            if (value[0] === '=') {
-              // Parse the python statement.
-              value = this.experiment._runner._pythonParser._prepare(value.slice(1))
-
-              if (value !== null) {
-                value = value.body[0]
+          switch (instruction) {
+            case 'run':
+              if (params.length > 0) this.vars.item = params[0]
+              break
+            case 'setcycle':
+              if (params.length <= 2) {
+                this._runner._debugger.addError(`Incorrect setcycle command in item ${this.name}`)
+                break
               }
-            }
-
-            if (this.matrix[cycle] === undefined) {
-              this.matrix[cycle] = {}
-            }
-
-            this.matrix[cycle][name] = value
-          } else if (instruction === 'fullfactorial') {
-            // First extract all possible values of the present variables
-            this.matrix = combos(group_by_variable(this.matrix))
-            this.vars.cycles = this.matrix.length
-          } else if (instruction === 'shuffle') {
-            if (params.length === 1) {
-              const col = params[0]
-              matrixT = group_by_variable(this.matrix)
-              matrixT[col] = shuffle(matrixT[col])
-              this.matrix = ungroup_by_variable(matrixT)
-            } else {
-              this.matrix = shuffle(this.matrix)
-            }
-          } else if (instruction === 'shuffle_horiz') {
-            if (params.length < 1) {
-              this.matrix = this.matrix.map(row => {
-                return row
-              })
-            } else {
-              // Process the column names
-            }
+              const cycle = params[0]
+              const name = params[1]
+              let value = this.syntax.remove_quotes(params[2])
+              // Check if the value is numeric
+              value = isNumber(value) ? Number(value) : value
+              // If a python expression, convert to javascript.
+              if (value[0] === '=') {
+                // Parse the python statement.
+                value = this.experiment._runner._pythonParser._prepare(value.slice(1))
+                if (value !== null) {
+                  value = value.body[0]
+                }
+              }
+              if (this.matrix[cycle] === undefined) {
+                this.matrix[cycle] = {}
+              }
+              this.matrix[cycle][name] = value
+              break
+            case 'fullfactorial':
+              // First extract all possible values of the present variables
+              this.matrix = combos(group_by_variable(this.matrix))
+              // Set the number of cycles to the length of the generated matrix
+              this.vars.cycles = this.matrix.length
+              break
+            case 'shuffle':
+              if (params.length === 1) {
+                const col = params[0]
+                // Extract the values for the specified column
+                let colValues = this.matrix.map(row => row[col])
+                // ...and shuffle them
+                colValues = shuffle(colValues)
+                // And finally place back the shuffled values into the original matrix
+                this.matrix.forEach((row, i) => {
+                  row[col] = colValues[i]
+                })
+              } else {
+                this.matrix = shuffle(this.matrix)
+              }
+              break
+            case 'shuflle_horiz':
+              if (params.length < 1) {
+                this.matrix = this.matrix.map(row => {
+                  return row
+                })
+              } else {
+                // Process the column names
+              }
+              break
           }
         }
       }
