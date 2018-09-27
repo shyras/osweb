@@ -1,10 +1,14 @@
 import combos from 'combos'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
+import isArray from 'lodash/isArray'
 import shuffle from 'lodash/shuffle'
 import zip from 'lodash/zip'
+import zipObject from 'lodash/zipObject'
 import fromPairs from 'lodash/fromPairs'
 import pick from 'lodash/pick'
+import sortBy from 'lodash/sortBy'
+
 import Keyboard from '../backends/keyboard.js'
 import { constants } from '../system/constants.js'
 import Item from './item.js'
@@ -124,6 +128,19 @@ export default class Loop extends Item {
               break
             case 'shuffle_horiz':
               this.matrix = shuffleHoriz(this.matrix, params)
+              break
+            case 'slice':
+              this.matrix = this.matrix.slice(...params)
+              break
+            case 'sort':
+              this.matrix = sortCol(this.matrix, params)
+              break
+            case 'sortby':
+              this.matrix = sortBy(this.matrix, params)
+              break
+            case 'reverse':
+              break
+            case 'weight':
               break
           }
         }
@@ -285,7 +302,7 @@ export default class Loop extends Item {
  * @param {Object} srcMatrix The source matrix to transform
  * @returns {Object}
  */
-function group_by_variable (srcMatrix) {
+function unstack (srcMatrix) {
   return Object.values(srcMatrix).reduce((acc, cycle) => {
     for (const [key, val] of Object.entries(cycle)) {
       if (key in acc) {
@@ -299,12 +316,23 @@ function group_by_variable (srcMatrix) {
 }
 
 /**
+ * Convert grouped matrix back to a normal matrix
+ * @param {array} srcMatrix
+ * @returns {array}
+ */
+function stack (srcMatrix) {
+  const columns = Object.keys(srcMatrix)
+  const rows = zip(...Object.values(srcMatrix))
+  return rows.map(row => zipObject(columns, row))
+}
+
+/**
  * Creates a full factorial design of all the variable values in the matrix
  * @param {array} matrix The array of cycles to fully cross
  * @returns {array}
  */
 export function fullfactorial (matrix) {
-  return combos(group_by_variable(matrix))
+  return combos(unstack(matrix))
 }
 
 /**
@@ -353,4 +381,13 @@ export function shuffleHoriz (matrix, params) {
     const res = fromPairs(zip(keys, vals))
     return { ...row, ...res }
   })
+}
+
+export function sortCol (matrix, params) {
+  if (!isArray(params) || params.length !== 1) {
+    throw new Error('Invalid argument specified to sortCol. Expects one column name')
+  }
+  const grouped = unstack(matrix)
+  grouped[params[0]].sort()
+  return stack(grouped)
 }
