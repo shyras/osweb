@@ -1,6 +1,5 @@
 import combos from 'combos'
 import isNumber from 'lodash/isNumber'
-import isString from 'lodash/isString'
 import isArray from 'lodash/isArray'
 import shuffle from 'lodash/shuffle'
 import zip from 'lodash/zip'
@@ -8,6 +7,7 @@ import zipObject from 'lodash/zipObject'
 import fromPairs from 'lodash/fromPairs'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
+import reverse from 'lodash/reverse'
 
 import Keyboard from '../backends/keyboard.js'
 import { constants } from '../system/constants.js'
@@ -139,8 +139,13 @@ export default class Loop extends Item {
               this.matrix = sortBy(this.matrix, params)
               break
             case 'reverse':
+              this.matrix = reverseRows(this.matrix, params)
+              break
+            case 'roll':
+              this.matrix = roll(this.matrix, params)
               break
             case 'weight':
+              this.matrix = weight(this.matrix, params)
               break
           }
         }
@@ -297,6 +302,10 @@ export default class Loop extends Item {
 }
 
 /**
+ * Utility functions
+ */
+
+/**
  * Group matrix values by their variables names
  *
  * @param {Object} srcMatrix The source matrix to transform
@@ -316,7 +325,7 @@ function unstack (srcMatrix) {
 }
 
 /**
- * Convert grouped matrix back to a normal matrix
+ * Convert grouped by variable matrix back to a normal matrix
  * @param {array} srcMatrix
  * @returns {array}
  */
@@ -341,24 +350,43 @@ export function fullfactorial (matrix) {
  *
  * @export
  * @param {array} matrix The matrix to be shuffles
- * @param {String} col  The variable/column to be shuffled
+ * @param {array} params  Array containing the variable/column to be shuffled
  * @returns {array}
  */
 export function shuffleVert (matrix, params) {
+  if (!isArray(params)) {
+    throw new TypeError('Invalid argument specified to shuffleVert. Expects an array optionally containing column names')
+  }
   if (params.length === 0) {
     return shuffle(matrix)
-  } else if (isString(params[0]) && params[0] !== '') {
-    const col = params[0]
-    // Extract the values for the specified column
-    let colValues = Object.values(matrix).map(row => row[col])
-    // ...and shuffle them
-    colValues = shuffle(colValues)
-    // And finally place back the shuffled values into the original matrix
-    return Object.values(matrix).map((row, i) => {
-      row[col] = colValues[i]
-      return row
-    })
+  } else {
+    let grouped = unstack(matrix)
+    let cols = pick(grouped, params)
+    cols = Object.entries(cols).reduce((prev, [key, values]) => {
+      prev[key] = shuffle(values)
+      return prev
+    }, {})
+    return stack({ ...grouped, ...cols })
   }
+
+  /** Variant 2 */
+  // if (params.length === 0) {
+  //   return shuffle(matrix)
+  // } else if (isString(params[0]) && params[0] !== '') {
+  //   const grouped = unstack(matrix)
+  //   grouped[params[0]] = shuffle(grouped[params[0]])
+  //   return unstack(grouped)
+
+  // // Extract the values for the specified column
+  // let colValues = Object.values(matrix).map(row => row[col])
+  // // ...and shuffle them
+  // colValues = shuffle(colValues)
+  // // And finally place back the shuffled values into the original matrix
+  // return Object.values(matrix).map((row, i) => {
+  //   row[col] = colValues[i]
+  //   return row
+  // })
+  // }
 }
 
 /**
@@ -371,6 +399,10 @@ export function shuffleVert (matrix, params) {
  * @returns {array}
  */
 export function shuffleHoriz (matrix, params) {
+  if (typeof params === 'undefined') params = []
+  if (!isArray(params)) {
+    throw new TypeError('Invalid argument specified to shuffleHoriz. Expects an array that optionally contains column names to shuffle')
+  }
   return Object.values(matrix).map(row => {
     const vars = params.length === 0
       ? row
@@ -383,11 +415,103 @@ export function shuffleHoriz (matrix, params) {
   })
 }
 
+/**
+ * Sorts pnly the specified columns of the matrix
+ *
+ * @export
+ * @param {array} matrix
+ * @param {array} params
+ * @returns array
+ */
 export function sortCol (matrix, params) {
   if (!isArray(params) || params.length !== 1) {
-    throw new Error('Invalid argument specified to sortCol. Expects one column name')
+    throw new Error('Invalid argument specified to sortCol. Expects an array with one column name')
   }
   const grouped = unstack(matrix)
   grouped[params[0]].sort()
   return stack(grouped)
+}
+
+/**
+ * Reverses the matrix order
+ * If column names are specified, only their orders are reversed
+ * @export
+ * @param {array} matrix
+ * @param {array} params
+ * @returns {array}
+ */
+export function reverseRows (matrix, params) {
+  if (typeof params === 'undefined') params = []
+  if (!isArray(params)) {
+    throw new TypeError('Invalid argument specified to reverseRows. Expects an array containing a column name')
+  }
+  if (params.length === 0) {
+    return reverse(matrix)
+  } else {
+    let grouped = unstack(matrix)
+    let cols = pick(grouped, params)
+    cols = Object.entries(cols).reduce((prev, [key, values]) => {
+      prev[key] = reverse(values)
+      return prev
+    }, {})
+    return stack({ ...grouped, ...cols })
+  }
+}
+
+/**
+ * Rolls the matrix with the specified distance
+ *
+ * @export
+ * @param {array} matrix
+ * @param {array} params
+ * @returns array
+ */
+export function roll (matrix, params) {
+  if (!isArray(params) || params.length < 1) {
+    throw new TypeError('Invalid argument passed to roll. Expects an array containing the roll distance, and and optional column name')
+  }
+  if (!isNumber(params[0])) {
+    throw new TypeError('First argument to roll needs to be an integer')
+  }
+  if (params.length === 1) {
+    return rollN(matrix, params[0])
+  } else {
+    let grouped = unstack(matrix)
+    grouped[params[1]] = rollN(grouped[params[1]], params[0])
+    return stack(grouped)
+  }
+}
+
+/**
+ * Roll array contents forward or backward by the specified amount
+ *
+ * @param {array} list
+ * @param {int} list
+ * @returns {array}
+ */
+function rollN (list, amount) {
+  if (amount > 0) {
+    for (let i = 0; i < amount; i++) {
+      list.unshift(list.pop())
+    }
+  } else {
+    for (let i = 0; i > amount; i--) {
+      list.push(list.shift())
+    }
+  }
+  return list
+}
+
+export function weight (matrix, params) {
+  if (!isArray(params) || params.length !== 1) {
+    throw new TypeError('Invalid argument passed to weight. Expects an array containing a column name')
+  }
+  const weightCol = params[0]
+  return matrix.reduce((prev, item) => {
+    const weight = item[weightCol]
+    for (let i = 0; i < weight; i++) {
+      prev.push(item)
+    }
+    return prev
+  }, [])
 }
