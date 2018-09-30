@@ -416,7 +416,7 @@ export function shuffleHoriz (matrix, params) {
 }
 
 /**
- * Sorts pnly the specified columns of the matrix
+ * Sorts only the specified columns of the matrix
  *
  * @export
  * @param {array} matrix

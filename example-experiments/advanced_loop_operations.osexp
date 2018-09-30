@@ -1,0 +1,351 @@
+---
+API: 2.1
+OpenSesame: 3.2.5
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Advanced Loop Operations"
+set subject_parity even
+set subject_nr 0
+set start test_battery
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend legacy
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/Users/daniel/Sites/osweb/example-experiments"
+set disable_garbage_collection yes
+set description "A test of all advanced loop operations offered by OpenSesame"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
+set background black
+
+define sketchpad Partial_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="On the next 5 slides,<br />only the bottom row of letters should change,<br />while the top row stays the same." x=0 y=0 z_index=0
+
+define sketchpad ff_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color="[color]" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter]" x=0 y=0 z_index=0
+
+define sequence full_factorial
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run intro_ff always
+	run new_loop always
+
+define loop full_shuffle
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 letter1 A
+	setcycle 0 letter2 B
+	setcycle 0 letter3 C
+	setcycle 0 letter4 D
+	setcycle 0 letter5 E
+	setcycle 0 letter6 F
+	setcycle 1 letter1 A
+	setcycle 1 letter2 B
+	setcycle 1 letter3 C
+	setcycle 1 letter4 D
+	setcycle 1 letter5 E
+	setcycle 1 letter6 F
+	setcycle 2 letter1 A
+	setcycle 2 letter2 B
+	setcycle 2 letter3 C
+	setcycle 2 letter4 D
+	setcycle 2 letter5 E
+	setcycle 2 letter6 F
+	setcycle 3 letter1 A
+	setcycle 3 letter2 B
+	setcycle 3 letter3 C
+	setcycle 3 letter4 D
+	setcycle 3 letter5 E
+	setcycle 3 letter6 F
+	setcycle 4 letter1 A
+	setcycle 4 letter2 B
+	setcycle 4 letter3 C
+	setcycle 4 letter4 D
+	setcycle 4 letter5 E
+	setcycle 4 letter6 F
+	shuffle_horiz
+	run letter_display
+
+define sketchpad intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=21 html=yes show_if=always text="This is a test of all<br />advanced loop operations<br />offered by OpenSesame for OSWeb<br />Operations include:<br /><br />- full factorial<br />- shuffle<br />- horizontal shuffle<br />- sorting<br />- reversing<br />- rolling<br />- weighted items" x=0 y=0 z_index=0
+
+define sketchpad intro_ff
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This sections tests the full factorial operation<br /><br />Both the letters A and B should be shown in red and green.<br /><br />Press space to continue on each display" x=0 y=0 z_index=0
+
+define sketchpad letter_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter2]" x=0 y=-192 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter1]" x=-224 y=-192 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter3]" x=224 y=-192 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter4]" x=-224 y=160 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter5]" x=0 y=160 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter6]" x=224 y=160 z_index=0
+
+define loop new_loop
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 letter A
+	setcycle 0 color red
+	setcycle 1 letter B
+	setcycle 1 color green
+	fullfactorial
+	run ff_display
+
+define loop partial_shuffle
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 letter1 A
+	setcycle 0 letter2 B
+	setcycle 0 letter3 C
+	setcycle 0 letter4 D
+	setcycle 0 letter5 E
+	setcycle 0 letter6 F
+	setcycle 1 letter1 A
+	setcycle 1 letter2 B
+	setcycle 1 letter3 C
+	setcycle 1 letter4 D
+	setcycle 1 letter5 E
+	setcycle 1 letter6 F
+	setcycle 2 letter1 A
+	setcycle 2 letter2 B
+	setcycle 2 letter3 C
+	setcycle 2 letter4 D
+	setcycle 2 letter5 E
+	setcycle 2 letter6 F
+	setcycle 3 letter1 A
+	setcycle 3 letter2 B
+	setcycle 3 letter3 C
+	setcycle 3 letter4 D
+	setcycle 3 letter5 E
+	setcycle 3 letter6 F
+	setcycle 4 letter1 A
+	setcycle 4 letter2 B
+	setcycle 4 letter3 C
+	setcycle 4 letter4 D
+	setcycle 4 letter5 E
+	setcycle 4 letter6 F
+	shuffle_horiz letter4 letter5 letter6
+	run letter_display
+
+define sketchpad partial_sort_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the sort operation.<br /><br />The next five slides should show pairs of numbers <br />and their corresponding words in the alphabetic order of the words.<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+
+define loop partial_sort_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 3
+	setcycle 1 word three
+	setcycle 2 number 5
+	setcycle 2 word five
+	setcycle 3 number 2
+	setcycle 3 word two
+	setcycle 4 number 4
+	setcycle 4 word four
+	sort number
+	run sort_display
+
+define sequence shuffle
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run shuffle_intro always
+	run shuffle_slides always
+	run shuffle_single_intro always
+	run shuffle_slides_single always
+
+define sketchpad shuffle_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192.0 y=0.0 z_index=0
+
+define sequence shuffle_horiz
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run shuffle_horiz_intro always
+	run full_shuffle always
+	run Partial_intro always
+	run partial_shuffle always
+
+define sketchpad shuffle_horiz_intro
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="This section tests OpenSesame's 'shuffle_horiz' functionality<br /><br />A series of letters will be shown on 5 slides. <br />On each slide, the letters should be found at positions. <br />It is possible for a letter to appear<br />at the same position several times. " x=0 y=0 z_index=0
+
+define sketchpad shuffle_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the shuffle operation.<br /><br />The next five slides should show pairs of numbers <br />and their corresponding words in random order.<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+
+define sketchpad shuffle_single_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The next five slides should show the numbers in ascending order,<br />and the words in random order<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+
+define loop shuffle_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	shuffle
+	run shuffle_display
+
+define loop shuffle_slides_single
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	shuffle word
+	run shuffle_display
+
+define sequence slice
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run slice_intro always
+
+define sketchpad slice_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text=WIP x=0 y=0 z_index=0
+
+define sequence sort
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run partial_sort_intro always
+	run partial_sort_slides always
+	run sort_intro always
+	run sort_slides always
+
+define sketchpad sort_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
+
+define sketchpad sort_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The next five slides should show the numbers in ascending order,<br />and the words in random order<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+
+define loop sort_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 3
+	setcycle 0 word three
+	setcycle 1 number 1
+	setcycle 1 word one
+	setcycle 2 number 2
+	setcycle 2 word two
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	sortby number
+	run sort_display
+
+define sequence test_battery
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run intro always
+	run full_factorial always
+	run shuffle always
+	run shuffle_horiz always
+	run sort always
+	run slice always
+
