@@ -10,6 +10,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+// const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+
 const pkgconfig = require('./package.json')
 
 // Check if devserver is running
@@ -64,6 +66,7 @@ module.exports = (env, args) => {
           loader: 'babel-loader',
           options: {
             cacheDirectory: true,
+            plugins: ['lodash'],
             presets: ['@babel/preset-env']
           }
         }
@@ -122,6 +125,11 @@ module.exports = (env, args) => {
         filename: 'index.html',
         exampleExperiments
       })
+      // new LodashModuleReplacementPlugin({
+      //   'shorthands': true,
+      //   'collections': true,
+      //   'paths': true
+      // })
     ],
     optimization: {
       sideEffects: true,

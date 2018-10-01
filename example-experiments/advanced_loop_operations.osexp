@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.2.5
+OpenSesame: 3.2.5b1
 Platform: posix
 ---
 set width 1024
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/Users/daniel/Sites/osweb/example-experiments"
+set experiment_path "/home/daniel/Repos/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "A test of all advanced loop operations offered by OpenSesame"
 set coordinates uniform
@@ -132,6 +132,12 @@ define loop new_loop
 	fullfactorial
 	run ff_display
 
+define sketchpad number_combo_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
+
 define loop partial_shuffle
 	set source_file ""
 	set source table
@@ -178,7 +184,7 @@ define loop partial_shuffle
 define sketchpad partial_sort_intro
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the sort operation.<br /><br />The next five slides should show pairs of numbers <br />and their corresponding words in the alphabetic order of the words.<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The next five slides should show the numbers in ascending order,<br />and the words in random order<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
 
 define loop partial_sort_slides
 	set source_file ""
@@ -201,7 +207,7 @@ define loop partial_sort_slides
 	setcycle 4 number 4
 	setcycle 4 word four
 	sort number
-	run sort_display
+	run number_combo_display
 
 define sequence shuffle
 	set flush_keyboard yes
@@ -215,7 +221,7 @@ define sketchpad shuffle_display
 	set duration keypress
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192.0 y=0.0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
 
 define sequence shuffle_horiz
 	set flush_keyboard yes
@@ -230,7 +236,7 @@ define sketchpad shuffle_horiz_intro
 	set reset_variables no
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="This section tests OpenSesame's 'shuffle_horiz' functionality<br /><br />A series of letters will be shown on 5 slides. <br />On each slide, the letters should be found at positions. <br />It is possible for a letter to appear<br />at the same position several times. " x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests OpenSesame's 'shuffle_horiz' functionality<br /><br />A series of letters will be shown on 5 slides. <br />On each slide, the letters should be found at different positions. <br />It is possible for a letter to appear<br />at the same position several times. " x=0 y=0 z_index=0
 
 define sketchpad shuffle_intro
 	set duration keypress
@@ -266,6 +272,7 @@ define loop shuffle_slides
 	run shuffle_display
 
 define loop shuffle_slides_single
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential
@@ -291,11 +298,34 @@ define sequence slice
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run slice_intro always
+	run slice_slides always
 
 define sketchpad slice_intro
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text=WIP x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="This section tests the slice operation.<br />The following display should show<br />the number/word combinations from 2 till 4.<br /><br />Press space to continue on each slide." x=0 y=0 z_index=0
+
+define loop slice_slides
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	slice 1 -1
+	run number_combo_display
 
 define sequence sort
 	set flush_keyboard yes
@@ -305,16 +335,10 @@ define sequence sort
 	run sort_intro always
 	run sort_slides always
 
-define sketchpad sort_display
-	set duration keypress
-	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
-
 define sketchpad sort_intro
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The next five slides should show the numbers in ascending order,<br />and the words in random order<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the sort operation.<br /><br />The next five slides should show pairs of numbers <br />and their corresponding words in the alphabetic order of the words.<br /><br />Press space to continue at each display" x=0 y=0 z_index=0
 
 define loop sort_slides
 	set source_file ""
@@ -337,7 +361,7 @@ define loop sort_slides
 	setcycle 4 number 5
 	setcycle 4 word five
 	sortby number
-	run sort_display
+	run number_combo_display
 
 define sequence test_battery
 	set flush_keyboard yes

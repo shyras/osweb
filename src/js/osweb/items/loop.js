@@ -1,16 +1,21 @@
 import combos from 'combos'
-import isNumber from 'lodash/isNumber'
-import isArray from 'lodash/isArray'
-import shuffle from 'lodash/shuffle'
-import zip from 'lodash/zip'
-import zipObject from 'lodash/zipObject'
-import fromPairs from 'lodash/fromPairs'
-import pick from 'lodash/pick'
-import sortBy from 'lodash/sortBy'
-import reverse from 'lodash/reverse'
+import {
+  isNumber,
+  isArray,
+  isString,
+  shuffle,
+  zip,
+  zipObject,
+  fromPairs,
+  pick,
+  sortBy,
+  reverse
+} from 'lodash'
 
 import Keyboard from '../backends/keyboard.js'
-import { constants } from '../system/constants.js'
+import {
+  constants
+} from '../system/constants.js'
 import Item from './item.js'
 
 /**
@@ -64,7 +69,7 @@ export default class Loop extends Item {
 
   /** Reset all item variables to their default value. */
   reset () {
-    this.matrix = {}
+    this.matrix = []
     this.vars.cycles = 1
     this.vars.repeat = 1
     this.vars.skip = 0
@@ -131,9 +136,11 @@ export default class Loop extends Item {
               break
             case 'slice':
               this.matrix = this.matrix.slice(...params)
+              // Set the number of cycles to the length of the generated matrix
+              this.vars.cycles = this.matrix.length
               break
             case 'sort':
-              this.matrix = sortCol(this.matrix, params)
+              this.matrix = sortCol(this.matrix, ...params)
               break
             case 'sortby':
               this.matrix = sortBy(this.matrix, params)
@@ -142,10 +149,10 @@ export default class Loop extends Item {
               this.matrix = reverseRows(this.matrix, params)
               break
             case 'roll':
-              this.matrix = roll(this.matrix, params)
+              this.matrix = roll(this.matrix, ...params)
               break
             case 'weight':
-              this.matrix = weight(this.matrix, params)
+              this.matrix = weight(this.matrix, ...params)
               break
           }
         }
@@ -368,25 +375,6 @@ export function shuffleVert (matrix, params) {
     }, {})
     return stack({ ...grouped, ...cols })
   }
-
-  /** Variant 2 */
-  // if (params.length === 0) {
-  //   return shuffle(matrix)
-  // } else if (isString(params[0]) && params[0] !== '') {
-  //   const grouped = unstack(matrix)
-  //   grouped[params[0]] = shuffle(grouped[params[0]])
-  //   return unstack(grouped)
-
-  // // Extract the values for the specified column
-  // let colValues = Object.values(matrix).map(row => row[col])
-  // // ...and shuffle them
-  // colValues = shuffle(colValues)
-  // // And finally place back the shuffled values into the original matrix
-  // return Object.values(matrix).map((row, i) => {
-  //   row[col] = colValues[i]
-  //   return row
-  // })
-  // }
 }
 
 /**
@@ -423,12 +411,12 @@ export function shuffleHoriz (matrix, params) {
  * @param {array} params
  * @returns array
  */
-export function sortCol (matrix, params) {
-  if (!isArray(params) || params.length !== 1) {
-    throw new Error('Invalid argument specified to sortCol. Expects an array with one column name')
+export function sortCol (matrix, col) {
+  if (!isString(col) || col === '') {
+    throw new Error('Invalid argument specified to sortCol. Expects a column name')
   }
   const grouped = unstack(matrix)
-  grouped[params[0]].sort()
+  grouped[col].sort()
   return stack(grouped)
 }
 
@@ -466,18 +454,15 @@ export function reverseRows (matrix, params) {
  * @param {array} params
  * @returns array
  */
-export function roll (matrix, params) {
-  if (!isArray(params) || params.length < 1) {
-    throw new TypeError('Invalid argument passed to roll. Expects an array containing the roll distance, and and optional column name')
-  }
-  if (!isNumber(params[0])) {
+export function roll (matrix, amount, column) {
+  if (!isNumber(amount)) {
     throw new TypeError('First argument to roll needs to be an integer')
   }
-  if (params.length === 1) {
-    return rollN(matrix, params[0])
+  if (!isString(column) || column === '') {
+    return rollN(matrix, amount)
   } else {
     let grouped = unstack(matrix)
-    grouped[params[1]] = rollN(grouped[params[1]], params[0])
+    grouped[column] = rollN(grouped[column], amount)
     return stack(grouped)
   }
 }
@@ -502,11 +487,10 @@ function rollN (list, amount) {
   return list
 }
 
-export function weight (matrix, params) {
-  if (!isArray(params) || params.length !== 1) {
-    throw new TypeError('Invalid argument passed to weight. Expects an array containing a column name')
+export function weight (matrix, weightCol) {
+  if (!isString(weightCol)) {
+    throw new TypeError('Invalid argument passed to weight. Expects a column name')
   }
-  const weightCol = params[0]
   return matrix.reduce((prev, item) => {
     const weight = item[weightCol]
     for (let i = 0; i < weight; i++) {
