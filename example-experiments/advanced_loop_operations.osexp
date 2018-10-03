@@ -46,11 +46,27 @@ define sketchpad ff_display
 	set description "Displays stimuli"
 	draw textline center=1 color="[color]" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter]" x=0 y=0 z_index=0
 
+define loop ff_slides
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 2
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 letter A
+	setcycle 0 color red
+	setcycle 1 letter B
+	setcycle 1 color green
+	fullfactorial
+	run ff_display
+
 define sequence full_factorial
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run intro_ff always
-	run new_loop always
+	run ff_slides always
 
 define loop full_shuffle
 	set source_file ""
@@ -98,7 +114,7 @@ define loop full_shuffle
 define sketchpad intro
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=21 html=yes show_if=always text="This is a test of all<br />advanced loop operations<br />offered by OpenSesame for OSWeb<br />Operations include:<br /><br />- full factorial<br />- shuffle<br />- horizontal shuffle<br />- sorting<br />- reversing<br />- rolling<br />- weighted items" x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=21 html=yes show_if=always text="This is a test of all<br />advanced loop operations<br />offered by OpenSesame for OSWeb<br />Operations include:<br /><br />- full factorial<br />- shuffle<br />- horizontal shuffle<br />- sorting<br />- slicing<br />- reversing<br />- rolling<br />- weighted items" x=0 y=0 z_index=0
 
 define sketchpad intro_ff
 	set duration keypress
@@ -115,28 +131,60 @@ define sketchpad letter_display
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter5]" x=0 y=160 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter6]" x=224 y=160 z_index=0
 
-define loop new_loop
-	set source_file ""
-	set source table
-	set repeat 1
-	set order random
-	set description "Repeatedly runs another item"
-	set cycles 2
-	set continuous no
-	set break_if_on_first yes
-	set break_if never
-	setcycle 0 letter A
-	setcycle 0 color red
-	setcycle 1 letter B
-	setcycle 1 color green
-	fullfactorial
-	run ff_display
-
 define sketchpad number_combo_display
 	set duration keypress
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
+
+define sketchpad number_combo_display_1
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[number]" x=-192 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=192 y=0 z_index=0
+
+define sketchpad partial_reverse_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Now the partial reverse is tested<br /><br />You should see the numbers count up,<br />while the words count down<br />(because they are reversed)<br /><br />Press space to continue on each slide" x=0 y=0 z_index=0
+
+define loop partial_reverse_slides
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	reverse word
+	run number_combo_display
+
+define sketchpad partial_roll_intro
+	set duration keypress
+	set description "Displays stimuli"
+
+define loop partial_roll_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 0
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	run number_combo_display
 
 define loop partial_shuffle
 	set source_file ""
@@ -207,6 +255,108 @@ define loop partial_sort_slides
 	setcycle 4 number 4
 	setcycle 4 word four
 	sort number
+	run number_combo_display
+
+define sequence reverse
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run reverse_intro always
+	run reverse_slides always
+	run partial_reverse_intro always
+	run partial_reverse_slides always
+
+define sketchpad reverse_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the reverse operation<br /><br />The next five slides should count down from 5 to 1, for both the numbers and words<br /><br />Press space to continue on each slide" x=0 y=0 z_index=0
+
+define loop reverse_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	reverse
+	run number_combo_display
+
+define sequence roll
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run roll_intro always
+	run roll_slides always
+	run roll_pos_intro always
+	run roll_pos_slides always
+	run partial_roll_intro always
+	run partial_roll_slides always
+
+define sketchpad roll_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the roll operation<br /><br />The next 5 slides shows number and word combos again.<br />It should start at three, but show 1 and 2 after 5<br /><br />Press space to continue on each slide" x=0 y=0 z_index=0
+
+define sketchpad roll_pos_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The next 5 slides shows number and word combos again.<br />The list of 1 to 5 is rolled two spaces forward<br />Thus, it should start at 4 and show 1, 2 and 3 after 5. <br />Press space to continue on each slide" x=0 y=0 z_index=0
+
+define loop roll_pos_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	roll 2
+	run number_combo_display_1
+
+define loop roll_slides
+	set source_file ""
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 5
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 number 1
+	setcycle 0 word one
+	setcycle 1 number 2
+	setcycle 1 word two
+	setcycle 2 number 3
+	setcycle 2 word three
+	setcycle 3 number 4
+	setcycle 3 word four
+	setcycle 4 number 5
+	setcycle 4 word five
+	roll -2
 	run number_combo_display
 
 define sequence shuffle
@@ -306,6 +456,7 @@ define sketchpad slice_intro
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="This section tests the slice operation.<br />The following display should show<br />the number/word combinations from 2 till 4.<br /><br />Press space to continue on each slide." x=0 y=0 z_index=0
 
 define loop slice_slides
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential
@@ -367,9 +518,11 @@ define sequence test_battery
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run intro always
-	run full_factorial always
-	run shuffle always
-	run shuffle_horiz always
-	run sort always
-	run slice always
+	run full_factorial never
+	run shuffle never
+	run shuffle_horiz never
+	run sort never
+	run slice never
+	run reverse never
+	run roll always
 

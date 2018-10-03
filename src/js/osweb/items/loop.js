@@ -1,6 +1,7 @@
 import combos from 'combos'
 import {
   isNumber,
+  toNumber,
   isArray,
   isString,
   shuffle,
@@ -357,18 +358,18 @@ export function fullfactorial (matrix) {
  *
  * @export
  * @param {array} matrix The matrix to be shuffles
- * @param {array} params  Array containing the variable/column to be shuffled
+ * @param {array} columns  Array containing the variable/column to be shuffled
  * @returns {array}
  */
-export function shuffleVert (matrix, params) {
-  if (!isArray(params)) {
+export function shuffleVert (matrix, columns) {
+  if (!isArray(columns)) {
     throw new TypeError('Invalid argument specified to shuffleVert. Expects an array optionally containing column names')
   }
-  if (params.length === 0) {
+  if (columns.length === 0) {
     return shuffle(matrix)
   } else {
     let grouped = unstack(matrix)
-    let cols = pick(grouped, params)
+    let cols = pick(grouped, columns)
     cols = Object.entries(cols).reduce((prev, [key, values]) => {
       prev[key] = shuffle(values)
       return prev
@@ -383,18 +384,18 @@ export function shuffleVert (matrix, params) {
  *
  * @export
  * @param {array} matrix
- * @param {array} params
+ * @param {array} columns
  * @returns {array}
  */
-export function shuffleHoriz (matrix, params) {
-  if (typeof params === 'undefined') params = []
-  if (!isArray(params)) {
+export function shuffleHoriz (matrix, columns) {
+  if (typeof columns === 'undefined') columns = []
+  if (!isArray(columns)) {
     throw new TypeError('Invalid argument specified to shuffleHoriz. Expects an array that optionally contains column names to shuffle')
   }
   return Object.values(matrix).map(row => {
-    const vars = params.length === 0
+    const vars = columns.length === 0
       ? row
-      : pick(row, params)
+      : pick(row, columns)
     const keys = Object.keys(vars)
     let vals = Object.values(vars)
     vals = shuffle(vals)
@@ -425,19 +426,19 @@ export function sortCol (matrix, col) {
  * If column names are specified, only their orders are reversed
  * @export
  * @param {array} matrix
- * @param {array} params
+ * @param {array} columns
  * @returns {array}
  */
-export function reverseRows (matrix, params) {
-  if (typeof params === 'undefined') params = []
-  if (!isArray(params)) {
+export function reverseRows (matrix, columns) {
+  if (typeof columns === 'undefined') columns = []
+  if (!isArray(columns)) {
     throw new TypeError('Invalid argument specified to reverseRows. Expects an array containing a column name')
   }
-  if (params.length === 0) {
+  if (columns.length === 0) {
     return reverse(matrix)
   } else {
     let grouped = unstack(matrix)
-    let cols = pick(grouped, params)
+    let cols = pick(grouped, columns)
     cols = Object.entries(cols).reduce((prev, [key, values]) => {
       prev[key] = reverse(values)
       return prev
@@ -455,8 +456,8 @@ export function reverseRows (matrix, params) {
  * @returns array
  */
 export function roll (matrix, amount, column) {
-  if (!isNumber(amount)) {
-    throw new TypeError('First argument to roll needs to be an integer')
+  if (!isNumber(toNumber(amount))) {
+    throw new TypeError(`First argument to roll needs to be an integer, was ${amount}`)
   }
   if (!isString(column) || column === '') {
     return rollN(matrix, amount)
