@@ -188,18 +188,18 @@ export default class Transfer {
 
         // Determine the file type and generate the appropriate osweb item
         const ext = currentFile.name.substr(currentFile.name.lastIndexOf('.') + 1)
-        if ((ext === 'jpg') || (ext === 'png')) {
+        if ((ext.toLowerCase() === 'jpg') || (ext.toLowerCase() === 'png')) {
           // Create a new file pool mage item.
           const img = new Image()
           img.src = currentFile.getBlobUrl()
           item.data = img
           item.type = 'image'
-        } else if ((ext === 'wav') || (ext === 'ogg')) {
+        } else if ((ext.toLowerCase() === 'wav') || (ext.toLowerCase() === 'ogg')) {
           const ado = new Audio()
           ado.src = currentFile.getBlobUrl()
           item.data = ado
           item.type = 'sound'
-        } else if (ext === 'ogv') {
+        } else if (ext.toLowerCase() === 'ogv') {
           const ado = document.createElement('VIDEO')
           ado.src = currentFile.getBlobUrl()
           item.data = ado
