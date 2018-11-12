@@ -33,7 +33,7 @@ module.exports = (env, args) => {
   let outputName = ''
   if (isDevServer) {
     outputName += '[name].bundle'
-  } else if (args.mode == 'development') {
+  } else if (args.mode === 'development') {
     outputName += '[name].[chunkhash].bundle'
   } else {
     outputName += `[name].${pkgconfig.version}.bundle`
@@ -43,7 +43,7 @@ module.exports = (env, args) => {
     mode: isDevServer ? 'development' : args.mode,
     devtool: (isDevServer || args.mode === 'development') ? 'cheap-module-source-map' : 'source-map',
     entry: {
-      osweb: ['@babel/polyfill', path.join(__dirname, 'src', 'app.js')]
+      osweb: [path.join(__dirname, 'src', 'app.js')]
     },
     output: {
       path: path.join(__dirname, 'public_html'),

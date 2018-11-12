@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import isFunction from 'lodash/isFunction'
 
 /** Class representing a data logger. */
 export default class Log {
@@ -79,7 +79,7 @@ export default class Log {
 
     var value
     var l = []
-    // If no var list defines, retrieve all variable.
+    // If no var list defined, retrieve all variables.
     if (varList === null) {
       varList = this._get_all_vars()
     }
@@ -101,13 +101,14 @@ export default class Log {
     const entry = {}
     for (let i = 0; i < varList.length; i++) {
       value = this._experiment.vars.get(varList[i], 'NA', false)
+      if (isFunction(value)) continue
       l.push('"' + value + '"')
       entry[varList[i]] = value
     }
     this.write(l.join())
 
     // If event is attached to the experiment output log.
-    if (_.isFunction(this._experiment.onLog)) {
+    if (isFunction(this._experiment.onLog)) {
       this._experiment.onLog(entry)
     }
   }

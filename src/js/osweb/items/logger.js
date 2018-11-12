@@ -88,6 +88,7 @@ export default class Logger extends Item {
           this._logvars.sort()
         }
       }
+
       this.experiment._log.write_vars(this._logvars)
 
       // Complete the cycle.
