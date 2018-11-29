@@ -1,4 +1,4 @@
-import { parseUrl } from '../../osweb/system/util'
+import { parseUrl } from '../../osweb/util/files'
 
 describe('parseUrl', () => {
   it('Should return an URL Object when supplied with a valid URL', () => {

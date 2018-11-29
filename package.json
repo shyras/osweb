@@ -54,6 +54,7 @@
 		"@babel/plugin-transform-runtime": "^7.1.0",
 		"@babel/polyfill": "^7.0.0",
 		"@babel/preset-env": "^7.1.0",
+		"acorn": "^6.0.4",
 		"alertifyjs": "^1.11.2",
 		"autoprefixer": "^9.3.1",
 		"babel-core": "^7.0.0-bridge.0",
@@ -119,7 +120,8 @@
 	},
 	"babel": {
 		"plugins": [
-			"lodash", "@babel/plugin-transform-runtime"
+			"lodash",
+			"@babel/plugin-transform-runtime"
 		],
 		"presets": [
 			[

@@ -1,3 +1,4 @@
+/* eslint-disable no-extend-native */
 /*
  * OsWeb
  *
@@ -18,6 +19,7 @@ export const VERSION_NAME = OSWEB_VERSION_NAME
 export const VERSION_NUMBER = OSWEB_VERSION_NO
 
 // Add replaceAll function to string prototype
+// eslint-disable-next-line no-extend-native
 String.prototype.replaceAll = function (str1, str2, ignore) {
   return this.replace(
     new RegExp(

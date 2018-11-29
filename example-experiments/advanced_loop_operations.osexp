@@ -41,12 +41,18 @@ define sketchpad Partial_intro
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="On the next 5 slides,<br />only the bottom row of letters should change,<br />while the top row stays the same." x=0 y=0 z_index=0
 
+define sketchpad extro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="That's it! Free to fly again..." x=0 y=0 z_index=0
+
 define sketchpad ff_display
 	set duration keypress
 	set description "Displays stimuli"
 	draw textline center=1 color="[color]" font_bold=no font_family=mono font_italic=no font_size=40 html=yes show_if=always text="[letter]" x=0 y=0 z_index=0
 
 define loop ff_slides
+	set source_file ""
 	set source table
 	set repeat 1
 	set order random
@@ -149,6 +155,7 @@ define sketchpad partial_reverse_intro
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Now the partial reverse is tested<br /><br />You should see the numbers count up,<br />while the words count down<br />(because they are reversed)<br /><br />Press space to continue on each slide" x=0 y=0 z_index=0
 
 define loop partial_reverse_slides
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential
@@ -173,17 +180,29 @@ define loop partial_reverse_slides
 define sketchpad partial_roll_intro
 	set duration keypress
 	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This tests the partial roll function.<br />The words should count up from one to five,<br />while the numbers should start at 2, count up to 5, and then return to 1." x=0 y=0 z_index=0
 
 define loop partial_roll_slides
 	set source_file ""
 	set source table
 	set repeat 1
-	set order random
+	set order sequential
 	set description "Repeatedly runs another item"
-	set cycles 0
+	set cycles 5
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
+	setcycle 0 word one
+	setcycle 0 number 1
+	setcycle 1 word two
+	setcycle 1 number 2
+	setcycle 2 word three
+	setcycle 2 number 3
+	setcycle 3 word four
+	setcycle 3 number 4
+	setcycle 4 word five
+	setcycle 4 number 5
+	roll -1 number
 	run number_combo_display
 
 define loop partial_shuffle
@@ -511,18 +530,56 @@ define loop sort_slides
 	setcycle 3 word four
 	setcycle 4 number 5
 	setcycle 4 word five
-	sortby number
+	sortby word
 	run number_combo_display
 
 define sequence test_battery
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
 	run intro always
-	run full_factorial never
-	run shuffle never
-	run shuffle_horiz never
-	run sort never
-	run slice never
-	run reverse never
+	run full_factorial always
+	run shuffle always
+	run shuffle_horiz always
+	run sort always
+	run slice always
+	run reverse always
 	run roll always
+	run weight always
+	run extro always
+
+define sequence weight
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run weight_intro always
+	run weight_slides always
+
+define sketchpad weight_display
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="[word]" x=0 y=0 z_index=0
+
+define sketchpad weight_intro
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the weight operation of a loop.<br /><br />You should <b>not</b> see the word zero.<br />You should see the word 'one' for one keypress<br />You should see the word 'two' for two keypresses<br />You should see the word 'three' for three keypresses.<br /><br />Press a key to start" x=0 y=0 z_index=0
+
+define loop weight_slides
+	set source table
+	set repeat 1
+	set order sequential
+	set description "Repeatedly runs another item"
+	set cycles 4
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 w 0
+	setcycle 0 word zero
+	setcycle 1 w 1
+	setcycle 1 word one
+	setcycle 2 w 2
+	setcycle 2 word two
+	setcycle 3 w 3
+	setcycle 3 word three
+	weight w
+	run weight_display
 

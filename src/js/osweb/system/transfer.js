@@ -3,7 +3,7 @@ import {
   decompress,
   readFileAsText,
   parseUrl
-} from './util'
+} from '../util/files'
 import isString from 'lodash/isString'
 import isObject from 'lodash/isObject'
 import axios from 'axios'
