@@ -21,7 +21,7 @@ import {
  * @param {Object} srcMatrix The source matrix to transform
  * @returns {Object}
  */
-function unstack (srcMatrix) {
+export function unstack (srcMatrix) {
   return Object.values(srcMatrix).reduce((acc, cycle) => {
     for (const [key, val] of Object.entries(cycle)) {
       if (key in acc) {
@@ -39,7 +39,7 @@ function unstack (srcMatrix) {
  * @param {array} srcMatrix
  * @returns {array}
  */
-function stack (srcMatrix) {
+export function stack (srcMatrix) {
   const columns = Object.keys(srcMatrix)
   const rows = zip(...Object.values(srcMatrix))
   return rows.map(row => zipObject(columns, row))
@@ -64,11 +64,10 @@ export function fullfactorial (matrix) {
  * @returns {array}
  */
 export function shuffleVert (matrix, columns) {
-  if (!isArray(columns)) {
-    throw new TypeError('Invalid argument specified to shuffleVert. Expects an array optionally containing column names')
-  }
-  if (columns.length === 0) {
+  if (typeof (columns) === 'undefined' || (isArray(columns) && columns.length === 0)) {
     return shuffle(matrix)
+  } else if (!isArray(columns)) {
+    throw new TypeError('Invalid argument for columns specified to shuffleVert. Expects an array containing column names')
   } else {
     let grouped = unstack(matrix)
     let cols = pick(grouped, columns)
