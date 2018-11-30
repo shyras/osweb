@@ -13,14 +13,15 @@ export default class Ellipse extends BaseElement {
    */
   constructor (sketchpad, script) {
     // Create a default property container.
-    var defaults = {}
-    defaults.fill = 1
-    defaults.color = sketchpad.vars.get('foreground')
-    defaults.penwidth = 1
-    defaults.x = null
-    defaults.y = null
-    defaults.w = null
-    defaults.h = null
+    const defaults = {
+      fill: 1,
+      color: sketchpad.vars.get('foreground'),
+      penwidth: 1,
+      x: null,
+      y: null,
+      w: null,
+      h: null
+    }
 
     // Inherited.
     super(sketchpad, script, defaults)

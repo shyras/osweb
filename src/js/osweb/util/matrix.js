@@ -21,7 +21,7 @@ import {
  * @param {Object} srcMatrix The source matrix to transform
  * @returns {Object}
  */
-export function unstack (srcMatrix) {
+function unstack (srcMatrix) {
   return Object.values(srcMatrix).reduce((acc, cycle) => {
     for (const [key, val] of Object.entries(cycle)) {
       if (key in acc) {
@@ -39,7 +39,7 @@ export function unstack (srcMatrix) {
  * @param {array} srcMatrix
  * @returns {array}
  */
-export function stack (srcMatrix) {
+function stack (srcMatrix) {
   const columns = Object.keys(srcMatrix)
   const rows = zip(...Object.values(srcMatrix))
   return rows.map(row => zipObject(columns, row))

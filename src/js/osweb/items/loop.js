@@ -155,6 +155,8 @@ export default class Loop extends Item {
               break
             case 'weight':
               this.matrix = weight(this.matrix, ...params)
+              // Set the number of cycles to the length of the generated matrix
+              this.vars.cycles = this.matrix.length
               break
           }
         }
