@@ -10,7 +10,18 @@ import {
   weight
 } from '../../osweb/util/matrix'
 
-import _ from 'lodash'
+/** Generate a mock functions to spy on lodash */
+const mockShuffle = jest.fn()
+jest.mock('lodash/shuffle', () => a => {
+  mockShuffle()
+  return a
+})
+
+const mockPick = jest.fn()
+jest.mock('lodash/pick', () => a => {
+  mockPick()
+  return a
+})
 
 describe('Matrix functions', () => {
   let srcMatrix
@@ -53,20 +64,24 @@ describe('Matrix functions', () => {
     })
   })
 
-  describe('shuffleVert()', () => {
+  describe('Randomization', () => {
     it('should throw an exception when something other than an array is passed for the columns argument', () => {
       expect(() => shuffleVert(srcMatrix, 'aaa')).toThrow()
+      expect(() => shuffleHoriz(srcMatrix, 'aaa')).toThrow()
     })
 
     it('should shuffle the rows of the entire matrix with no argument for columns', () => {
-      const shuffleSpy = jest.spyOn(_, 'shuffle')
-      const result = shuffleVert(srcMatrix)
-      expect(shuffleSpy).toHaveBeenCalled()
+      shuffleVert(srcMatrix)
+      shuffleHoriz(srcMatrix)
+      expect(mockShuffle).toHaveBeenCalledTimes(2)
     })
-  })
 
-  describe('shuffleHoriz()', () => {
-
+    it('should only shuffle the rows of columns that were specified', () => {
+      shuffleVert(srcMatrix, ['word'])
+      shuffleHoriz(srcMatrix, ['word'])
+      expect(mockShuffle).toHaveBeenCalledTimes(2)
+      expect(mockPick).toHaveBeenCalledTimes(2)
+    })
   })
 
   describe('sortCol()', () => {
