@@ -13,14 +13,16 @@ import {
 /** Generate a mock functions to spy on lodash */
 const mockShuffle = jest.fn()
 jest.mock('lodash/shuffle', () => a => {
+  const shuffle = jest.requireActual('lodash/shuffle')
   mockShuffle()
-  return a
+  return shuffle(a)
 })
 
 const mockPick = jest.fn()
-jest.mock('lodash/pick', () => a => {
+jest.mock('lodash/pick', () => (a, b) => {
+  const pick = jest.requireActual('lodash/pick')
   mockPick()
-  return a
+  return pick(a, b)
 })
 
 describe('Matrix functions', () => {
@@ -46,6 +48,15 @@ describe('Matrix functions', () => {
     it('should construct the original matrix from an unstacked one', () => {
       expect(stack(unstackedMatrix)).toEqual(srcMatrix)
     })
+
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', []]) {
+        expect(() => stack(arg)).toThrow()
+      }
+      for (let arg of [5, '5', {}]) {
+        expect(() => unstack(arg)).toThrow()
+      }
+    })
   })
 
   describe('fullfactorial()', () => {
@@ -70,15 +81,18 @@ describe('Matrix functions', () => {
       mockPick.mockClear()
     })
 
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', true, {}]) {
+        expect(() => shuffleVert(arg)).toThrow()
+        expect(() => shuffleHoriz(arg)).toThrow()
+      }
+    })
+
     it('should throw an exception when something other than an array is passed for the columns argument', () => {
-      expect(() => shuffleVert(srcMatrix, 'aaa')).toThrow()
-      expect(() => shuffleVert(srcMatrix, 2)).toThrow()
-      expect(() => shuffleVert(srcMatrix, true)).toThrow()
-      expect(() => shuffleVert(srcMatrix, {})).toThrow()
-      expect(() => shuffleHoriz(srcMatrix, 'aaa')).toThrow()
-      expect(() => shuffleHoriz(srcMatrix, 2)).toThrow()
-      expect(() => shuffleHoriz(srcMatrix, true)).toThrow()
-      expect(() => shuffleHoriz(srcMatrix, {})).toThrow()
+      for (let arg of [5, 'aaa', true, {}]) {
+        expect(() => shuffleVert(srcMatrix, arg)).toThrow()
+        expect(() => shuffleHoriz(srcMatrix, arg)).toThrow()
+      }
     })
 
     it('should shuffle the rows of the entire matrix with no argument for columns', () => {
@@ -92,21 +106,25 @@ describe('Matrix functions', () => {
     it('should only shuffle the rows of columns that were specified', () => {
       shuffleVert(srcMatrix, ['word'])
       shuffleHoriz(srcMatrix, ['word'])
-      expect(mockShuffle).toHaveBeenCalledTimes(5)
+      expect(mockShuffle).toHaveBeenCalledTimes(4)
       expect(mockPick).toHaveBeenCalledTimes(4)
     })
   })
 
   describe('sortCol', () => {
-    it('should throw an error if something else is passed for column than a string', () => {
-      expect(() => sortCol(srcMatrix, '')).toThrow()
-      expect(() => sortCol(srcMatrix, 2)).toThrow()
-      expect(() => sortCol(srcMatrix, [])).toThrow()
-      expect(() => sortCol(srcMatrix, {})).toThrow()
-      expect(() => sortCol(srcMatrix, true)).toThrow()
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', true, {}]) {
+        expect(() => sortCol(arg)).toThrow()
+      }
     })
 
-    it('should sort the specified column in the matrix', () => {
+    it('should throw an error if something else is passed for column than a string', () => {
+      for (let arg of [5, true, [], {}, '']) {
+        expect(() => sortCol(srcMatrix, arg)).toThrow()
+      }
+    })
+
+    it('should only sort the specified column in the matrix', () => {
       expect(sortCol(srcMatrix, 'word')).toEqual([
         { number: 1, word: 'one' },
         { number: 2, word: 'three' },
@@ -116,11 +134,16 @@ describe('Matrix functions', () => {
   })
 
   describe('reverseRows', () => {
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', true, {}]) {
+        expect(() => reverseRows(arg)).toThrow()
+      }
+    })
+
     it('should throw an error if something other than an array is passed for the column argument', () => {
-      expect(() => reverseRows(srcMatrix, 'aaa')).toThrow()
-      expect(() => reverseRows(srcMatrix, 2)).toThrow()
-      expect(() => reverseRows(srcMatrix, true)).toThrow()
-      expect(() => reverseRows(srcMatrix, {})).toThrow()
+      for (let arg of ['aa', 2, true, {}]) {
+        expect(() => reverseRows(srcMatrix, arg)).toThrow()
+      }
     })
 
     it('should reverse all rows if no column name is specified', () => {
@@ -133,8 +156,6 @@ describe('Matrix functions', () => {
 
     it('should only reverse the rows of the column name that is specified', () => {
       const reversed = reverseRows(srcMatrix, ['word'])
-      console.log(srcMatrix)
-      console.log(reversed)
       expect(reversed).toEqual([
         { number: 1, word: 'three' },
         { number: 2, word: 'two' },
@@ -144,10 +165,85 @@ describe('Matrix functions', () => {
   })
 
   describe('roll()', () => {
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', true, {}]) {
+        expect(() => roll(arg)).toThrow()
+      }
+    })
 
+    it('should throw an error if something other than an integer is passed for the amount argument', () => {
+      for (let arg of ['aaa', true, {}, []]) {
+        expect(() => roll(srcMatrix, arg)).toThrow()
+      }
+    })
+
+    it('should throw an error if something other than a string is passed for the column argument', () => {
+      for (let arg of [5, [], true, {}]) {
+        expect(() => roll(srcMatrix, 2, arg)).toThrow()
+      }
+    })
+
+    it('should roll the matrix forward or backward by the specified amount', () => {
+      expect(roll(srcMatrix, 1)).toEqual([
+        { number: 3, word: 'three' },
+        { number: 1, word: 'one' },
+        { number: 2, word: 'two' }
+      ])
+
+      expect(roll(srcMatrix, -1)).toEqual([
+        { number: 2, word: 'two' },
+        { number: 3, word: 'three' },
+        { number: 1, word: 'one' }
+      ])
+
+      expect(roll(srcMatrix, srcMatrix.length)).toEqual(srcMatrix)
+      expect(roll(srcMatrix, -srcMatrix.length)).toEqual(srcMatrix)
+    })
+
+    it('should throw an error if the specified column is not found', () => {
+      expect(() => roll(srcMatrix, 2, 'imaginary')).toThrow()
+    })
+
+    it('should only roll the values of the specified column', () => {
+      expect(roll(srcMatrix, 1, 'word')).toEqual([
+        { number: 1, word: 'three' },
+        { number: 2, word: 'one' },
+        { number: 3, word: 'two' }
+      ])
+
+      expect(roll(srcMatrix, -1, 'number')).toEqual([
+        { number: 2, word: 'one' },
+        { number: 3, word: 'two' },
+        { number: 1, word: 'three' }
+      ])
+
+      expect(roll(srcMatrix, srcMatrix.length, 'number')).toEqual(srcMatrix)
+      expect(roll(srcMatrix, -srcMatrix.length, 'number')).toEqual(srcMatrix)
+    })
   })
 
   describe('weight()', () => {
+    it('should throw an error if the wrong datatype is passed for matrix', () => {
+      for (let arg of [5, '5', true, {}]) {
+        expect(() => weight(arg)).toThrow()
+      }
+    })
 
+    it('should throw an error if something other than a string is passed as the second argument', () => {
+      for (let arg of [true, {}, []]) {
+        expect(() => weight(srcMatrix, arg)).toThrow()
+      }
+    })
+
+    it('should throw an error if the weight column is not found in the matrix', () => {
+      expect(() => weight(srcMatrix, 'aaa')).toThrow(`Column 'aaa' not found in matrix`)
+    })
+
+    // it('should remove items with weight 0', () => {
+    //   srcMatrix[0].w = 0
+    //   srcMatrix[0].w = 1
+    //   srcMatrix[0].w = 1
+    //   expect(weight(srcMatrix, 'w')).toEqual()
+    // })
   })
 })

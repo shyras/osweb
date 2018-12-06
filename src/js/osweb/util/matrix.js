@@ -3,10 +3,11 @@
  */
 import combos from 'combos'
 import {
-  isNumber,
-  toNumber,
+  isInteger,
   isArray,
+  isPlainObject,
   isString,
+  isEmpty,
   shuffle,
   zip,
   zipObject,
@@ -22,6 +23,9 @@ import {
  * @returns {Object}
  */
 export function unstack (srcMatrix) {
+  if (!isArray(srcMatrix)) {
+    throw new TypeError('srcMatrix should be an array')
+  }
   return Object.values(srcMatrix).reduce((acc, cycle) => {
     for (const [key, val] of Object.entries(cycle)) {
       if (key in acc) {
@@ -40,6 +44,9 @@ export function unstack (srcMatrix) {
  * @returns {array}
  */
 export function stack (srcMatrix) {
+  if (!isPlainObject(srcMatrix)) {
+    throw new TypeError('srcMatrix should be an object')
+  }
   const columns = Object.keys(srcMatrix)
   const rows = zip(...Object.values(srcMatrix))
   return rows.map(row => zipObject(columns, row))
@@ -59,15 +66,18 @@ export function fullfactorial (matrix) {
  * is specified, only the rows in this column are shuffled.
  *
  * @export
- * @param {array} matrix The matrix to be shuffles
+ * @param {array} matrix The matrix to be shuffled
  * @param {array} columns  Array containing the variable/column to be shuffled
  * @returns {array}
  */
 export function shuffleVert (matrix, columns) {
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
+  }
   if (typeof (columns) === 'undefined' || (isArray(columns) && columns.length === 0)) {
     return shuffle(matrix)
   } else if (!isArray(columns)) {
-    throw new TypeError('Invalid argument for columns specified to shuffleVert. Expects an array containing column names')
+    throw new TypeError('Invalid argument for columns passed to shuffleVert. Expects an array containing column names')
   } else {
     let grouped = unstack(matrix)
     let cols = pick(grouped, columns)
@@ -89,6 +99,9 @@ export function shuffleVert (matrix, columns) {
  * @returns {array}
  */
 export function shuffleHoriz (matrix, columns) {
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
+  }
   if (typeof columns === 'undefined') columns = []
   if (!isArray(columns)) {
     throw new TypeError('Invalid argument specified to shuffleHoriz. Expects an array that optionally contains column names to shuffle')
@@ -114,6 +127,9 @@ export function shuffleHoriz (matrix, columns) {
  * @returns array
  */
 export function sortCol (matrix, col) {
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
+  }
   if (!isString(col) || col === '') {
     throw new Error('Invalid argument specified to sortCol. Expects a column name')
   }
@@ -131,6 +147,9 @@ export function sortCol (matrix, col) {
  * @returns {array}
  */
 export function reverseRows (matrix, columns) {
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
+  }
   if (typeof columns === 'undefined') columns = []
   if (!isArray(columns)) {
     throw new TypeError('Invalid argument specified to reverseRows. Expects an array containing a column name')
@@ -140,6 +159,9 @@ export function reverseRows (matrix, columns) {
   } else {
     let grouped = unstack(matrix)
     let cols = pick(grouped, columns)
+    if (isEmpty(cols)) {
+      throw new ReferenceError(`one or more of ${columns} were not found in the matrix`)
+    }
     cols = Object.entries(cols).reduce((prev, [key, values]) => {
       prev[key] = reverse(values)
       return prev
@@ -157,13 +179,28 @@ export function reverseRows (matrix, columns) {
  * @returns array
  */
 export function roll (matrix, amount, column) {
-  if (!isNumber(toNumber(amount))) {
-    throw new TypeError(`First argument to roll needs to be an integer, was ${amount}`)
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
   }
-  if (!isString(column) || column === '') {
+  // operate on a copy of the array to preserve the original
+  matrix = [...matrix]
+
+  amount = parseInt(amount)
+  if (!isInteger(amount)) {
+    throw new TypeError(`amount needs to be an integer, was ${amount}`)
+  }
+
+  if (!column) {
     return rollN(matrix, amount)
+  }
+
+  if (!isString(column)) {
+    throw new TypeError(`column expects a string, was ${column}`)
   } else {
     let grouped = unstack(matrix)
+    if (!grouped.hasOwnProperty(column)) {
+      throw new ReferenceError(`Could not find column ${column} in matrix`)
+    }
     grouped[column] = rollN(grouped[column], amount)
     return stack(grouped)
   }
@@ -196,13 +233,19 @@ function rollN (list, amount) {
  * @param {string} weightCol The colom to use for weight values
  */
 export function weight (matrix, weightCol) {
+  if (!isArray(matrix)) {
+    throw new TypeError('matrix should be of type array')
+  }
   if (!isString(weightCol)) {
     throw new TypeError('Invalid argument passed to weight. Expects a column name')
   }
+  if (!matrix[0].hasOwnProperty(weightCol)) {
+    throw new ReferenceError(`Column '${weightCol}' not found in matrix`)
+  }
   return matrix.reduce((result, item) => {
-    const weight = toNumber(item[weightCol])
-    if (!isNumber(weight)) {
-      throw new TypeError('Specified weight value is not a number')
+    const weight = parseInt(item[weightCol])
+    if (!isInteger(weight)) {
+      throw new TypeError('Specified weight value is not an integer')
     }
     for (let i = 0; i < weight; i++) {
       result.push(item)
