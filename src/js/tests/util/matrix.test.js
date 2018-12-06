@@ -239,11 +239,31 @@ describe('Matrix functions', () => {
       expect(() => weight(srcMatrix, 'aaa')).toThrow(`Column 'aaa' not found in matrix`)
     })
 
-    // it('should remove items with weight 0', () => {
-    //   srcMatrix[0].w = 0
-    //   srcMatrix[0].w = 1
-    //   srcMatrix[0].w = 1
-    //   expect(weight(srcMatrix, 'w')).toEqual()
-    // })
+    it('should remove items with weight 0', () => {
+      srcMatrix[0].w = 0
+      srcMatrix[1].w = 1
+      srcMatrix[2].w = 1
+      expect(weight(srcMatrix, 'w')).toEqual([
+        { number: 2, word: 'two', w: 1 },
+        { number: 3, word: 'three', w: 1 }
+      ])
+    })
+
+    it('should duplicate items by their designated weight', () => {
+      srcMatrix[0].w = 1
+      srcMatrix[1].w = 2
+      srcMatrix[2].w = 1
+      expect(weight(srcMatrix, 'w')).toEqual([
+        { number: 1, word: 'one', w: 1 },
+        { number: 2, word: 'two', w: 2 },
+        { number: 2, word: 'two', w: 2 },
+        { number: 3, word: 'three', w: 1 }
+      ])
+    })
+
+    it('should throw an error when a weight value is missing', () => {
+      srcMatrix[1].w = 2
+      expect(() => weight(srcMatrix, 'w')).toThrow()
+    })
   })
 })
