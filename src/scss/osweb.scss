@@ -1,7 +1,4 @@
 /*  osweb CSS Definitions */
-
-
-
 html, body {
   width: 100%;
   height: 100%;
@@ -10,6 +7,23 @@ html, body {
 // #osweb_div {
 //   background-color: #000000;
 // }
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.stretch {
+  flex: 1;
+  height: 100%
+}
 
 .osweb-canvas-container{
   position: relative;
