@@ -44,7 +44,7 @@ define sketchpad Partial_intro
 define sketchpad extro
 	set duration keypress
 	set description "Displays stimuli"
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="That's it! Free to fly again..." x=0 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=30 html=yes show_if=always text="That's all folks!" x=0 y=0 z_index=0
 
 define sketchpad ff_display
 	set duration keypress
@@ -564,6 +564,7 @@ define sketchpad weight_intro
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="This section tests the weight operation of a loop.<br /><br />You should <b>not</b> see the word zero.<br />You should see the word 'one' for one keypress<br />You should see the word 'two' for two keypresses<br />You should see the word 'three' for three keypresses.<br /><br />Press a key to start" x=0 y=0 z_index=0
 
 define loop weight_slides
+	set source_file ""
 	set source table
 	set repeat 1
 	set order sequential

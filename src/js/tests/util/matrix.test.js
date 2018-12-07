@@ -265,5 +265,10 @@ describe('Matrix functions', () => {
       srcMatrix[1].w = 2
       expect(() => weight(srcMatrix, 'w')).toThrow()
     })
+
+    it('should throw an error when a weight value is not an int', () => {
+      srcMatrix[0].w = 'an apple a day...'
+      expect(() => weight(srcMatrix, 'w')).toThrow()
+    })
   })
 })
