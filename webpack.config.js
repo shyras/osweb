@@ -43,7 +43,8 @@ module.exports = (env, args) => {
     mode: isDevServer ? 'development' : args.mode,
     devtool: (isDevServer || args.mode === 'development') ? 'cheap-module-source-map' : 'source-map',
     entry: {
-      osweb: [path.join(__dirname, 'src', 'app.js')]
+      osweb: [path.join(__dirname, 'src', 'app.js')],
+      extra: [path.join(__dirname, 'src', 'extra.js')]
     },
     output: {
       path: path.join(__dirname, 'public_html'),
