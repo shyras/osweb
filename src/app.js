@@ -9,6 +9,7 @@ import osweb from './js/osweb/index.js'
 if (typeof window !== 'undefined') {
   window.alertify = require('alertifyjs')
   require('alertifyjs/build/css/alertify.css')
+  require('alertifyjs/build/css/themes/default.css')
   window.osweb = osweb
   window.osweb.printVersionInfo()
 }
