@@ -36,7 +36,7 @@ Alternatively, you can start a development server with:
 
     npm start
 
-Once the development server is started, you can visit `http://localhost:8080` in your browser and you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser.
+Once it is started, you can visit `http://localhost:3000` in your browser and you should see the osweb interface. The devserver is especially useful if you are working on the source of osweb itself, because it employs hot module reloading (HMR). This implies that whenever you change a file and save it to disk, it is automatically reloaded in the browser without having to refresh the page each time.
 
 ## Unit tests
 
