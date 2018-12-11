@@ -140,8 +140,12 @@ export default class ItemStore {
 
       return this._items[name]
     } else {
-      // Unkwone class definition, show error message.
-      this._runner._debugger.addError('Unknown class definition within osweb script: ' + type)
+      // Unknown class definition, show error message.
+      this._runner._debugger.addError('The item "' + type + '" is not yet supported by osweb', {
+        notify: true,
+        url: 'https://osdoc.cogsci.nl/manual/osweb/#supported-functionality'
+      })
+      this._runner.exit()
     }
   }
 

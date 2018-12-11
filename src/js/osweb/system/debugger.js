@@ -2,6 +2,9 @@ import {
   constants
 } from './constants.js'
 
+import isFunction from 'lodash/isFunction'
+import isPlainObject from 'lodash/isPlainObject'
+
 /** Class representing a debugger. */
 export default class Debugger {
   /**
@@ -39,7 +42,7 @@ export default class Debugger {
    * Show a fatal error to the user and stops the running of the experiment.
    * @param {String} errorText - The error shown to the user.
    */
-  addError (errorText) {
+  addError (errorText, context = null) {
     // Set the error flag.
     this.error = true
 
@@ -49,6 +52,13 @@ export default class Debugger {
     // Throw the exception.
     console.error('OSWeb has stopped running due to a fatal error.')
     console.error(errorText)
+
+    if (isPlainObject(context)) {
+      if (context.notify === true && isFunction(this._runner._onError)) {
+        const url = context.url || null
+        this._runner._onError(errorText, url)
+      }
+    }
   }
 
   /**

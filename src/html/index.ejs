@@ -112,6 +112,7 @@
 			onConsole: onConsoleHandler,
 			onFinished: onFinishedHandler,
 			onLog: onLogHandler,
+			onError: errorHandler,
 			prompt: prompt,
 			scaleMode: 'exactFit',
 			source: null,
@@ -131,7 +132,7 @@
 			alertify.dialog('errorAlert', function factory() {
 				return {
 					build: function () {
-						var errorHeader = '<span class="fa fa-times-circle fa-2x" ' +
+						var errorHeader = '<img src="<%= require('../img/warning.png') %>"' +
 							'style="vertical-align:middle;color:#e10000;">' +
 							'</span> Application Error';
 						this.setHeader(errorHeader);
@@ -140,11 +141,15 @@
 			}, true, 'alert');
 		}
 
-		// Set event callback for handling error messages using alertify.
-		window.onerror = function (msg, url, line, col, error) {
-			var text = '<p><b>' + msg + '</b></p>' + '<p>See console for further details</p>';
+		// Callback function to handle errors
+		function errorHandler (msg, url, line, col, error) {
+			let text = '<p><b>' + msg + '</b></p>'
+			text += '<p>See ' + (url ? '<a href="'+url+'" target="_BLANK">this source</a>':'the console') + ' for further details</p>';
 			alertify.errorAlert(text);
 		}
+
+		// Set event callback for handling error messages using alertify.
+		window.onerror = errorHandler
 
 		// Prevent the run/stop button from keeping focus after the subject nr dialog box is
 		// closed. Otherwise the stop button is activated when users press spacebar for a

@@ -32,6 +32,7 @@ export default class Runner {
     this._onConsole = null // Event handler for processing print messages.
     this._onFinished = null // Event handler for finishing the experiment.
     this._onLog = null // Event handler to call when logger is encountered.
+    this._onError = null // Event handler to call when an error is encountered.
     this._prompt = null // Optional prompt dialog function.
     this._renderer = null // PIXI: The visual stimuli renderer.
     this._scaleMode = 'noScale' // Scale type used for full screen mode.
@@ -106,6 +107,7 @@ export default class Runner {
         onConsole: this._onConsole = null,
         onFinished: this._onFinished = null,
         onLog: this._onLog = null,
+        onError: this._onError = null,
         prompt: this._prompt = null,
         scaleMode: this._scaleMode = 'noScale',
         source: this._source = null,

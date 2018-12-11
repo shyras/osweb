@@ -1,0 +1,64 @@
+---
+API: 2.1
+OpenSesame: 3.2.6a4
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "New experiment"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set round_decimals 2
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/Users/daniel/Git/OpenSesame/opensesame_resources/templates"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set canvas_backend legacy
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run new_quest_staircase_init always
+	run new_quest_staircase_next always
+
+define quest_staircase_init new_quest_staircase_init
+	set var_test_value quest_test_value
+	set test_value_method quantile
+	set t_guess_sd 0.25
+	set t_guess 0.5
+	set p_threshold 0.75
+	set min_test_value 0
+	set max_test_value 1
+	set gamma 0.5
+	set description "Initializes a new Quest staircase procedure"
+	set delta 0.01
+	set beta 3.5
+
+define quest_staircase_next new_quest_staircase_next
+	set response_var correct
+	set description "Updates the Quest test value based on a response"
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.2 <i>Kafkaesque Koffka</i>" x=0 y=0 z_index=0
+
