@@ -144,7 +144,9 @@
 		// Callback function to handle errors
 		function errorHandler (msg, url, line, col, error) {
 			let text = '<p><b>' + msg + '</b></p>'
-			text += '<p>See ' + (url ? '<a href="'+url+'" target="_BLANK">this source</a>':'the console') + ' for further details</p>';
+			text += '<p>See ' + (url && url.includes('osdoc')
+				? '<a href="'+url+'" target="_BLANK">the osweb documentation</a>'
+				: 'the console') + ' for further details</p>';
 			alertify.errorAlert(text);
 		}
 
