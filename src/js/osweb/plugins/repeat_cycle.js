@@ -47,7 +47,7 @@ export default class RepeatCycle extends Item {
 
     // Run item only one time.
     if (this._status !== constants.STATUS_FINALIZE) {
-      if (this.epxeriment._runner._pythonWorkspace._eval(this._condition) === true) {
+      if (this.experiment._runner._pythonWorkspace._eval(this._condition) === true) {
         this.experiment.vars.repeat_cycle = 1
       }
 
