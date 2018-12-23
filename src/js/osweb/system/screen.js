@@ -278,6 +278,7 @@ export default class Screen {
       var clickHandler = function (event) {
         // Remove the handler.
         this._runner._renderer.view.removeEventListener('click', clickHandler)
+        this._runner._renderer.view.removeEventListener('touchstart', clickHandler)
 
         // Finalize the introscreen elements.
         this._clearIntroScreen()
@@ -288,6 +289,7 @@ export default class Screen {
 
       // Set the temporary mouse click.
       this._runner._renderer.view.addEventListener('click', clickHandler, false)
+      this._runner._renderer.view.addEventListener('touchstart', clickHandler, false)
     } else {
       // Finalize the introscreen elements.
       this._clearIntroScreen()
