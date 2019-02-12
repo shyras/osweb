@@ -6,6 +6,7 @@ import Sketchpad from '../items/sketchpad.js'
 import Feedback from '../items/feedback.js'
 // Scripts
 import InlineScript from '../items/inline_script.js'
+import InlineJavaScript from '../items/inline_javascript.js'
 // Responses
 import KeyboardResponse from '../items/keyboard_response.js'
 import MouseResponse from '../items/mouse_response'
@@ -62,6 +63,7 @@ export const itemClasses = {
   sketchpad: Sketchpad,
   feedback: Feedback,
   inline_script: InlineScript,
+  inline_javascript: InlineJavaScript,
   keyboard_response: KeyboardResponse,
   mouse_response: MouseResponse,
   logger: Logger,
