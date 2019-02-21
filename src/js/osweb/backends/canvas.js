@@ -500,7 +500,7 @@ export default class Canvas {
     const px = ctx.getImageData(0, 0, size, size)
 
     // Conver the orientation to radians.
-    orient = Math.PI * orient / 180
+    orient = Math.PI * orient / -180
     color1 = this._styles._convertColorValueToRGB(color1)
     color2 = this._styles._convertColorValueToRGB(color2)
 
