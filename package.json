@@ -120,17 +120,6 @@
 		},
 		"globals": {}
 	},
-	"babel": {
-		"plugins": [
-			"lodash",
-			"@babel/plugin-transform-runtime"
-		],
-		"presets": [
-			[
-				"@babel/preset-env"
-			]
-		]
-	},
 	"jest": {
 		"setupFiles": [
 			"./src/js/tests/setupEnv.js"
