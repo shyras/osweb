@@ -1,4 +1,4 @@
-export default function babelConfig (api) {
+module.exports = function babelConfig (api) {
   api.cache(true)
   return {
     'plugins': [
@@ -13,8 +13,7 @@ export default function babelConfig (api) {
     'env': {
       'test': {
         'presets': [
-          '@babel/preset-env',
-          '@babel/preset-react'
+          '@babel/preset-env'
         ]
       }
     }
