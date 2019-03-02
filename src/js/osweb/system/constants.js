@@ -1,6 +1,7 @@
 // Control elements
 import Loop from '../items/loop.js'
 import Sequence from '../items/sequence.js'
+import Coroutines from '../items/coroutines.js'
 // Slides
 import Sketchpad from '../items/sketchpad.js'
 import Feedback from '../items/feedback.js'
@@ -67,6 +68,7 @@ export const itemClasses = {
   logger: Logger,
   sampler: Sampler,
   synth: Synth,
+  coroutines: Coroutines,
   // Elements
   arrow: Arrow,
   circle: Circle,
