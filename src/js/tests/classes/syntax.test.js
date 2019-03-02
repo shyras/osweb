@@ -3,7 +3,6 @@ import mockConsole from 'jest-mock-console'
 import Runner from '../../osweb/system/runner'
 import Syntax from '../../osweb/classes/syntax'
 import PythonParser from '../../osweb/python/python'
-// import osweb from '../../osweb'
 import VarStore from '../../osweb/classes/var_store'
 
 const mockUpdateIntroScreen = jest.fn()

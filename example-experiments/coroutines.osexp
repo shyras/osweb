@@ -1,0 +1,82 @@
+---
+API: 2.1
+OpenSesame: 3.2.5
+Platform: nt
+---
+set width 1024
+set uniform_coordinates yes
+set title Coroutines
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend xpyriment
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend xpyriment
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run main_routines always
+
+define keyboard_response keyboard
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+
+define coroutines main_routines
+	set flush_keyboard yes
+	set end_after_item keyboard
+	set duration 10000
+	set description "Run items simultaneously"
+	run welcome end=0 runif=always start=0
+	run slide2 end=2000 runif=always start=2000
+	run slide3 end=4000 runif=always start=4000
+	run slide4 end=6000 runif=always start=6000
+	run keyboard end=10000 runif=always start=0
+
+define sketchpad slide2
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You have not done anything for a second" x=0 y=0 z_index=0
+
+define sketchpad slide3
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="And it all changes again..." x=0 y=0 z_index=0
+
+define sketchpad slide4
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Suit yourself. You will have to look at this slide forever..." x=0 y=0 z_index=0
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="Welcome<br />" x=0 y=0 z_index=0
+
