@@ -5,9 +5,15 @@
  */
 class VarStoreHandler {
 
-  get(target, prop) {
+  get (target, prop) {
+    // The VarStore sets a property on itself to bypass this proxy. This
+    // avoids feedback loops when the VarStore tries to get a variable without
+    // evaluating it.
+    if (target._bypass_proxy === true) {
+      return target[prop]
+    }
     return typeof target[prop] === 'string'
-      ? target.get(prop)
+      ? target.get(prop, null, true, null, false)
       : target[prop]
   }
 
@@ -24,16 +30,16 @@ export default class JavaScriptWorkspace {
      * Create a JavaScript workspace.
      * @param {Object} experiment - The experiment item to which the item belongs.
      */
-  constructor(experiment) {
+  constructor (experiment) {
     this.experiment = experiment
-    this.vars_proxy = new Proxy(this.experiment.vars, VarStoreHandler)
+    this.vars_proxy = new Proxy(this.experiment.vars, new VarStoreHandler())
   }
 
   /**
      * Executes JavaScript code in the workspace.
      * @param {String} js - JavaScript code to execute
      */
-  _eval(js) {
+  _eval (js) {
     let vars = this.vars_proxy
     eval(js)
   }

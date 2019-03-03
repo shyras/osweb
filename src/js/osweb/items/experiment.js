@@ -1,4 +1,5 @@
 import Item from './item.js'
+import JavaScriptWorkspace from '../classes/javascript_workspace.js'
 import Canvas from '../backends/canvas.js'
 import Log from '../backends/log'
 import {
@@ -25,6 +26,7 @@ export default class Experiment extends Item {
     this._log = new Log(this)
     this._scale_x = 1 // Scaling of the canvas for fullscreen mode.
     this._scale_y = 1 // Scaling of the canvas for fullscreen mode.
+    this._javascriptWorkspace = new JavaScriptWorkspace(this)
 
     // Create and set public properties.
     this.debug = this._runner._debugger.enabled

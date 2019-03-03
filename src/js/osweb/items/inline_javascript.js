@@ -1,5 +1,4 @@
 import Item from './item.js'
-import JavaScriptWorkspace from '../classes/javascript_workspace.js'
 
 /**
  * Class representing an inline item.
@@ -17,7 +16,7 @@ export default class InlineJavaScript extends Item {
     super(experiment, name, script)
     // Define and set the public properties.
     this.description = 'Executes JavaScript code (ECMA 5.1)'
-    this.workspace = new JavaScriptWorkspace(this.experiment)
+    this.workspace = experiment._javascriptWorkspace
     // Process the script
     console.log(this.vars)
     this.from_string(script)
