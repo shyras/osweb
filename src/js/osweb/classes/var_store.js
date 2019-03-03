@@ -17,33 +17,35 @@ export default class VarStore {
    * @param {Boolean|Number|String} defaultValue - The default value for the variable.
    * @param {Object} evaluate - The parent global var_store.
    * @param {Object} valid - The parent global var_store.
+   * @param {Boolean} addQuotes - The add quotes toggle.
    * @return {Boolean|Number|String} - The value of the given variable.
    */
-  get (variable, defaultValue, evaluate, valid) {
+  get (variable, defaultValue, evaluate, valid, addQuotes) {
     // Set the optional arguments
     defaultValue = (typeof defaultValue === 'undefined') ? null : defaultValue
     evaluate = (typeof evaluate === 'undefined') ? true : evaluate
     valid = (typeof valid === 'undefined') ? null : valid
-
     var value = null
-
     // Gets an experimental variable.
     if (variable in this) {
-      if (typeof this[variable] === 'string') {
-        value = this._item.syntax.eval_text(this[variable], null, true)
+      this._bypass_proxy = true // Avoid Proxy feedback loop
+      if (typeof this[variable] === 'string' && evaluate === true) {
+        value = this._item.syntax.eval_text(this[variable], null, addQuotes)
       } else {
         value = this[variable]
       }
+      this._bypass_proxy = false
     }
     // If value is not found locally, look in experiment object.
     if (value == null && this._parent && variable in this._parent) {
-      if (typeof this._parent[variable] === 'string') {
-        value = this._item.syntax.eval_text(this._parent[variable], null, true)
+      this._parent._bypass_proxy = true // Avoid Proxy feedback loop
+      if (typeof this._parent[variable] === 'string' && evaluate === true) {
+        value = this._item.syntax.eval_text(this._parent[variable], null, addQuotes)
       } else {
         value = this._parent[variable]
       }
+      this._parent._bypass_proxy = false
     }
-
     // Return function result.
     return value
   }
