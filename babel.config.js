@@ -3,7 +3,8 @@ module.exports = function babelConfig (api) {
   return {
     'plugins': [
       'lodash',
-      '@babel/plugin-transform-runtime'
+      '@babel/plugin-transform-runtime',
+      '@babel/plugin-proposal-class-properties'
     ],
     'presets': [
       ['@babel/preset-env', {

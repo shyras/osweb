@@ -107,9 +107,8 @@ export default class Item {
     if (this.parse_comment(line)) {
       return true
     } else {
-      let cmd, args, kwargs
       // Split the single line into a set of tokens.
-      [cmd, args, kwargs] = this._runner._syntax.parse_cmd(line)
+      const [cmd, args, kwargs] = this._runner._syntax.parse_cmd(line)
       if (cmd === 'set') {
         if (args.length !== 2) {
           this._runner._debugger.addError('Failed to parse definition: ' + line)
