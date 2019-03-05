@@ -1,0 +1,323 @@
+---
+API: 2.1
+OpenSesame: 3.2.7a2
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "Attentional Capture"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set sampler_backend legacy
+set round_decimals 2
+set mouse_backend legacy
+set keyboard_backend legacy
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set experiment_path "/home/sebastiaan/git/osweb/example-experiments"
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set color_backend legacy
+set clock_backend legacy
+set canvas_backend legacy
+set background "#37474F"
+
+define feedback block_feedback
+	set reset_variables yes
+	set duration keypress
+	set description "Provides feedback to the participant"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text="Break!" x=0 y=-320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press any key to continue" x=0 y=320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Your average response time was [avg_rt] ms<br />Your accuracy was [acc] %" x=0 y=0 z_index=0
+
+define loop block_loop
+	set source table
+	set repeat 2
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 4
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 distractor present
+	setcycle 0 target_color "[COLOR1]"
+	setcycle 0 dist_color "[COLOR2]"
+	setcycle 1 distractor absent
+	setcycle 1 target_color "[COLOR1]"
+	setcycle 1 dist_color "[COLOR2]"
+	setcycle 2 distractor present
+	setcycle 2 target_color "[COLOR2]"
+	setcycle 2 dist_color "[COLOR1]"
+	setcycle 3 distractor absent
+	setcycle 3 target_color "[COLOR2]"
+	setcycle 3 dist_color "[COLOR1]"
+	run trial_sequence
+
+define sequence block_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run reset_feedback always
+	run block_loop always
+	run block_feedback always
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run init always
+	run instructions always
+	run experimental_loop always
+	run finished always
+
+define loop experimental_loop
+	set source table
+	set repeat 2
+	set order random
+	set description "Repeatedly runs another item"
+	set cycles 1
+	set continuous no
+	set break_if_on_first yes
+	set break_if never
+	setcycle 0 empty_column ""
+	run block_sequence
+
+define sketchpad finished
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text="Finished!" x=0 y=-320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press any key to exit" x=0 y=320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="The experiment is finished<br />Thank you for your participation!" x=0 y=0 z_index=0
+
+define sketchpad fixation_dot
+	set start_response_interval no
+	set reset_variables no
+	set duration 495
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+
+define sketchpad green_dot
+	set duration 495
+	set description "Displays stimuli"
+	draw textline center=1 color="#8BC34A" font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text="&#x1F603;" x=0 y=0 z_index=0
+
+define inline_javascript init
+	set description "Executes JavaScript code (ECMA 5.1)"
+	set _run ""
+	___prepare__
+	vars.LEFT = '&#9680;'
+	vars.RIGHT = '&#9681;'
+	vars.BOTTOM= '&#9682;'
+	vars.TOP = '&#9683;'
+	vars.RESP_LEFT = 'c'
+	vars.RESP_RIGHT = 'm'
+	vars.COLOR1 = '#E91E63'
+	vars.COLOR2 = '#2196F3'
+	__end__
+
+define sequence instructions
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run instructions1 always
+	run instructions2 always
+	run wait_left always
+	run instructions3 always
+	run wait_right always
+	run instructions4 always
+	run logger always
+
+define sketchpad instructions1
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text=Instructions x=0 y=-320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You will see several shapes<br />Ignore the colors<br /><br />One shape is filled on the left or the right. This is the target!<br />Indicate which side of the target is filled<br />" x=0 y=-160 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[LEFT]" x=-224 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press '[RESP_LEFT]' to indicate 'left'" x=-224 y=96 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[RIGHT]" x=224 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press '[RESP_RIGHT]' to indicate right" x=224 y=96 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press any key to see an example" x=0 y=320 z_index=0
+
+define sketchpad instructions2
+	set duration 0
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[LEFT]" x=200 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=1 penwidth=1 show_if=always x1=320 x2=224 y1=-128 y2=-32 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text=Target x=320 y=-160 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Here the target is filled on the left<br />So press '[RESP_LEFT]' to continue" x=0 y=320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text=Instructions x=0 y=-320 z_index=0
+
+define sketchpad instructions3
+	set duration 0
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=200 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[RIGHT]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text=Target x=-352 y=-288 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Here the target is filled on the right<br />So press '[RESP_RIGHT]' to continue" x=0 y=320 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text=Instructions x=0 y=-320 z_index=0
+	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=1 penwidth=1 show_if=always x1=-320 x2=-160 y1=-256 y2=-192 z_index=0
+
+define sketchpad instructions4
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Ready?" x=0 y=-96 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press any key to start" x=0 y=96 z_index=0
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+
+define keyboard_response keyboard_response
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses "c;m"
+
+define logger logger
+	set description "Logs experimental data"
+	set auto_log yes
+
+define sketchpad red_dot
+	set duration 495
+	set description "Displays stimuli"
+	draw textline center=1 color="#f44336" font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text="&#x1F611;" x=0 y=0 z_index=0
+
+define reset_feedback reset_feedback
+	set description "Resets the feedback variables, such as 'avg_rt' and 'acc'"
+
+define sketchpad search_display
+	set duration 0
+	set description "Displays stimuli"
+	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
+	draw textline center=1 color="[c1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s1]" x=200 y=0 z_index=0
+	draw textline center=1 color="[c2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s2]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[c3]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s3]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[c4]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s4]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[c5]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s5]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[c6]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s6]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+
+define inline_javascript trial_script
+	set description "Executes JavaScript code (ECMA 5.1)"
+	set _run ""
+	___prepare__
+	function shuffle(array) {
+	    let counter = array.length;
+		while (counter > 0) {
+	        let index = Math.floor(Math.random() * counter);
+	        counter--;
+	        let temp = array[counter];
+	        array[counter] = array[index];
+	        array[index] = temp;
+	    }
+	    return array
+	}
+	
+	function random_pos(exclude) {
+		let pos = [1, 2, 3, 4, 5, 6]
+		if (typeof exclude != 'undefined') {
+			pos.splice(exclude - 1, 1)
+		}
+		pos = shuffle(pos)
+		return pos[0]
+	}
+	
+	function target_symbol() {
+		return shuffle([vars.LEFT, vars.RIGHT])[0]
+	}
+	
+	function dist_symbol() {
+		return shuffle([vars.TOP, vars.BOTTOM])[0]
+	}
+	
+	let symbols = [
+		dist_symbol(),
+		dist_symbol(),
+		dist_symbol(),
+		dist_symbol(),
+		dist_symbol(),
+		dist_symbol()
+	]
+	
+	let colors = [
+		vars.target_color,
+		vars.target_color,
+		vars.target_color,
+		vars.target_color,
+		vars.target_color,
+		vars.target_color
+	]
+	
+	
+	vars.dist_pos = (vars.distractor == 'present')
+		? random_pos()
+		: undefined
+	vars.target_pos = random_pos(vars.dist_pos)
+	vars.target_symbol = target_symbol()
+	vars.correct_response = (vars.target_symbol == vars.LEFT)
+		? vars.RESP_LEFT
+		: vars.RESP_RIGHT
+	colors[vars.dist_pos - 1] = vars.dist_color
+	symbols[vars.target_pos - 1] = vars.target_symbol
+	
+	vars.s1 = symbols[0]
+	vars.s2 = symbols[1]
+	vars.s3 = symbols[2]
+	vars.s4 = symbols[3]
+	vars.s5 = symbols[4]
+	vars.s6 = symbols[5]
+	
+	vars.c1 = colors[0]
+	vars.c2 = colors[1]
+	vars.c3 = colors[2]
+	vars.c4 = colors[3]
+	vars.c5 = colors[4]
+	vars.c6 = colors[5]
+	__end__
+
+define sequence trial_sequence
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run trial_script always
+	run fixation_dot always
+	run search_display always
+	run keyboard_response always
+	run green_dot "[correct] = 1"
+	run red_dot "[correct] = 0"
+
+define keyboard_response wait_left
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses c
+
+define keyboard_response wait_right
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+	set allowed_responses m
+
