@@ -88,6 +88,7 @@ export default class KeyboardResponse extends GenericResponse {
     this.set_sri()
     let proceed = true
     this.response = null
+    console.log(this.response)
     while (!this.response && proceed) {
       proceed = yield true
     }
