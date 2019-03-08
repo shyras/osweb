@@ -88,8 +88,6 @@ export default class MouseResponse extends GenericResponse {
   }
 
   * coroutine () {
-    console.log('Starting', this.name)
-
     const mouseDownHandler = (event) => {
       this.response = this.experiment._runner._events._processMouseEvent(event, 1)
     }
@@ -101,13 +99,8 @@ export default class MouseResponse extends GenericResponse {
       this.response = this.experiment._runner._events._processMouseEvent(event, 1)
     }
 
-    const mouseUpHandler = (event) => {
-      this.response = this.experiment._runner._events._processMouseEvent(event, 0)
-    }
-
     window.addEventListener('mousedown', mouseDownHandler)
     window.addEventListener('touchstart', touchHandler)
-    window.addEventListener('mouseup', mouseUpHandler)
 
     yield
     // Show the cursor if defined.
@@ -118,10 +111,6 @@ export default class MouseResponse extends GenericResponse {
     // Record the onset of the current item.
     this.set_item_onset()
 
-    // Flush responses, to make sure that earlier responses are not carried over.
-    if (this._flush === 'yes') {
-      this._mouse.flush()
-    }
     this.set_sri()
     let proceed = true
     this.response = null
@@ -130,7 +119,6 @@ export default class MouseResponse extends GenericResponse {
     }
     window.removeEventListener('mousedown', mouseDownHandler)
     window.removeEventListener('touchstart', touchHandler)
-    window.removeEventListener('mouseup', mouseUpHandler)
     this.process_response_mouseclick(this.response)
   }
 }
