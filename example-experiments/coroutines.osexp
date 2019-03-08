@@ -1,7 +1,7 @@
 ---
 API: 2.1
 OpenSesame: 3.2.5
-Platform: nt
+Platform: posix
 ---
 set width 1024
 set uniform_coordinates yes
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "D:/Users/Daniel/Documents/GitHub/osweb/example-experiments"
+set experiment_path "/Users/daniel/Sites/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -44,7 +44,7 @@ define sketchpad End
 define sequence experiment
 	set flush_keyboard yes
 	set description "Runs a number of items in sequence"
-	run welcome never
+	run welcome always
 	run main_routines always
 	run End always
 
