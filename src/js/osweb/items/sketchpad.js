@@ -107,9 +107,7 @@ export default class Sketchpad extends GenericResponse {
   }
 
   * coroutine () {
-    console.log('Starting', this.name)
     yield
     this.set_item_onset(this.canvas.show())
-    yield
   }
 }

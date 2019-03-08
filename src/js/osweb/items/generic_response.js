@@ -71,7 +71,7 @@ export default class GenericResponse extends Item {
       this._allowed_responses = null
     } else {
       // Create a list of allowed responses that are separated by semicolons. Also trim any whitespace.
-      var allowed_responses = String(this.vars.allowed_responses).split(';')
+      var allowed_responses = this.vars.get('allowed_responses').split(';').map(key => key.trim())
       if (this.vars.duration === 'keypress') {
         // this._allowed_responses = allowed_responses;
         this._allowed_responses = this._keyboard._get_default_from_synoniem(allowed_responses)
@@ -235,11 +235,6 @@ export default class GenericResponse extends Item {
           }
         } else {
           this.experiment.vars.correct = 'undefined'
-          /* if self.experiment.response in (correct_response, safe_decode(correct_response)):
-              self.experiment.var.correct = 1
-              self.experiment.var.total_correct += 1
-            else:
-              self.experiment.var.correct = 0 */
         }
       } else {
         // If a correct_response hasn't been defined, we simply set correct to undefined.

@@ -110,7 +110,7 @@ export default class Syntax {
    * @param {Boolean} addQuotes - The add quotes toggle.
    * @return {Boolean|Number|Object|String} - The result of the evaluated text.
    */
-  eval_text (text, vars, addQuotes) {
+  eval_text (text, vars, addQuotes = false) {
     // if pTxt is an object then it is a parsed python expression.
     if (isObject(text)) {
       return this._runner._pythonParser._run_statement(text)

@@ -1,6 +1,8 @@
-import Item from './item.js'
 import sortBy from 'lodash/sortBy'
 import isFunction from 'lodash/isFunction'
+
+import Item from './item.js'
+import { constants } from '../system/constants.js'
 
 /**
  * Class representing coroutines
@@ -12,7 +14,9 @@ export default class Coroutines extends Item {
     super(experiment, name, script)
     // Definition of public properties.
     this.description = 'Repeatedly runs another item'
-    // The variable that holds all child coroutine items
+    // The tasks to perform
+    this.tasks = []
+    // The tasks to perform this iteration
     this.schedule = []
     // Process the script.
     this.from_string(script)
@@ -33,24 +37,27 @@ export default class Coroutines extends Item {
           end_time: kwdict.end || 0,
           run_if: kwdict.runif || 'always'
         }
-        this.schedule.push(task)
+        this.tasks.push(task)
       }
     }
   }
 
   prepare () {
-    this.schedule = this.schedule.reduce((result, taskParams) => {
-      const item = this._runner._itemStore._items[taskParams.item_name]
+    this._runner._debugger.addMessage(`Preparing coroutines item '${this.name}'`)
+    this.schedule = this.tasks.reduce((result, taskParams) => {
+      const item_name = this._runner._syntax.eval_text(taskParams.item_name, this.vars)
+      const item = this._runner._itemStore._items[item_name]
       if (!item) {
-        const msg = `Coroutines '${name}' - could not find item: ${taskParams.item_name}`
+        const msg = `Coroutines '${this.name}' - could not find item: ${item_name}`
         this._runner._debugger.addError(msg)
         throw new Error(msg)
       }
-      // Set the workspace.
       this._runner._pythonWorkspace['self'] = this
       if (this._runner._pythonWorkspace._eval(taskParams.run_if) === true) {
-        result.push(new Task(item, ...Object.values(taskParams),
-          taskParams.item_name === this.vars.end_after_item))
+        const start_time = this._runner._syntax.eval_text(taskParams.start_time, this.vars)
+        const end_time = this._runner._syntax.eval_text(taskParams.end_time, this.vars)
+        result.push(new Task(item, item_name, start_time, end_time,
+          taskParams.item_name === this.vars.get('end_after_item')))
       }
       return result
     }, [])
@@ -58,6 +65,7 @@ export default class Coroutines extends Item {
   }
 
   run () {
+    this._runner._debugger.addMessage(`Running coroutines item '${this.name}'`)
     super.run()
     // Prepare all tasks
     for (let task of this.schedule) {
@@ -66,6 +74,7 @@ export default class Coroutines extends Item {
     this.schedule = sortBy(this.schedule, 'start_time')
     // Launch all tasks and wrap them in the coroutine helper
     for (let task of this.schedule) {
+      this._runner._debugger.addMessage(`Launching task '${task.item_name}'`)
       task.launch()
     }
 
@@ -99,16 +108,17 @@ export default class Coroutines extends Item {
     }
 
     this.dt = performance.now() - this.t0
-    if (this.running && this.dt < this.vars.duration) {
+    if (this.running && this.dt < this.vars.get('duration') &&
+      ![constants.TIMER_BREAK, constants.TIMER_EXIT, constants.TIMER_ERROR]
+        .includes(this._runner._events._state)) {
       setTimeout(this._loop.bind(this), 0) // The well-known trick to deal with JS async nature...
     } else {
+      // Kill all remaining tasks
+      for (let task of this.active) {
+        this._runner._debugger.addMessage(`Killing task '${task.item_name}'`)
+        task.kill()
+      }
       this._complete()
-    }
-  }
-
-  _finish () {
-    for (let task of this.active) {
-      task.kill()
     }
   }
 }
@@ -170,7 +180,6 @@ class Task {
   }
 
   kill () {
-    console.log(`Killing ${this.item_name}`)
     let response = this._coroutine.next(false)
     if (response.done === true) {
       this.state = this.FINISHED

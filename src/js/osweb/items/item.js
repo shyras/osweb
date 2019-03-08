@@ -27,7 +27,7 @@ export default class Item {
     this._status = constants.STATUS_FINALIZE
 
     // Implements the complete phase of the item.
-    if (this._parent !== null) {
+    if (this._parent !== null && this._runner._events._currentItem) {
       // Return the process control to the parent of the element.
       this._runner._events._currentItem = this._parent
       this._runner._events._currentItem.run()

@@ -119,6 +119,6 @@ export default class MouseResponse extends GenericResponse {
     }
     window.removeEventListener('mousedown', mouseDownHandler)
     window.removeEventListener('touchstart', touchHandler)
-    this.process_response_mouseclick(this.response)
+    if (this.response) this.process_response_mouseclick(this.response)
   }
 }

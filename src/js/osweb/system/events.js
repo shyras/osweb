@@ -371,12 +371,6 @@ export default class Events {
         // Do nothing in the loop
         break
       case constants.TIMER_BREAK:
-        // Adjus the status.
-        this._state = constants.TIMER_NONE
-
-        // Exit the runner.
-        this._runner._finalize()
-        break
       case constants.TIMER_EXIT:
         // Adjus the status.
         this._state = constants.TIMER_NONE
