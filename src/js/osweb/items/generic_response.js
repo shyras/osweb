@@ -74,8 +74,10 @@ export default class GenericResponse extends Item {
     } else {
       // Create a list of allowed responses that are separated by semicolons.
       // Also trim any whitespace.
-      const allowed_responses = this.vars.get('allowed_responses').split(';')
-        .map(item => item.replace(/^"(.*)"$/g, '$1').trim())
+      const allowed_responses = String(this.vars.get('allowed_responses')).split(';')
+        .map(item => (typeof item === 'string')
+          ? item.replace(/^"(.*)"$/g, '$1').trim()
+          : item)
       if (this.vars.duration === 'keypress') {
         // this._allowed_responses = allowed_responses;
         this._allowed_responses = this._keyboard._get_default_from_synoniem(allowed_responses)
