@@ -50,9 +50,11 @@ export default class GenericResponse extends Item {
   _update (response) {
     if (response !== null) {
       // Implements the update response phase of the item.
-      if ((this._responsetype === constants.RESPONSE_KEYBOARD) && (response.type === constants.RESPONSE_KEYBOARD)) {
+      if ((this._responsetype === constants.RESPONSE_KEYBOARD) &&
+        (response.type === constants.RESPONSE_KEYBOARD)) {
         this.process_response_keypress(response)
-      } else if ((this._responsetype === constants.RESPONSE_MOUSE) && (response.type === constants.RESPONSE_MOUSE)) {
+      } else if ((this._responsetype === constants.RESPONSE_MOUSE) &&
+        (response.type === constants.RESPONSE_MOUSE)) {
         this.process_response_mouseclick(response)
       }
     }
@@ -70,8 +72,10 @@ export default class GenericResponse extends Item {
     if (this.vars.get('allowed_responses') === null) {
       this._allowed_responses = null
     } else {
-      // Create a list of allowed responses that are separated by semicolons. Also trim any whitespace.
-      var allowed_responses = String(this.vars.allowed_responses).split(';')
+      // Create a list of allowed responses that are separated by semicolons.
+      // Also trim any whitespace.
+      const allowed_responses = this.vars.get('allowed_responses').split(';')
+        .map(item => item.trim().replace(/^"(.*)"$/g, '$1'))
       if (this.vars.duration === 'keypress') {
         // this._allowed_responses = allowed_responses;
         this._allowed_responses = this._keyboard._get_default_from_synoniem(allowed_responses)
@@ -82,7 +86,9 @@ export default class GenericResponse extends Item {
 
       // If allowed responses are provided, the list should not be empty.
       if (this._allowed_responses.length === 0) {
-        this.experiment._runner._debugger.addError('Defined responses are not valid in keyboard_response: ' + this.name + ' (' + this.vars.get('allowed_responses') + ')')
+        this.experiment._runner._debugger.addError(
+          'Defined responses are not valid in keyboard_response: ' +
+          this.name + ' (' + this.vars.get('allowed_responses') + ')')
       }
     }
   }
