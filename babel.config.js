@@ -1,8 +1,3 @@
-const babelCfg = {
-  'useBuiltIns': 'entry',
-  'modules': false
-}
-
 module.exports = function babelConfig (api) {
   api.cache(true)
   return {
@@ -12,12 +7,15 @@ module.exports = function babelConfig (api) {
       '@babel/plugin-proposal-class-properties'
     ],
     'presets': [
-      ['@babel/preset-env', babelCfg]
+      ['@babel/preset-env', {
+        'useBuiltIns': 'entry',
+        'modules': false
+      }]
     ],
     'env': {
       'test': {
         'presets': [
-          ['@babel/preset-env', babelCfg]
+          '@babel/preset-env'
         ]
       }
     }
