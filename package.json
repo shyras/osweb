@@ -95,6 +95,7 @@
 		"popper.js": "^1.15.0",
 		"postcss-loader": "^3.0.0",
 		"precss": "^4.0.0",
+		"regenerator-runtime": "^0.13.1",
 		"rimraf": "^2.6.3",
 		"sass-loader": "^7.1.0",
 		"style-loader": "^0.23.1",
@@ -128,5 +129,6 @@
 		"hooks": {
 			"pre-push": "npm test"
 		}
-	}
+	},
+	"browserslist": "> 0.25%, not dead"
 }
