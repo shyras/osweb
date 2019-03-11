@@ -66,6 +66,7 @@
 		"bootstrap": "^4.3.1",
 		"canvas": "^2.3.1",
 		"copy-webpack-plugin": "^5.0.0",
+		"core-js": "^2.6.5",
 		"css-loader": "^2.1.1",
 		"data-urls": "^1.1.0",
 		"del": "^4.0.0",
@@ -96,6 +97,7 @@
 		"popper.js": "^1.14.7",
 		"postcss-loader": "^3.0.0",
 		"precss": "^4.0.0",
+		"regenerator-runtime": "^0.13.1",
 		"rimraf": "^2.6.3",
 		"sass-loader": "^7.1.0",
 		"style-loader": "^0.23.1",
@@ -131,5 +133,6 @@
 		"hooks": {
 			"pre-push": "npm test"
 		}
-	}
+	},
+	"browserslist": "> 0.25%, not dead"
 }

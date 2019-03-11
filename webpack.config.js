@@ -66,9 +66,9 @@ module.exports = (env, args) => {
         use: {
           loader: 'babel-loader',
           options: {
-            cacheDirectory: true,
-            plugins: ['lodash'],
-            presets: ['@babel/preset-env']
+            cacheDirectory: true
+            // plugins: ['lodash'],
+            // presets: ['@babel/preset-env']
           }
         }
       },
