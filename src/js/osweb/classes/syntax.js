@@ -1,5 +1,6 @@
 import {
   isNumber,
+  toNumber,
   isObject,
   isString
 } from 'lodash'
@@ -112,13 +113,11 @@ export default class Syntax {
    */
   eval_text (text, vars, addQuotes) {
     // if pTxt is an object then it is a parsed python expression.
-    if (isObject(text)) {
-      return this._runner._pythonParser._run_statement(text)
-    };
+    if (isObject(text)) return this._runner._pythonParser._run_statement(text)
     // if pTxt is already a number simply return it
-    if (isNumber(text)) {
-      return text
-    }
+    if (isNumber(text)) return text
+    // Try to convert text to a number. If this succeeds return it.
+    if (!isNaN(toNumber(text))) return toNumber(text)
 
     text = this.escapeBrackets(text)
     /** The replacer function detects variable entries in the passed text
