@@ -195,7 +195,7 @@ define keyboard_response keyboard_response
 	set event_type keypress
 	set duration keypress
 	set description "Collects keyboard responses"
-	set allowed_responses "c;m"
+	set allowed_responses "[RESP_LEFT];[RESP_RIGHT]"
 
 define logger logger
 	set description "Logs experimental data"
@@ -314,7 +314,7 @@ define keyboard_response wait_left
 	set event_type keypress
 	set duration keypress
 	set description "Collects keyboard responses"
-	set allowed_responses c
+	set allowed_responses "[RESP_LEFT]"
 
 define keyboard_response wait_right
 	set timeout infinite
@@ -322,5 +322,5 @@ define keyboard_response wait_right
 	set event_type keypress
 	set duration keypress
 	set description "Collects keyboard responses"
-	set allowed_responses m
+	set allowed_responses "[RESP_RIGHT]"
 
