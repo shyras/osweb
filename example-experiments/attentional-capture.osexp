@@ -45,6 +45,7 @@ define feedback block_feedback
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Your average response time was [avg_rt] ms<br />Your accuracy was [acc] %" x=0 y=0 z_index=0
 
 define loop block_loop
+	set source_file ""
 	set source table
 	set repeat 2
 	set order random
@@ -83,6 +84,7 @@ define sequence experiment
 	run finished always
 
 define loop experimental_loop
+	set source_file ""
 	set source table
 	set repeat 2
 	set order random
@@ -125,6 +127,7 @@ define inline_javascript init
 	vars.RESP_RIGHT = 'm'
 	vars.COLOR1 = '#E91E63'
 	vars.COLOR2 = '#2196F3'
+	vars.FONT_SIZE = 128
 	__end__
 
 define sequence instructions
@@ -143,9 +146,9 @@ define sketchpad instructions1
 	set description "Displays stimuli"
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text=Instructions x=0 y=-320 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="You will see several shapes<br />Ignore the colors<br /><br />One shape is filled on the left or the right. This is the target!<br />Indicate which side of the target is filled<br />" x=0 y=-160 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[LEFT]" x=-224 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[LEFT]" x=-224 y=0 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press '[RESP_LEFT]' to indicate 'left'" x=-224 y=96 z_index=0
-	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[RIGHT]" x=224 y=0 z_index=0
+	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[RIGHT]" x=224 y=0 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press '[RESP_RIGHT]' to indicate right" x=224 y=96 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Press any key to see an example" x=0 y=320 z_index=0
 
@@ -153,12 +156,12 @@ define sketchpad instructions2
 	set duration 0
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[LEFT]" x=200 y=0 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
-	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[LEFT]" x=200 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
 	draw arrow arrow_body_length=0.8 arrow_body_width=0.5 arrow_head_width=30 color=white fill=1 penwidth=1 show_if=always x1=320 x2=224 y1=-128 y2=-32 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text=Target x=320 y=-160 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Here the target is filled on the left<br />So press '[RESP_LEFT]' to continue" x=0 y=320 z_index=0
@@ -168,12 +171,12 @@ define sketchpad instructions3
 	set duration 0
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=200 y=0 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
-	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[RIGHT]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
-	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=200 y=0 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[COLOR2]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[BOTTOM]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[BOTTOM]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[RIGHT]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[COLOR1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[TOP]" x=100.00000000000003 y=-173.20508075688772 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text=Target x=-352 y=-288 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=18 html=yes show_if=always text="Here the target is filled on the right<br />So press '[RESP_RIGHT]' to continue" x=0 y=320 z_index=0
 	draw textline center=1 color=white font_bold=no font_family=mono font_italic=no font_size=32 html=yes show_if=always text=Instructions x=0 y=-320 z_index=0
@@ -210,12 +213,12 @@ define sketchpad search_display
 	set duration 0
 	set description "Displays stimuli"
 	draw fixdot color=white show_if=always style=default x=0 y=0 z_index=0
-	draw textline center=1 color="[c1]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s1]" x=200 y=0 z_index=0
-	draw textline center=1 color="[c2]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s2]" x=100.00000000000003 y=173.20508075688772 z_index=0
-	draw textline center=1 color="[c3]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s3]" x=-99.99999999999996 y=173.20508075688775 z_index=0
-	draw textline center=1 color="[c4]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s4]" x=-200 y=2.4492935982947064e-14 z_index=0
-	draw textline center=1 color="[c5]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s5]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
-	draw textline center=1 color="[c6]" font_bold=no font_family=mono font_italic=no font_size=96 html=yes show_if=always text="[s6]" x=100.00000000000003 y=-173.20508075688772 z_index=0
+	draw textline center=1 color="[c1]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s1]" x=200 y=0 z_index=0
+	draw textline center=1 color="[c2]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s2]" x=100.00000000000003 y=173.20508075688772 z_index=0
+	draw textline center=1 color="[c3]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s3]" x=-99.99999999999996 y=173.20508075688775 z_index=0
+	draw textline center=1 color="[c4]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s4]" x=-200 y=2.4492935982947064e-14 z_index=0
+	draw textline center=1 color="[c5]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s5]" x=-100.00000000000009 y=-173.20508075688767 z_index=0
+	draw textline center=1 color="[c6]" font_bold=no font_family=mono font_italic=no font_size="[FONT_SIZE]" html=yes show_if=always text="[s6]" x=100.00000000000003 y=-173.20508075688772 z_index=0
 
 define inline_javascript trial_script
 	set description "Executes JavaScript code (ECMA 5.1)"
