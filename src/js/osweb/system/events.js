@@ -166,7 +166,7 @@ export default class Events {
       this._runner._screen._showPauseScreen()
     } else if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processKeyboardEvent(event, 1)
+      return this._processKeyboardEvent(event, 1)
     }
   }
 
@@ -178,7 +178,7 @@ export default class Events {
     // Only select this event when the collection mode is set for this.
     if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processKeyboardEvent(event, 0)
+      return this._processKeyboardEvent(event, 0)
     }
   }
 
@@ -189,7 +189,7 @@ export default class Events {
      */
   _processKeyboardEvent (event, keyboardState) {
     // Create a new keyboard response object.
-    var keyboardResponse = {
+    const keyboardResponse = {
       'event': event,
       'rtTime': this._runner._experiment.clock.time(),
       'state': keyboardState,
@@ -210,6 +210,7 @@ export default class Events {
       // Set the valid response given toggle.
       this._responseGiven = true
     }
+    return keyboardResponse
   }
 
   /** Prevent the right mouse context menu from showing. */
@@ -258,7 +259,7 @@ export default class Events {
     // Only select this event when the collection mode is set for this.
     if ((this._state === constants.TIMER_WAIT) && ((this._mousePressMode === constants.PRESSES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processMouseEvent(event, 1)
+      return this._processMouseEvent(event, 1)
     }
   }
 
@@ -301,6 +302,7 @@ export default class Events {
       // Set the valid response given toggle.
       this._responseGiven = true
     }
+    return mouseResponse
   }
 
   /**
@@ -369,12 +371,6 @@ export default class Events {
         // Do nothing in the loop
         break
       case constants.TIMER_BREAK:
-        // Adjus the status.
-        this._state = constants.TIMER_NONE
-
-        // Exit the runner.
-        this._runner._finalize()
-        break
       case constants.TIMER_EXIT:
         // Adjus the status.
         this._state = constants.TIMER_NONE

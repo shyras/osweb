@@ -243,11 +243,6 @@ export default class GenericResponse extends Item {
           }
         } else {
           this.experiment.vars.correct = 'undefined'
-          /* if self.experiment.response in (correct_response, safe_decode(correct_response)):
-              self.experiment.var.correct = 1
-              self.experiment.var.total_correct += 1
-            else:
-              self.experiment.var.correct = 0 */
         }
       } else {
         // If a correct_response hasn't been defined, we simply set correct to undefined.

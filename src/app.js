@@ -2,7 +2,7 @@
 This script ties all needed modules or files together and provides the
 correct setting for the webpack-devserver
 */
-
+import '@babel/polyfill'
 import './scss/osweb.scss'
 import osweb from './js/osweb/index.js'
 
