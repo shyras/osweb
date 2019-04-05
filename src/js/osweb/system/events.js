@@ -236,7 +236,6 @@ export default class Events {
      * @param {Object} event - system touchstart event.
      */
   _touchStart (event) {
-    console.log(event)
     event.button = 0
     event.clientX = event.changedTouches[0].clientX
     event.clientY = event.changedTouches[0].clientY
@@ -249,7 +248,6 @@ export default class Events {
      */
   _mouseDown (event) {
     // Store the mouse down event and its timestamp for use in the mouse class.
-    console.log(event)
     this._mouseDownEvent = {
       'event': event,
       'rtTime': this._runner._experiment.clock.time()

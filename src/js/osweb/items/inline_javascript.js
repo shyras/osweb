@@ -18,7 +18,6 @@ export default class InlineJavaScript extends Item {
     this.description = 'Executes JavaScript code (ECMA 5.1)'
     this.workspace = experiment._javascriptWorkspace
     // Process the script
-    console.log(this.vars)
     this.from_string(script)
   }
 
