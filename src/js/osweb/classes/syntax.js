@@ -144,7 +144,9 @@ export default class Syntax {
           }
 
           if (isString(value)) {
-            value = this.eval_text(value, vars, addQuotes)
+            if (value !== '') {
+              value = this.eval_text(value, vars, addQuotes)
+            }
           }
         } catch (err) {
           this._runner._debugger.addError(`Could not resolve variable '${content}': ${err.message}`)
