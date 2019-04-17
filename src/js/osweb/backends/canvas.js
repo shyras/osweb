@@ -865,20 +865,20 @@ export default class Canvas {
 
   /**
    * Draws a text element on the canvas.
-   * @param {String} text - The x coordinate of the element.
+   * @param {String} txt - The x coordinate of the element.
    * @param {Boolean} center - If true the text must be centered.
    * @param {Number} x - The x coordinate of the element.
    * @param {Number} y - The y coordinate of the element.
    * @param {Boolean} html - If true the text parameter contains HTML tags.
    * @param {Object} styleArgs - Optional styling argument for the element.
    */
-  text (text, center, x, y, html, styleArgs) {
+  text (txt, center, x, y, html, styleArgs) {
     // Get the style
     const elementStyle = this._getStyle(styleArgs)
 
     // Only jump through the HTML rendering hoops if the html == 'yes' and
     // text actually contains HTML markup.
-    if ((html === 'yes') && (this._containsHTML(text))) {
+    if ((html === 'yes') && (this._containsHTML(txt))) {
       //  Define the text block object.
       const textBlock = {
         element_style: elementStyle,
@@ -907,7 +907,7 @@ export default class Canvas {
       div.style.lineHeight = 'normal'
       div.style.display = 'inline-block'
       div.style.visibility = 'hidden'
-      div.innerHTML = text
+      div.innerHTML = txt
 
       // Parse the html recursive.
       this._parseHtmlNode(div, textBlock, elementStyle)
@@ -961,7 +961,7 @@ export default class Canvas {
         fontWeight: (elementStyle.font_bold === true) ? 'bold' : 'normal',
         fill: elementStyle.color
       }
-      var textElement = new PIXI.Text(text, textStyle)
+      var textElement = new PIXI.Text(txt, textStyle)
 
       if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
         textElement.x = x - (textElement.width / 2)
