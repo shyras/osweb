@@ -80,6 +80,6 @@ export default class Debugger {
    */
   msg (messageText) {
     // Push the error message to the log.
-    this.addMesage(messageText)
+    this.addMessage(messageText)
   }
 }
