@@ -52,23 +52,20 @@ export default class TouchResponse extends MouseResponse {
     this.experiment.vars.cursor_x = retval.event.clientX
     this.experiment.vars.cursor_y = retval.event.clientY
 
-    var rect = this._runner._renderer.view.getBoundingClientRect()
-    if (this.experiment.vars.uniform_coordinates === 'yes') {
-      this._x = retval.event.clientX - rect.left
-      this._y = retval.event.clientY - rect.top
-      // this._x = pRetval.event.clientX - rect.left + (this.experiment.vars.width / 2);
-      // this._y = pRetval.event.clientY - rect.top + (this.experiment.vars.height / 2);
-    } else {
-      this._x = retval.event.clientX - rect.left
-      this._y = retval.event.clientY - rect.top
-    }
+    const rect = this._runner._renderer.view.getBoundingClientRect()
+    this._x = retval.event.clientX - rect.left
+    this._y = retval.event.clientY - rect.top
+    // if (this.experiment.vars.uniform_coordinates === 'yes') {
+    //   this._x += (this.experiment.vars.width / 2)
+    //   this._y += (this.experiment.vars.height / 2)
+    // }
 
     // Calulate the row, column and cell.
     this.col = Math.floor(this._x / (this.experiment.vars.width / this.vars._ncol))
     this.row = Math.floor(this._y / (this.experiment.vars.height / this.vars._nrow))
     this.cell = this.row * this.vars._ncol + this.col + 1
     this.experiment.vars.response = this.cell
-    this.synonyms = [String(this.experiment.vars.response)]
+    this.synonyms = [this.experiment.vars.get('response')]
 
     // Do the bookkeeping
     this.response_bookkeeping()
