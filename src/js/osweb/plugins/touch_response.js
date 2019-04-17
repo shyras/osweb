@@ -51,15 +51,9 @@ export default class TouchResponse extends MouseResponse {
     this.synonyms = this._mouse._synonyms(this.experiment.vars.response)
     this.experiment.vars.cursor_x = retval.event.clientX
     this.experiment.vars.cursor_y = retval.event.clientY
-
     const rect = this._runner._renderer.view.getBoundingClientRect()
     this._x = retval.event.clientX - rect.left
     this._y = retval.event.clientY - rect.top
-    // if (this.experiment.vars.uniform_coordinates === 'yes') {
-    //   this._x += (this.experiment.vars.width / 2)
-    //   this._y += (this.experiment.vars.height / 2)
-    // }
-
     // Calulate the row, column and cell.
     this.col = Math.floor(this._x / (this.experiment.vars.width / this.vars._ncol))
     this.row = Math.floor(this._y / (this.experiment.vars.height / this.vars._nrow))
