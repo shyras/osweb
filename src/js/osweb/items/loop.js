@@ -196,13 +196,6 @@ export default class Loop extends Item {
 
   /** Implements the prepare phase of an item. */
   prepare () {
-    // Prepare the break if condition.
-    if ((this.vars.break_if !== '') && (this.vars.break_if !== 'never')) {
-      this._break_if = this.syntax.compile_cond(this.vars.get('break_if'))
-    } else {
-      this._break_if = null
-    }
-
     //  First generate a list of cycle numbers
     this._cycles = []
     this._index = 0
@@ -276,8 +269,13 @@ export default class Loop extends Item {
     // Inherited.
     super.run()
 
+    // Prepare the break if condition.
+    const break_if_val = this.vars.get('break_if')
+    this._break_if = ['never', ''].includes(break_if_val)
+      ? null
+      : this.syntax.compile_cond(break_if_val)
+
     if (this._cycles.length > 0) {
-      let exit = false
       this._index = this._cycles.shift()
       this.apply_cycle(this._index)
 
@@ -288,23 +286,18 @@ export default class Loop extends Item {
         const breakIf = this.syntax.eval_text(this._break_if, null, true)
 
         if (this.python_workspace._eval(breakIf) === true) {
-          exit = true
+          this._complete()
+          return
         }
       }
 
-      // Check the exit status.
-      if (exit === false) {
-        this.experiment.vars.repeat_cycle = 0
+      this.experiment.vars.repeat_cycle = 0
 
-        // Replace with execute
-        if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
-          this.experiment._runner._itemStore.prepare(this.vars.item, this)
-        } else {
-          this.experiment._runner._itemStore.execute(this.vars.item, this)
-        }
+      // Replace with execute
+      if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
+        this.experiment._runner._itemStore.prepare(this.vars.item, this)
       } else {
-        // Break the loop.
-        this._complete()
+        this.experiment._runner._itemStore.execute(this.vars.item, this)
       }
     } else {
       // Break the loop.
