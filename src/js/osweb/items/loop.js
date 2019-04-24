@@ -196,19 +196,12 @@ export default class Loop extends Item {
 
   /** Implements the prepare phase of an item. */
   prepare () {
-    // Prepare the break if condition.
-    if ((this.vars.break_if !== '') && (this.vars.break_if !== 'never')) {
-      this._break_if = this.syntax.compile_cond(this.vars.break_if)
-    } else {
-      this._break_if = null
-    }
-
     //  First generate a list of cycle numbers
     this._cycles = []
     this._index = 0
 
     // Walk through all complete repeats
-    var wholeRepeats = Math.floor(this.vars.repeat)
+    var wholeRepeats = Math.floor(this.vars.get('repeat'))
     for (let j = 0; j < wholeRepeats; j++) {
       for (let i = 0; i < this.vars.cycles; i++) {
         this._cycles.push(i)
@@ -216,7 +209,7 @@ export default class Loop extends Item {
     }
 
     // Add the leftover repeats.
-    const partialRepeats = this.vars.repeat - wholeRepeats
+    const partialRepeats = this.vars.get('repeat') - wholeRepeats
     if (partialRepeats > 0) {
       const allCycles = Array.apply(null, {
         length: this.vars.cycles
@@ -233,24 +226,25 @@ export default class Loop extends Item {
     }
 
     // Randomize the list if necessary.
-    if (this.vars.order === 'random') {
+    if (this.vars.get('order') === 'random') {
       this._cycles = shuffle(this._cycles)
     } else {
+      const skipVal = this.vars.get('skip')
       // In sequential order, the offset and the skip are relevant.
-      if (this._cycles.length < this.vars.skip) {
+      if (this._cycles.length < skipVal) {
         this.experiment._runner._debugger.addError('The value of skip is too high in loop item. You cannot skip more cycles than there are in: ' + this.name)
       } else {
-        if (this.vars.offset === 'yes') {
+        if (this.vars.get('offset') === 'yes') {
           // Get the skip elements.
-          const skip = this._cycles.slice(0, this.vars.skip)
+          const skip = this._cycles.slice(0, skipVal)
 
           // Remove the skip elements from the original location.
-          this._cycles = this._cycles.slice(this.vars.skip)
+          this._cycles = this._cycles.slice(skipVal)
 
           // Add the skip element to the end.
           this._cycles = this._cycles.concat(skip)
         } else {
-          this._cycles = this._cycles.slice(this.vars.skip)
+          this._cycles = this._cycles.slice(skipVal)
         }
       }
     }
@@ -275,8 +269,13 @@ export default class Loop extends Item {
     // Inherited.
     super.run()
 
+    // Prepare the break if condition.
+    const break_if_val = this.vars.get('break_if')
+    this._break_if = ['never', ''].includes(break_if_val)
+      ? null
+      : this.syntax.compile_cond(break_if_val)
+
     if (this._cycles.length > 0) {
-      let exit = false
       this._index = this._cycles.shift()
       this.apply_cycle(this._index)
 
@@ -287,23 +286,18 @@ export default class Loop extends Item {
         const breakIf = this.syntax.eval_text(this._break_if, null, true)
 
         if (this.python_workspace._eval(breakIf) === true) {
-          exit = true
+          this._complete()
+          return
         }
       }
 
-      // Check the exit status.
-      if (exit === false) {
-        this.experiment.vars.repeat_cycle = 0
+      this.experiment.vars.repeat_cycle = 0
 
-        // Replace with execute
-        if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
-          this.experiment._runner._itemStore.prepare(this.vars.item, this)
-        } else {
-          this.experiment._runner._itemStore.execute(this.vars.item, this)
-        }
+      // Replace with execute
+      if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
+        this.experiment._runner._itemStore.prepare(this.vars.item, this)
       } else {
-        // Break the loop.
-        this._complete()
+        this.experiment._runner._itemStore.execute(this.vars.item, this)
       }
     } else {
       // Break the loop.
