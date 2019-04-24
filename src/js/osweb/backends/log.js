@@ -21,10 +21,13 @@ export default class Log {
    */
   _get_all_vars () {
     // Retrieves a list of all variables that exist in the experiment.
+    /*
     if (this._all_vars === null) {
       this._all_vars = this._experiment.vars.inspect()
     }
     return this._all_vars
+    */
+    return this._experiment.vars.inspect()
   }
 
   /** Closes the current log. */
