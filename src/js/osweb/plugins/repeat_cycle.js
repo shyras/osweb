@@ -33,9 +33,6 @@ export default class RepeatCycle extends Item {
 
   /** Implements the prepare phase of an item. */
   prepare () {
-    // Prepare the condtion for which the repeat_cycle must fire.
-    this._condition = this.syntax.compile_cond(this.vars.get('condition'))
-
     // Inherited.
     super.prepare()
   }
@@ -45,9 +42,11 @@ export default class RepeatCycle extends Item {
     // Inherited.
     super.run()
 
+    // Prepare the condtion for which the repeat_cycle must fire.
+    const condition = this.syntax.compile_cond(this.vars.get('condition'))
     // Run item only one time.
     if (this._status !== constants.STATUS_FINALIZE) {
-      if (this.experiment._runner._pythonWorkspace._eval(this._condition) === true) {
+      if (this.experiment._runner._pythonWorkspace._eval(condition) === true) {
         this.experiment.vars.repeat_cycle = 1
       }
 
