@@ -51,22 +51,8 @@ export default class Loop extends Item {
 
   /** Implements the complete phase of an item. */
   _complete () {
-    // Check if if the cycle must be repeated.
-    if (this.experiment.vars.repeat_cycle === 1) {
-      this.experiment._runner._debugger.msg('Repeating cycle: ' + this._index)
-
-      this._cycles.push(this._index)
-
-      if (this.vars.order === 'random') {
-        this._cycles = shuffle(this._cycles)
-      }
-    } else {
-      // All items are processed, set the status to finalized.
-      this._status = constants.STATUS_FINALIZE
-
-      // Inherited.
-      super._complete()
-    }
+    this._status = constants.STATUS_FINALIZE
+    super._complete()
   }
 
   /** Reset all item variables to their default value. */
@@ -184,7 +170,7 @@ export default class Loop extends Item {
           } catch (e) {
             // Error during evaluation.
             this.experiment._runner._debugger.addError(
-              'Failed to evaluate experssion in in loop item: ' + this.name + ' (' + value + ')')
+              'Failed to evaluate expression in in loop item: ' + this.name + ' (' + value + ')')
           }
         }
 
@@ -232,7 +218,8 @@ export default class Loop extends Item {
       const skipVal = this.vars.get('skip')
       // In sequential order, the offset and the skip are relevant.
       if (this._cycles.length < skipVal) {
-        this.experiment._runner._debugger.addError('The value of skip is too high in loop item. You cannot skip more cycles than there are in: ' + this.name)
+        this.experiment._runner._debugger.addError('The value of skip is too high in loop item. ' +
+          'You cannot skip more cycles than there are in: ' + this.name)
       } else {
         if (this.vars.get('offset') === 'yes') {
           // Get the skip elements.
@@ -254,7 +241,8 @@ export default class Loop extends Item {
 
     // Make sure the item to run exists.
     if (this.experiment.items._items[this.vars.item] === 'undefined') {
-      this.experiment._runner._debugger.addError('Could not find an item which is called by loop item: ' + this.name + ' (' + this.vars.item + ')')
+      this.experiment._runner._debugger.addError('Could not find an item which is called by loop item: ' +
+      this.name + ' (' + this.vars.item + ')')
     }
 
     // Inherited.
@@ -274,6 +262,13 @@ export default class Loop extends Item {
     this._break_if = ['never', ''].includes(break_if_val)
       ? null
       : this.syntax.compile_cond(break_if_val)
+
+    // Check if if the cycle must be repeated.
+    if (this.experiment.vars.repeat_cycle === 1 && isNumber(this._index)) {
+      this.experiment._runner._debugger.msg('Repeating cycle: ' + this._index)
+      this._cycles.unshift(this._index)
+      this.experiment.vars.repeat_cycle = 0
+    }
 
     if (this._cycles.length > 0) {
       this._index = this._cycles.shift()
