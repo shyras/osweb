@@ -266,7 +266,10 @@ export default class Loop extends Item {
     // Check if if the cycle must be repeated.
     if (this.experiment.vars.repeat_cycle === 1 && isNumber(this._index)) {
       this.experiment._runner._debugger.msg('Repeating cycle: ' + this._index)
-      this._cycles.unshift(this._index)
+      this._cycles.push(this._index)
+      if (this.vars.get('order') === 'random') {
+        this._cycles = shuffle(this._cycles)
+      }
       this.experiment.vars.repeat_cycle = 0
     }
 
