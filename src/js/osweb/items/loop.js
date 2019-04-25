@@ -236,7 +236,6 @@ export default class Loop extends Item {
       }
     }
 
-    // Create a keyboard to flush responses between cycles.
     this._keyboard = new Keyboard(this.experiment)
 
     // Make sure the item to run exists.
@@ -245,19 +244,15 @@ export default class Loop extends Item {
       this.name + ' (' + this.vars.item + ')')
     }
 
-    // Inherited.
     super.prepare()
 
-    // Set the onset time.
     this.set_item_onset()
   }
 
   /** Implements the run phase of an item. */
   run () {
-    // Inherited.
     super.run()
 
-    // Prepare the break if condition.
     const break_if_val = this.vars.get('break_if')
     this._break_if = ['never', ''].includes(break_if_val)
       ? null
@@ -274,7 +269,6 @@ export default class Loop extends Item {
       this._index = this._cycles.shift()
       this.apply_cycle(this._index)
 
-      // Check the break_if flag.
       if (this._break_if !== null) {
         this.python_workspace['this'] = this
 
@@ -286,7 +280,6 @@ export default class Loop extends Item {
         }
       }
 
-      // Replace with execute
       if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
         this.experiment._runner._itemStore.prepare(this.vars.item, this)
       } else {
