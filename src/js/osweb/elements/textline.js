@@ -33,10 +33,7 @@ export default class Textline extends BaseElement {
   draw () {
     // Inherited.
     super.draw()
-
-    // Decode text so unicode is converted properly.
-    const text = decodeURIComponent(escape(this._properties.text))
-
+    const text = this._properties.text
     // Create a styles object containing style information
     const styles = new Styles()
     styles.color = this._properties.color

@@ -72,7 +72,7 @@ export default class Transfer {
    * @returns boolean
    * @memberof Transfer
    */
-  async _readOsexpFromString (osexp) {
+  async _readExpFile (osexp) {
     if ([File, Blob].includes(osexp.constructor)) {
       osexp = await readFileAsText(osexp)
     }
@@ -85,7 +85,7 @@ export default class Transfer {
    */
   async _readOsexpFromFile (osexpFile) {
     try {
-      return await this._readOsexpFromString(osexpFile)
+      return await this._readExpFile(osexpFile)
     } catch (e) {
       this._runner._debugger.addMessage(`Could not read osexp file as plain text: ${e.message}.\nFile is probably binary`)
     }
@@ -100,7 +100,7 @@ export default class Transfer {
     if (expFileIndex === -1) throw new Error('Could not locate experiment script')
     // Pop the script out of the file array and proccess it
     const expFile = files.splice(expFileIndex, 1)[0]
-    const script = this._processScript(expFile.readAsString())
+    const script = await this._readExpFile(expFile.blob)
 
     // According to the zlib convention followed by the pako library we use to decompress
     // the osexp file, files have a type of 0, so filter these out.
