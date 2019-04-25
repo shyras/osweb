@@ -286,8 +286,6 @@ export default class Loop extends Item {
         }
       }
 
-      this.experiment.vars.repeat_cycle = 0
-
       // Replace with execute
       if (this._runner._itemStore._items[this.vars.item].type === 'sequence') {
         this.experiment._runner._itemStore.prepare(this.vars.item, this)
