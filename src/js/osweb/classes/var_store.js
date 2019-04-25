@@ -59,7 +59,7 @@ export default class VarStore {
    * @return {Boolean} - True if the variable is part of the store.
    */
   has (variable) {
-    return this.inspect().contains(variable)
+    return this.inspect().includes(variable)
   }
 
   /** Create a list of all avariables available.
@@ -118,7 +118,7 @@ export default class VarStore {
    */
   clear (preserve) {
     preserve = (typeof preserve === 'undefined') ? [] : preserve
-    for (let variable of this.inpsect()) {
+    for (let variable of this.inspect()) {
       if (preserve.includes(variable)) continue
       this.unset(variable)
     }
