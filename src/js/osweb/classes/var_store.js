@@ -9,6 +9,9 @@ export default class VarStore {
     // Create and set private properties.
     this._item = item
     this._parent = parent
+    this._ignored_properties = [
+      '_item', '_parent', '_bypass_proxy', '_ignored_properties'
+    ]
   };
 
   /**
@@ -56,31 +59,31 @@ export default class VarStore {
    * @return {Boolean} - True if the variable is part of the store.
    */
   has (variable) {
-    // Check if the variable (property) is part of the class.
-    return this.hasOwnProperty(variable)
+    return this.inspect().contains(variable)
   }
 
   /** Create a list of all avariables available.
    * @return {Array} - Array containing names of all variables.
    */
   inspect () {
-    // Get all variable values.
-    var keys = []
-    for (var key in this) {
-      keys.push(key)
+    let variables = []
+    for (let variable in this) {
+      if (this._ignored_properties.includes(variable)) continue
+      variables.push(variable)
     }
-
-    // Slide default properties (HACK for removing the defauly properties/methods from the log_list).
-    keys = keys.slice(2, -7)
-
-    // Return function result.
-    return keys
+    return variables
   }
 
   /** Create a list of value/name pairs.
    * @return {Array} - Array containing name and values of all variables.
    */
-  items () {}
+  items () {
+    let pairs = {}
+    for (let variable of this.inspect()) {
+      pairs[variable] = this[variable]
+    }
+    return pairs
+  }
 
   /**
    * Set the value of a variable in the store.
@@ -88,7 +91,6 @@ export default class VarStore {
    * @value {Boolean|Number|String} - Value of the variable to set.
    */
   set (variable, value) {
-    // Sets and experimental variable.
     this[variable] = value
   }
 
@@ -97,15 +99,28 @@ export default class VarStore {
    * @param {String} variable - The name of the variable.
    */
   unset (variable) {
-    // Check if the variable exists.
     if (this.has(variable) === true) {
-      // Remove the variable as property from the object.
       delete this[variable]
     }
   }
 
-  /** Create a list of variable values.
-   * @return {Array} - Array containing values of all variables.
+  /** Create a list of variable names.
+   * @return {Array} - Array containing namesof all variables.
    */
-  vars () {}
+  vars () {
+    return this.inspect()
+  }
+
+  /**
+   * Clears all experimental variables, except those that are explicitly
+   * preserved.
+   * @param {Array} preserve - An array of variable names to preserve.
+   */
+  clear (preserve) {
+    preserve = (typeof preserve === 'undefined') ? [] : preserve
+    for (let variable of this.inpsect()) {
+      if (preserve.includes(variable)) continue
+      this.unset(variable)
+    }
+  }
 }

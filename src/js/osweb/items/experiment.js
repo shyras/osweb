@@ -163,11 +163,6 @@ export default class Experiment extends Item {
     this._canvas.init_display(this)
   }
 
-  /** Open a connection to the log file. */
-  init_log () {
-    this._log.open()
-  }
-
   /** Event handler for external data retrieval. */
   onLog (data) {
     // Function to be overwritten by external handler
@@ -190,7 +185,6 @@ export default class Experiment extends Item {
         this.vars.opensesame_codename = VERSION_NAME
         this.init_clock()
         this.init_display()
-        this.init_log()
         this.reset_feedback()
 
         // Add closing message to debug system.
@@ -215,10 +209,6 @@ export default class Experiment extends Item {
 
   /** Ends an experiment. */
   end () {
-    // Close the log file.
-    this._log.close()
-
-    // Finalize the parent (runner).
     this._runner._finalize()
   }
 }
