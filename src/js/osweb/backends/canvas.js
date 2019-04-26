@@ -592,20 +592,20 @@ export default class Canvas {
    */
   image (fname, center, x, y, scale) {
     // Get image from file pool.
-    var name = this.experiment._runner._syntax.remove_quotes(fname)
-    var path = this.experiment._runner._pool[name]
+    let name = this.experiment._runner._syntax.remove_quotes(fname)
+    let path = this.experiment._runner._pool[name]
     if (typeof (path) === 'undefined') {
       this.experiment._runner._debugger.addError(`"${fname}" does not exist`)
     }
-    var img = path.data
+    let img = path.data
     // Create a temporary canvas to make an image data array.
-    var canvas = document.createElement('canvas')
+    let canvas = document.createElement('canvas')
     canvas.width = img.width
     canvas.height = img.height
-    var ctx = canvas.getContext('2d')
+    let ctx = canvas.getContext('2d')
     ctx.drawImage(img, 0, 0)
 
-    var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas))
+    let sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas))
 
     // Scale the image.
     sprite.scale.x = scale
