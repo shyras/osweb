@@ -181,7 +181,12 @@ export default class Transfer {
         var item = {
           data: null,
           folder: currentFile.name.match(/(.*)[/\\]/)[1] || '',
-          name: currentFile.name.replace(/^.*[\\/]/, ''),
+          name: currentFile.name.replace(/^.*[\\/]/, '').replace(
+            /U\+([0-9A-F]{4})/g, (whole, group1) => {
+              // Parse encoded characters back to their unicode counterparts
+              return String.fromCharCode(parseInt(group1, 16))
+            }
+          ),
           size: currentFile.size,
           type: 'undefined'
         }
