@@ -17,7 +17,3 @@ if (typeof window !== 'undefined') {
 if (module.hot) {
   module.hot.accept()
 }
-
-if (process.env.NODE_ENV === 'development') {
-  require('webpack-serve-overlay')
-}
