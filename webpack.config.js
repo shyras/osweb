@@ -180,15 +180,5 @@ module.exports = (env, args) => {
     }
   }
 
-  // config.serve = {
-  //   add: (app, middleware, options) => {
-  //     // Be sure to pass the options argument from the arguments
-  //     app.use(webpackServeWaitpage(options, {
-  //       title: 'OpenSesame Web',
-  //       theme: 'material'
-  //     }))
-  //   }
-  // }
-
   return config
 }
