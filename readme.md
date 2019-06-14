@@ -14,7 +14,7 @@ OSWeb is built using node.js and webpack, and therefore the installation process
 
 First, go to the root of the OSWEB folder and install the dependencies with the command:
 
-    npm install
+    npm ci
 
 Then build OSWEB by running:
 

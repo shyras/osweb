@@ -1,22 +1,18 @@
 // webpack.config.js - Common settings
 const webpack = require('webpack')
-const webpackServeWaitpage = require('webpack-serve-waitpage')
 
 const path = require('path')
 const fs = require('fs')
 const startCase = require('lodash').startCase
-
+// Webpack plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 // const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-
 const pkgconfig = require('./package.json')
 
-// Check if devserver is running
-const isDevServer = process.env.WEBPACK_SERVE || false // require.main.filename.includes('webpack-dev-server')
-
+const outputPath = path.join(__dirname, 'public_html')
 // Folder to which example experiments are copied
 const exampleFolder = 'osexp'
 
@@ -30,24 +26,25 @@ const exampleExperiments = fs.readdirSync('example-experiments')
   }))
 
 module.exports = (env, args) => {
-  let outputName = ''
-  if (isDevServer) {
-    outputName += '[name].bundle'
-  } else if (args.mode === 'development') {
-    outputName += '[name].[chunkhash].bundle'
+  // Check if devserver is running
+  console.info('Current mode:', args.mode)
+
+  let outputName
+  if (args.mode === 'development') {
+    outputName = '[name].[chunkhash].bundle'
   } else {
-    outputName += `[name].${pkgconfig.version}.bundle`
+    outputName = `[name].${pkgconfig.version}.bundle`
   }
 
   const config = {
-    mode: isDevServer ? 'development' : args.mode,
-    devtool: (isDevServer || args.mode === 'development') ? 'cheap-module-source-map' : 'source-map',
+    mode: args.mode || 'development',
+    devtool: args.mode === 'development' ? 'cheap-module-source-map' : 'source-map',
     entry: {
       osweb: [path.join(__dirname, 'src', 'app.js')],
       extra: [path.join(__dirname, 'src', 'extra.js')]
     },
     output: {
-      path: path.join(__dirname, 'public_html'),
+      path: outputPath,
       filename: `js/${outputName}.js`
     },
     module: {
@@ -80,25 +77,50 @@ module.exports = (env, args) => {
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       }, {
         test: /\.(png|jpg)$/,
-        use: 'url-loader?limit=8192&name=images/[hash].[ext]' // inline base64 URLs for <=8k images, direct URLs for the rest
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: 'images/[hash].[ext]'
+          }
+        }]
       }, {
         test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'url-loader?limit=10000&mimetype=application/font-woff&name=fonts/[hash].[ext]'
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: 'fonts/[hash].[ext]',
+            mimetype: 'application/font-woff'
+          }
+        }]
       }, {
         test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'url-loader?limit=10000&mimetype=application/octet-stream&name=fonts/[hash].[ext]'
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: 'fonts/[hash].[ext]',
+            mimetype: 'application/octet-stream'
+          }
+        }]
       }, {
         test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
         use: 'file-loader?name=fonts/[hash].[ext]'
       }, {
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        use: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]'
-      }
-      ]
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 8192,
+            name: 'vector/[hash].[ext]',
+            mimetype: 'image/svg+xml'
+          }
+        }]
+      }]
     },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(isDevServer ? 'development' : args.mode),
         'OSWEB_VERSION_NAME': JSON.stringify(pkgconfig.name),
         'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version)
       }),
@@ -158,19 +180,15 @@ module.exports = (env, args) => {
     }
   }
 
-  config.serve = {
-    add: (app, middleware, options) => {
-      // Be sure to pass the options argument from the arguments
-      app.use(webpackServeWaitpage(options, {
-        title: 'OpenSesame Web',
-        theme: 'material'
-      }))
-
-      // Make sure the usage of webpack-serve-waitpage will be before the following commands if exists
-      // middleware.webpack();
-      // middleware.content();
-    }
-  }
+  // config.serve = {
+  //   add: (app, middleware, options) => {
+  //     // Be sure to pass the options argument from the arguments
+  //     app.use(webpackServeWaitpage(options, {
+  //       title: 'OpenSesame Web',
+  //       theme: 'material'
+  //     }))
+  //   }
+  // }
 
   return config
 }
