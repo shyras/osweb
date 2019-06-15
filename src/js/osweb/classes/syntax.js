@@ -118,7 +118,6 @@ export default class Syntax {
     if (isNumber(text)) return text
     // Try to convert text to a number. If this succeeds return it.
     if (!isNaN(toNumber(text))) return toNumber(text)
-
     text = this.escapeBrackets(text)
     /** The replacer function detects variable entries in the passed text
     and replaces them with variable values as found in OpenSesame's var store */
@@ -142,7 +141,6 @@ export default class Syntax {
           if (typeof value === 'undefined') {
             throw new ReferenceError(`Variable '${content}' not present in var store`)
           }
-
           if (isString(value)) {
             if (value !== '') {
               value = this.eval_text(value, vars, addQuotes)
@@ -152,16 +150,17 @@ export default class Syntax {
           this._runner._debugger.addError(`Could not resolve variable '${content}': ${err.message}`)
           throw err
         }
-
         if (addQuotes === true) {
-          // Temporyary hack for string types.
+          // Temporary hack for string types.
           return isString(value) ? `"${value}"` : value
         } else {
           return value
         }
       }
     })
-
+    // Try to convert the result to a number again. If this succeeds return it.
+    let nr = toNumber(result)
+    if (!isNaN(nr)) return nr
     // Check if content has additional quotes
     return this.strip_slashes(this.unescapeBrackets(result))
   }
