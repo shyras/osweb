@@ -144,7 +144,7 @@ describe('Syntax', function () {
     })
     it('Should parse variables with underscores and numbers: [my_var99]', function () {
       expect(syntax.eval_text(
-        '[my_var99]', tmpVarStore)).toBe('99')
+        '[my_var99]', tmpVarStore)).toBe(99)
     })
     it('Should not try to parse a variable if it is preceded by a backslash: \\[width]', function () {
       expect(syntax.eval_text(
@@ -156,7 +156,7 @@ describe('Syntax', function () {
     })
     it('Should process python code: [=10*10]', function () {
       expect(syntax.eval_text(
-        '[=10*10]', tmpVarStore)).toBe('100')
+        '[=10*10]', tmpVarStore)).toBe(100)
     })
     it('Should not process python code if it is preceded by a backslash: \\[=10*10]', function () {
       expect(syntax.eval_text(
