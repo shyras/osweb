@@ -211,7 +211,7 @@ export default class Screen {
 
       const logoPath = (typeof logoSrc === 'undefined') ? 'img/opensesame.png' : logoSrc
 
-      const oswebLogo = new PIXI.Sprite.fromImage(logoPath)
+      const oswebLogo = new PIXI.Sprite.from(logoPath)
       const oswebTitle = new PIXI.Text('OSWeb', {
         fontFamily: 'Arial',
         fontSize: 26,

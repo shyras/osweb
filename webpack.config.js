@@ -122,7 +122,8 @@ module.exports = (env, args) => {
     plugins: [
       new webpack.DefinePlugin({
         'OSWEB_VERSION_NAME': JSON.stringify(pkgconfig.name),
-        'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version)
+        'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version),
+        PIXI: 'pixi.js'
       }),
       new webpack.NamedModulesPlugin(),
       new MiniCssExtractPlugin({

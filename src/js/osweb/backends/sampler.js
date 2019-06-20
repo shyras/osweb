@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js'
-import 'pixi-sound'
+import sound from 'pixi-sound'
 import {
   constants
 } from '../system/constants.js'
@@ -36,14 +35,14 @@ export default class SamplerBackend {
       // Set the sound object.
       this._name = source.name
 
-      // Check if the sourse is not already in the sound.
-      if (PIXI.sound.exists(source.name) === false) {
-        PIXI.sound.add(source.name, {
-          url: source.data.src,
-          preload: true,
-          complete: this.experiment._runner._events._audioEnded.bind(this)
-        })
-      }
+      // Check if the source is not already in present among previously loaded elements.
+      // if (!PIXI.sound.exists(source.name)) {
+      sound.add(source.name, {
+        url: source.data.src,
+        preload: true,
+        complete: this.experiment._runner._events._audioEnded.bind(this)
+      })
+      // }
     }
   }
 
@@ -67,10 +66,10 @@ export default class SamplerBackend {
 
     if (this._name !== '') {
       // Set the sound properties.
-      PIXI.sound.volume(this._name, this.volume)
+      sound.volume(this._name, this.volume)
 
       // Play the actual sound.
-      PIXI.sound.play(this._name)
+      sound.play(this._name)
     }
   }
 

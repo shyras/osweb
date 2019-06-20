@@ -87,7 +87,7 @@ export default class Events {
     this._state = constants.TIMER_NONE
 
     // Create the time handler and start the experiment.
-    this._timeHandler = new PIXI.ticker.Ticker()
+    this._timeHandler = new PIXI.Ticker()
     this._timeHandler.add(this._time.bind(this))
     this._timeHandler.start()
   }
@@ -164,7 +164,9 @@ export default class Events {
 
       // Show the pause screen.
       this._runner._screen._showPauseScreen()
-    } else if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
+    } else if ((this._state === constants.TIMER_WAIT) &&
+      ((this._keyPressMode === constants.PRESSES_ONLY) ||
+      (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
       this._processKeyboardEvent(event, 1)
     }
@@ -176,7 +178,8 @@ export default class Events {
      */
   _keyUp (event) {
     // Only select this event when the collection mode is set for this.
-    if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
+    if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) ||
+      (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
       this._processKeyboardEvent(event, 0)
     }
@@ -200,7 +203,9 @@ export default class Events {
     keyboardResponse.resp = this._convertKeyCode(event)
 
     // Process the response to the current object.
-    if ((this._responseType === constants.RESPONSE_KEYBOARD) && ((this._responseList === null) || (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
+    if ((this._responseType === constants.RESPONSE_KEYBOARD) &&
+      ((this._responseList === null) ||
+      (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
       // Process the current item.
       if (this._currentItem !== null) {
         // Process the response.
@@ -290,7 +295,8 @@ export default class Events {
     mouseResponse.resp = String(event.button + 1)
 
     // Process the response to the current object.
-    if ((this._responseType === constants.RESPONSE_MOUSE) && ((this._responseList === null) || (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
+    if ((this._responseType === constants.RESPONSE_MOUSE) && ((this._responseList === null) ||
+      (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
       // Process the response to the current object.
       if (this._currentItem !== null) {
         this._currentItem._update(mouseResponse)

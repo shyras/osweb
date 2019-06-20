@@ -564,7 +564,7 @@ export default class Canvas {
     ctx.putImageData(px, 0, 0)
 
     // Retrieve the image from the recourses
-    var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas))
+    var sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
 
     // Position the image.
     sprite.x = x - (size / 2)
@@ -605,7 +605,7 @@ export default class Canvas {
     let ctx = canvas.getContext('2d')
     ctx.drawImage(img, 0, 0)
 
-    let sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas))
+    let sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
 
     // Scale the image.
     sprite.scale.x = scale
@@ -752,7 +752,7 @@ export default class Canvas {
     ctx.putImageData(px, 0, 0)
 
     // Retrieve the image from the recourses
-    var sprite = new PIXI.Sprite(PIXI.Texture.fromCanvas(canvas))
+    var sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
 
     // Position the image.
     sprite.x = x - (size / 2)
