@@ -3,7 +3,7 @@ import parseDataURL from 'data-urls'
 import Canvas from '../../osweb/backends/canvas'
 import Style from '../../osweb/backends/styles'
 import Experiment from '../../osweb/items/experiment'
-import * as PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js-legacy'
 
 // Add image snapshot matcher to Jest expect function suite
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
