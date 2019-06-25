@@ -1,5 +1,5 @@
 import { isFunction } from 'lodash'
-import { Container, Sprite, Graphics } from 'pixi.js'
+import { Container, Sprite, Graphics, Text } from 'pixi.js'
 import { VERSION_NUMBER } from '../index.js'
 
 /** Class representing a Screen. */
