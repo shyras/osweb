@@ -1,5 +1,5 @@
 import ImageWidget from './image_widget.js'
-import * as PIXI from 'pixi.js'
+import { Rectangle } from 'pixi.js'
 import { constants } from '../system/constants.js'
 
 /**
@@ -30,7 +30,7 @@ export default class ImageButtonWidget extends ImageWidget {
     if ((this.form.item.vars.only_render === 'no') && (this._container.interactive === false)) {
       this._container.interactive = true
       this._container.buttonMode = true
-      this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height)
+      this._container.hitArea = new Rectangle(0, 0, this._container._width, this._container._height)
       this._container.on('mousedown', function (event) {
         this.response(event)
       }.bind(this))

@@ -1,5 +1,5 @@
 import { constants } from '../system/constants.js'
-import * as PIXI from 'pixi.js'
+import { Ticker } from 'pixi.js'
 
 /** Class representing the event system. */
 export default class Events {
@@ -87,7 +87,7 @@ export default class Events {
     this._state = constants.TIMER_NONE
 
     // Create the time handler and start the experiment.
-    this._timeHandler = new PIXI.Ticker()
+    this._timeHandler = new Ticker()
     this._timeHandler.add(this._time.bind(this))
     this._timeHandler.start()
   }

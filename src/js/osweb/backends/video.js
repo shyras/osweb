@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import { Texture, Sprite } from 'pixi.js'
 import {
   constants
 } from '../system/constants.js'
@@ -29,10 +29,10 @@ export default class Video {
       this._video = source.data
 
       // create a video texture from the video.
-      this._texture = new PIXI.Texture.fromVideo(source.data)
+      this._texture = Texture.from(source.data)
 
       // create a new Sprite using the video texture (yes it's that easy)
-      this._videoSprite = new PIXI.Sprite(this._texture)
+      this._videoSprite = new Sprite(this._texture)
       this._video.pause()
 
       // Set the event anchors.

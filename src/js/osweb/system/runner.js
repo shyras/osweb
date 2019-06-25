@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import { autoDetectRenderer } from 'pixi.js'
 import {
   constants
 } from './constants.js'
@@ -71,7 +71,7 @@ export default class Runner {
       this._container = (typeof content === 'string') ? document.getElementById(content) : content
 
       // Create and set the experiment canvas.
-      this._renderer = PIXI.autoDetectRenderer(800, 600, {
+      this._renderer = autoDetectRenderer(800, 600, {
         antialias: true,
         transparent: false,
         resolution: 1

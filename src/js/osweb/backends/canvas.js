@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import { Container, Graphics, Sprite, Text, Texture } from 'pixi.js'
 import Styles from './styles.js'
 
 /** Class representing a drawing canvas. */
@@ -15,7 +15,7 @@ export default class Canvas {
     this.experiment = experiment // Anchor to the experiment object.
 
     // Create and set private properties.
-    this._container = new PIXI.Container() // PIXI - Create the container which represents the canvas.
+    this._container = new Container() // Create the container which represents the canvas.
     this._font_string = 'bold 18px Courier New' // Default font definition string.
     this._height = this.experiment._runner._renderer.height // Height of the HTML canvas used for drawing.
     this._styles = new Styles() // The style container.
@@ -75,7 +75,7 @@ export default class Canvas {
     // Set the cursor visibility to default (visible).
     this.experiment._runner._renderer.view.style.cursor = 'default'
 
-    // PIXI: Set the renderer dimensions.
+    //  Set the renderer dimensions.
     this.experiment._runner._renderer.resize(800, 600)
 
     // Clear the renderer.
@@ -256,7 +256,7 @@ export default class Canvas {
         }
         break
       case 3:
-        // PIXI - Create the text style element.
+        // Create the text style element.
         var textStyle = {
           fontFamily: elementStyle.font_family,
           fontStyle: (elementStyle.font_italic === true) ? 'italic' : 'normal',
@@ -267,7 +267,7 @@ export default class Canvas {
 
         // Create the text element and get the dimension.
         var bounds = {}
-        var textElement = new PIXI.Text(htmlNode.textContent, textStyle)
+        var textElement = new Text(htmlNode.textContent, textStyle)
         textElement.getBounds(false, bounds)
 
         // Get the height and descent (for vertical positioning);
@@ -336,7 +336,7 @@ export default class Canvas {
     var elementStyle = this._getStyle(styleArgs)
 
     // Create a circle element.
-    var circle = new PIXI.Graphics()
+    var circle = new Graphics()
     circle.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     if (elementStyle.fill === true) {
       circle.beginFill(elementStyle.background_color)
@@ -391,7 +391,7 @@ export default class Canvas {
     var elementStyle = this._getStyle(styleArgs)
 
     // Create an ellipse element.
-    var ellipse = new PIXI.Graphics()
+    var ellipse = new Graphics()
     ellipse.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     if (elementStyle.fill === true) {
       ellipse.beginFill(elementStyle.background_color)
@@ -564,7 +564,7 @@ export default class Canvas {
     ctx.putImageData(px, 0, 0)
 
     // Retrieve the image from the recourses
-    var sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
+    var sprite = new Sprite(Texture.from(canvas))
 
     // Position the image.
     sprite.x = x - (size / 2)
@@ -605,7 +605,7 @@ export default class Canvas {
     let ctx = canvas.getContext('2d')
     ctx.drawImage(img, 0, 0)
 
-    let sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
+    let sprite = new Sprite(Texture.from(canvas))
 
     // Scale the image.
     sprite.scale.x = scale
@@ -633,10 +633,10 @@ export default class Canvas {
     this._height = experiment.vars.height
     this._width = experiment.vars.width
 
-    // PIXI: Set the renderer dimensions.
+    // Set the renderer dimensions.
     experiment._runner._renderer.resize(this._width, this._height)
 
-    // PIXI: Set the renderer background color.
+    // Set the renderer background color.
     experiment._runner._renderer.clear(this._styles._convertColorValue(experiment.vars.background, 'number'))
     experiment._runner._renderer.backgroundColor = this._styles._convertColorValue(experiment.vars.background, 'number')
 
@@ -663,7 +663,7 @@ export default class Canvas {
     var elementStyle = this._getStyle(styleArgs)
 
     // Create a line element.
-    var line = new PIXI.Graphics()
+    var line = new Graphics()
     line.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     line.moveTo(0, 0)
     line.lineTo(ex - sx, ey - sy)
@@ -752,7 +752,7 @@ export default class Canvas {
     ctx.putImageData(px, 0, 0)
 
     // Retrieve the image from the recourses
-    var sprite = new PIXI.Sprite(PIXI.Texture.from(canvas))
+    var sprite = new Sprite(Texture.from(canvas))
 
     // Position the image.
     sprite.x = x - (size / 2)
@@ -781,7 +781,7 @@ export default class Canvas {
     path.push(verticles[0][1])
 
     // Create a polygon element.
-    var polygon = new PIXI.Graphics()
+    var polygon = new Graphics()
     polygon.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     if (elementStyle.fill === true) polygon.beginFill(elementStyle.background_color)
     polygon.drawPolygon(path)
@@ -806,7 +806,7 @@ export default class Canvas {
     // Get the style
     var elementStyle = this._getStyle(styleArgs)
     // Create a rectangle element.
-    var rectangle = new PIXI.Graphics()
+    var rectangle = new Graphics()
     rectangle.lineStyle(elementStyle.penwidth, elementStyle.color, 1)
     if (elementStyle.fill === true) {
       rectangle.beginFill(elementStyle.background_color)
@@ -948,20 +948,20 @@ export default class Canvas {
               elementStyle)
           }
 
-          // PIXI - Add text element to the stage.
+          //  Add text element to the stage.
           this._container.addChild(textBlock.rows[i].text_elements[j])
         }
         textBlock.y_pos = textBlock.y_pos + textBlock.rows[i].height
       }
     } else {
-      // PIXI - Create the text element
+      //  Create the text element
       var textStyle = {
         fontFamily: elementStyle.font_family,
         fontSize: elementStyle.font_size,
         fontWeight: (elementStyle.font_bold === true) ? 'bold' : 'normal',
         fill: elementStyle.color
       }
-      var textElement = new PIXI.Text(txt, textStyle)
+      var textElement = new Text(txt, textStyle)
 
       if ([1, '1', true, 'yes'].indexOf(center) !== -1) {
         textElement.x = x - (textElement.width / 2)
@@ -971,7 +971,7 @@ export default class Canvas {
         textElement.y = y
       }
 
-      // PIXI - Add text element to the stage.
+      //  Add text element to the stage.
       this._container.addChild(textElement)
     }
   }
