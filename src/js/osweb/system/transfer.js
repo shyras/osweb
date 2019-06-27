@@ -178,7 +178,7 @@ export default class Transfer {
         }
 
         // Generate the item.
-        var item = {
+        const item = {
           data: null,
           folder: currentFile.name.match(/(.*)[/\\]/)[1] || '',
           name: currentFile.name.replace(/^.*[\\/]/, '').replace(

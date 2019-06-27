@@ -1,7 +1,13 @@
-import sound from 'pixi-sound'
 import {
   constants
 } from '../system/constants.js'
+
+let audioCtx = null
+try {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+} catch (e) {
+  console.warning('Web Audio API is not supported in this browser')
+}
 
 /** Class representing a sampler. */
 export default class SamplerBackend {
@@ -21,28 +27,19 @@ export default class SamplerBackend {
     this.block = (typeof block === 'undefined') ? false : block
     this.duration = (typeof duration === 'undefined') ? 'sound' : duration
     this.experiment = experiment
+    this.volume = (typeof volume === 'undefined') ? 1 : volume
     this.fade = (typeof fade === 'undefined') ? 0 : fade
     this.pan = (typeof pan === 'undefined') ? 0 : pan
     this.pitch = (typeof pitch === 'undefined') ? 1 : pitch
-    this.source = (typeof source === 'undefined') ? null : source
-    this.volume = (typeof volume === 'undefined') ? 1 : volume
 
-    // Create and set private properties.
-    this._instance = ''
+    this.sample = source.data.cloneNode()
 
-    // Create the sound instance
-    if (source !== null) {
-      // Set the sound object.
-      this._name = source.name
-
-      // Check if the source is not already in present among previously loaded elements.
-      // if (!PIXI.sound.exists(source.name)) {
-      sound.add(source.name, {
-        url: source.data.src,
-        preload: true,
-        complete: this.experiment._runner._events._audioEnded.bind(this)
-      })
-      // }
+    if (audioCtx) {
+      this.source = audioCtx.createMediaElementSource(this.sample)
+      this.source.addEventListener('ended',
+        this.experiment._runner._events._audioEnded.bind(this))
+    } else {
+      this.source = this.sample
     }
   }
 
@@ -57,25 +54,61 @@ export default class SamplerBackend {
    */
   play (volume, pitch, pan, duration, fade, block) {
     // Check if optional parameters are defined.
-    this.block = (typeof block === 'undefined') ? this.block : block
-    this.duration = (typeof duration === 'undefined') ? this.duration : duration
-    this.fade = (typeof fade === 'undefined') ? this.fade : fade
-    this.pan = (typeof pan === 'undefined') ? this.pan : pan
-    this.pitch = (typeof pitch === 'undefined') ? this.pitch : pitch
-    this.volume = (typeof volume === 'undefined') ? this.volume : volume
+    this.block = block || this.block
+    this.duration = typeof duration === 'undefined' ? this.duration : duration
+    this.volume = typeof volume === 'undefined' ? this.volume : volume
+    this.pitch = typeof pitch === 'undefined' ? this.pitch : pitch
+    this.pan = typeof pan === 'undefined' ? this.pan : pan
+    this.fade = typeof fade === 'undefined' ? this.fade : fade
 
-    if (this._name !== '') {
-      // Set the sound properties.
-      sound.volume(this._name, this.volume)
-
-      // Play the actual sound.
-      sound.play(this._name)
+    if (audioCtx) {
+      if (audioCtx.state === 'suspended') audioCtx.resume()
+      this.source.connect(this.applyFilters())
+    } else {
+      this.source.volume = this.volume
     }
+
+    this.sample.play()
   }
 
   /** Set the blocking of the sound (wait period). */
   wait () {
     // Set the blocking of the sound.
     this.experiment._runner._events._run(this, -1, constants.RESPONSE_SOUND, [])
+  }
+
+  applyFilters () {
+    const nodes = [audioCtx.destination]
+
+    try {
+      const gainNode = audioCtx.createGain()
+      gainNode.gain.setValueAtTime(this.volume, audioCtx.currentTime)
+
+      if (this.fade) {
+        gainNode.gain.setValueAtTime(0, audioCtx.currentTime)
+        gainNode.gain.linearRampToValueAtTime(this.volume, audioCtx.currentTime + this.fade / 1000)
+      }
+
+      nodes.unshift(gainNode)
+    } catch (e) {
+      console.warning('Unable to apply volume or gain', e)
+    }
+
+    if (this.pan) {
+      try {
+        nodes.unshift(new StereoPannerNode(audioCtx, { pan: this.pan }))
+      } catch (e) {
+        console.warning('Unable to apply panning', e)
+      }
+    }
+
+    // Connect the filters creating a chain
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i] !== audioCtx.destination) {
+        nodes[i].connect(nodes[i + 1])
+      }
+    }
+
+    return nodes.shift(0)
   }
 }
