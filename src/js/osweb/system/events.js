@@ -311,10 +311,10 @@ export default class Events {
      * Event handler for sound event processing.
      * @param {Object} event - sound end event.
      */
-  _audioEnded (event) {
+  _audioEnded (sampler) {
     // If duration isequal to sound exit the sound item.
-    if (this.duration === 'sound') {
-      this._soundHasEnded = true
+    if (sampler.duration === 'sound') {
+      this.proceed()
     }
   }
 
@@ -349,17 +349,10 @@ export default class Events {
         this._timeStamp = this._currentItem.clock.time()
 
         // Check if a time out occures or a valid response is given.
-        if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._soundHasEnded === true) || (this._videoHasEnded === true))) ||
+        if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._videoHasEnded === true))) ||
                     ((this._timeOut > 0) && ((this._responseType === constants.RESPONSE_KEYBOARD) || (this._responseType === constants.RESPONSE_MOUSE)) && (this._responseGiven === true)) ||
                     ((this._timeOut > 0) && ((this._timeStamp - this._currentItem.experiment.vars.get('time_' + this._currentItem.name)) > this._timeOut))) {
-          // Adjus the status.
-          this._state = constants.TIMER_NONE
-
-          // Remove the items from the general stack.
-          this._runner._itemStack.pop()
-
-          // Execute the post-run phase after duration is finished or response is received.
-          this._currentItem._complete()
+          this.proceed()
         } else {
           // Update the current item without response.
           this._currentItem._update(null)
@@ -409,5 +402,16 @@ export default class Events {
     this._soundHasEnded = false
     this._state = constants.TIMER_WAIT
     this._videoHasEnded = false
+  }
+
+  proceed () {
+    // Adjust the status.
+    this._state = constants.TIMER_NONE
+
+    // Remove the items from the general stack.
+    this._runner._itemStack.pop()
+
+    // Execute the post-run phase after duration is finished or response is received.
+    this._currentItem._complete()
   }
 }

@@ -32,8 +32,12 @@ export default class SamplerBackend {
     this.pan = (typeof pan === 'undefined') ? 0 : pan
     this.pitch = (typeof pitch === 'undefined') ? 1 : pitch
 
-    this.sample = source.data.cloneNode()
-    this.sample.onended = this.experiment._runner._events._audioEnded.bind(this)
+    try {
+      this.sample = source.data.cloneNode()
+    } catch (e) {
+      console.error(`Could not play sound: ${source.name}`, e)
+    }
+    this.sample.onended = () => this.experiment._runner._events._audioEnded(this)
 
     if (audioCtx) {
       this.source = audioCtx.createMediaElementSource(this.sample)
