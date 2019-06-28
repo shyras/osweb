@@ -82,6 +82,12 @@ export default class Canvas {
     this.experiment._runner._renderer.backgroundColor = 0x000000
     this.experiment._runner._renderer.clear()
     this.experiment._runner._renderer.render(this._container)
+
+    try {
+      document.body.style.backgroundColor = '#FFFFFF'
+    } catch (e) {
+      console.log('Could not reset body color to white', e)
+    }
   }
 
   /**
@@ -851,8 +857,14 @@ export default class Canvas {
     this._container.scale.x = this.experiment._scale_x
     this._container.scale.y = this.experiment._scale_y
 
-    // Set renderer baxckground and render the content.
+    // Set renderer background and render the content.
     this.experiment._runner._renderer.backgroundColor = this._styles._background_color
+    try {
+      const c = this._styles.rgb
+      document.body.style.backgroundColor = `rgb(${c.r},${c.g},${c.b})`
+    } catch (e) {
+      console.error(e)
+    }
     this.experiment._runner._renderer.render(this._container)
 
     // Return the current time.

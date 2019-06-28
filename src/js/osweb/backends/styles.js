@@ -98,6 +98,17 @@ export default class Styles {
     }
   }
 
+  get rgb () {
+    return {
+      r: this._background_color >> 16,
+      g: this._background_color >> 8 & 0xFF,
+      b: this._background_color & 0xFF
+    }
+  }
+
+  set rgb (val) {
+  }
+
   /**
    * Checks if the passed value is an integer.
    * @param {Number} value -  The value to check.
