@@ -35,7 +35,7 @@ export default class SamplerBackend {
     try {
       this.sample = source.data.cloneNode()
     } catch (e) {
-      console.error(`Could not play sound:`, source, e)
+      console.error(`Could not play sound:`, source)
       throw e
     }
     this.sample.onended = () => this.experiment._runner._events._audioEnded(this)
