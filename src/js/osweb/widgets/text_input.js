@@ -2,7 +2,8 @@ import Widget from './widget.js'
 import {
   constants
 } from '../system/constants.js'
-import PixiTextInput from '../../dependencies/PixiTextInput'
+
+// import TextInput from 'pixi-text-input'
 
 /**
  * Class representing an OpenSesame Image Widget.
@@ -60,15 +61,10 @@ export default class TextInputWidget extends Widget {
    * @param {Number|String} pHtml - Toggle if the text contains html (ignored).
    */
   draw_text (text, html) {
-    // Create the background color element.
-    var rectangle = new PIXI.Graphics()
-    rectangle.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number'), 1)
-    rectangle.beginFill(this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number'))
-    rectangle.drawRect(1, 1, this._container._width - 2, this._container._height - 2)
-    rectangle.endFill()
-    rectangle.x = 0
-    rectangle.y = 0
-    this._container.addChild(rectangle)
+    const box_style = {
+      fill: this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background),
+      rounded: 5
+    }
 
     // PIXI - Create the text element
     const text_style = {
@@ -78,15 +74,12 @@ export default class TextInputWidget extends Widget {
       fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
       fill: this.form.experiment.vars.foreground
     }
-    this.inputField = new PixiTextInput(text, text_style)
-    this.inputField.backgroundColor = this.form._canvas._styles._convertColorValue(this.form.experiment.vars.background, 'number')
-    this.inputField.x = 5
-    this.inputField.y = 5
-    this.inputField.width = this._container._width - 10
-    this.inputField.update = this.response
-    this.inputField.widget = this
-    this.inputField.focus()
-    this._container.addChild(this.inputField)
+    // this.inputField = new TextInput(text_style, box_style)
+    // this.inputField.x = 5
+    // this.inputField.y = 5
+    // this.inputField.keydown = this.response
+    // this.inputField.focus()
+    // this._container.addChild(this.inputField)
   }
 
   /** General drawing method for the label widget. */
@@ -94,10 +87,10 @@ export default class TextInputWidget extends Widget {
     // Clear the old content.
     this._container.removeChildren()
 
-    // Draw the frame (if enabled).
-    if (this.frame === true) {
-      this.draw_frame()
-    }
+    // // Draw the frame (if enabled).
+    // if (this.frame === true) {
+    //   this.draw_frame()
+    // }
 
     // Draw the text.
     this.draw_text(this.text)
