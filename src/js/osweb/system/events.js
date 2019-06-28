@@ -313,8 +313,7 @@ export default class Events {
      */
   _audioEnded (event) {
     // If duration isequal to sound exit the sound item.
-    var sampler = this
-    if (sampler.duration === 'sound') {
+    if (this.duration === 'sound') {
       this._soundHasEnded = true
     }
   }

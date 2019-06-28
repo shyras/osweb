@@ -33,11 +33,10 @@ export default class SamplerBackend {
     this.pitch = (typeof pitch === 'undefined') ? 1 : pitch
 
     this.sample = source.data.cloneNode()
+    this.sample.onended = this.experiment._runner._events._audioEnded.bind(this)
 
     if (audioCtx) {
       this.source = audioCtx.createMediaElementSource(this.sample)
-      this.source.addEventListener('ended',
-        this.experiment._runner._events._audioEnded.bind(this))
     } else {
       this.source = this.sample
     }
