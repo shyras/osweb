@@ -39,7 +39,7 @@ export default class JavaScriptWorkspace {
      */
   _eval (js) {
     let vars = this.vars_proxy
-    let Canvas = () => CanvasClass(this.experiment)
+    let Canvas = () => new CanvasClass(this.experiment)
     eval(js)
   }
 }

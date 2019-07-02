@@ -581,11 +581,19 @@ export default class Canvas {
   }
 
   /**
-   * Returns the canvas heigt
+   * Returns the canvas height
    * @return {Number} - The height of the canvas in pixels.
    */
-  height () {
-    return this._heigth
+  get height () {
+    return this._height
+  }
+
+  /**
+   * Returns the canvas width
+   * @return {Number} - The width of the canvas in pixels.
+   */
+  get width () {
+    return this._width
   }
 
   /**

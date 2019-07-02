@@ -1,0 +1,68 @@
+---
+API: 2.1
+OpenSesame: 3.2.8
+Platform: posix
+---
+set width 1024
+set uniform_coordinates yes
+set title "New experiment"
+set subject_parity even
+set subject_nr 0
+set start experiment
+set sound_sample_size -16
+set sound_freq 48000
+set sound_channels 2
+set sound_buf_size 1024
+set round_decimals 2
+set height 768
+set fullscreen no
+set form_clicks no
+set foreground white
+set font_underline no
+set font_size 18
+set font_italic no
+set font_family mono
+set font_bold no
+set disable_garbage_collection yes
+set description "The main experiment item"
+set coordinates uniform
+set compensation 0
+set canvas_backend xpyriment
+set background black
+
+define sequence experiment
+	set flush_keyboard yes
+	set description "Runs a number of items in sequence"
+	run welcome always
+	run new_inline_javascript always
+	run new_keyboard_response always
+
+define inline_javascript new_inline_javascript
+	set description "Executes JavaScript code (ECMA 5.1)"
+	___run__
+	var cnvs = Canvas()
+	var xc = cnvs.width / 2
+	var yc = cnvs.height / 2
+	
+	cnvs.rect(xc-200, yc-25, 50, 50, {color: 'green', background_color: 'green', fill: true})
+	cnvs.circle(xc, yc, 50, {color: 'red' , background_color: 'red', fill: true})
+	cnvs.text("Yes!", true, xc+200, yc)
+	
+	cnvs.show()
+	__end__
+	set _prepare ""
+
+define keyboard_response new_keyboard_response
+	set timeout infinite
+	set flush yes
+	set event_type keypress
+	set duration keypress
+	set description "Collects keyboard responses"
+
+define sketchpad welcome
+	set start_response_interval no
+	set reset_variables no
+	set duration keypress
+	set description "Displays stimuli"
+	draw textline center=1 color=white font_bold=no font_family=serif font_italic=no font_size=32 html=yes show_if=always text="OpenSesame 3.2 <i>Kafkaesque Koffka</i>" x=0 y=0 z_index=0
+
