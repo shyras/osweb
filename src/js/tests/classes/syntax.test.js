@@ -138,6 +138,10 @@ describe('Syntax', function () {
       expect(syntax.eval_text(
         '[no var]', tmpVarStore)).toBe('[no var]')
     })
+    it('Should not turn an empty string into the number 0', function () {
+      expect(syntax.eval_text(
+        '', tmpVarStore)).toBe('')
+    })
     it('Should not try to parse a variable if [] contents contain non-alphanumeric (unicode) characters: [nóvar]', function () {
       expect(syntax.eval_text(
         '[nóvar]', tmpVarStore)).toBe('[nóvar]')
