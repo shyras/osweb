@@ -44,24 +44,18 @@ export default class TouchResponse extends MouseResponse {
      * @param {Object} pRetval - The mouse response to process.
      */
   process_response_mouseclick (retval) {
-    // Processes a mouseclick response.
-    this.experiment._start_response_interval = this.sri
-    this.experiment._end_response_interval = retval.rtTime
-    this.experiment.vars.response = retval.resp
-    this.synonyms = this._mouse._synonyms(this.experiment.vars.response)
-    this.experiment.vars.cursor_x = retval.event.clientX
-    this.experiment.vars.cursor_y = retval.event.clientY
-    const rect = this._runner._renderer.view.getBoundingClientRect()
-    this._x = retval.event.clientX - rect.left
-    this._y = retval.event.clientY - rect.top
+    super.process_response_mouseclick(retval)
     // Calulate the row, column and cell.
-    this.col = Math.floor(this._x / (this.experiment.vars.width / this.vars._ncol))
-    this.row = Math.floor(this._y / (this.experiment.vars.height / this.vars._nrow))
+    this.col = Math.floor(
+        (this.experiment.vars.cursor_x + this.experiment.vars.width / 2) /
+        (this.experiment.vars.width / this.vars._ncol)
+    )
+    this.row = Math.floor(
+        (this.experiment.vars.cursor_y + this.experiment.vars.height / 2) /
+        (this.experiment.vars.height / this.vars._nrow)
+    )
     this.cell = this.row * this.vars._ncol + this.col + 1
     this.experiment.vars.response = this.cell
     this.synonyms = [this.experiment.vars.get('response')]
-
-    // Do the bookkeeping
-    this.response_bookkeeping()
   }
 }
