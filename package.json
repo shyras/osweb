@@ -62,7 +62,7 @@
 		"babel-loader": "^8.0.6",
 		"babel-plugin-lodash": "^3.3.4",
 		"bootstrap": "^4.3.1",
-		"canvas": "^2.6.1",
+		"canvas": "^2.5.0",
 		"copy-webpack-plugin": "^5.0.3",
 		"css-loader": "^3.0.0",
 		"data-urls": "^1.1.0",
