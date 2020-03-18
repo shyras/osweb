@@ -193,7 +193,7 @@ export default class GenericResponse extends Item {
   }
   
   /** Sets the mouse coordinates based **/
-  set_mouse_coordinates (retval) {
+  set_mouse_coordinates (clientX, clientY) {
     // We need the top-left and scaling of the viewport to set the mouse
     // coordinates so that 0,0 corresponds to the display center. The scaling
     // needs to be taken into account also such that the viewport always has
@@ -205,8 +205,8 @@ export default class GenericResponse extends Item {
     )
     const center_x = scale * this.experiment.vars.width / 2
     const center_y = scale * this.experiment.vars.height / 2
-    this.experiment.vars.cursor_x = (retval.event.clientX - center_x - rect.left) / scale
-    this.experiment.vars.cursor_y = (retval.event.clientY - center_y - rect.top) / scale
+    this.experiment.vars.cursor_x = (clientX - center_x - rect.left) / scale
+    this.experiment.vars.cursor_y = (clientY - center_y - rect.top) / scale
   }
 
   /** Process a keyboard response. */
@@ -224,7 +224,7 @@ export default class GenericResponse extends Item {
     this.experiment._end_response_interval = retval.rtTime
     this.experiment.vars.response = retval.resp
     this.synonyms = this._mouse._synonyms(this.experiment.vars.response)
-    this.set_mouse_coordinates(retval)
+    this.set_mouse_coordinates(retval.event.clientX, retval.event.clientY)
     this.response_bookkeeping()
   }
 
