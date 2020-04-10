@@ -76,12 +76,13 @@ module.exports = (env, args) => {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       }, {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpe?g|gif)$/i,
         use: [{
           loader: 'url-loader',
           options: {
             limit: 8192,
-            name: 'images/[hash].[ext]'
+            name: 'images/[hash].[ext]',
+            esModule: false
           }
         }]
       }, {
@@ -121,8 +122,8 @@ module.exports = (env, args) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'OSWEB_VERSION_NAME': JSON.stringify(pkgconfig.name),
-        'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version),
+        OSWEB_VERSION_NAME: JSON.stringify(pkgconfig.name),
+        OSWEB_VERSION_NO: JSON.stringify(pkgconfig.version),
         PIXI: 'pixi.js'
       }),
       new webpack.NamedModulesPlugin(),

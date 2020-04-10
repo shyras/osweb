@@ -58,8 +58,8 @@ export default class Logger extends Item {
       this.set_item_onset()
       this.experiment._log.write_vars(
         (this.vars.get('auto_log') === 'yes')
-        ? this.logvars.concat(this.experiment.vars.inspect()).sort()
-        : this.logvars
+          ? this.logvars.concat(this.experiment.vars.inspect()).sort()
+          : this.logvars
       )
       this._complete()
     }
