@@ -8,7 +8,7 @@ const startCase = require('lodash').startCase
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const pkgconfig = require('./package.json')
 
 const outputPath = path.join(__dirname, 'public_html')
@@ -165,7 +165,17 @@ module.exports = (env, args) => {
             priority: -10
           }
         }
-      }
+      },
+      minimizer: [
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true,
+          terserOptions: {
+            keep_fnames: true
+          }
+        })
+      ]
     }
   }
 
