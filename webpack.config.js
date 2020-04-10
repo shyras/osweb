@@ -8,8 +8,7 @@ const startCase = require('lodash').startCase
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-// const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+// const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const pkgconfig = require('./package.json')
 
 const outputPath = path.join(__dirname, 'public_html')
@@ -150,11 +149,6 @@ module.exports = (env, args) => {
         filename: 'index.html',
         exampleExperiments
       })
-      // new LodashModuleReplacementPlugin({
-      //   'shorthands': true,
-      //   'collections': true,
-      //   'paths': true
-      // })
     ],
     optimization: {
       sideEffects: true,
@@ -171,14 +165,7 @@ module.exports = (env, args) => {
             priority: -10
           }
         }
-      },
-      minimizer: [
-        new UglifyJsPlugin({
-          uglifyOptions: {
-            keep_fnames: true
-          }
-        })
-      ]
+      }
     }
   }
 
