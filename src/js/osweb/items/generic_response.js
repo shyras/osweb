@@ -248,23 +248,18 @@ export default class GenericResponse extends Item {
     // But correctness information is only set for dedicated response items,
     // such as keyboard_response items, because otherwise we might confound the feedback
     if (this.process_feedback === true) {
+      this.experiment.vars.correct = ''
       if (this.vars.get('correct_response') !== null) {
         // If a correct_response has been defined, we use it to determine accuracy etc.
         if (this.synonyms !== null) {
-          if (this.synonyms.includes(this.syntax.remove_quotes(this.vars.get('correct_response')))) {
+          if (this.synonyms.includes(this.syntax.remove_quotes(this.vars.get('correct_response').toString()))) {
             this.experiment.vars.correct = 1
             this.experiment.vars.total_correct = this.experiment.vars.total_correct + 1
           } else {
             this.experiment.vars.correct = 0
           }
-        } else {
-          this.experiment.vars.correct = 'undefined'
         }
-      } else {
-        // If a correct_response hasn't been defined, we simply set correct to undefined.
-        this.experiment.vars.correct = 'undefined'
       }
-
       // Do some response bookkeeping
       this.experiment.vars.total_response_time = this.experiment.vars.total_response_time + this.experiment.vars.response_time
       this.experiment.vars.total_responses = this.experiment.vars.total_responses + 1
