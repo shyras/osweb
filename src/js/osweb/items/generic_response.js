@@ -169,29 +169,29 @@ export default class GenericResponse extends Item {
   process_response () {
     // Start stimulus response cycle.
     switch (this._responsetype) {
-      case constants.RESPONSE_NONE:
-        // Duration is 0, so complete the stimulus/response cycle.
-        this._status = constants.STATUS_FINALIZE
-        this._complete()
-        break
-      case constants.RESPONSE_DURATION:
-        this.sleep_for_duration()
-        break
-      case constants.RESPONSE_KEYBOARD:
-        this._keyboard.get_key()
-        break
-      case constants.RESPONSE_MOUSE:
-        this._mouse.get_click()
-        break
-      case constants.RESPONSE_SOUND:
-        this._sampler.wait()
-        break
-      case constants.RESPONSE_VIDEO:
-        this._video_player.wait()
-        break
+    case constants.RESPONSE_NONE:
+      // Duration is 0, so complete the stimulus/response cycle.
+      this._status = constants.STATUS_FINALIZE
+      this._complete()
+      break
+    case constants.RESPONSE_DURATION:
+      this.sleep_for_duration()
+      break
+    case constants.RESPONSE_KEYBOARD:
+      this._keyboard.get_key()
+      break
+    case constants.RESPONSE_MOUSE:
+      this._mouse.get_click()
+      break
+    case constants.RESPONSE_SOUND:
+      this._sampler.wait()
+      break
+    case constants.RESPONSE_VIDEO:
+      this._video_player.wait()
+      break
     }
   }
-  
+
   /** Sets the mouse coordinates based **/
   set_mouse_coordinates (clientX, clientY) {
     // We need the top-left and scaling of the viewport to set the mouse
@@ -200,8 +200,8 @@ export default class GenericResponse extends Item {
     // the same size in cursor coordinates, even if it's scaled down.
     const rect = this._runner._renderer.view.getBoundingClientRect()
     const scale = Math.min(
-        (rect.right - rect.left) / this.experiment.vars.width,
-        (rect.bottom - rect.top) / this.experiment.vars.height,
+      (rect.right - rect.left) / this.experiment.vars.width,
+      (rect.bottom - rect.top) / this.experiment.vars.height
     )
     const center_x = scale * this.experiment.vars.width / 2
     const center_y = scale * this.experiment.vars.height / 2
@@ -248,23 +248,18 @@ export default class GenericResponse extends Item {
     // But correctness information is only set for dedicated response items,
     // such as keyboard_response items, because otherwise we might confound the feedback
     if (this.process_feedback === true) {
+      this.experiment.vars.correct = ''
       if (this.vars.get('correct_response') !== null) {
         // If a correct_response has been defined, we use it to determine accuracy etc.
         if (this.synonyms !== null) {
-          if (this.synonyms.includes(this.syntax.remove_quotes(this.vars.get('correct_response')))) {
+          if (this.synonyms.includes(this.syntax.remove_quotes(this.vars.get('correct_response').toString()))) {
             this.experiment.vars.correct = 1
             this.experiment.vars.total_correct = this.experiment.vars.total_correct + 1
           } else {
             this.experiment.vars.correct = 0
           }
-        } else {
-          this.experiment.vars.correct = 'undefined'
         }
-      } else {
-        // If a correct_response hasn't been defined, we simply set correct to undefined.
-        this.experiment.vars.correct = 'undefined'
       }
-
       // Do some response bookkeeping
       this.experiment.vars.total_response_time = this.experiment.vars.total_response_time + this.experiment.vars.response_time
       this.experiment.vars.total_responses = this.experiment.vars.total_responses + 1
