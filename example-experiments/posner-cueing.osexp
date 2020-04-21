@@ -1,7 +1,7 @@
 ---
-API: 2
-OpenSesame: 3.1.6
-Platform: posix
+API: 2.1
+OpenSesame: 3.3.0a71
+Platform: nt
 ---
 set width 1024
 set uniform_coordinates yes
@@ -13,7 +13,7 @@ set sound_sample_size -16
 set sound_freq 48000
 set sound_channels 2
 set sound_buf_size 1024
-set sampler_backend legacy
+set sampler_backend psycho
 set round_decimals 2
 set mouse_backend psycho
 set keyboard_backend psycho
@@ -26,7 +26,7 @@ set font_size 18
 set font_italic no
 set font_family mono
 set font_bold no
-set experiment_path "/Users/daniel/Sites/osweb/test-osexp"
+set experiment_path "D:/Users/Daniel/Documents/GitHub/osweb/example-experiments"
 set disable_garbage_collection yes
 set description "The main experiment item"
 set coordinates uniform
@@ -91,6 +91,7 @@ define logger logger
 define keyboard_response response
 	set timeout infinite
 	set flush yes
+	set event_type keypress
 	set duration keypress
 	set description "Collects keyboard responses"
 	set allowed_responses "z;m"

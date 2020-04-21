@@ -36,9 +36,9 @@ describe('Matrix functions', () => {
   })
 
   describe('stack() and unstack()', () => {
-    let unstackedMatrix = {
-      'number': [1, 2, 3],
-      'word': ['one', 'two', 'three']
+    const unstackedMatrix = {
+      number: [1, 2, 3],
+      word: ['one', 'two', 'three']
     }
 
     it('should unstack/transpose the matrix', () => {
@@ -50,10 +50,10 @@ describe('Matrix functions', () => {
     })
 
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', []]) {
+      for (const arg of [5, '5', []]) {
         expect(() => stack(arg)).toThrow()
       }
-      for (let arg of [5, '5', {}]) {
+      for (const arg of [5, '5', {}]) {
         expect(() => unstack(arg)).toThrow()
       }
     })
@@ -82,14 +82,14 @@ describe('Matrix functions', () => {
     })
 
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', true, {}]) {
+      for (const arg of [5, '5', true, {}]) {
         expect(() => shuffleVert(arg)).toThrow()
         expect(() => shuffleHoriz(arg)).toThrow()
       }
     })
 
     it('should throw an exception when something other than an array is passed for the columns argument', () => {
-      for (let arg of [5, 'aaa', true, {}]) {
+      for (const arg of [5, 'aaa', true, {}]) {
         expect(() => shuffleVert(srcMatrix, arg)).toThrow()
         expect(() => shuffleHoriz(srcMatrix, arg)).toThrow()
       }
@@ -113,13 +113,13 @@ describe('Matrix functions', () => {
 
   describe('sortCol', () => {
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', true, {}]) {
+      for (const arg of [5, '5', true, {}]) {
         expect(() => sortCol(arg)).toThrow()
       }
     })
 
     it('should throw an error if something else is passed for column than a string', () => {
-      for (let arg of [5, true, [], {}, '']) {
+      for (const arg of [5, true, [], {}, '']) {
         expect(() => sortCol(srcMatrix, arg)).toThrow()
       }
     })
@@ -135,13 +135,13 @@ describe('Matrix functions', () => {
 
   describe('reverseRows', () => {
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', true, {}]) {
+      for (const arg of [5, '5', true, {}]) {
         expect(() => reverseRows(arg)).toThrow()
       }
     })
 
     it('should throw an error if something other than an array is passed for the column argument', () => {
-      for (let arg of ['aa', 2, true, {}]) {
+      for (const arg of ['aa', 2, true, {}]) {
         expect(() => reverseRows(srcMatrix, arg)).toThrow()
       }
     })
@@ -166,19 +166,19 @@ describe('Matrix functions', () => {
 
   describe('roll()', () => {
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', true, {}]) {
+      for (const arg of [5, '5', true, {}]) {
         expect(() => roll(arg)).toThrow()
       }
     })
 
     it('should throw an error if something other than an integer is passed for the amount argument', () => {
-      for (let arg of ['aaa', true, {}, []]) {
+      for (const arg of ['aaa', true, {}, []]) {
         expect(() => roll(srcMatrix, arg)).toThrow()
       }
     })
 
     it('should throw an error if something other than a string is passed for the column argument', () => {
-      for (let arg of [5, [], true, {}]) {
+      for (const arg of [5, [], true, {}]) {
         expect(() => roll(srcMatrix, 2, arg)).toThrow()
       }
     })
@@ -224,19 +224,19 @@ describe('Matrix functions', () => {
 
   describe('weight()', () => {
     it('should throw an error if the wrong datatype is passed for matrix', () => {
-      for (let arg of [5, '5', true, {}]) {
+      for (const arg of [5, '5', true, {}]) {
         expect(() => weight(arg)).toThrow()
       }
     })
 
     it('should throw an error if something other than a string is passed as the second argument', () => {
-      for (let arg of [true, {}, []]) {
+      for (const arg of [true, {}, []]) {
         expect(() => weight(srcMatrix, arg)).toThrow()
       }
     })
 
     it('should throw an error if the weight column is not found in the matrix', () => {
-      expect(() => weight(srcMatrix, 'aaa')).toThrow(`Column 'aaa' not found in matrix`)
+      expect(() => weight(srcMatrix, 'aaa')).toThrow('Column \'aaa\' not found in matrix')
     })
 
     it('should remove items with weight 0', () => {

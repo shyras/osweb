@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js'
-
+import { Container, Graphics } from 'pixi.js'
 /** Class representing an OpenSesame Widget. */
 export default class Widget {
   /**
@@ -15,7 +14,7 @@ export default class Widget {
     this.var = null
 
     // Create the widget container.
-    this._container = new PIXI.Container() // PIXI - Create the container which represents the canvas.
+    this._container = new Container() // - Create the container which represents the canvas.
   }
 
   /**
@@ -25,7 +24,7 @@ export default class Widget {
      */
   draw_frame (rect, style) {
     // Create the background line elements.
-    var line = new PIXI.Graphics()
+    var line = new Graphics()
     line.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].lineColorLeftTop), 1)
     line.moveTo(this._container._width, 0)
     line.lineTo(0, 0)
@@ -37,7 +36,7 @@ export default class Widget {
     line.y = 0
 
     // Create the background color element.
-    var rectangle = new PIXI.Graphics()
+    var rectangle = new Graphics()
     rectangle.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].backgroundColor), 1)
     rectangle.beginFill(this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].backgroundColor))
     rectangle.drawRect(1, 1, this._container._width - 2, this._container._height - 2)

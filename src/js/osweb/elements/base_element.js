@@ -56,23 +56,23 @@ export default class BaseElement {
    */
   eval_properties () {
     // Evaluates all properties and return them.
-    this._properties = {}
-
     const xc = this.experiment.vars.width / 2
     const yc = this.experiment.vars.height / 2
 
-    for (let property in this.properties) {
-      let value = this.sketchpad.syntax.eval_text(this.properties[property], null, false)
+    this._properties = Object.entries(this.properties).reduce((result, [prop, val]) => {
+      let value = this.syntax.eval_text(val, this.vars, false)
 
-      if ((property === 'x') || (property === 'x1') || (property === 'x2')) {
+      if (['x', 'x1', 'x2'].includes(prop)) {
         value = Math.round(Number(value) + xc)
-      };
-      if ((property === 'y') || (property === 'y1') || (property === 'y2')) {
-        value = Math.round(Number(value) + yc)
-      };
+      }
 
-      this._properties[property] = value
-    }
+      if (['y', 'y1', 'y2'].includes(prop)) {
+        value = Math.round(Number(value) + yc)
+      }
+
+      result[prop] = value
+      return result
+    }, {})
   }
 
   /**

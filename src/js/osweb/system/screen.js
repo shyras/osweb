@@ -1,5 +1,5 @@
 import { isFunction } from 'lodash'
-import * as PIXI from 'pixi.js'
+import { Container, Sprite, Graphics, Text } from 'pixi.js'
 import { VERSION_NUMBER } from '../index.js'
 
 /** Class representing a Screen. */
@@ -15,7 +15,7 @@ export default class Screen {
     // Set class properties.
     this._active = true // If true the introduction screen is shown.
     this._click = true // If true all is started with a mouse click.
-    this._container = null // PIXI: Container which holds the screen info.
+    this._container = null //  Container which holds the screen info.
     this._exit = false // Exit toggle to prevent dialog when closing experiment.
   }
 
@@ -205,25 +205,25 @@ export default class Screen {
     // Check if introscreen is used.
     if (this._active === true) {
       // Define introscreen elements.
-      this._introScreen = new PIXI.Container()
+      this._introScreen = new Container()
 
       const center = this.screenCenter()
 
       const logoPath = (typeof logoSrc === 'undefined') ? 'img/opensesame.png' : logoSrc
 
-      const oswebLogo = new PIXI.Sprite.fromImage(logoPath)
-      const oswebTitle = new PIXI.Text('OSWeb', {
+      const oswebLogo = Sprite.from(logoPath)
+      const oswebTitle = new Text('OSWeb', {
         fontFamily: 'Arial',
         fontSize: 26,
         fill: '#FFFFFF'
       })
-      const versionInfo = new PIXI.Text(VERSION_NUMBER, {
+      const versionInfo = new Text(VERSION_NUMBER, {
         fontFamily: 'Arial',
         fontSize: 16,
         fill: '#FFFFFF'
       })
 
-      const copyrightText = new PIXI.Text(
+      const copyrightText = new Text(
         `Copyright Jaap Bos, Daniel Schreij & Sebastiaan Mathot, 2016 - ${(new Date()).getFullYear()}`,
         {
           fontFamily: 'Arial',
@@ -242,7 +242,7 @@ export default class Screen {
         center.y * 2 - copyrightText.height * 2
       )
 
-      this._statusText = new PIXI.Text('', {
+      this._statusText = new Text('', {
         fontFamily: 'Arial',
         fontSize: 18,
         fill: '#FFFFFF'
@@ -327,12 +327,12 @@ export default class Screen {
       // Select the stage.
       switch (percentage) {
         case -1:
-          this._progressBarOuter = new PIXI.Graphics()
+          this._progressBarOuter = new Graphics()
           this._progressBarOuter.lineStyle(1, 0xFFFFFF, 1)
           this._progressBarOuter.drawRect(xOuter, yOuter, wOuter, hOuter)
           this._progressBarOuter.x = 0
           this._progressBarOuter.y = 0
-          this._progressBarInner = new PIXI.Graphics()
+          this._progressBarInner = new Graphics()
           this._progressBarInner.lineStyle(1, 0xFFFFFF, 1)
           this._progressBarInner.drawRect(xOuter + 2, yOuter + 2, 1, hOuter - 4)
           this._progressBarInner.x = 0

@@ -50,13 +50,13 @@ describe('Transfer class', () => {
     })
   })
 
-  describe('_readOsexpFromString', () => {
+  describe('_readExpFile', () => {
     it('Should throw an error if an invalid osexp representation is supplied', () => {
-      expect(transfer._readOsexpFromString('abc')).rejects.toThrow()
+      expect(transfer._readExpFile('abc')).rejects.toThrow()
     })
 
     it('Should recognize a valid script and update the status bar', () => {
-      expect(transfer._readOsexpFromString(osexpString)).resolves.toBe(osexpString)
+      expect(transfer._readExpFile(osexpString)).resolves.toBe(osexpString)
       expect(mockUpdateProgressBar).toHaveBeenCalledTimes(1)
       expect(mockUpdateProgressBar.mock.calls[0][0]).toBe(100)
     })

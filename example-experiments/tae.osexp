@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.2.5
+OpenSesame: 3.3.0a15
 Platform: posix
 ---
 set width 1024
@@ -124,11 +124,11 @@ define sketchpad instructions
 	set duration keypress
 	set description "Displays stimuli"
 	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="INSTRUCTIONS<br /><br />On each trial, you will see two patches of tilted lines<br />The first patch is shown for a few seconds<br />The second patch is shown only briefly<br />Indicate whether the second patch was tilted leftwards or rightwards " x=0 y=-224 z_index=0
-	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=-5 phase=0 show_if=always size=200 stdev=30 x=181.0 y=78.0 z_index=0
-	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=5 phase=0 show_if=always size=200 stdev=30 x=-181.0 y=78.0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the left key if the<br />second patch looks like this" x=-192.0 y=-64.0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the right key if the<br />second patch looks like this" x=192.0 y=-64.0 z_index=0
-	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="In total, you will respond to 11 patches<br /><br />Press any key to begin!" x=0.0 y=256.0 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=5.0 phase=0.0 show_if=always size=200 stdev=30.0 x=181 y=78 z_index=0
+	draw gabor bgmode=avg color1=black color2=white env=gaussian freq=0.05 orient=355.0 phase=0.0 show_if=always size=200 stdev=30.0 x=-181 y=78 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the left key if the<br />second patch looks like this" x=-192 y=-64 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="Press the right key if the<br />second patch looks like this" x=192 y=-64 z_index=0
+	draw textline center=1 color=black font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="In total, you will respond to 11 patches<br /><br />Press any key to begin!" x=0 y=256 z_index=0
 
 define keyboard_response keyboard_response
 	set timeout infinite

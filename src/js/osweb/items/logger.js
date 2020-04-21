@@ -13,17 +13,8 @@ export default class Logger extends Item {
      * @param {String} pScript - The script containing the properties of the item.
      */
   constructor (experiment, name, script) {
-    // Inherited create.
     super(experiment, name, script)
-
-    // Definition of public properties.
     this.description = 'Logs experimental data'
-    this.logvars = []
-
-    // Definition of private properties.
-    this._logvars = null
-
-    // Process the script.
     this.from_string(script)
   }
 
@@ -35,7 +26,6 @@ export default class Logger extends Item {
 
   /** Reset all item variables to their default value. */
   reset () {
-    this._logvars = null
     this.logvars = []
     this.vars.auto_log = 'yes'
   }
@@ -45,12 +35,7 @@ export default class Logger extends Item {
      * @param {String} script - The script containing the properties of the item.
      */
   from_string (script) {
-    // Parses a definition string.
-    this.variables = {}
-    this.comments = []
     this.reset()
-
-    // Split the string into an array of lines.
     if (script !== null) {
       var lines = script.split('\n')
       for (var i = 0; i < lines.length; i++) {
@@ -62,36 +47,20 @@ export default class Logger extends Item {
         }
       }
     }
+    this.logvars.sort()
   }
 
   /** Implements the run phase of an item. */
   run () {
-    // Inherited.
     super.run()
-
-    // Run item only one time.
     if (this._status !== constants.STATUS_FINALIZE) {
-      // item is finalized.
       this._status = constants.STATUS_FINALIZE
-
       this.set_item_onset()
-      if (this._logvars == null) {
-        if (this.vars.auto_log === 'yes') {
-          this._logvars = this.experiment._log._get_all_vars()
-        } else {
-          this._logvars = []
-          for (const variable of this.logvars) {
-            if ((variable in this._logvars) === false) {
-              this._logvars.push(variable)
-            }
-          }
-          this._logvars.sort()
-        }
-      }
-
-      this.experiment._log.write_vars(this._logvars)
-
-      // Complete the cycle.
+      this.experiment._log.write_vars(
+        (this.vars.get('auto_log') === 'yes')
+          ? this.logvars.concat(this.experiment.vars.inspect()).sort()
+          : this.logvars
+      )
       this._complete()
     }
   }

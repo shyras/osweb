@@ -1,5 +1,6 @@
 import {
   isNumber,
+  toNumber,
   isObject,
   isString
 } from 'lodash'
@@ -110,16 +111,13 @@ export default class Syntax {
    * @param {Boolean} addQuotes - The add quotes toggle.
    * @return {Boolean|Number|Object|String} - The result of the evaluated text.
    */
-  eval_text (text, vars, addQuotes) {
+  eval_text (text, vars, addQuotes = false) {
     // if pTxt is an object then it is a parsed python expression.
-    if (isObject(text)) {
-      return this._runner._pythonParser._run_statement(text)
-    };
+    if (isObject(text)) return this._runner._pythonParser._run_statement(text)
     // if pTxt is already a number simply return it
-    if (isNumber(text)) {
-      return text
-    }
-
+    if (isNumber(text)) return text
+    // Try to convert text to a number. If this succeeds return it.
+    if ((text !== '') && !isNaN(toNumber(text))) return toNumber(text)
     text = this.escapeBrackets(text)
     /** The replacer function detects variable entries in the passed text
     and replaces them with variable values as found in OpenSesame's var store */
@@ -143,24 +141,28 @@ export default class Syntax {
           if (typeof value === 'undefined') {
             throw new ReferenceError(`Variable '${content}' not present in var store`)
           }
-
           if (isString(value)) {
-            value = this.eval_text(value, vars, addQuotes)
+            if (value !== '') {
+              value = this.eval_text(value, vars, addQuotes)
+            }
           }
         } catch (err) {
           this._runner._debugger.addError(`Could not resolve variable '${content}': ${err.message}`)
           throw err
         }
-
         if (addQuotes === true) {
-          // Temporyary hack for string types.
+          // Temporary hack for string types.
           return isString(value) ? `"${value}"` : value
         } else {
           return value
         }
       }
     })
-
+    // Try to convert the result to a number again. If this succeeds return it.
+    if (result !== '') {
+      let nr = toNumber(result)
+      if (!isNaN(nr)) return nr
+    }
     // Check if content has additional quotes
     return this.strip_slashes(this.unescapeBrackets(result))
   }

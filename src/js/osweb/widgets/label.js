@@ -1,4 +1,4 @@
-import * as PIXI from 'pixi.js'
+import { Text } from 'pixi.js'
 import Widget from './widget.js'
 
 /**
@@ -7,17 +7,21 @@ import Widget from './widget.js'
  */
 export default class LabelWidget extends Widget {
   /**
-     * Create a widget object which represents a text label.
-     * @param {Object} form - The form  which the widget belongs.
-     * @param {Object} properties - The properties belonging to the widget.
-     */
+   * Create a widget object which represents a text label.
+   * @param {Object} form - The form  which the widget belongs.
+   * @param {Object} properties - The properties belonging to the widget.
+   */
   constructor (form, properties) {
     // Inherited create.
     super(form)
 
     // Set the class public properties.
-    this.center = (typeof properties['center'] !== 'undefined') ? (properties['center'] === 'yes') : true
-    this.frame = (typeof properties['frame'] !== 'undefined') ? (properties['frame'] === 'yes') : false
+    this.center = (typeof properties['center'] !== 'undefined')
+      ? (properties['center'] === 'yes')
+      : true
+    this.frame = (typeof properties['frame'] !== 'undefined')
+      ? (properties['frame'] === 'yes')
+      : false
     this.text = properties['text']
     this.type = 'label'
   }
@@ -88,7 +92,7 @@ export default class LabelWidget extends Widget {
      * @param {Number|String} html - Toggle if the text contains html (ignored).
      */
   draw_text (text, html) {
-    // PIXI - Create the text element
+    // Create the text element
     var text_style = {
       fontFamily: this.form._canvas._styles.font_family,
       fontSize: this.form.experiment.vars.font_size,
@@ -97,14 +101,16 @@ export default class LabelWidget extends Widget {
       fill: this.form.experiment.vars.foreground
     }
     // Get the lines and properties.
-    var text_elements = this.text_lines(text, this._container._width - 10, this._container._height - 10, text_style)
-    var lineProperties = this.form._canvas._getTextBaseline('MgyQ', text_style.fontFamily, text_style.fontSize, text_style.fontWeight)
+    const text_elements = this.text_lines(text, this._container._width - 10,
+      this._container._height - 10, text_style)
+    const lineProperties = this.form._canvas._getTextBaseline('MgyQ', text_style.fontFamily,
+      text_style.fontSize, text_style.fontWeight)
 
     // Calculate the starting y position.
-    var y = (this.center === true) ? (this._container._height - ((text_elements.length) * lineProperties.height)) / 2 : 5
+    let y = (this.center === true) ? (this._container._height - ((text_elements.length) * lineProperties.height)) / 2 : 5
     // Create the lines.
-    for (var i = 0; i < text_elements.length; i++) {
-      var text_element = new PIXI.Text(text_elements[i], text_style)
+    for (let i = 0; i < text_elements.length; i++) {
+      const text_element = new Text(text_elements[i], text_style)
       text_element.x = Math.round((this.center === true) ? (this._container._width - text_element.width) / 2 : 5)
       text_element.y = Math.round(y)
       y = y + lineProperties.height
@@ -125,7 +131,7 @@ export default class LabelWidget extends Widget {
     }
 
     // Update the text.
-    var text = this.form.experiment.syntax.eval_text(this.text, this.form.item.vars, false)
+    const text = this.form.experiment.syntax.eval_text(this.text, this.form.item.vars, false)
 
     // Draw the text.
     this.draw_text(text)

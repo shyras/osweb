@@ -1,6 +1,6 @@
 ---
 API: 2.1
-OpenSesame: 3.2.5
+OpenSesame: 3.3.0a8
 Platform: posix
 ---
 set width 1024
@@ -44,6 +44,7 @@ define feedback block_feedback
 	draw textline center=1 color=white font_bold=no font_family=sans font_italic=no font_size=24 html=yes show_if=always text="BREAK<br /><br /><br />Your average response time in this block was [avg_rt] ms<br />Your accuracy was [acc] %<br /><br /><br />Press any key to continue ...<br /><br /><br />" x=0 y=0 z_index=0
 
 define loop block_loop
+	set source_file ""
 	set source table
 	set skip 0
 	set repeat 0.2
@@ -1276,6 +1277,7 @@ define sketchpad end_of_experiment
 define sequence experiment
 	set flush_keyboard yes
 	set description "The main sequence of the experiment"
+	run set_response_mapping always
 	run set_variables always
 	run block_loop always
 	run end_of_experiment always
@@ -1297,8 +1299,6 @@ define loop group0
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
 	setcycle 0 x1 -32
 	setcycle 0 x2 -16
 	setcycle 0 x3 0
@@ -1316,8 +1316,6 @@ define loop group1
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
 	setcycle 0 x1 32
 	setcycle 0 x2 -32
 	setcycle 0 x3 -16
@@ -1335,8 +1333,6 @@ define loop group2
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
 	setcycle 0 x1 16
 	setcycle 0 x2 32
 	setcycle 0 x3 -32
@@ -1354,8 +1350,6 @@ define loop group3
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
 	setcycle 0 x1 0
 	setcycle 0 x2 16
 	setcycle 0 x3 32
@@ -1373,8 +1367,6 @@ define loop group4
 	set continuous no
 	set break_if_on_first yes
 	set break_if never
-	setcycle 0 word_response right
-	setcycle 0 nonword_response left
 	setcycle 0 x1 -16
 	setcycle 0 x2 0
 	setcycle 0 x3 16
@@ -1399,6 +1391,19 @@ define keyboard_response keyboard_response
 define logger logger
 	set description "Logs experimental data"
 	set auto_log yes
+
+define inline_javascript set_response_mapping
+	set description "Executes JavaScript code (ECMA 5.1)"
+	set _run ""
+	___prepare__
+	if (Math.random() < .5) {
+	    vars.word_response = 'left'
+	    vars.nonword_response = 'right'
+	} else {
+	    vars.word_response = 'right'
+	    vars.nonword_response = 'left'
+	}
+	__end__
 
 define loop set_variables
 	set source_file ""

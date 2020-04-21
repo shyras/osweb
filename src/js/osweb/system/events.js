@@ -1,5 +1,5 @@
 import { constants } from '../system/constants.js'
-import * as PIXI from 'pixi.js'
+import { Ticker } from 'pixi.js'
 
 /** Class representing the event system. */
 export default class Events {
@@ -87,7 +87,7 @@ export default class Events {
     this._state = constants.TIMER_NONE
 
     // Create the time handler and start the experiment.
-    this._timeHandler = new PIXI.ticker.Ticker()
+    this._timeHandler = new Ticker()
     this._timeHandler.add(this._time.bind(this))
     this._timeHandler.start()
   }
@@ -164,9 +164,11 @@ export default class Events {
 
       // Show the pause screen.
       this._runner._screen._showPauseScreen()
-    } else if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.PRESSES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
+    } else if ((this._state === constants.TIMER_WAIT) &&
+      ((this._keyPressMode === constants.PRESSES_ONLY) ||
+      (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processKeyboardEvent(event, 1)
+      return this._processKeyboardEvent(event, 1)
     }
   }
 
@@ -176,9 +178,10 @@ export default class Events {
      */
   _keyUp (event) {
     // Only select this event when the collection mode is set for this.
-    if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) || (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
+    if ((this._state === constants.TIMER_WAIT) && ((this._keyPressMode === constants.RELEASES_ONLY) ||
+      (this._keyPressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processKeyboardEvent(event, 0)
+      return this._processKeyboardEvent(event, 0)
     }
   }
 
@@ -189,7 +192,7 @@ export default class Events {
      */
   _processKeyboardEvent (event, keyboardState) {
     // Create a new keyboard response object.
-    var keyboardResponse = {
+    const keyboardResponse = {
       'event': event,
       'rtTime': this._runner._experiment.clock.time(),
       'state': keyboardState,
@@ -200,7 +203,9 @@ export default class Events {
     keyboardResponse.resp = this._convertKeyCode(event)
 
     // Process the response to the current object.
-    if ((this._responseType === constants.RESPONSE_KEYBOARD) && ((this._responseList === null) || (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
+    if ((this._responseType === constants.RESPONSE_KEYBOARD) &&
+      ((this._responseList === null) ||
+      (this._responseList.indexOf(keyboardResponse.resp) >= 0))) {
       // Process the current item.
       if (this._currentItem !== null) {
         // Process the response.
@@ -210,6 +215,7 @@ export default class Events {
       // Set the valid response given toggle.
       this._responseGiven = true
     }
+    return keyboardResponse
   }
 
   /** Prevent the right mouse context menu from showing. */
@@ -236,7 +242,6 @@ export default class Events {
      * @param {Object} event - system touchstart event.
      */
   _touchStart (event) {
-    console.log(event)
     event.button = 0
     event.clientX = event.changedTouches[0].clientX
     event.clientY = event.changedTouches[0].clientY
@@ -249,7 +254,6 @@ export default class Events {
      */
   _mouseDown (event) {
     // Store the mouse down event and its timestamp for use in the mouse class.
-    console.log(event)
     this._mouseDownEvent = {
       'event': event,
       'rtTime': this._runner._experiment.clock.time()
@@ -258,7 +262,7 @@ export default class Events {
     // Only select this event when the collection mode is set for this.
     if ((this._state === constants.TIMER_WAIT) && ((this._mousePressMode === constants.PRESSES_ONLY) || (this._mousePressMode === constants.PRESSES_AND_RELEASES))) {
       // Process the event.
-      this._processMouseEvent(event, 1)
+      return this._processMouseEvent(event, 1)
     }
   }
 
@@ -292,7 +296,8 @@ export default class Events {
     mouseResponse.resp = String(event.button + 1)
 
     // Process the response to the current object.
-    if ((this._responseType === constants.RESPONSE_MOUSE) && ((this._responseList === null) || (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
+    if ((this._responseType === constants.RESPONSE_MOUSE) && ((this._responseList === null) ||
+      (this._responseList.indexOf(mouseResponse.resp) >= 0))) {
       // Process the response to the current object.
       if (this._currentItem !== null) {
         this._currentItem._update(mouseResponse)
@@ -301,17 +306,17 @@ export default class Events {
       // Set the valid response given toggle.
       this._responseGiven = true
     }
+    return mouseResponse
   }
 
   /**
      * Event handler for sound event processing.
      * @param {Object} event - sound end event.
      */
-  _audioEnded (event) {
+  _audioEnded (sampler) {
     // If duration isequal to sound exit the sound item.
-    var sampler = this
     if (sampler.duration === 'sound') {
-      this._soundHasEnded = true
+      this.proceed()
     }
   }
 
@@ -346,17 +351,10 @@ export default class Events {
         this._timeStamp = this._currentItem.clock.time()
 
         // Check if a time out occures or a valid response is given.
-        if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._soundHasEnded === true) || (this._videoHasEnded === true))) ||
+        if (((this._timeOut === -1) && ((this._responseGiven === true) || (this._videoHasEnded === true))) ||
                     ((this._timeOut > 0) && ((this._responseType === constants.RESPONSE_KEYBOARD) || (this._responseType === constants.RESPONSE_MOUSE)) && (this._responseGiven === true)) ||
                     ((this._timeOut > 0) && ((this._timeStamp - this._currentItem.experiment.vars.get('time_' + this._currentItem.name)) > this._timeOut))) {
-          // Adjus the status.
-          this._state = constants.TIMER_NONE
-
-          // Remove the items from the general stack.
-          this._runner._itemStack.pop()
-
-          // Execute the post-run phase after duration is finished or response is received.
-          this._currentItem._complete()
+          this.proceed()
         } else {
           // Update the current item without response.
           this._currentItem._update(null)
@@ -369,12 +367,6 @@ export default class Events {
         // Do nothing in the loop
         break
       case constants.TIMER_BREAK:
-        // Adjus the status.
-        this._state = constants.TIMER_NONE
-
-        // Exit the runner.
-        this._runner._finalize()
-        break
       case constants.TIMER_EXIT:
         // Adjus the status.
         this._state = constants.TIMER_NONE
@@ -406,5 +398,16 @@ export default class Events {
     this._soundHasEnded = false
     this._state = constants.TIMER_WAIT
     this._videoHasEnded = false
+  }
+
+  proceed () {
+    // Adjust the status.
+    this._state = constants.TIMER_NONE
+
+    // Remove the items from the general stack.
+    this._runner._itemStack.pop()
+
+    // Execute the post-run phase after duration is finished or response is received.
+    this._currentItem._complete()
   }
 }

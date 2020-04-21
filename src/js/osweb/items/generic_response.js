@@ -50,9 +50,11 @@ export default class GenericResponse extends Item {
   _update (response) {
     if (response !== null) {
       // Implements the update response phase of the item.
-      if ((this._responsetype === constants.RESPONSE_KEYBOARD) && (response.type === constants.RESPONSE_KEYBOARD)) {
+      if ((this._responsetype === constants.RESPONSE_KEYBOARD) &&
+        (response.type === constants.RESPONSE_KEYBOARD)) {
         this.process_response_keypress(response)
-      } else if ((this._responsetype === constants.RESPONSE_MOUSE) && (response.type === constants.RESPONSE_MOUSE)) {
+      } else if ((this._responsetype === constants.RESPONSE_MOUSE) &&
+        (response.type === constants.RESPONSE_MOUSE)) {
         this.process_response_mouseclick(response)
       }
     }
@@ -70,8 +72,12 @@ export default class GenericResponse extends Item {
     if (this.vars.get('allowed_responses') === null) {
       this._allowed_responses = null
     } else {
-      // Create a list of allowed responses that are separated by semicolons. Also trim any whitespace.
-      var allowed_responses = String(this.vars.allowed_responses).split(';')
+      // Create a list of allowed responses that are separated by semicolons.
+      // Also trim any whitespace.
+      const allowed_responses = String(this.vars.get('allowed_responses')).split(';')
+        .map(item => (typeof item === 'string')
+          ? item.replace(/^"(.*)"$/g, '$1').trim()
+          : item)
       if (this.vars.duration === 'keypress') {
         // this._allowed_responses = allowed_responses;
         this._allowed_responses = this._keyboard._get_default_from_synoniem(allowed_responses)
@@ -82,7 +88,9 @@ export default class GenericResponse extends Item {
 
       // If allowed responses are provided, the list should not be empty.
       if (this._allowed_responses.length === 0) {
-        this.experiment._runner._debugger.addError('Defined responses are not valid in keyboard_response: ' + this.name + ' (' + this.vars.get('allowed_responses') + ')')
+        this.experiment._runner._debugger.addError(
+          'Defined responses are not valid in keyboard_response: ' +
+          this.name + ' (' + this.vars.get('allowed_responses') + ')')
       }
     }
   }
@@ -183,6 +191,23 @@ export default class GenericResponse extends Item {
         break
     }
   }
+  
+  /** Sets the mouse coordinates based **/
+  set_mouse_coordinates (clientX, clientY) {
+    // We need the top-left and scaling of the viewport to set the mouse
+    // coordinates so that 0,0 corresponds to the display center. The scaling
+    // needs to be taken into account also such that the viewport always has
+    // the same size in cursor coordinates, even if it's scaled down.
+    const rect = this._runner._renderer.view.getBoundingClientRect()
+    const scale = Math.min(
+        (rect.right - rect.left) / this.experiment.vars.width,
+        (rect.bottom - rect.top) / this.experiment.vars.height,
+    )
+    const center_x = scale * this.experiment.vars.width / 2
+    const center_y = scale * this.experiment.vars.height / 2
+    this.experiment.vars.cursor_x = (clientX - center_x - rect.left) / scale
+    this.experiment.vars.cursor_y = (clientY - center_y - rect.top) / scale
+  }
 
   /** Process a keyboard response. */
   process_response_keypress (retval) {
@@ -199,8 +224,7 @@ export default class GenericResponse extends Item {
     this.experiment._end_response_interval = retval.rtTime
     this.experiment.vars.response = retval.resp
     this.synonyms = this._mouse._synonyms(this.experiment.vars.response)
-    this.experiment.vars.cursor_x = retval.event.clientX
-    this.experiment.vars.cursor_y = retval.event.clientY
+    this.set_mouse_coordinates(retval.event.clientX, retval.event.clientY)
     this.response_bookkeeping()
   }
 
@@ -235,11 +259,6 @@ export default class GenericResponse extends Item {
           }
         } else {
           this.experiment.vars.correct = 'undefined'
-          /* if self.experiment.response in (correct_response, safe_decode(correct_response)):
-              self.experiment.var.correct = 1
-              self.experiment.var.total_correct += 1
-            else:
-              self.experiment.var.correct = 0 */
         }
       } else {
         // If a correct_response hasn't been defined, we simply set correct to undefined.

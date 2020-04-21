@@ -86,4 +86,39 @@ export default class MouseResponse extends GenericResponse {
     this.set_sri()
     this.process_response()
   }
+
+  * coroutine () {
+    const mouseDownHandler = (event) => {
+      this.response = this.experiment._runner._events._processMouseEvent(event, 1)
+    }
+
+    const touchHandler = (event) => {
+      event.button = 0
+      event.clientX = event.changedTouches[0].clientX
+      event.clientY = event.changedTouches[0].clientY
+      this.response = this.experiment._runner._events._processMouseEvent(event, 1)
+    }
+
+    window.addEventListener('mousedown', mouseDownHandler)
+    window.addEventListener('touchstart', touchHandler)
+
+    yield
+    // Show the cursor if defined.
+    if (this.vars.show_cursor === 'yes') {
+      this._mouse.show_cursor(true)
+    }
+
+    // Record the onset of the current item.
+    this.set_item_onset()
+
+    this.set_sri()
+    let proceed = true
+    this.response = null
+    while (!this.response && proceed) {
+      proceed = yield true
+    }
+    window.removeEventListener('mousedown', mouseDownHandler)
+    window.removeEventListener('touchstart', touchHandler)
+    if (this.response) this.process_response_mouseclick(this.response)
+  }
 }

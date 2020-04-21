@@ -63,4 +63,34 @@ export default class KeyboardResponse extends GenericResponse {
     this.set_sri()
     this.process_response()
   }
+
+  * coroutine () {
+    const keyDownHandler = (event) => {
+      const keypress = this.experiment._runner._events._processKeyboardEvent(event, 1)
+      let allowed_responses = 'all'
+      if (this.vars.get('allowed_responses')) {
+        allowed_responses = this._keyboard._get_default_from_synoniem(
+          this.vars.get('allowed_responses').split(';').map(key => key.trim())
+        )
+      }
+
+      if (allowed_responses === 'all' || allowed_responses.includes(keypress.resp)) {
+        this.response = keypress
+      }
+    }
+
+    window.addEventListener('keydown', keyDownHandler)
+    yield
+    // Record the onset of the current item.
+    this.set_item_onset()
+
+    this.set_sri()
+    let proceed = true
+    this.response = null
+    while (!this.response && proceed) {
+      proceed = yield true
+    }
+    window.removeEventListener('keydown', keyDownHandler)
+    if (this.response) this.process_response_keypress(this.response)
+  }
 }

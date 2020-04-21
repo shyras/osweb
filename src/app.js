@@ -2,7 +2,6 @@
 This script ties all needed modules or files together and provides the
 correct setting for the webpack-devserver
 */
-
 import './scss/osweb.scss'
 import osweb from './js/osweb/index.js'
 
@@ -16,8 +15,4 @@ if (typeof window !== 'undefined') {
 
 if (module.hot) {
   module.hot.accept()
-}
-
-if (process.env.NODE_ENV === 'development') {
-  require('webpack-serve-overlay')
 }

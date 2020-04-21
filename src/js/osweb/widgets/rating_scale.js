@@ -1,13 +1,13 @@
 import Widget from './widget.js'
-import * as PIXI from 'pixi.js'
+import { Graphics, Container, Rectangle } from 'pixi.js'
 
 /** Class representing an OpenSesame text input Widget. */
 export default class RatingScaleWidget extends Widget {
   /**
-     * Create a widget object which represents a text label.
-     * @param {Object} form - The form  which the widget belongs.
-     * @param {Object} properties - The properties belonging to the widget.
-     */
+   * Create a widget object which represents a text label.
+   * @param {Object} form - The form  which the widget belongs.
+   * @param {Object} properties - The properties belonging to the widget.
+   */
   constructor (form, properties) {
     // Inherited create.
     super(form)
@@ -56,7 +56,7 @@ export default class RatingScaleWidget extends Widget {
      */
   _drawBorder (x, y, width, height) {
     // Create the rectangle element.
-    var rectangle = new PIXI.Graphics()
+    var rectangle = new Graphics()
     rectangle.lineStyle(1, this.form._canvas._styles._convertColorValue(this.form._themes.theme['gray'].backgroundColor), 1)
     rectangle.drawRect(x, y, width, height)
     rectangle.x = 0
@@ -72,7 +72,7 @@ export default class RatingScaleWidget extends Widget {
      */
   _drawCheckBox (x, y) {
     // PIXI: create the border box.
-    var box_lines = new PIXI.Graphics()
+    var box_lines = new Graphics()
     box_lines.lineStyle(1, 0x000000)
     box_lines.moveTo(1, 0)
     box_lines.lineTo(13, 0)
@@ -86,7 +86,7 @@ export default class RatingScaleWidget extends Widget {
     box_lines.y = 7
 
     // PIXI: create the fill box.
-    var box_fill = new PIXI.Graphics()
+    var box_fill = new Graphics()
     box_fill.lineStyle(1, 0xffffff, 1)
     box_fill.beginFill(0xffffff)
     box_fill.drawRect(1, 1, 12, 12)
@@ -94,8 +94,8 @@ export default class RatingScaleWidget extends Widget {
     box_fill.x = 5
     box_fill.y = 7
 
-    // PIXI: create the check line.
-    var box_check = new PIXI.Graphics()
+    //  create the check line.
+    var box_check = new Graphics()
     box_check.lineStyle(1, 0x04b010)
     box_check.moveTo(4, 5)
     box_check.lineTo(7, 12)
@@ -105,7 +105,7 @@ export default class RatingScaleWidget extends Widget {
     box_check.visible = false
 
     // Add the elements to a container.
-    var container = new PIXI.Container()
+    var container = new Container()
     container.addChild(box_lines)
     container.addChild(box_fill)
     container.addChild(box_check)
@@ -119,7 +119,7 @@ export default class RatingScaleWidget extends Widget {
     // Set the interactive mode.
     container.interactive = true
     container.buttonMode = true
-    container.hitArea = new PIXI.Rectangle(0, 5, 15, 15)
+    container.hitArea = new Rectangle(0, 5, 15, 15)
     container.on('mousedown', function (event) {
       this.response(event)
     }.bind(this))
@@ -146,7 +146,7 @@ export default class RatingScaleWidget extends Widget {
 
     // Get the lines and properties.
     var lineProperties = this.form._canvas._getTextBaseline(text, text_style.fontFamily, text_style.fontSize, text_style.fontWeight)
-    var text_element = new PIXI.Text(text, text_style)
+    var text_element = new Text(text, text_style)
     if (horizontal === true) {
       text_element.x = x - (text_element.width / 2) + 15
       text_element.y = y - lineProperties.height
@@ -165,7 +165,7 @@ export default class RatingScaleWidget extends Widget {
     if ((this.form.item.vars.only_render === 'no') && (this._container.interactive === false)) {
       this._container.interactive = true
       this._container.buttonMode = true
-      this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height)
+      this._container.hitArea = new Rectangle(0, 0, this._container._width, this._container._height)
     }
 
     // Clear the old content.

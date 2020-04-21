@@ -1,9 +1,8 @@
 import parseDataURL from 'data-urls'
-
+import { Application } from 'pixi.js-legacy'
 import Canvas from '../../osweb/backends/canvas'
 import Style from '../../osweb/backends/styles'
 import Experiment from '../../osweb/items/experiment'
-import * as PIXI from 'pixi.js'
 
 // Add image snapshot matcher to Jest expect function suite
 const { toMatchImageSnapshot } = require('jest-image-snapshot')
@@ -52,7 +51,7 @@ const cy = dimensions.height / 2
 // const cx = dimensions.width / 2
 
 let canvas = new Canvas(new Experiment())
-let app = new PIXI.Application({
+let app = new Application({
   width: dimensions.width,
   height: dimensions.height,
   antialias: true,

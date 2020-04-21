@@ -1,5 +1,5 @@
 import Widget from './widget.js'
-import * as PIXI from 'pixi.js'
+import { Rectangle, Text } from 'pixi.js'
 import { constants } from '../system/constants.js'
 
 /**
@@ -33,7 +33,7 @@ export default class ButtonWidget extends Widget {
      * @param {Number|String} html - Toggle if the text contains html (ignored).
      */
   draw_text (text, html) {
-    // PIXI - Create the text element
+    //  Create the text element
     var text_style = {
       fontFamily: this.form._canvas._styles.font_family,
       fontSize: this.form.experiment.vars.font_size,
@@ -41,7 +41,7 @@ export default class ButtonWidget extends Widget {
       fontWeight: (this.form.experiment.vars.font_bold === 'yes') ? 'bold' : 'normal',
       fill: this.form.experiment.vars.foreground
     }
-    var text_element = new PIXI.Text(text, text_style)
+    var text_element = new Text(text, text_style)
 
     // Position the text element.
     if (this.center === true) {
@@ -62,7 +62,7 @@ export default class ButtonWidget extends Widget {
     if ((this.form.item.vars.only_render === 'no') && (this._container.interactive === false)) {
       this._container.interactive = true
       this._container.buttonMode = true
-      this._container.hitArea = new PIXI.Rectangle(0, 0, this._container._width, this._container._height)
+      this._container.hitArea = new Rectangle(0, 0, this._container._width, this._container._height)
       this._container.on('mousedown', function (event) { this.response(event) }.bind(this))
       this._container.on('touchstart', function (event) { this.response(event) }.bind(this))
     }
