@@ -141,7 +141,7 @@ export default class GenericResponse extends Item {
   }
 
   /** Prepare the system for a mouseclick duration interval. */
-  prepare_duration_mouseclick (self) {
+  prepare_duration_mouseclick () {
     // Prepare a mouseclick duration.
     this._mouse = new Mouse(this.experiment)
     if (this.experiment.auto_response === true) {
@@ -169,29 +169,29 @@ export default class GenericResponse extends Item {
   process_response () {
     // Start stimulus response cycle.
     switch (this._responsetype) {
-      case constants.RESPONSE_NONE:
-        // Duration is 0, so complete the stimulus/response cycle.
-        this._status = constants.STATUS_FINALIZE
-        this._complete()
-        break
-      case constants.RESPONSE_DURATION:
-        this.sleep_for_duration()
-        break
-      case constants.RESPONSE_KEYBOARD:
-        this._keyboard.get_key()
-        break
-      case constants.RESPONSE_MOUSE:
-        this._mouse.get_click()
-        break
-      case constants.RESPONSE_SOUND:
-        this._sampler.wait()
-        break
-      case constants.RESPONSE_VIDEO:
-        this._video_player.wait()
-        break
+    case constants.RESPONSE_NONE:
+      // Duration is 0, so complete the stimulus/response cycle.
+      this._status = constants.STATUS_FINALIZE
+      this._complete()
+      break
+    case constants.RESPONSE_DURATION:
+      this.sleep_for_duration()
+      break
+    case constants.RESPONSE_KEYBOARD:
+      this._keyboard.get_key()
+      break
+    case constants.RESPONSE_MOUSE:
+      this._mouse.get_click()
+      break
+    case constants.RESPONSE_SOUND:
+      this._sampler.wait()
+      break
+    case constants.RESPONSE_VIDEO:
+      this._video_player.wait()
+      break
     }
   }
-  
+
   /** Sets the mouse coordinates based **/
   set_mouse_coordinates (clientX, clientY) {
     // We need the top-left and scaling of the viewport to set the mouse
@@ -200,8 +200,8 @@ export default class GenericResponse extends Item {
     // the same size in cursor coordinates, even if it's scaled down.
     const rect = this._runner._renderer.view.getBoundingClientRect()
     const scale = Math.min(
-        (rect.right - rect.left) / this.experiment.vars.width,
-        (rect.bottom - rect.top) / this.experiment.vars.height,
+      (rect.right - rect.left) / this.experiment.vars.width,
+      (rect.bottom - rect.top) / this.experiment.vars.height
     )
     const center_x = scale * this.experiment.vars.width / 2
     const center_y = scale * this.experiment.vars.height / 2

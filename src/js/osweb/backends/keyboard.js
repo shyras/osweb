@@ -18,7 +18,7 @@ export default class Keyboard {
 
     // Set constant properties.
     this._SYNONIEM_MAP = [
-      [' ', 'space', 'SPACE'],
+      ['space', ' ', 'SPACE'],
       ['"', 'quotedbl', 'QUOTEDBL'],
       ['!', 'exclaim', 'EXCLAIM'],
       ['#', 'hash', 'HASH'],
@@ -162,9 +162,9 @@ export default class Keyboard {
    * @return {Array} - List of default values for the given responses.
    */
   _get_default_from_synoniem (responses) {
-    var defaults = []
-    for (var i = 0; i < responses.length; i++) {
-      var synoniem = this._synonyms(responses[i])
+    const defaults = []
+    for (let i = 0; i < responses.length; i++) {
+      const synoniem = this._synonyms(responses[i])
       defaults.push(synoniem[0])
     }
     return defaults
@@ -188,8 +188,8 @@ export default class Keyboard {
    */
   _synonyms (button) {
     if (typeof button !== 'undefined') {
-      for (var i = 0; i < this._SYNONIEM_MAP.length; i++) {
-        for (var j = 0; j < this._SYNONIEM_MAP[i].length; j++) {
+      for (let i = 0; i < this._SYNONIEM_MAP.length; i++) {
+        for (let j = 0; j < this._SYNONIEM_MAP[i].length; j++) {
           if (this._SYNONIEM_MAP[i][j] === button) {
             return this._SYNONIEM_MAP[i]
           }

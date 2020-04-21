@@ -54,7 +54,7 @@ export default class Sampler extends GenericResponse {
       this._sampler.pitch = this.vars.pitch
     } else {
       // Show error message.
-      this._debugger.addError('No sample has been specified in sampler: ' + this.vars.sample)
+      this._runner._debugger.addError('No sample has been specified in sampler: ' + this.vars.sample)
     }
 
     // Inherited.
