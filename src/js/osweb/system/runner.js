@@ -24,7 +24,7 @@ export default class Runner {
     // Create and set private properties.
     this._confirm = null // Optionale confirm dialog function.
     this._container = null // HTML: The container (div) element.
-    this._data = null // Experiment result data.
+    this._data = [] // Experiment result data.
     this._experiment = null // The experiment container.
     this._fullScreen = false // Full screen toggle mode.
     this._mimetype = null // Distinction between text and binanry files.

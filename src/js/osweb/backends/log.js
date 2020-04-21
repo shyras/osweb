@@ -15,14 +15,15 @@ export default class Log {
    * @param {Array} varList - Array with variables to write to the log.
    */
   write_vars (varList) {
-    if (!isFunction(this._experiment.onLog)) return
-    let entry = {}
-    let value
-    for (let varName of varList) {
-      value = this._experiment.vars.get(varName, 'NA', false)
+    const entry = {}
+    for (const varName of varList) {
+      const value = this._experiment.vars.get(varName, 'NA', false)
       if (isFunction(value)) continue
       entry[varName] = value
     }
-    this._experiment.onLog(entry)
+    if (isFunction(this._experiment.onLog)) {
+      this._experiment.onLog(entry)
+    }
+    this._experiment._runner._data.push(entry)
   }
 }

@@ -117,7 +117,7 @@ export default class Syntax {
     // if pTxt is already a number simply return it
     if (isNumber(text)) return text
     // Try to convert text to a number. If this succeeds return it.
-    if (!isNaN(toNumber(text))) return toNumber(text)
+    if ((text !== '') && !isNaN(toNumber(text))) return toNumber(text)
     text = this.escapeBrackets(text)
     /** The replacer function detects variable entries in the passed text
     and replaces them with variable values as found in OpenSesame's var store */
@@ -159,8 +159,10 @@ export default class Syntax {
       }
     })
     // Try to convert the result to a number again. If this succeeds return it.
-    let nr = toNumber(result)
-    if (!isNaN(nr)) return nr
+    if (result !== '') {
+      let nr = toNumber(result)
+      if (!isNaN(nr)) return nr
+    }
     // Check if content has additional quotes
     return this.strip_slashes(this.unescapeBrackets(result))
   }

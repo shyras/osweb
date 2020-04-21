@@ -8,8 +8,7 @@ const startCase = require('lodash').startCase
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-// const LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const pkgconfig = require('./package.json')
 
 const outputPath = path.join(__dirname, 'public_html')
@@ -76,12 +75,13 @@ module.exports = (env, args) => {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
       }, {
-        test: /\.(png|jpg)$/,
+        test: /\.(png|jpe?g|gif)$/i,
         use: [{
           loader: 'url-loader',
           options: {
             limit: 8192,
-            name: 'images/[hash].[ext]'
+            name: 'images/[hash].[ext]',
+            esModule: false
           }
         }]
       }, {
@@ -121,8 +121,8 @@ module.exports = (env, args) => {
     },
     plugins: [
       new webpack.DefinePlugin({
-        'OSWEB_VERSION_NAME': JSON.stringify(pkgconfig.name),
-        'OSWEB_VERSION_NO': JSON.stringify(pkgconfig.version),
+        OSWEB_VERSION_NAME: JSON.stringify(pkgconfig.name),
+        OSWEB_VERSION_NO: JSON.stringify(pkgconfig.version),
         PIXI: 'pixi.js'
       }),
       new webpack.NamedModulesPlugin(),
@@ -149,11 +149,6 @@ module.exports = (env, args) => {
         filename: 'index.html',
         exampleExperiments
       })
-      // new LodashModuleReplacementPlugin({
-      //   'shorthands': true,
-      //   'collections': true,
-      //   'paths': true
-      // })
     ],
     optimization: {
       sideEffects: true,
@@ -172,8 +167,11 @@ module.exports = (env, args) => {
         }
       },
       minimizer: [
-        new UglifyJsPlugin({
-          uglifyOptions: {
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true,
+          terserOptions: {
             keep_fnames: true
           }
         })
