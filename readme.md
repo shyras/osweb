@@ -2,7 +2,7 @@
 
 Copyright 2016-2018 Jaap Bos (@shyras), Daniel Schreij (@dschreij), and Sebastiaan Mathôt (@smathot)
 
-<b>Warning! This repository is no longer active and has been moved to smathot/osweb.<b/> 
+<b>Warning! This repository is no longer active and has been moved to smathot/osweb.</b> 
 
 ## About
 
