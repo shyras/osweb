@@ -2,6 +2,8 @@
 
 Copyright 2016-2018 Jaap Bos (@shyras), Daniel Schreij (@dschreij), and Sebastiaan Mathôt (@smathot)
 
+Warning! This repository is no longer active and has been moved to smathot/osweb. 
+
 ## About
 
 OSWEB is an online runtime for OpenSesame experiments. OpenSesame is a open-source program for creating behavioral experiments. For more information, see:
